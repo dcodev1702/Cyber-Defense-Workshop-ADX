@@ -1,0 +1,88 @@
+{
+  "tableName": "DeviceTvmSecureConfigurationAssessment",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmsecureconfigurationassessment-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the device in the service"
+    },
+    {
+      "name": "DeviceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Fully qualified domain name (FQDN) of the device"
+    },
+    {
+      "name": "OSPlatform",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Platform of the operating system running on the device. Indicates specific operating systems, including variations within the same family, such as Windows 11, Windows 10, and Windows 7."
+    },
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the record was generated"
+    },
+    {
+      "name": "ConfigurationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for a specific configuration"
+    },
+    {
+      "name": "ConfigurationCategory",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Category or grouping to which the configuration belongs: Application, OS, Network, Accounts, Security controls"
+    },
+    {
+      "name": "ConfigurationSubcategory",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Subcategory or subgrouping to which the configuration belongs. In many cases, string describes specific capabilities or features."
+    },
+    {
+      "name": "ConfigurationImpact",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Rated impact of the configuration to the overall configuration score (1-10)"
+    },
+    {
+      "name": "IsCompliant",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether the configuration or policy is properly configured * A value of True is Compliant * A value of False is Not Compliant"
+    },
+    {
+      "name": "IsApplicable",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether the configuration or policy applies to the device * A value of True is Applicable * A value of False is Not Applicable"
+    },
+    {
+      "name": "Context",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Additional contextual information about the configuration or policy"
+    },
+    {
+      "name": "IsExpectedUserImpact",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether there will be user impact if the configuration or policy is applied"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceTvmSecureConfigurationAssessment_JsonMapping"
+  }
+}

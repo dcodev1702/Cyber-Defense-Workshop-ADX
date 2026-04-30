@@ -1,0 +1,232 @@
+{
+  "tableName": "CloudAppEvents",
+  "categories": [
+    "CloudApp",
+    "Graph",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-cloudappevents-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the event was recorded"
+    },
+    {
+      "name": "ActionType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of activity that triggered the event"
+    },
+    {
+      "name": "Application",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Application that performed the recorded action"
+    },
+    {
+      "name": "ApplicationId",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Unique identifier for the application"
+    },
+    {
+      "name": "AppInstanceId",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Unique identifier for the instance of an application. To convert this to Microsoft Defender for Cloud Apps App-connector-ID, use CloudAppEvents| distinct ApplicationId,AppInstanceId,binary_or(binary_shift_left(AppInstanceId,20),Application|order by ApplicationId,AppInstanceId"
+    },
+    {
+      "name": "AccountObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the account in Microsoft Entra ID"
+    },
+    {
+      "name": "AccountId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "An identifier for the account as found by Microsoft Defender for Cloud Apps. Could be Microsoft Entra ID, user principal name, or other identifiers."
+    },
+    {
+      "name": "AccountDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name displayed in the address book entry for the account user. This is usually a combination of the given name, middle initial, and surname of the user."
+    },
+    {
+      "name": "IsAdminOperation",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Indicates whether the activity was performed by an administrator"
+    },
+    {
+      "name": "DeviceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of device based on purpose and functionality, such as network device, workstation, server, mobile, gaming console, or printer"
+    },
+    {
+      "name": "OSPlatform",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Platform of the operating system running on the device. This column indicates specific operating systems, including variations within the same family, such as Windows 11, Windows 10, and Windows 7."
+    },
+    {
+      "name": "IPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "IP address assigned to the device during communication"
+    },
+    {
+      "name": "IsAnonymousProxy",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether the IP address belongs to a known anonymous proxy"
+    },
+    {
+      "name": "CountryCode",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Two-letter code indicating the country where the client IP address is geolocated"
+    },
+    {
+      "name": "City",
+      "type": "string",
+      "sourceType": "string",
+      "description": "City where the client IP address is geolocated"
+    },
+    {
+      "name": "Isp",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Internet service provider associated with the IP address"
+    },
+    {
+      "name": "UserAgent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User agent information from the web browser or other client application"
+    },
+    {
+      "name": "ActivityType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of activity that triggered the event"
+    },
+    {
+      "name": "ActivityObjects",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "List of objects, such as files or folders, that were involved in the recorded activity"
+    },
+    {
+      "name": "ObjectName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the object that the recorded action was applied to"
+    },
+    {
+      "name": "ObjectType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of object, such as a file or a folder, that the recorded action was applied to"
+    },
+    {
+      "name": "ObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the object that the recorded action was applied to"
+    },
+    {
+      "name": "ReportId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the event"
+    },
+    {
+      "name": "AccountType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of user account, indicating its general role and access levels, such as Regular, System, Admin, Application"
+    },
+    {
+      "name": "IsExternalUser",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether a user inside the network doesn't belong to the organization's domain"
+    },
+    {
+      "name": "IsImpersonated",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether the activity was performed by one user for another (impersonated) user"
+    },
+    {
+      "name": "IPTags",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Customer-defined information applied to specific IP addresses and IP address ranges"
+    },
+    {
+      "name": "IPCategory",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Additional information about the IP address"
+    },
+    {
+      "name": "UserAgentTags",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "More information provided by Microsoft Defender for Cloud Apps in a tag in the user agent field. Can have any of the following values: Native client, Outdated browser, Outdated operating system, Robot"
+    },
+    {
+      "name": "RawEventData",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Raw event information from the source application or service in JSON format"
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Additional information about the entity or event"
+    },
+    {
+      "name": "LastSeenForUser",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Indicates the number of days since a specific attribute was last seen for the user. A value of 0 means the attribute was seen today, a negative value indicates the attribute is being seen for the first time, and a positive value represents the number of days since the attribute was last seen. For example: {\"ActionType\":\"0\",\"OSPlatform\":\"4\",\"ISP\":\"-1\"}"
+    },
+    {
+      "name": "UncommonForUser",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Lists the attributes in the event that are uncommon for the user, helping to rule out false positives and find anomalies. For example: [\"ActivityType\",\"ActionType\"]. To filter out nonanomalous results: events with low or insignificant security value won't go through enrichment processes and will have a value of \"\", while high-value events will go through enrichment processes and, if no anomalies are found, will have a value of \"[]\"."
+    },
+    {
+      "name": "AuditSource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Audit data source. Possible values are one of the following: - Defender for Cloud Apps access control - Defender for Cloud Apps session control - Defender for Cloud Apps app connector"
+    },
+    {
+      "name": "SessionData",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "The Defender for Cloud Apps session ID for access or session control. For example: {InLineSessionId:\"232342\"}"
+    },
+    {
+      "name": "OAuthAppId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "A unique identifier that is assigned to an application when it's registered to Microsoft Entra with OAuth 2.0 protocol."
+    }
+  ],
+  "adx": {
+    "mappingName": "CloudAppEvents_JsonMapping"
+  }
+}

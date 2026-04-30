@@ -1,0 +1,52 @@
+{
+  "tableName": "DeviceTvmInfoGathering",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvminfogathering-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the record was generated"
+    },
+    {
+      "name": "LastSeenTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the service last saw the device"
+    },
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the device in the service"
+    },
+    {
+      "name": "DeviceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Fully qualified domain name (FQDN) of the device"
+    },
+    {
+      "name": "OSPlatform",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Platform of the operating system running on the device. This indicates specific operating systems, including variations within the same family, such as Windows 10 and Windows 7."
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Additional information about the entity or event"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceTvmInfoGathering_JsonMapping"
+  }
+}

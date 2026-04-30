@@ -1,0 +1,64 @@
+{
+  "tableName": "DeviceTvmSoftwareVulnerabilitiesKB",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmsoftwarevulnerabilitieskb-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "CveId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier assigned to the security vulnerability under the Common Vulnerabilities and Exposures (CVE) system"
+    },
+    {
+      "name": "CvssScore",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Severity score assigned to the security vulnerability under the Common Vulnerability Scoring System (CVSS)"
+    },
+    {
+      "name": "IsExploitAvailable",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether exploit code for the vulnerability is publicly available"
+    },
+    {
+      "name": "VulnerabilitySeverityLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Severity level assigned to the security vulnerability based on the CVSS score and dynamic factors influenced by the threat landscape"
+    },
+    {
+      "name": "LastModifiedTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time the item or related metadata was last modified"
+    },
+    {
+      "name": "PublishedDate",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date vulnerability was disclosed to the public"
+    },
+    {
+      "name": "VulnerabilityDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Description of the vulnerability and associated risks"
+    },
+    {
+      "name": "AffectedSoftware",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "List of all software products affected by the vulnerability"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceTvmSoftwareVulnerabilitiesKB_JsonMapping"
+  }
+}

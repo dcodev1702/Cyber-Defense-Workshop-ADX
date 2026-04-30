@@ -1,0 +1,46 @@
+{
+  "tableName": "DeviceTvmInfoGatheringKB",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvminfogatheringkb-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "IgId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the piece of information gathered"
+    },
+    {
+      "name": "FieldName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the field where this information appears in the AdditionalFields column of the DeviceTvmInfoGathering table"
+    },
+    {
+      "name": "Description",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Description of the information gathered"
+    },
+    {
+      "name": "Categories",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "List of categories that the information belongs to, in JSON array format"
+    },
+    {
+      "name": "DataStructure",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The data structure of the information gathered"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceTvmInfoGatheringKB_JsonMapping"
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "tableName": "AuditLogs",
+  "categories": [
+    "EntraId",
+    "Audit",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Microsoft Entra ID",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/auditlogs",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "AADOperationType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of the operation. Possible values are Add Update Delete and Other."
+    },
+    {
+      "name": "AADTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "ID of the ADD tenant"
+    },
+    {
+      "name": "ActivityDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time the activity was performed in UTC."
+    },
+    {
+      "name": "ActivityDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Activity name or the operation name. Examples include Create User and Add member to group. For full list see Azure AD activity list."
+    },
+    {
+      "name": "AdditionalDetails",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Indicates additional details on the activity."
+    },
+    {
+      "name": "_BilledSize",
+      "type": "real",
+      "sourceType": "real",
+      "description": "The record size in bytes"
+    },
+    {
+      "name": "Category",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Currently Audit is the only supported value."
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Optional GUID that's passed by the client. Can help correlate client-side operations with server-side operations and is useful when tracking logs that span services."
+    },
+    {
+      "name": "DurationMs",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Property is not used and can be ignored."
+    },
+    {
+      "name": "Id",
+      "type": "string",
+      "sourceType": "string",
+      "description": "GUID that uniquely identifies the activity."
+    },
+    {
+      "name": "Identity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identity from the token that was presented when the request was made. The identity can be a user account system account or service principal."
+    },
+    {
+      "name": "InitiatedBy",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "User or app initiated the activity."
+    },
+    {
+      "name": "_IsBillable",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Specifies whether ingesting the data is billable. When _IsBillable is false ingestion isn't billed to your Azure account"
+    },
+    {
+      "name": "Level",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Message type. This is currently always Informational."
+    },
+    {
+      "name": "Location",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Location of the datacenter."
+    },
+    {
+      "name": "LoggedByService",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Service that initiated the activity (For example: Self-service Password Management Core Directory B2C Invited Users Microsoft Identity Manager Privileged Identity Management."
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the operation."
+    },
+    {
+      "name": "OperationVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "REST API version that's requested by the client."
+    },
+    {
+      "name": "Resource",
+      "type": "string",
+      "sourceType": "string",
+      "description": ""
+    },
+    {
+      "name": "ResourceGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": ""
+    },
+    {
+      "name": "ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": ""
+    },
+    {
+      "name": "ResourceProvider",
+      "type": "string",
+      "sourceType": "string",
+      "description": ""
+    },
+    {
+      "name": "Result",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Result of the activity. Possible values are: success failure timeout unknownFutureValue."
+    },
+    {
+      "name": "ResultDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Additional description of the result."
+    },
+    {
+      "name": "ResultReason",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Describes cause of failure or timeout results."
+    },
+    {
+      "name": "ResultSignature",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Property is not used and can be ignored."
+    },
+    {
+      "name": "ResultType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Result of the operation. Possible values are Success and Failure."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of agent the event was collected by. For example, OpsManager for Windows agent, either direct connect or Operations Manager, Linux for all Linux agents, or Azure for Azure Diagnostics"
+    },
+    {
+      "name": "TargetResources",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Indicates information on which resource was changed due to the activity. Target Resource Type can be User Device Directory App Role Group Policy or Other."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time the record was created."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The name of the table"
+    }
+  ],
+  "adx": {
+    "mappingName": "AuditLogs_JsonMapping"
+  }
+}

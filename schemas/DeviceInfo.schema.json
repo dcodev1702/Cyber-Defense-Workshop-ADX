@@ -1,0 +1,309 @@
+{
+  "tableName": "DeviceInfo",
+  "categories": [
+    "MDE",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceinfo-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Last date and time recorded for the device"
+    },
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the device in the service"
+    },
+    {
+      "name": "DeviceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Fully qualified domain name (FQDN) of the device"
+    },
+    {
+      "name": "ClientVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Version of the endpoint agent or sensor running on the device"
+    },
+    {
+      "name": "PublicIP",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Public IP address used by the onboarded device to connect to the Microsoft Defender for Endpoint service. This could be the IP address of the device itself, a NAT device, or a proxy."
+    },
+    {
+      "name": "OSArchitecture",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Architecture of the operating system running on the device"
+    },
+    {
+      "name": "OSPlatform",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Platform of the operating system running on the device. This indicates specific operating systems, including variations within the same family, such as Windows 11, Windows 10 and Windows 7."
+    },
+    {
+      "name": "OSBuild",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Build version of the operating system running on the device"
+    },
+    {
+      "name": "IsAzureADJoined",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Boolean indicator of whether device is joined to the Microsoft Entra ID"
+    },
+    {
+      "name": "JoinType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The device's Microsoft Entra ID join type"
+    },
+    {
+      "name": "AadDeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the device in Microsoft Entra ID"
+    },
+    {
+      "name": "LoggedOnUsers",
+      "type": "string",
+      "sourceType": "string",
+      "description": "List of all users that are logged on the device at the time of the event in JSON array format"
+    },
+    {
+      "name": "RegistryDeviceTag",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Device tag added through the registry"
+    },
+    {
+      "name": "OSVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Version of the operating system running on the device"
+    },
+    {
+      "name": "MachineGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Machine group of the device. This group is used by role-based access control to determine access to the device."
+    },
+    {
+      "name": "ReportId",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Event identifier based on a repeating counter. To identify unique events, this column must be used in conjunction with the DeviceName and Timestamp columns."
+    },
+    {
+      "name": "OnboardingStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Indicates whether the device is currently onboarded or not to Microsoft Defender For Endpoint or if the device is not supported"
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Additional information about the event in JSON array format"
+    },
+    {
+      "name": "DeviceCategory",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Broader classification that groups certain device types under the following categories: Endpoint, Network device, IoT, Unknown"
+    },
+    {
+      "name": "DeviceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of device based on purpose and functionality, such as network device, workstation, server, mobile, gaming console, or printer"
+    },
+    {
+      "name": "DeviceSubtype",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Additional modifier for certain types of devices, for example, a mobile device can be a tablet or a smartphone; only available if device discovery finds enough information about this attribute"
+    },
+    {
+      "name": "Model",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Model name or number of the product from the vendor or manufacturer, only available if device discovery finds enough information about this attribute"
+    },
+    {
+      "name": "Vendor",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the product vendor or manufacturer, only available if device discovery finds enough information about this attribute"
+    },
+    {
+      "name": "OSDistribution",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Distribution of the OS platform, such as Ubuntu or RedHat for Linux platforms"
+    },
+    {
+      "name": "OSVersionInfo",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Additional information about the OS version, such as the popular name, code name, or version number"
+    },
+    {
+      "name": "MergedDeviceIds",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Previous device IDs that have been assigned to the same device"
+    },
+    {
+      "name": "MergedToDeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The most recent device ID assigned to a device"
+    },
+    {
+      "name": "IsInternetFacing",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether the device is internet-facing"
+    },
+    {
+      "name": "SensorHealthState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Indicates health of the device's EDR sensor, if onboarded to Microsoft Defender For Endpoint"
+    },
+    {
+      "name": "IsExcluded",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Determines if the device is currently excluded from Microsoft Defender for Vulnerability Management experiences"
+    },
+    {
+      "name": "ExclusionReason",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Indicates the reason for device exclusion"
+    },
+    {
+      "name": "ExposureLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The device's level of vulnerability to exploitation based on its exposure score; can be: Low, Medium, High"
+    },
+    {
+      "name": "AssetValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Priority or value assigned to the device in relation to its importance in computing the organization's exposure score; can be: Low, Normal (Default), High"
+    },
+    {
+      "name": "DeviceManualTags",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Device tags created manually using the portal UI or public API"
+    },
+    {
+      "name": "DeviceDynamicTags",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Device tags added and removed dynamically based on dynamic rules"
+    },
+    {
+      "name": "ConnectivityType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of connectivity from the device to the cloud"
+    },
+    {
+      "name": "HostDeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Device ID of the device running Windows Subsystem for Linux"
+    },
+    {
+      "name": "AzureResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the Azure resource associated with the device"
+    },
+    {
+      "name": "AwsResourceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier specific to Amazon Web Services devices, containing the Amazon resource name"
+    },
+    {
+      "name": "GcpFullResourceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier specific to Google Cloud Platform devices, containing a combination of zone and ID for GCP"
+    },
+    {
+      "name": "HardwareUuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Universally Unique Identifier (UUID) of the device's hardware"
+    },
+    {
+      "name": "CloudPlatforms",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The cloud platforms that the device belongs to. Can be Azure, Amazon Web Services, Google Cloud Platform and Azure Arc."
+    },
+    {
+      "name": "AzureVmId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier assigned to the device in Azure"
+    },
+    {
+      "name": "AzureVmSubscriptionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the Azure subscription associated with the device"
+    },
+    {
+      "name": "IsTransient",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether this device is classified as short-lived or transient based on the frequency of appearance of the device on the network"
+    },
+    {
+      "name": "OsBuildRevision",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Build revision number of the operating system running on the machine"
+    },
+    {
+      "name": "MitigationStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Indicates the mitigation action applied to a device"
+    },
+    {
+      "name": "Site",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Represents the physical location where the device is located"
+    },
+    {
+      "name": "DiscoverySources",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Products or services that have seen or reported the device, including when they last reported it."
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceInfo_JsonMapping"
+  }
+}

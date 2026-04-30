@@ -1,0 +1,82 @@
+{
+  "tableName": "DeviceBaselineComplianceAssessmentKB",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicebaselinecomplianceassessmentkb-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "ConfigurationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for a specific configuration"
+    },
+    {
+      "name": "ConfigurationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Display name of the configuration"
+    },
+    {
+      "name": "ConfigurationDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Description of the configuration"
+    },
+    {
+      "name": "ConfigurationRationale",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Description of any associated risks and rationale behind the configuration"
+    },
+    {
+      "name": "ConfigurationCategory",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Category or grouping to which the configuration belongs"
+    },
+    {
+      "name": "BenchmarkProfileLevels",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "List of benchmark compliance levels for which the configuration is applicable"
+    },
+    {
+      "name": "CCEReference",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique Common Configuration Enumeration (CCE) identifier for the configuration"
+    },
+    {
+      "name": "RemediationOptions",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Recommended actions to reduce or address any associated risks"
+    },
+    {
+      "name": "ConfigurationBenchmark",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Industry benchmark recommending the configuration"
+    },
+    {
+      "name": "Source",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "The registry path or other location used to determine the current device setting"
+    },
+    {
+      "name": "RecommendedValue",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Set of expected values for the current device setting to be compliant"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceBaselineComplianceAssessmentKB_JsonMapping"
+  }
+}

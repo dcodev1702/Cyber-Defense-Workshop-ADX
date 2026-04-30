@@ -1,0 +1,109 @@
+// Cyber Defense KQL Workshop - Student Lab
+// Database: CyberDefenseKqlWorkshop
+
+// 1. Confirm that core table families are populated.
+union withsource=TableName
+    DeviceInfo,
+    IdentityInfo,
+    SigninLogs,
+    CloudAppEvents,
+    GraphApiAuditEvents,
+    DeviceProcessEvents,
+    IdentityQueryEvents,
+    AlertInfo,
+    AlertEvidence
+| summarize Rows=count() by TableName
+| order by TableName asc
+
+// 2. Understand the notional infrastructure.
+DeviceInfo
+| summarize Hosts=dcount(DeviceId), Devices=make_set(DeviceName, 100) by OSPlatform, DeviceType, MachineGroup, AssetValue
+| order by AssetValue desc, Hosts desc
+
+// 3. Find risky Entra sign-ins.
+SigninLogs
+| where IsRisky == true or RiskLevelDuringSignIn in~ ("high", "medium")
+| project TimeGenerated, UserPrincipalName, IPAddress, AppDisplayName, AuthenticationMethodsUsed, ConditionalAccessStatus, RiskLevelDuringSignIn, RiskState, UserAgent
+| order by TimeGenerated asc
+
+// 4. Correlate sign-in IP with OAuth consent and Graph access.
+let suspiciousIp =
+    SigninLogs
+    | where IsRisky == true
+    | top 1 by TimeGenerated asc
+    | project IPAddress;
+CloudAppEvents
+| where IPAddress in (suspiciousIp)
+| project Timestamp, AccountDisplayName, AccountId, ActionType, ObjectName, OAuthAppId, RawEventData
+| order by Timestamp asc
+
+GraphApiAuditEvents
+| where IPAddress in (suspiciousIp)
+| project Timestamp, AccountObjectId, ApplicationId, RequestMethod, RequestUri, Scopes, ResponseStatusCode
+| order by Timestamp asc
+
+// 5. Pivot from compromised user to endpoint process activity.
+let compromisedUser = "victor.alvarez@wiesbadenresearch.example";
+DeviceProcessEvents
+| where AccountUpn =~ compromisedUser
+| project Timestamp, DeviceName, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields
+| order by Timestamp asc
+
+// 6. Hunt the screenshot credential-access vectors.
+let suspiciousTools = dynamic(["reg.exe", "esentutl.exe", "Rubeus.exe", "procdump64.exe", "PwDump7.exe", "gsecdump.exe", "lazagne.exe", "mimikatz.exe", "rundll32.exe"]);
+DeviceProcessEvents
+| where FileName in~ (suspiciousTools)
+   or ProcessCommandLine has_any ("kerberoast", "sam.save", "LoginData.db", "logonpasswords", "pwdump", "gsecdump", "lazagne")
+| project Timestamp, DeviceName, AccountUpn, FileName, ProcessCommandLine
+| order by Timestamp asc
+
+// 7. Find registry and file artifacts produced by credential access.
+DeviceRegistryEvents
+| where RegistryKey has_any ("VPN", "Run", "Winlogon") or RegistryValueName has_any ("SavedPassword", "DefaultPassword")
+| project Timestamp, DeviceName, RegistryKey, RegistryValueName, RegistryValueData, InitiatingProcessFileName, InitiatingProcessCommandLine
+| order by Timestamp asc
+
+DeviceFileEvents
+| where FolderPath has @"C:\ProgramData\wrstage"
+| project Timestamp, DeviceName, ActionType, FileName, FolderPath, InitiatingProcessFileName, InitiatingProcessCommandLine
+| order by Timestamp asc
+
+// 8. Find Kerberoasting in identity telemetry.
+IdentityQueryEvents
+| where Query has "servicePrincipalName" or AdditionalFields has "T1558.003"
+| project Timestamp, AccountUpn, DeviceName, IPAddress, DestinationDeviceName, QueryType, Query, Application, AdditionalFields
+| order by Timestamp asc
+
+IdentityLogonEvents
+| where Protocol =~ "Kerberos" or AdditionalFields has "ServicePrincipalName"
+| project Timestamp, AccountUpn, DeviceName, IPAddress, DestinationDeviceName, DestinationPort, TargetAccountDisplayName, AdditionalFields
+| order by Timestamp asc
+
+// 9. Identify service-account use after credential access.
+DeviceLogonEvents
+| where AccountName startswith "svc_"
+| project Timestamp, DeviceName, ActionType, LogonType, AccountDomain, AccountName, RemoteDeviceName, RemoteIP, Protocol, IsLocalAdmin
+| order by Timestamp asc
+
+// 10. Correlate alert metadata with evidence.
+AlertInfo
+| join kind=inner AlertEvidence on AlertId
+| project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, ServiceSource=ServiceSource1, AttackTechniques=AttackTechniques1, EntityType, DeviceName, AccountUpn, FileName, ProcessCommandLine
+| order by Timestamp asc
+
+// 11. Build a concise incident timeline.
+let endpoint =
+    DeviceProcessEvents
+    | where DeviceName has "WIN11-04"
+    | project Timestamp, SourceTable="DeviceProcessEvents", Entity=DeviceName, Detail=strcat(FileName, " :: ", ProcessCommandLine);
+let identity =
+    IdentityQueryEvents
+    | project Timestamp, SourceTable="IdentityQueryEvents", Entity=AccountUpn, Detail=strcat(Application, " :: ", QueryTarget, " :: ", DestinationDeviceName);
+let cloud =
+    CloudAppEvents
+    | project Timestamp, SourceTable="CloudAppEvents", Entity=AccountId, Detail=strcat(ActionType, " :: ", ObjectName);
+let alerts =
+    AlertInfo
+    | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
+union endpoint, identity, cloud, alerts
+| order by Timestamp asc

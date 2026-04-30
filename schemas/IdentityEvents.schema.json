@@ -1,0 +1,124 @@
+{
+  "tableName": "IdentityEvents",
+  "categories": [
+    "MDI",
+    "Identity",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Identity",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-identityevents-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the record was generated"
+    },
+    {
+      "name": "ReportId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the event"
+    },
+    {
+      "name": "AccountId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the account in the source application"
+    },
+    {
+      "name": "AccountType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of user account, indicating its general role like User, SystemPrincipal"
+    },
+    {
+      "name": "AccountDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name displayed in the address book entry for the account user. This is usually a combination of the given name, middle initial, and surname of the user."
+    },
+    {
+      "name": "AccountUpn",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Alternate ID, email, or name for the account in the source application"
+    },
+    {
+      "name": "ActionType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of activity that triggered the event in the raw format received from the source application"
+    },
+    {
+      "name": "ActionResult",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Result of the action"
+    },
+    {
+      "name": "ActionFailureReason",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Information explaining why the recorded action failed"
+    },
+    {
+      "name": "IPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "IP address assigned to the device and used during related network communications"
+    },
+    {
+      "name": "UserAgent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User agent information from the web browser or other client application"
+    },
+    {
+      "name": "TargetObjects",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "List of the target objects of this activity. Target object can be user, group, role, domain, application, and more."
+    },
+    {
+      "name": "Application",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The source application where this event was received from"
+    },
+    {
+      "name": "ApplicationInstanceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Domain of the source application"
+    },
+    {
+      "name": "ApplicationEventId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Raw event ID provided by the source application"
+    },
+    {
+      "name": "ApplicationSessionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Raw session ID provided by the source application"
+    },
+    {
+      "name": "RawEventData",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Full raw event information from the source application in JSON format"
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Additional information about the entity or event"
+    }
+  ],
+  "adx": {
+    "mappingName": "IdentityEvents_JsonMapping"
+  }
+}

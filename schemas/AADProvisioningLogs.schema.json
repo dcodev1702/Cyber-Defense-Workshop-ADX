@@ -1,0 +1,184 @@
+{
+  "tableName": "AADProvisioningLogs",
+  "categories": [
+    "EntraId",
+    "Audit",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Microsoft Entra ID",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadprovisioninglogs",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "AADTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique Azure AD tenant ID"
+    },
+    {
+      "name": "_BilledSize",
+      "type": "real",
+      "sourceType": "real",
+      "description": "The record size in bytes"
+    },
+    {
+      "name": "Category",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Category of the event"
+    },
+    {
+      "name": "ChangeId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique ID of this change in this cycle"
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "ID to provide provisioning trail"
+    },
+    {
+      "name": "CycleId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique ID per job iteration"
+    },
+    {
+      "name": "DurationMs",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Indicates how long this provisioning action took to finish"
+    },
+    {
+      "name": "Id",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Indicates the unique ID for the activity"
+    },
+    {
+      "name": "InitiatedBy",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of who initiated this provisioning"
+    },
+    {
+      "name": "_IsBillable",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Specifies whether ingesting the data is billable. When _IsBillable is false ingestion isn't billed to your Azure account"
+    },
+    {
+      "name": "JobId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The unique ID for the whole provisioning job"
+    },
+    {
+      "name": "ModifiedProperties",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of each property that was modified in this provisioning action on this object"
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the operation"
+    },
+    {
+      "name": "OperationVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The REST API version that's requested by the client"
+    },
+    {
+      "name": "ProvisioningAction",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Indicates the activity name or the operation name. For a list of activities logged, refer to Azure AD activity list"
+    },
+    {
+      "name": "ProvisioningStatusInfo",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of provisioning status"
+    },
+    {
+      "name": "ProvisioningSteps",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of each step in provisioning"
+    },
+    {
+      "name": "ResultDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "When available, provides the error description for the provisioning operation"
+    },
+    {
+      "name": "ResultSignature",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Contains the error code, if any, for the provisioning operation"
+    },
+    {
+      "name": "ResultType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The result of the provisioning operation can be Success, Failure, or Skipped"
+    },
+    {
+      "name": "ServicePrincipal",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Represents the service principal used for provisioning"
+    },
+    {
+      "name": "SourceIdentity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of source object being provisioned"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of agent the event was collected by. For example, OpsManager for Windows agent, either direct connect or Operations Manager, Linux for all Linux agents, or Azure for Azure Diagnostics"
+    },
+    {
+      "name": "TargetIdentity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of target object being provisioned"
+    },
+    {
+      "name": "TargetSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of target system of the object being provisioned"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The Log Analytics workspace ID"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "The date and time of the event in UTC"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The name of the table"
+    }
+  ],
+  "adx": {
+    "mappingName": "AADProvisioningLogs_JsonMapping"
+  }
+}

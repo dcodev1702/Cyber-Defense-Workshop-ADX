@@ -1,0 +1,82 @@
+{
+  "tableName": "DeviceTvmBrowserExtensionsKB",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmbrowserextensionskb-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "BrowserName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the web browser with the extension"
+    },
+    {
+      "name": "ExtensionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the browser extension"
+    },
+    {
+      "name": "ExtensionName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the extension"
+    },
+    {
+      "name": "ExtensionDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Description from the publisher about the extension"
+    },
+    {
+      "name": "ExtensionVersion",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Version number of the extension"
+    },
+    {
+      "name": "ExtensionRisk",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Risk level for the extension based on the permissions it has requested"
+    },
+    {
+      "name": "PermissionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the permission"
+    },
+    {
+      "name": "PermissionName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name given to each permission based on what the extension is asking for"
+    },
+    {
+      "name": "PermissionDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Explanation of what the permission is supposed to do"
+    },
+    {
+      "name": "PermissionRisk",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Risk level for the permission based on the type of access it would allow"
+    },
+    {
+      "name": "IsPermissionRequired",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Whether the permission is required for the extension to run, or optional"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceTvmBrowserExtensionsKB_JsonMapping"
+  }
+}

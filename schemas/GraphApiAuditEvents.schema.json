@@ -1,0 +1,136 @@
+{
+  "tableName": "GraphApiAuditEvents",
+  "categories": [
+    "Graph",
+    "EntraId",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-graphapiauditevents-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "IdentityProvider",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identity provider that authenticated the subject of the token"
+    },
+    {
+      "name": "ApiVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The API version of the event"
+    },
+    {
+      "name": "ApplicationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the application"
+    },
+    {
+      "name": "IPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The IP address of the client from where the request was made"
+    },
+    {
+      "name": "ClientRequestId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identifier for the client request sent; if none is available, the operation identifier is used instead"
+    },
+    {
+      "name": "EntityType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of object, such as a file, a process, a device, or a user, that made the request"
+    },
+    {
+      "name": "RequestUri",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Uniform resource identifier (URI) of the request"
+    },
+    {
+      "name": "AccountObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the account making the request"
+    },
+    {
+      "name": "OperationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identifier for a batch of requests; the same identifier is used for all requests in a batch but if requests are non-batched, the identifier is unique per request"
+    },
+    {
+      "name": "Location",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the region that served the request"
+    },
+    {
+      "name": "RequestDuration",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Duration of the request in milliseconds"
+    },
+    {
+      "name": "RequestId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the request"
+    },
+    {
+      "name": "RequestMethod",
+      "type": "string",
+      "sourceType": "string",
+      "description": "HTTP method of the request"
+    },
+    {
+      "name": "Timestamp",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Date and time when the request was recorded"
+    },
+    {
+      "name": "ResponseStatusCode",
+      "type": "string",
+      "sourceType": "string",
+      "description": "HTTP response status code for the request"
+    },
+    {
+      "name": "Scopes",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Scopes in token claims"
+    },
+    {
+      "name": "UniqueTokenIdentifier",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier embedded in every access token and ID token that were issued"
+    },
+    {
+      "name": "TargetWorkload",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The target workload (for example, Microsoft.Exchange, Microsoft.SharePoint) the API call was made to"
+    },
+    {
+      "name": "ServicePrincipalId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier for the Service Principal making the request"
+    },
+    {
+      "name": "ResponseSize",
+      "type": "int",
+      "sourceType": "int",
+      "description": "The size of the response in bytes"
+    }
+  ],
+  "adx": {
+    "mappingName": "GraphApiAuditEvents_JsonMapping"
+  }
+}

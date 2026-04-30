@@ -1,0 +1,292 @@
+{
+  "tableName": "IdentityAccountInfo",
+  "categories": [
+    "MDI",
+    "Identity",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Identity",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-identityaccountinfo-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "The date and time that the line was written to the database. This is used when there are multiple lines for each identity, such as when a change is detected, or if 24 hours have passed since the last database line was added."
+    },
+    {
+      "name": "ReportId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the event"
+    },
+    {
+      "name": "SourceProviderAccountId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identifier for the account in the source provider (for example, object ID for a Microsoft Entra ID account)"
+    },
+    {
+      "name": "AccountId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Internal identifier for the account"
+    },
+    {
+      "name": "IdentityId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identifier for the identity that the account is linked to"
+    },
+    {
+      "name": "IsPrimary",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Indicates if this account is considered as primary account for the linked identity"
+    },
+    {
+      "name": "IdentityLinkType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of linkage between the account and identity; possible values: Manual, Strong identifiers"
+    },
+    {
+      "name": "IdentityLinkReason",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Reason for linking the account and identity. If the linkage type is manual, the value will be the justification comment added by the user."
+    },
+    {
+      "name": "IdentityLinkTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time the account was linked to the identity"
+    },
+    {
+      "name": "IdentityLinkBy",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The entity that linked the account to the identity. If the linkage type is based on strong identifiers, the value will be System"
+    },
+    {
+      "name": "DisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the account user displayed in the address book. Typically a combination of a given or first name, a middle initial, and a last name or surname."
+    },
+    {
+      "name": "AccountUpn",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User principal name (UPN) of the account"
+    },
+    {
+      "name": "EmailAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "SMTP address of the account"
+    },
+    {
+      "name": "CriticalityLevel",
+      "type": "int",
+      "sourceType": "int",
+      "description": "The criticality score of the account"
+    },
+    {
+      "name": "DefenderRiskLevel",
+      "type": "int",
+      "sourceType": "int",
+      "description": "The risk level of the account as calculated by Microsoft Defender"
+    },
+    {
+      "name": "DefenderRiskUpdateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time Microsoft Defender last updated the risk level of the account"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of identity; possible values: User, ServiceAccount"
+    },
+    {
+      "name": "GivenName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Given name or first name of the account user"
+    },
+    {
+      "name": "Surname",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Surname, family name, or last name of the account user"
+    },
+    {
+      "name": "EmployeeId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Employee identifier assigned to the user by the organization"
+    },
+    {
+      "name": "Department",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the department that the account user belongs to"
+    },
+    {
+      "name": "JobTitle",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Job title of the account user"
+    },
+    {
+      "name": "Address",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Address of the account user"
+    },
+    {
+      "name": "City",
+      "type": "string",
+      "sourceType": "string",
+      "description": "City where the account user is located"
+    },
+    {
+      "name": "Country",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Country/Region where the account user is located"
+    },
+    {
+      "name": "Phone",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The listed phone number of the account user"
+    },
+    {
+      "name": "Manager",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The listed manager of the account user"
+    },
+    {
+      "name": "Sid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Security identifier (SID) of the account"
+    },
+    {
+      "name": "AccountStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The status of the account; possible values: Disabled, Enabled, Deleted"
+    },
+    {
+      "name": "SourceProvider",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Source application or service of the account (for example, Microsoft Entra ID)"
+    },
+    {
+      "name": "SourceProviderInstanceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier of the source application or service of the account. For example, in Microsoft Entra ID, this is the organization Globally Unique Identifier (GUID)."
+    },
+    {
+      "name": "SourceProviderInstanceDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The display name of the source application or service of the account"
+    },
+    {
+      "name": "AuthenticationMethod",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Authentication method used to allow the account user to sign into the account; possible values: Credentials, Federated, Hybrid"
+    },
+    {
+      "name": "AuthenticationSourceAcccountId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier of the federating account, if the authentication method is Federated"
+    },
+    {
+      "name": "EnrolledMfas",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Types of multifactor authentication methods configured for the account user and their status"
+    },
+    {
+      "name": "LastPasswordChangeTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time the account password was last changed"
+    },
+    {
+      "name": "GroupMembership",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Group identifiers assigned to the account"
+    },
+    {
+      "name": "AssignedRoles",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Role identifiers assigned to the account"
+    },
+    {
+      "name": "EligibleRoles",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Identifiers for roles the account are eligible to use (for example, Microsoft Entra Privileged Identity Management roles)"
+    },
+    {
+      "name": "TenantMembershipType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User type; possible values: Guest, Member"
+    },
+    {
+      "name": "CreatedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the user account was created"
+    },
+    {
+      "name": "DeletedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the user account was deleted"
+    },
+    {
+      "name": "Tags",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Tags assigned to the account by Defender for Identity"
+    },
+    {
+      "name": "SourceProvderRiskLevel",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Risk level of the account as it appears in the source provider; possible values: Low, Medium, High"
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Additional information about the entity or event"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Universally unique identifier (UUID) for the tenant"
+    }
+  ],
+  "adx": {
+    "mappingName": "IdentityAccountInfo_JsonMapping"
+  }
+}

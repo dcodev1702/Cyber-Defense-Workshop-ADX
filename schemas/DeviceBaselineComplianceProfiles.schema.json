@@ -1,0 +1,94 @@
+{
+  "tableName": "DeviceBaselineComplianceProfiles",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicebaselinecomplianceprofiles-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "ProfileId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the profile"
+    },
+    {
+      "name": "ProfileName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Display name of the profile"
+    },
+    {
+      "name": "ProfileDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Optional description providing additional information related to the profile"
+    },
+    {
+      "name": "OSPlatform",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Platform of the operating system running on the device. This indicates specific operating systems, including variations within the same family, such as Windows 11, Windows 10 and Windows 7."
+    },
+    {
+      "name": "OSVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Version of the operating system running on the device"
+    },
+    {
+      "name": "BaseBenchmark",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Industry benchmark on top of which the profile was created"
+    },
+    {
+      "name": "BenchmarkVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Version of the industry benchmark on top of which the profile was created"
+    },
+    {
+      "name": "BenchmarkProfileLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Benchmark compliance level set for the profile"
+    },
+    {
+      "name": "Status",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicator of the profile status - can be Enabled or Disabled"
+    },
+    {
+      "name": "CreatedBy",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identity of the user account who created the profile"
+    },
+    {
+      "name": "CreatedOn",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the profile was created"
+    },
+    {
+      "name": "LastUpdatedBy",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identity of the user account who last updated the profile"
+    },
+    {
+      "name": "LastUpdatedOn",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the profile was last updated"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceBaselineComplianceProfiles_JsonMapping"
+  }
+}

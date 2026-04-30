@@ -1,0 +1,279 @@
+{
+  "tableName": "DeviceRegistryEvents",
+  "categories": [
+    "MDE",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceregistryevents-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the event was recorded"
+    },
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the device in the service"
+    },
+    {
+      "name": "DeviceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Fully qualified domain name (FQDN) of the device"
+    },
+    {
+      "name": "ActionType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of activity that triggered the event. See the in-portal schema reference for details."
+    },
+    {
+      "name": "RegistryKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Registry key that the recorded action was applied to"
+    },
+    {
+      "name": "RegistryValueType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Data type, such as binary or string, of the registry value that the recorded action was applied to"
+    },
+    {
+      "name": "RegistryValueName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the registry value that the recorded action was applied to"
+    },
+    {
+      "name": "RegistryValueData",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Data of the registry value that the recorded action was applied to"
+    },
+    {
+      "name": "PreviousRegistryKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Original registry key of the registry value before it was modified"
+    },
+    {
+      "name": "PreviousRegistryValueName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Original name of the registry value before it was modified"
+    },
+    {
+      "name": "PreviousRegistryValueData",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Original data of the registry value before it was modified"
+    },
+    {
+      "name": "InitiatingProcessAccountDomain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Domain of the account that ran the process responsible for the event"
+    },
+    {
+      "name": "InitiatingProcessAccountName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User name of the account that ran the process responsible for the event; if the device is registered in Microsoft Entra ID, the Entra ID user name of the account that ran the process responsible for the event might be shown instead"
+    },
+    {
+      "name": "InitiatingProcessAccountSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Security Identifier (SID) of the account that ran the process responsible for the event"
+    },
+    {
+      "name": "InitiatingProcessAccountUpn",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User principal name (UPN) of the account that ran the process responsible for the event; if the device is registered in Microsoft Entra ID, the Entra ID UPN of the account that ran the process responsible for the event might be shown instead"
+    },
+    {
+      "name": "InitiatingProcessAccountObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Microsoft Entra object ID of the user account that ran the process responsible for the event"
+    },
+    {
+      "name": "InitiatingProcessSHA1",
+      "type": "string",
+      "sourceType": "string",
+      "description": "SHA-1 of the process (image file) that initiated the event"
+    },
+    {
+      "name": "InitiatingProcessSHA256",
+      "type": "string",
+      "sourceType": "string",
+      "description": "SHA-256 of the process (image file) that initiated the event. This field is usually not populated — use the SHA1 column when available."
+    },
+    {
+      "name": "InitiatingProcessMD5",
+      "type": "string",
+      "sourceType": "string",
+      "description": "MD5 hash of the process (image file) that initiated the event"
+    },
+    {
+      "name": "InitiatingProcessFileName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the process file that initiated the event; if unavailable, the name of the process that initiated the event might be shown instead"
+    },
+    {
+      "name": "InitiatingProcessFileSize",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Size of the file that ran the process responsible for the event"
+    },
+    {
+      "name": "InitiatingProcessVersionInfoCompanyName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Company name from the version information of the process (image file) responsible for the event"
+    },
+    {
+      "name": "InitiatingProcessVersionInfoProductName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Product name from the version information of the process (image file) responsible for the event"
+    },
+    {
+      "name": "InitiatingProcessVersionInfoProductVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Product version from the version information of the process (image file) responsible for the event"
+    },
+    {
+      "name": "InitiatingProcessVersionInfoInternalFileName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Internal file name from the version information of the process (image file) responsible for the event"
+    },
+    {
+      "name": "InitiatingProcessVersionInfoOriginalFileName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Original file name from the version information of the process (image file) responsible for the event"
+    },
+    {
+      "name": "InitiatingProcessVersionInfoFileDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Description from the version information of the process (image file) responsible for the event"
+    },
+    {
+      "name": "InitiatingProcessId",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Process ID (PID) of the process that initiated the event"
+    },
+    {
+      "name": "InitiatingProcessCommandLine",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Command line used to run the process that initiated the event"
+    },
+    {
+      "name": "InitiatingProcessCreationTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the process that initiated the event was started"
+    },
+    {
+      "name": "InitiatingProcessFolderPath",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Folder containing the process (image file) that initiated the event"
+    },
+    {
+      "name": "InitiatingProcessParentId",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Process ID (PID) of the parent process that spawned the process responsible for the event"
+    },
+    {
+      "name": "InitiatingProcessParentFileName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the parent process that spawned the process responsible for the event"
+    },
+    {
+      "name": "InitiatingProcessParentCreationTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the parent of the process responsible for the event was started"
+    },
+    {
+      "name": "InitiatingProcessIntegrityLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Integrity level of the process that initiated the event. Windows assigns integrity levels to processes based on certain characteristics, such as if they were launched from an internet download. These integrity levels influence permissions to resources."
+    },
+    {
+      "name": "InitiatingProcessTokenElevation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Token type indicating the presence or absence of User Access Control (UAC) privilege elevation applied to the process that initiated the event"
+    },
+    {
+      "name": "ReportId",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Event identifier based on a repeating counter. To identify unique events, this column must be used in conjunction with the DeviceName and Timestamp columns."
+    },
+    {
+      "name": "AppGuardContainerId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identifier for the virtualized container used by Application Guard to isolate browser activity"
+    },
+    {
+      "name": "InitiatingProcessSessionId",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Windows session ID of the initiating process"
+    },
+    {
+      "name": "IsInitiatingProcessRemoteSession",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Indicates whether the initiating process was run under a remote desktop protocol (RDP) session (true) or locally (false)"
+    },
+    {
+      "name": "InitiatingProcessRemoteSessionDeviceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Device name of the remote device from which the initiating process's RDP session was initiated"
+    },
+    {
+      "name": "InitiatingProcessRemoteSessionIP",
+      "type": "string",
+      "sourceType": "string",
+      "description": "IP address of the remote device from which the initiating process's RDP session was initiated"
+    },
+    {
+      "name": "ProcessUniqueId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the process; this is equal to the Process Start Key in Windows devices"
+    },
+    {
+      "name": "InitiatingProcessUniqueId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the initiating process; this is equal to the Process Start Key in Windows devices"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceRegistryEvents_JsonMapping"
+  }
+}

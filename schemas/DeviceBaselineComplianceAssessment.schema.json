@@ -1,0 +1,88 @@
+{
+  "tableName": "DeviceBaselineComplianceAssessment",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicebaselinecomplianceassessment-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the device in the service"
+    },
+    {
+      "name": "DeviceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Fully qualified domain name (FQDN) of the device"
+    },
+    {
+      "name": "OSPlatform",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Platform of the operating system running on the device. This indicates specific operating systems, including variations within the same family, such as Windows 11, Windows 10 and Windows 7."
+    },
+    {
+      "name": "OSVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Version of the operating system running on the device"
+    },
+    {
+      "name": "ConfigurationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for a specific configuration"
+    },
+    {
+      "name": "ProfileId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the profile"
+    },
+    {
+      "name": "IsCompliant",
+      "type": "bool",
+      "sourceType": "nullable bool",
+      "description": "Indicates whether the device that initiated the event is compliant or not"
+    },
+    {
+      "name": "IsApplicable",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether the configuration or policy is applicable"
+    },
+    {
+      "name": "Source",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "The registry path or other location used to determine the current device setting"
+    },
+    {
+      "name": "RecommendedValue",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Set of expected values for the current device setting to be compliant"
+    },
+    {
+      "name": "CurrentValue",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Set of detected values found on the device"
+    },
+    {
+      "name": "IsExempt",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether the device is exempt from having the baseline configuration"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceBaselineComplianceAssessment_JsonMapping"
+  }
+}

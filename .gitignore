@@ -1,0 +1,11 @@
+# Local student rosters can contain passwords or TAP values.
+students\*.csv
+
+# Local environment and logs.
+.env
+*.log
+
+# OS/editor noise.
+.DS_Store
+Thumbs.db
+.vscode\

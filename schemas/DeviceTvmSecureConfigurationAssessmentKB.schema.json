@@ -1,0 +1,76 @@
+{
+  "tableName": "DeviceTvmSecureConfigurationAssessmentKB",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmsecureconfigurationassessmentkb-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "ConfigurationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for a specific configuration"
+    },
+    {
+      "name": "ConfigurationImpact",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Rated impact of the configuration to the overall configuration score (1-10)"
+    },
+    {
+      "name": "ConfigurationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Display name of the configuration"
+    },
+    {
+      "name": "ConfigurationDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Description of the configuration"
+    },
+    {
+      "name": "RiskDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Description of the associated risk"
+    },
+    {
+      "name": "ConfigurationCategory",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Category or grouping to which the configuration belongs: Application, OS, Network, Accounts, Security controls"
+    },
+    {
+      "name": "ConfigurationSubcategory",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Subcategory or subgrouping to which the configuration belongs. In many cases, this describes specific capabilities or features."
+    },
+    {
+      "name": "ConfigurationBenchmarks",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "List of industry benchmarks recommending the same or similar configuration"
+    },
+    {
+      "name": "Tags",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Labels representing various attributes used to identify or categorize a security configuration"
+    },
+    {
+      "name": "RemediationOptions",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Recommended actions to reduce or address any associated risks"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceTvmSecureConfigurationAssessmentKB_JsonMapping"
+  }
+}

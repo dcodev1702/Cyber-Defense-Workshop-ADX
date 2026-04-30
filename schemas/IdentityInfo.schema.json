@@ -1,0 +1,293 @@
+{
+  "tableName": "IdentityInfo",
+  "categories": [
+    "MDI",
+    "Identity",
+    "EntraId",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-identityinfo-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "Timestamp *",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "The date and time that the line was written to the database. This is used when there are multiple lines for each identity, such as when a change is detected, or if 24 hours have passed since the last database line was added."
+    },
+    {
+      "name": "ReportId *",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the event"
+    },
+    {
+      "name": "AccountObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the account in Microsoft Entra ID"
+    },
+    {
+      "name": "AccountUpn",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User principal name (UPN) of the account"
+    },
+    {
+      "name": "OnPremSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "On-premises security identifier (SID) of the account"
+    },
+    {
+      "name": "AccountDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the account user displayed in the address book. Typically a combination of a given or first name, a middle initial, and a last name or surname."
+    },
+    {
+      "name": "AccountName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User name of the account"
+    },
+    {
+      "name": "AccountDomain *",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Domain of the account"
+    },
+    {
+      "name": "CriticalityLevel",
+      "type": "int",
+      "sourceType": "int",
+      "description": "The criticality score of the account"
+    },
+    {
+      "name": "Type *",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of identity; possible values: User, ServiceAccount"
+    },
+    {
+      "name": "DistinguishedName *",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The user's distinguished name"
+    },
+    {
+      "name": "CloudSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Cloud security identifier of the account"
+    },
+    {
+      "name": "GivenName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Given name or first name of the account user"
+    },
+    {
+      "name": "Surname",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Surname, family name, or last name of the account user"
+    },
+    {
+      "name": "Department",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the department that the account user belongs to"
+    },
+    {
+      "name": "JobTitle",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Job title of the account user"
+    },
+    {
+      "name": "EmailAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "SMTP address of the account"
+    },
+    {
+      "name": "SipProxyAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Voice over IP (VOIP) session initiation protocol (SIP) address of the account"
+    },
+    {
+      "name": "Address",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Address of the account user"
+    },
+    {
+      "name": "City",
+      "type": "string",
+      "sourceType": "string",
+      "description": "City where the account user is located"
+    },
+    {
+      "name": "Country",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Country/Region where the account user is located"
+    },
+    {
+      "name": "IsAccountEnabled",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether the account is enabled or not"
+    },
+    {
+      "name": "Manager *",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The listed manager of the account user"
+    },
+    {
+      "name": "Phone *",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The listed phone number of the account user"
+    },
+    {
+      "name": "CreatedDateTime *",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the account user was created"
+    },
+    {
+      "name": "ChangeSource *",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identifies which identity provider or process triggered the addition of the new row. For example, the System-UserPersistence value is used for any rows added by an automated process."
+    },
+    {
+      "name": "BlastRadius **",
+      "type": "string",
+      "sourceType": "string",
+      "description": "A calculation based on the position of the user in the org tree and the user's Microsoft Entra roles and permissions; possible values: Low, Medium, High"
+    },
+    {
+      "name": "CompanyName **",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the company for which the user works"
+    },
+    {
+      "name": "DeletedDateTime **",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the user account was deleted"
+    },
+    {
+      "name": "EmployeeId **",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Employee identifier assigned to the user by the organization"
+    },
+    {
+      "name": "OtherMailAddresses **",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Additional email addresses of the user account"
+    },
+    {
+      "name": "RiskLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Microsoft Entra ID risk level of the user account; possible values: Low, Medium, High"
+    },
+    {
+      "name": "RiskLevelDetails",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details regarding the Microsoft Entra ID risk level"
+    },
+    {
+      "name": "State **",
+      "type": "string",
+      "sourceType": "string",
+      "description": "State where the sign-in occurred, if available"
+    },
+    {
+      "name": "Tags *",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Tags assigned to the account user by Defender for Identity"
+    },
+    {
+      "name": "AssignedRoles *",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "For identities from Microsoft Entra-only, the roles assigned to the account user"
+    },
+    {
+      "name": "PrivilegedEntraPimRoles (Preview) ***",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "A snapshot of privileged role assignment schedules and eligibility schedules for the account as maintained by Microsoft Entra Privileged Identity Management (excluding activated assignments)"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier representing your organization's instance of Microsoft Entra ID"
+    },
+    {
+      "name": "SourceSystem *",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The source system for the record"
+    },
+    {
+      "name": "OnPremObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Active Directory object ID of the user"
+    },
+    {
+      "name": "TenantMembershipType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User type in Microsoft Entra ID; possible values: Guest, Member"
+    },
+    {
+      "name": "RiskStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Status of the user's risk; possible values: None, ConfirmedSafe, Remediated, Dismissed, AtRisk, ConfirmedCompromised, UnknownFutureValue"
+    },
+    {
+      "name": "UserAccountControl",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Security attributes of the user account in the Active Directory domain"
+    },
+    {
+      "name": "IdentityEnvironment",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Environment where the identity is used; possible values: CloudOnly, Hybrid, On-premises"
+    },
+    {
+      "name": "SourceProviders",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Source providers of the accounts for the identity; possible values: ActiveDirectory, EntraID, Okta"
+    },
+    {
+      "name": "GroupMembership **",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Microsoft Entra ID groups where the user account is a member"
+    }
+  ],
+  "adx": {
+    "mappingName": "IdentityInfo_JsonMapping"
+  }
+}

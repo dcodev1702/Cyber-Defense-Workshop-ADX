@@ -1,0 +1,178 @@
+{
+  "tableName": "AADUserRiskEvents",
+  "categories": [
+    "EntraId",
+    "IdentityProtection",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Microsoft Entra ID Protection",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aaduserriskevents",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "Activity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Indicates the activity type the detected risk is linked to. Possible values are: signin, user, unknownFutureValue."
+    },
+    {
+      "name": "ActivityDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the risky activity occurred in UTC."
+    },
+    {
+      "name": "AdditionalInfo",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Additional information associated with the user risk event in JSON format."
+    },
+    {
+      "name": "_BilledSize",
+      "type": "real",
+      "sourceType": "real",
+      "description": "The record size in bytes"
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Correlation ID of the sign-in associated with the risk detection. This property is null if the risk detection is not associated with a sign-in."
+    },
+    {
+      "name": "DetectedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time that the risk was detected in UTC."
+    },
+    {
+      "name": "DetectionTimingType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Timing of the detected risk (real-time/offline). Possible values are: notDefined, realtime, nearRealtime, offline, unknownFutureValue."
+    },
+    {
+      "name": "Id",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique ID of the risk event."
+    },
+    {
+      "name": "IpAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The IP address of the client from where the risk occurred."
+    },
+    {
+      "name": "_IsBillable",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Specifies whether ingesting the data is billable. When _IsBillable is false ingestion isn't billed to your Azure account"
+    },
+    {
+      "name": "LastUpdatedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the risk detection was last updated in UTC."
+    },
+    {
+      "name": "Location",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Location of the sign-in."
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the operation."
+    },
+    {
+      "name": "RequestId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Request ID of the sign-in associated with the risk detection. This property is null if the risk detection is not associated with a sign-in."
+    },
+    {
+      "name": "RiskDetail",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of the detected risk. Possible values are: none, adminGeneratedTemporaryPassword, userPerformedSecuredPasswordChange, userPerformedSecuredPasswordReset, adminConfirmedSigninSafe, aiConfirmedSigninSafe, userPassedMFADrivenByRiskBasedPolicy, adminDismissedAllRiskForUser, adminConfirmedSigninCompromised, hidden, adminConfirmedUserCompromised, unknownFutureValue."
+    },
+    {
+      "name": "RiskEventType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of risk event detected."
+    },
+    {
+      "name": "RiskLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Level of the detected risk. Possible values are: low, medium, high, hidden, none, unknownFutureValue."
+    },
+    {
+      "name": "RiskState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The state of a detected risky user or sign-in. Possible values are: none, confirmedSafe, remediated, dismissed, atRisk, confirmedCompromised, unknownFutureValue."
+    },
+    {
+      "name": "Source",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Source of the risk detection. For example, activeDirectory."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of agent the event was collected by. For example, OpsManager for Windows agent, either direct connect or Operations Manager, Linux for all Linux agents, or Azure for Azure Diagnostics"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The Log Analytics workspace ID"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "The date and time of the event in UTC."
+    },
+    {
+      "name": "TokenIssuerType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Indicates the type of token issuer for the detected sign-in risk. Possible values are: AzureAD, ADFederationServices, UnknownFutureValue."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The name of the table"
+    },
+    {
+      "name": "UserDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The user principal name (UPN) of the user."
+    },
+    {
+      "name": "UserId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique ID of the user."
+    },
+    {
+      "name": "UserPrincipalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The user principal name (UPN) of the user."
+    }
+  ],
+  "adx": {
+    "mappingName": "AADUserRiskEvents_JsonMapping"
+  }
+}

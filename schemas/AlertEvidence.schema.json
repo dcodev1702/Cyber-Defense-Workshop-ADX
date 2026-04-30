@@ -1,0 +1,267 @@
+{
+  "tableName": "AlertEvidence",
+  "categories": [
+    "Alert",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-alertevidence-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the event was recorded"
+    },
+    {
+      "name": "AlertId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the alert"
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Title of the alert"
+    },
+    {
+      "name": "Categories",
+      "type": "string",
+      "sourceType": "string",
+      "description": "List of categories that the information belongs to, in JSON array format"
+    },
+    {
+      "name": "AttackTechniques",
+      "type": "string",
+      "sourceType": "string",
+      "description": "MITRE ATT&CK techniques associated with the activity that triggered the alert"
+    },
+    {
+      "name": "ServiceSource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Product or service that provided the alert information"
+    },
+    {
+      "name": "DetectionSource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Detection technology or sensor that identified the notable component or activity"
+    },
+    {
+      "name": "EntityType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of object, such as a file, a process, a device, or a user"
+    },
+    {
+      "name": "EvidenceRole",
+      "type": "string",
+      "sourceType": "string",
+      "description": "How the entity is involved in an alert, indicating whether it is impacted or is merely related"
+    },
+    {
+      "name": "EvidenceDirection",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Indicates whether the entity is the source or the destination of a network connection"
+    },
+    {
+      "name": "FileName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the file that the recorded action was applied to"
+    },
+    {
+      "name": "FolderPath",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Folder containing the file that the recorded action was applied to"
+    },
+    {
+      "name": "SHA1",
+      "type": "string",
+      "sourceType": "string",
+      "description": "SHA-1 of the file that the recorded action was applied to"
+    },
+    {
+      "name": "SHA256",
+      "type": "string",
+      "sourceType": "string",
+      "description": "SHA-256 of the file that the recorded action was applied to. This field is usually not populated—use the SHA1 column when available."
+    },
+    {
+      "name": "FileSize",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Size of the file in bytes"
+    },
+    {
+      "name": "ThreatFamily",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Malware family that the suspicious or malicious file or process has been classified under"
+    },
+    {
+      "name": "RemoteIP",
+      "type": "string",
+      "sourceType": "string",
+      "description": "IP address that was being connected to"
+    },
+    {
+      "name": "RemoteUrl",
+      "type": "string",
+      "sourceType": "string",
+      "description": "URL or fully qualified domain name (FQDN) that was being connected to"
+    },
+    {
+      "name": "AccountName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User name of the account"
+    },
+    {
+      "name": "AccountDomain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Domain of the account"
+    },
+    {
+      "name": "AccountSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Security Identifier (SID) of the account"
+    },
+    {
+      "name": "AccountObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the account in Microsoft Entra ID"
+    },
+    {
+      "name": "AccountUpn",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User principal name (UPN) of the account"
+    },
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the device in the service"
+    },
+    {
+      "name": "DeviceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Fully qualified domain name (FQDN) of the device"
+    },
+    {
+      "name": "LocalIP",
+      "type": "string",
+      "sourceType": "string",
+      "description": "IP address assigned to the local device used during communication"
+    },
+    {
+      "name": "NetworkMessageId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the email, generated by Office 365"
+    },
+    {
+      "name": "EmailSubject",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Subject of the email"
+    },
+    {
+      "name": "Application",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Application that performed the recorded action"
+    },
+    {
+      "name": "ApplicationId",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Unique identifier for the application"
+    },
+    {
+      "name": "OAuthApplicationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the third-party OAuth application"
+    },
+    {
+      "name": "ProcessCommandLine",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Command line used to create the new process"
+    },
+    {
+      "name": "RegistryKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Registry key that the recorded action was applied to"
+    },
+    {
+      "name": "RegistryValueName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the registry value that the recorded action was applied to"
+    },
+    {
+      "name": "RegistryValueData",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Data of the registry value that the recorded action was applied to"
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Additional information about the entity or event"
+    },
+    {
+      "name": "Severity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Indicates the potential impact (high, medium, or low) of the threat indicator or breach activity identified by the alert"
+    },
+    {
+      "name": "CloudResource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Cloud resource name"
+    },
+    {
+      "name": "CloudPlatform",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The cloud platform that the resource belongs to, can be Azure, Amazon Web Services, or Google Cloud Platform"
+    },
+    {
+      "name": "ResourceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of cloud resource"
+    },
+    {
+      "name": "ResourceID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the cloud resource accessed"
+    },
+    {
+      "name": "SubscriptionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the cloud service subscription"
+    }
+  ],
+  "adx": {
+    "mappingName": "AlertEvidence_JsonMapping"
+  }
+}

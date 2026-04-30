@@ -1,0 +1,76 @@
+{
+  "tableName": "DeviceTvmBrowserExtensions",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmbrowserextensions-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the device in the service"
+    },
+    {
+      "name": "BrowserName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the web browser with the extension"
+    },
+    {
+      "name": "ExtensionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the browser extension"
+    },
+    {
+      "name": "ExtensionName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the extension"
+    },
+    {
+      "name": "ExtensionDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Description from the publisher about the extension"
+    },
+    {
+      "name": "ExtensionVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Version number of the extension"
+    },
+    {
+      "name": "ExtensionRisk",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Risk level for the extension based on the permissions it has requested"
+    },
+    {
+      "name": "ExtensionVendor",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the vendor offering the extension"
+    },
+    {
+      "name": "IsActivated",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Whether the extension is turned on or off on the devices"
+    },
+    {
+      "name": "InstallationTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the browser extension was first installed"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceTvmBrowserExtensions_JsonMapping"
+  }
+}

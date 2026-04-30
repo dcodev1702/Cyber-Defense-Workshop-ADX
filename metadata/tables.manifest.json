@@ -1,0 +1,290 @@
+[
+  {
+    "name": "AADSignInEventsBeta",
+    "categories": ["EntraId", "SignIn", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender XDR",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-aadsignineventsbeta-table"
+  },
+  {
+    "name": "AADSpnSignInEventsBeta",
+    "categories": ["EntraId", "SignIn", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender XDR",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-aadspnsignineventsbeta-table"
+  },
+  {
+    "name": "AlertEvidence",
+    "categories": ["Alert", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender XDR",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-alertevidence-table"
+  },
+  {
+    "name": "AlertInfo",
+    "categories": ["Alert", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender XDR",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-alertinfo-table"
+  },
+  {
+    "name": "AuditLogs",
+    "categories": ["EntraId", "Audit", "AzureMonitor"],
+    "sourceProduct": "Microsoft Entra ID",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/auditlogs"
+  },
+  {
+    "name": "AADManagedIdentitySignInLogs",
+    "categories": ["EntraId", "SignIn", "AzureMonitor"],
+    "sourceProduct": "Microsoft Entra ID",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadmanagedidentitysigninlogs"
+  },
+  {
+    "name": "AADNonInteractiveUserSignInLogs",
+    "categories": ["EntraId", "SignIn", "AzureMonitor"],
+    "sourceProduct": "Microsoft Entra ID",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadnoninteractiveusersigninlogs"
+  },
+  {
+    "name": "AADProvisioningLogs",
+    "categories": ["EntraId", "Audit", "AzureMonitor"],
+    "sourceProduct": "Microsoft Entra ID",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadprovisioninglogs"
+  },
+  {
+    "name": "AADRiskyUsers",
+    "categories": ["EntraId", "IdentityProtection", "AzureMonitor"],
+    "sourceProduct": "Microsoft Entra ID Protection",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadriskyusers"
+  },
+  {
+    "name": "AADServicePrincipalSignInLogs",
+    "categories": ["EntraId", "SignIn", "AzureMonitor"],
+    "sourceProduct": "Microsoft Entra ID",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadserviceprincipalsigninlogs"
+  },
+  {
+    "name": "AADUserRiskEvents",
+    "categories": ["EntraId", "IdentityProtection", "AzureMonitor"],
+    "sourceProduct": "Microsoft Entra ID Protection",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aaduserriskevents"
+  },
+  {
+    "name": "CloudAppEvents",
+    "categories": ["CloudApp", "Graph", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender XDR",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-cloudappevents-table"
+  },
+  {
+    "name": "DeviceBaselineComplianceAssessment",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicebaselinecomplianceassessment-table"
+  },
+  {
+    "name": "DeviceBaselineComplianceAssessmentKB",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicebaselinecomplianceassessmentkb-table"
+  },
+  {
+    "name": "DeviceBaselineComplianceProfiles",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicebaselinecomplianceprofiles-table"
+  },
+  {
+    "name": "DeviceEvents",
+    "categories": ["MDE", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceevents-table"
+  },
+  {
+    "name": "DeviceFileCertificateInfo",
+    "categories": ["MDE", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicefilecertificateinfo-table"
+  },
+  {
+    "name": "DeviceFileEvents",
+    "categories": ["MDE", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicefileevents-table"
+  },
+  {
+    "name": "DeviceImageLoadEvents",
+    "categories": ["MDE", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceimageloadevents-table"
+  },
+  {
+    "name": "DeviceInfo",
+    "categories": ["MDE", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceinfo-table"
+  },
+  {
+    "name": "DeviceLogonEvents",
+    "categories": ["MDE", "SignIn", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicelogonevents-table"
+  },
+  {
+    "name": "DeviceNetworkEvents",
+    "categories": ["MDE", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicenetworkevents-table"
+  },
+  {
+    "name": "DeviceNetworkInfo",
+    "categories": ["MDE", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicenetworkinfo-table"
+  },
+  {
+    "name": "DeviceProcessEvents",
+    "categories": ["MDE", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceprocessevents-table"
+  },
+  {
+    "name": "DeviceRegistryEvents",
+    "categories": ["MDE", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceregistryevents-table"
+  },
+  {
+    "name": "DeviceTvmBrowserExtensions",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmbrowserextensions-table"
+  },
+  {
+    "name": "DeviceTvmBrowserExtensionsKB",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmbrowserextensionskb-table"
+  },
+  {
+    "name": "DeviceTvmCertificateInfo",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmcertificateinfo-table"
+  },
+  {
+    "name": "DeviceTvmHardwareFirmware",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmhardwarefirmware-table"
+  },
+  {
+    "name": "DeviceTvmInfoGathering",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvminfogathering-table"
+  },
+  {
+    "name": "DeviceTvmInfoGatheringKB",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvminfogatheringkb-table"
+  },
+  {
+    "name": "DeviceTvmSecureConfigurationAssessment",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmsecureconfigurationassessment-table"
+  },
+  {
+    "name": "DeviceTvmSecureConfigurationAssessmentKB",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmsecureconfigurationassessmentkb-table"
+  },
+  {
+    "name": "DeviceTvmSoftwareEvidenceBeta",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmsoftwareevidencebeta-table"
+  },
+  {
+    "name": "DeviceTvmSoftwareInventory",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmsoftwareinventory-table"
+  },
+  {
+    "name": "DeviceTvmSoftwareVulnerabilities",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmsoftwarevulnerabilities-table"
+  },
+  {
+    "name": "DeviceTvmSoftwareVulnerabilitiesKB",
+    "categories": ["MDE", "DefenderVulnerabilityManagement", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Endpoint",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmsoftwarevulnerabilitieskb-table"
+  },
+  {
+    "name": "EntraIdSignInEvents",
+    "categories": ["EntraId", "SignIn", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender XDR",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-entraidsigninevents-table"
+  },
+  {
+    "name": "EntraIdSpnSignInEvents",
+    "categories": ["EntraId", "SignIn", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender XDR",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-entraidspnsigninevents-table"
+  },
+  {
+    "name": "GraphApiAuditEvents",
+    "categories": ["Graph", "EntraId", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender XDR",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-graphapiauditevents-table"
+  },
+  {
+    "name": "IdentityAccountInfo",
+    "categories": ["MDI", "Identity", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Identity",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-identityaccountinfo-table"
+  },
+  {
+    "name": "IdentityDirectoryEvents",
+    "categories": ["MDI", "Identity", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Identity",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-identitydirectoryevents-table"
+  },
+  {
+    "name": "IdentityEvents",
+    "categories": ["MDI", "Identity", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Identity",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-identityevents-table"
+  },
+  {
+    "name": "IdentityInfo",
+    "categories": ["MDI", "Identity", "EntraId", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender XDR",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-identityinfo-table"
+  },
+  {
+    "name": "IdentityLogonEvents",
+    "categories": ["MDI", "Identity", "SignIn", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Identity",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-identitylogonevents-table"
+  },
+  {
+    "name": "IdentityQueryEvents",
+    "categories": ["MDI", "Identity", "DefenderXDR"],
+    "sourceProduct": "Microsoft Defender for Identity",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-identityqueryevents-table"
+  },
+  {
+    "name": "MicrosoftGraphActivityLogs",
+    "categories": ["Graph", "EntraId", "AzureMonitor"],
+    "sourceProduct": "Microsoft Graph",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/microsoftgraphactivitylogs"
+  },
+  {
+    "name": "SigninLogs",
+    "categories": ["EntraId", "SignIn", "AzureMonitor"],
+    "sourceProduct": "Microsoft Entra ID",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/signinlogs"
+  }
+]

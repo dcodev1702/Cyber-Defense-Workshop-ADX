@@ -1,0 +1,526 @@
+{
+  "tableName": "AADNonInteractiveUserSignInLogs",
+  "categories": [
+    "EntraId",
+    "SignIn",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Microsoft Entra ID",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadnoninteractiveusersigninlogs",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "AADTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The AADTenantId GUID that's associated with the logs"
+    },
+    {
+      "name": "Agent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of agentic sign-in."
+    },
+    {
+      "name": "AlternateSignInName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Provides the on-premises UPN of the user sign-ing into Azure AD.e.g. Phone number sign-in."
+    },
+    {
+      "name": "AppDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "App name displayed in the Azure portal."
+    },
+    {
+      "name": "AppId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique GUID representing the app ID in the Azure Active Directory."
+    },
+    {
+      "name": "AppliedEventListeners",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Detailed information about the applied event listeners or listeners that are triggered by the corresponding events in an authentication activity. It's called appliedEventListeners in ALP and MSGraph, but use Authentication Events to match name on UX."
+    },
+    {
+      "name": "AppOwnerTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The tenant identifier of the owenr of the application in Azure Active Directory."
+    },
+    {
+      "name": "AuthenticationContextClassReferences",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The authentication contexts of the sign-in."
+    },
+    {
+      "name": "AuthenticationDetails",
+      "type": "string",
+      "sourceType": "string",
+      "description": "A record of each step of authentication undertaken in the sign-in."
+    },
+    {
+      "name": "AuthenticationMethodsUsed",
+      "type": "string",
+      "sourceType": "string",
+      "description": "List of authentication methods used."
+    },
+    {
+      "name": "AuthenticationProcessingDetails",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Provides the details associated with authentication processor."
+    },
+    {
+      "name": "AuthenticationProtocol",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Lists the protocol type or grant type used in the authentication. The possible values are: none, oAuth2, ropc, wsFederation, saml20, deviceCode, unknownFutureValue. For authentications that use protocols other than the possible values listed, the protocol type is listed as none."
+    },
+    {
+      "name": "AuthenticationRequirement",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of authentication required for the sign-in. If set to multiFactorAuthentication, an MFA step was required. If set to singleFactorAuthentication, no MFA was required."
+    },
+    {
+      "name": "AuthenticationRequirementPolicies",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Set of CA policies that apply to this sign-in, each as CA: policy name, and/or MFA: Per-user."
+    },
+    {
+      "name": "AuthenticatorAppLocation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The location of the authenticator app."
+    },
+    {
+      "name": "AutonomousSystemNumber",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Autonomous System Number for the network."
+    },
+    {
+      "name": "_BilledSize",
+      "type": "real",
+      "sourceType": "real",
+      "description": "The record size in bytes"
+    },
+    {
+      "name": "Category",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Category of the sign-in event."
+    },
+    {
+      "name": "ClientAppUsed",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details outlining app auth used (Legacy vs non Legacy) Eg: Modern Browser, Native App, Exchange Activty Sync and Older Clients."
+    },
+    {
+      "name": "ClientCredentialType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of client credential used. Examples include client assertion, client secret, etc."
+    },
+    {
+      "name": "ConditionalAccessAudiences",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of the conditional access audiences being applied for the sign-in."
+    },
+    {
+      "name": "ConditionalAccessPolicies",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of the conditional access policies being applied for the sign-in."
+    },
+    {
+      "name": "ConditionalAccessStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Status of all the conditionalAccess policies related to the sign-in."
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "ID to provide sign-in trail."
+    },
+    {
+      "name": "CreatedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Datetime of the sign-in activity."
+    },
+    {
+      "name": "CrossTenantAccessType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Describes the type of cross-tenant access used by the actor to access the resource. Possible values are: none, b2bCollaboration, b2bDirectConnect, microsoftSupport, serviceProvider, unknownFutureValue. If the sign in did not cross tenant boundaries, the value is none."
+    },
+    {
+      "name": "DeviceDetail",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of the device used for the sign-in."
+    },
+    {
+      "name": "DurationMs",
+      "type": "long",
+      "sourceType": "long",
+      "description": "The duration of the operation in milliseconds."
+    },
+    {
+      "name": "FederatedCredentialId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Federated Credential Id."
+    },
+    {
+      "name": "GlobalSecureAccessIpAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Global secure IP address that user signed in from."
+    },
+    {
+      "name": "HomeTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The home tenant ID for cross-tenant scenarios."
+    },
+    {
+      "name": "HomeTenantName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The tenant name of the external tenant who homes the entitity taking action in the customer's tenant."
+    },
+    {
+      "name": "Id",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique ID representing the sign-in activity."
+    },
+    {
+      "name": "Identity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identity from the token that was presented when you made the request. It can be a user account, system account, or service principal."
+    },
+    {
+      "name": "IncomingTokenType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of token utilized to signIn (examples: primary refresh token, saml assertion)."
+    },
+    {
+      "name": "IPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "IP address of the client used to sign in."
+    },
+    {
+      "name": "_IsBillable",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Specifies whether ingesting the data is billable. When _IsBillable is false ingestion isn't billed to your Azure account"
+    },
+    {
+      "name": "IsInteractive",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Indicates if a sign-in is interactive or not."
+    },
+    {
+      "name": "IsRisky",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Indicates if a sign-in is considered risky or not."
+    },
+    {
+      "name": "IsTenantRestricted",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Indicates if a signIn is under a tenant restrictions policy or not."
+    },
+    {
+      "name": "IsThroughGlobalSecureAccess",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Displays whether or not a user came through Global Secure Access service or not."
+    },
+    {
+      "name": "Level",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The severity level of the event."
+    },
+    {
+      "name": "Location",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The region of the resource emitting the event."
+    },
+    {
+      "name": "LocationDetails",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of the sign-in location."
+    },
+    {
+      "name": "MfaDetail",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of the Multi-factor authentication."
+    },
+    {
+      "name": "NetworkLocationDetails",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Provides the details associated with authentication processor."
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "For sign-ins, this value is always Sign-in activity."
+    },
+    {
+      "name": "OperationVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The REST API version that's requested by the client."
+    },
+    {
+      "name": "OriginalRequestId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The request id of the first request in the authentication sequence."
+    },
+    {
+      "name": "OriginalTransferMethod",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Transfer method used to initiate a session throughout all subsequent requests."
+    },
+    {
+      "name": "ProcessingTimeInMs",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Request processing time in milliseconds in AD STS."
+    },
+    {
+      "name": "ResourceDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the resource that the user signed into."
+    },
+    {
+      "name": "ResourceGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Resource group for the logs."
+    },
+    {
+      "name": "ResourceIdentity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "ID of the resource that the user signed into."
+    },
+    {
+      "name": "ResourceOwnerTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The tenant identifier of the owner of the resource referenced in the sign in."
+    },
+    {
+      "name": "ResourceServicePrincipalId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Service Principal Id of the resource."
+    },
+    {
+      "name": "ResourceTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The resource tenant ID for cross-tenant scenarios."
+    },
+    {
+      "name": "ResultDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Provides the error description for the sign-in operation."
+    },
+    {
+      "name": "ResultSignature",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Contains the error code, if any, for the sign-in operation."
+    },
+    {
+      "name": "ResultType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The result of the sign-in operation can be Success or Failure."
+    },
+    {
+      "name": "RiskDetail",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Risky user state details."
+    },
+    {
+      "name": "RiskEventTypes",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The list of risk event types associated with the sign-in."
+    },
+    {
+      "name": "RiskEventTypes_V2",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The list of risk event types associated with the sign-in. These are strings."
+    },
+    {
+      "name": "RiskLevelAggregated",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Aggregated risk level."
+    },
+    {
+      "name": "RiskLevelDuringSignIn",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Risk level during sign-in."
+    },
+    {
+      "name": "RiskState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Risky user state."
+    },
+    {
+      "name": "ServicePrincipalId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "ID of the service principal who initiated the sign-in."
+    },
+    {
+      "name": "SessionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Id of the session that was generated during the signIn."
+    },
+    {
+      "name": "SessionLifetimePolicies",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Policies and settings that applied to the sign-in that enforced or revoked a session lifetime."
+    },
+    {
+      "name": "SignInEventTypes",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The types that are associated with the sign-in. Examples include \"interactive\", \"refreshToken\", \"managedIdentity\", \"continuousAccessEvaluation\" and many more."
+    },
+    {
+      "name": "SignInIdentifierType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of sign in identifier. Possible values are: userPrincipalName, phoneNumber, proxyAddress, qrCode, onPremisesUserPrincipalName, unknownFutureValue."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of agent the event was collected by. For example, OpsManager for Windows agent, either direct connect or Operations Manager, Linux for all Linux agents, or Azure for Azure Diagnostics"
+    },
+    {
+      "name": "Status",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of the sign-in status."
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The Log Analytics workspace ID"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "The date and time of the event in UTC."
+    },
+    {
+      "name": "TokenIssuerName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the identity provider (e.g. sts.microsoft.com )."
+    },
+    {
+      "name": "TokenIssuerType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of identityProvider (Azure AD, AD Federation Services)."
+    },
+    {
+      "name": "TokenProtectionStatusDetails",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Token protection creates a cryptographically secure tie between the token and the device it's issued to. This field indicates whether the signin token was bound to the device or not."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The name of the table"
+    },
+    {
+      "name": "UniqueTokenIdentifier",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique token identifier for the request."
+    },
+    {
+      "name": "UserAgent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User Agent for the sign-in."
+    },
+    {
+      "name": "UserDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Display name of the user that initiated the sign-in."
+    },
+    {
+      "name": "UserId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "ID of the user that initiated the sign-in."
+    },
+    {
+      "name": "UserPrincipalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User principal name of the user that initiated the sign-in."
+    },
+    {
+      "name": "UserType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identifies whether the user is a member or guest in the tenant. Possible values are: member, guest, unknownFutureValue."
+    }
+  ],
+  "adx": {
+    "mappingName": "AADNonInteractiveUserSignInLogs_JsonMapping"
+  }
+}

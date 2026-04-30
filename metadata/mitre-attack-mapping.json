@@ -1,0 +1,94 @@
+{
+  "threatActor": "FIN7-inspired intrusion emulation",
+  "note": "The scenario is inspired by FIN7 tradecraft and common intrusion patterns, but uses synthetic telemetry and ATT&CK technique coverage rather than asserting exact historical tool use for every item.",
+  "attackVectors": [
+    {
+      "scenarioMinute": 15,
+      "attackVector": "Credentials in Registry Script",
+      "tactic": "Credential Access",
+      "techniqueId": "T1552.002",
+      "techniqueName": "Unsecured Credentials: Credentials in Registry",
+      "primaryTables": ["DeviceProcessEvents", "DeviceRegistryEvents", "AlertInfo", "AlertEvidence"]
+    },
+    {
+      "scenarioMinute": 22,
+      "attackVector": "Dump SAM Registry Hive via reg save Command",
+      "tactic": "Credential Access",
+      "techniqueId": "T1003.002",
+      "techniqueName": "OS Credential Dumping: Security Account Manager",
+      "primaryTables": ["DeviceProcessEvents", "DeviceFileEvents", "AlertInfo", "AlertEvidence"]
+    },
+    {
+      "scenarioMinute": 27,
+      "attackVector": "Collect Browser Data via Esentutl using PowerShell Script",
+      "tactic": "Credential Access",
+      "techniqueId": "T1555.003",
+      "techniqueName": "Credentials from Password Stores: Credentials from Web Browsers",
+      "primaryTables": ["DeviceProcessEvents", "DeviceFileEvents"]
+    },
+    {
+      "scenarioMinute": 35,
+      "attackVector": "Kerberoasting using Rubeus",
+      "tactic": "Credential Access",
+      "techniqueId": "T1558.003",
+      "techniqueName": "Steal or Forge Kerberos Tickets: Kerberoasting",
+      "primaryTables": ["DeviceProcessEvents", "DeviceNetworkEvents", "IdentityQueryEvents", "IdentityLogonEvents", "AlertInfo", "AlertEvidence"]
+    },
+    {
+      "scenarioMinute": 42,
+      "attackVector": "Kerberoasting using PowerShell Empire Invoke-Kerberoast Script",
+      "tactic": "Credential Access",
+      "techniqueId": "T1558.003",
+      "techniqueName": "Steal or Forge Kerberos Tickets: Kerberoasting",
+      "primaryTables": ["DeviceProcessEvents", "IdentityQueryEvents", "AlertInfo", "AlertEvidence"]
+    },
+    {
+      "scenarioMinute": 50,
+      "attackVector": "Dump LSASS Process to Minidump File",
+      "tactic": "Credential Access",
+      "techniqueId": "T1003.001",
+      "techniqueName": "OS Credential Dumping: LSASS Memory",
+      "primaryTables": ["DeviceProcessEvents", "DeviceFileEvents", "AlertInfo", "AlertEvidence"]
+    },
+    {
+      "scenarioMinute": 56,
+      "attackVector": "Dump Passwords using PwDump7",
+      "tactic": "Credential Access",
+      "techniqueId": "T1003.002",
+      "techniqueName": "OS Credential Dumping: Security Account Manager",
+      "primaryTables": ["DeviceProcessEvents", "DeviceFileEvents"]
+    },
+    {
+      "scenarioMinute": 60,
+      "attackVector": "Dump Passwords using gsecdump",
+      "tactic": "Credential Access",
+      "techniqueId": "T1003.001",
+      "techniqueName": "OS Credential Dumping: LSASS Memory",
+      "primaryTables": ["DeviceProcessEvents", "DeviceFileEvents"]
+    },
+    {
+      "scenarioMinute": 65,
+      "attackVector": "Dump Passwords using LaZagne",
+      "tactic": "Credential Access",
+      "techniqueId": "T1555",
+      "techniqueName": "Credentials from Password Stores",
+      "primaryTables": ["DeviceProcessEvents", "DeviceFileEvents", "AlertInfo", "AlertEvidence"]
+    },
+    {
+      "scenarioMinute": 70,
+      "attackVector": "Dump Windows Passwords with Obfuscated Mimikatz",
+      "tactic": "Credential Access",
+      "techniqueId": "T1003.001",
+      "techniqueName": "OS Credential Dumping: LSASS Memory",
+      "primaryTables": ["DeviceProcessEvents", "AlertInfo", "AlertEvidence"]
+    },
+    {
+      "scenarioMinute": 73,
+      "attackVector": "Dump Windows Passwords with Original Mimikatz",
+      "tactic": "Credential Access",
+      "techniqueId": "T1003.001",
+      "techniqueName": "OS Credential Dumping: LSASS Memory",
+      "primaryTables": ["DeviceProcessEvents", "AlertInfo", "AlertEvidence"]
+    }
+  ]
+}

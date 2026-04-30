@@ -1,0 +1,130 @@
+{
+  "tableName": "EntraIdSpnSignInEvents",
+  "categories": [
+    "EntraId",
+    "SignIn",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-entraidspnsigninevents-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the record was generated"
+    },
+    {
+      "name": "Application",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Application that performed the recorded action"
+    },
+    {
+      "name": "ApplicationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the application"
+    },
+    {
+      "name": "IsManagedIdentity",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether the sign-in was initiated by a managed identity"
+    },
+    {
+      "name": "ErrorCode",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Contains the error code if a sign-in error occurs. To find a description of a specific error code, visit https://aka.ms/AADsigninsErrorCodes ."
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the sign-in event"
+    },
+    {
+      "name": "ServicePrincipalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the service principal that initiated the sign-in"
+    },
+    {
+      "name": "ServicePrincipalId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the service principal that initiated the sign-in"
+    },
+    {
+      "name": "ResourceDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Display name of the resource accessed. The display name can contain any character."
+    },
+    {
+      "name": "ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the resource accessed"
+    },
+    {
+      "name": "ResourceTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the tenant of the resource accessed"
+    },
+    {
+      "name": "IPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "IP address assigned to the endpoint and used during related network communications"
+    },
+    {
+      "name": "Country",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Two-letter code indicating the country/region where the client IP address is geolocated"
+    },
+    {
+      "name": "State",
+      "type": "string",
+      "sourceType": "string",
+      "description": "State where the sign-in occurred, if available"
+    },
+    {
+      "name": "City",
+      "type": "string",
+      "sourceType": "string",
+      "description": "City where the account user is located"
+    },
+    {
+      "name": "Latitude",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The north to south coordinates of the sign-in location"
+    },
+    {
+      "name": "Longitude",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The east to west coordinates of the sign-in location"
+    },
+    {
+      "name": "RequestId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier of the request"
+    },
+    {
+      "name": "ReportId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the event"
+    }
+  ],
+  "adx": {
+    "mappingName": "EntraIdSpnSignInEvents_JsonMapping"
+  }
+}

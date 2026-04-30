@@ -1,0 +1,100 @@
+{
+  "tableName": "DeviceTvmCertificateInfo",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmcertificateinfo-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the device in the service"
+    },
+    {
+      "name": "Thumbprint",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the certificate"
+    },
+    {
+      "name": "Path",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The location of the certificate"
+    },
+    {
+      "name": "SerialNumber",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the certificate within a certificate authority's systems"
+    },
+    {
+      "name": "IssuedTo",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Entity that a certificate belongs to; can be a device, an individual, or an organization"
+    },
+    {
+      "name": "IssuedBy",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Entity that verified the information and signed the certificate"
+    },
+    {
+      "name": "FriendlyName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Easy-to-understand version of a certificate's title"
+    },
+    {
+      "name": "SignatureAlgorithm",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Hashing algorithm and encryption algorithm used"
+    },
+    {
+      "name": "KeySize",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Size of the key used in the signature algorithm"
+    },
+    {
+      "name": "ExpirationDate",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The date and time beyond which the certificate is no longer valid"
+    },
+    {
+      "name": "IssueDate",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The earliest date and time when the certificate became valid"
+    },
+    {
+      "name": "SubjectType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Indicates if the holder of the certificate is a CA or end entity"
+    },
+    {
+      "name": "KeyUsage",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The valid cryptographic uses of the certificate's public key"
+    },
+    {
+      "name": "ExtendedKeyUsage",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Other valid uses for the certificate"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceTvmCertificateInfo_JsonMapping"
+  }
+}

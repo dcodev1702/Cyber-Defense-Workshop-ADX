@@ -1,0 +1,64 @@
+{
+  "tableName": "DeviceTvmHardwareFirmware",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmhardwarefirmware-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the device in the service"
+    },
+    {
+      "name": "DeviceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Fully qualified domain name (FQDN) of the device"
+    },
+    {
+      "name": "ComponentType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Type of hardware or firmware component"
+    },
+    {
+      "name": "Manufacturer",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Manufacturer of hardware or firmware component"
+    },
+    {
+      "name": "ComponentName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of hardware or firmware component"
+    },
+    {
+      "name": "ComponentFamily",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Component family or class, a grouping of components that have similar features or characteristics as determined by the manufacturer"
+    },
+    {
+      "name": "ComponentVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Component version (for example, BIOS version)"
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Additional information about the components in JSON array format"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceTvmHardwareFirmware_JsonMapping"
+  }
+}

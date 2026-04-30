@@ -1,0 +1,226 @@
+{
+  "tableName": "MicrosoftGraphActivityLogs",
+  "categories": [
+    "Graph",
+    "EntraId",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Microsoft Graph",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/microsoftgraphactivitylogs",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "AadTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The Azure AD tenant ID."
+    },
+    {
+      "name": "ApiVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The API version of the event."
+    },
+    {
+      "name": "AppId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier for the application."
+    },
+    {
+      "name": "ATContent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Reserved for future use."
+    },
+    {
+      "name": "ATContentH",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Reserved for future use."
+    },
+    {
+      "name": "ATContentP",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Reserved for future use."
+    },
+    {
+      "name": "_BilledSize",
+      "type": "real",
+      "sourceType": "real",
+      "description": "The record size in bytes"
+    },
+    {
+      "name": "ClientAuthMethod",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Indicates how the client was authenticated. For a public client, the value is 0. If client ID and client secret are used, the value is 1. If a client certificate was used for authentication, the value is 2."
+    },
+    {
+      "name": "ClientRequestId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Optional. The client request identifier when sent. If no client request identifier is sent, the value will be equal to the operation identifier."
+    },
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier of the device from which the authentication request originated."
+    },
+    {
+      "name": "DurationMs",
+      "type": "int",
+      "sourceType": "int",
+      "description": "The duration of the request in milliseconds."
+    },
+    {
+      "name": "IdentityProvider",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identity provider that authenticated the subject of the token."
+    },
+    {
+      "name": "IPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The IP address of the client from where the request occurred."
+    },
+    {
+      "name": "_IsBillable",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Specifies whether ingesting the data is billable. When _IsBillable is false ingestion isn't billed to your Azure account"
+    },
+    {
+      "name": "Location",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The name of the region that served the request."
+    },
+    {
+      "name": "OperationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier for the batch. For non-batched requests, this will be unique per request. For batched requests, this will be the same for all requests in the batch."
+    },
+    {
+      "name": "RequestId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier representing the request."
+    },
+    {
+      "name": "RequestMethod",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The HTTP method of the event."
+    },
+    {
+      "name": "RequestUri",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The URI of the request."
+    },
+    {
+      "name": "ResponseSizeBytes",
+      "type": "int",
+      "sourceType": "int",
+      "description": "The size of the response in Bytes."
+    },
+    {
+      "name": "ResponseStatusCode",
+      "type": "int",
+      "sourceType": "int",
+      "description": "The HTTP response status code for the event."
+    },
+    {
+      "name": "Roles",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The roles in token claims."
+    },
+    {
+      "name": "Scopes",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The scopes in token claims."
+    },
+    {
+      "name": "ServicePrincipalId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier of the servicePrincipal making the request."
+    },
+    {
+      "name": "SessionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The unique identifier for the authentication session."
+    },
+    {
+      "name": "SignInActivityId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier representing the sign-in activitys."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of agent the event was collected by. For example, OpsManager for Windows agent, either direct connect or Operations Manager, Linux for all Linux agents, or Azure for Azure Diagnostics"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The Log Analytics workspace ID"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "The date and time the request was received."
+    },
+    {
+      "name": "TokenIssuedAt",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "The timestamp the token was issued at."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The name of the table"
+    },
+    {
+      "name": "UniqueTokenId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The unique token identifier of the API call used to make the audited change."
+    },
+    {
+      "name": "UserAgent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The user agent information related to request."
+    },
+    {
+      "name": "UserId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier of the user making the request."
+    },
+    {
+      "name": "Wids",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Denotes the tenant-wide roles assigned to this user."
+    }
+  ],
+  "adx": {
+    "mappingName": "MicrosoftGraphActivityLogs_JsonMapping"
+  }
+}

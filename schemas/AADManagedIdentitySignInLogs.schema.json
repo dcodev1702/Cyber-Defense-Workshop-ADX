@@ -1,0 +1,298 @@
+{
+  "tableName": "AADManagedIdentitySignInLogs",
+  "categories": [
+    "EntraId",
+    "SignIn",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Microsoft Entra ID",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadmanagedidentitysigninlogs",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "AADTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The AADTenantId GUID that's associated with the logs"
+    },
+    {
+      "name": "Agent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of agentic sign-in."
+    },
+    {
+      "name": "AppId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique GUID representing the app ID in the Azure Active Directory"
+    },
+    {
+      "name": "AppOwnerTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The tenant identifier of the owenr of the application in Azure Active Directory"
+    },
+    {
+      "name": "AuthenticationContextClassReferences",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The authentication contexts of the sign-in"
+    },
+    {
+      "name": "AuthenticationProcessingDetails",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Provides the details associated with authentication processor"
+    },
+    {
+      "name": "_BilledSize",
+      "type": "real",
+      "sourceType": "real",
+      "description": "The record size in bytes"
+    },
+    {
+      "name": "Category",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Category of the sign-in event"
+    },
+    {
+      "name": "ClientCredentialType",
+      "type": "string",
+      "sourceType": "string",
+      "description": ""
+    },
+    {
+      "name": "ConditionalAccessAudiences",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of the conditional access audiences being applied for the sign-in."
+    },
+    {
+      "name": "ConditionalAccessPolicies",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of the conditional access policies being applied for the sign-in"
+    },
+    {
+      "name": "ConditionalAccessStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Status of all the conditionalAccess policies related to the sign-in"
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "ID to provide sign-in trail"
+    },
+    {
+      "name": "CreatedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Datetime of the sign-in activity."
+    },
+    {
+      "name": "DurationMs",
+      "type": "long",
+      "sourceType": "long",
+      "description": "The duration of the operation in milliseconds"
+    },
+    {
+      "name": "FederatedCredentialId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Th identifier of an application's federated identity credential if a federated identity credential was used to sign in."
+    },
+    {
+      "name": "Id",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique ID representing the sign-in activity"
+    },
+    {
+      "name": "Identity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identity from the token that was presented when you made the request. It can be a user account, system account, or service principal"
+    },
+    {
+      "name": "IPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "IP address of the client used to sign in"
+    },
+    {
+      "name": "_IsBillable",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Specifies whether ingesting the data is billable. When _IsBillable is false ingestion isn't billed to your Azure account"
+    },
+    {
+      "name": "Level",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The severity level of the event"
+    },
+    {
+      "name": "Location",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The region of the resource emitting the event"
+    },
+    {
+      "name": "LocationDetails",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of the sign-in location"
+    },
+    {
+      "name": "ManagedServiceIdentity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of the Managed Service Identity used to Sign In."
+    },
+    {
+      "name": "NetworkLocationDetails",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Provides the details associated with Authentication processor."
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "For sign-ins, this value is always Sign-in activity"
+    },
+    {
+      "name": "OperationVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The REST API version that's requested by the client"
+    },
+    {
+      "name": "ResourceDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the resource that the service principal signed into"
+    },
+    {
+      "name": "ResourceGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Resource group for the logs"
+    },
+    {
+      "name": "ResourceIdentity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "ID of the resource that the service principal signed into"
+    },
+    {
+      "name": "ResourceOwnerTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The tenant identifier of the owner of the resource referenced in the sign in"
+    },
+    {
+      "name": "ResourceServicePrincipalId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Service Principal Id of the resource"
+    },
+    {
+      "name": "ResultDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Provides the error description for the sign-in operation"
+    },
+    {
+      "name": "ResultSignature",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Contains the error code, if any, for the sign-in operation"
+    },
+    {
+      "name": "ResultType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The result of the sign-in operation can be Success or Failure"
+    },
+    {
+      "name": "ServicePrincipalCredentialKeyId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Key id of the service principal that initiated the sign-in"
+    },
+    {
+      "name": "ServicePrincipalCredentialThumbprint",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Thumbprint of the service principal that initiated the sign-in"
+    },
+    {
+      "name": "ServicePrincipalId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "ID of the service principal who initiated the sign-in"
+    },
+    {
+      "name": "ServicePrincipalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Service Principal Name of the service principal who initiated the sign-in"
+    },
+    {
+      "name": "SessionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Id of the session that was generated during the signIn."
+    },
+    {
+      "name": "SourceAppClientId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The client ID of the application that initiated the sign-in"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of agent the event was collected by. For example, OpsManager for Windows agent, either direct connect or Operations Manager, Linux for all Linux agents, or Azure for Azure Diagnostics"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The Log Analytics workspace ID"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "The date and time of the event in UTC"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The name of the table"
+    },
+    {
+      "name": "UniqueTokenIdentifier",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique token identifier for the request"
+    },
+    {
+      "name": "UserAgent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User Agent for the sign-in"
+    }
+  ],
+  "adx": {
+    "mappingName": "AADManagedIdentitySignInLogs_JsonMapping"
+  }
+}

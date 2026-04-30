@@ -1,0 +1,118 @@
+{
+  "tableName": "AADRiskyUsers",
+  "categories": [
+    "EntraId",
+    "IdentityProtection",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Microsoft Entra ID Protection",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadriskyusers",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "_BilledSize",
+      "type": "real",
+      "sourceType": "real",
+      "description": "The record size in bytes"
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The ID for correlated log analytics events. Can be used to identify correlated events between multiple tables."
+    },
+    {
+      "name": "Id",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique ID of the user at risk."
+    },
+    {
+      "name": "_IsBillable",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Specifies whether ingesting the data is billable. When _IsBillable is false ingestion isn't billed to your Azure account"
+    },
+    {
+      "name": "IsDeleted",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Indicates whether the user is deleted."
+    },
+    {
+      "name": "IsProcessing",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Indicates whether a user's risky state is being processed by the backend."
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the operation."
+    },
+    {
+      "name": "RiskDetail",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Details of the detected risk. Possible values are: none, adminGeneratedTemporaryPassword, userPerformedSecuredPasswordChange, userPerformedSecuredPasswordReset, adminConfirmedSigninSafe, aiConfirmedSigninSafe, userPassedMFADrivenByRiskBasedPolicy, adminDismissedAllRiskForUser, adminConfirmedSigninCompromised, hidden, adminConfirmedUserCompromised, unknownFutureValue."
+    },
+    {
+      "name": "RiskLastUpdatedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "The date and time that the risky user was last updated in UTC."
+    },
+    {
+      "name": "RiskLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Level of the detected risky user. Possible values are: low, medium, high, hidden, none, unknownFutureValue."
+    },
+    {
+      "name": "RiskState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "State of the user's risk. Possible values are: none, confirmedSafe, remediated, dismissed, atRisk, confirmedCompromised, unknownFutureValue."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of agent the event was collected by. For example, OpsManager for Windows agent, either direct connect or Operations Manager, Linux for all Linux agents, or Azure for Azure Diagnostics"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The Log Analytics workspace ID"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "The date and time of the event in UTC."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The name of the table"
+    },
+    {
+      "name": "UserDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Risky user display name."
+    },
+    {
+      "name": "UserPrincipalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Risky user principal name."
+    }
+  ],
+  "adx": {
+    "mappingName": "AADRiskyUsers_JsonMapping"
+  }
+}

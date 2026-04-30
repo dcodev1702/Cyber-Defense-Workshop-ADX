@@ -1,0 +1,58 @@
+{
+  "tableName": "DeviceTvmSoftwareEvidenceBeta",
+  "categories": [
+    "MDE",
+    "DefenderVulnerabilityManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Endpoint",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmsoftwareevidencebeta-table",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique identifier for the device in the service"
+    },
+    {
+      "name": "SoftwareVendor",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the software publisher"
+    },
+    {
+      "name": "SoftwareName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Name of the software product"
+    },
+    {
+      "name": "SoftwareVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Version number of the software product"
+    },
+    {
+      "name": "RegistryPaths",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Registry paths where evidence indicating the existence of the software on a device was detected"
+    },
+    {
+      "name": "DiskPaths",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Disk paths where file-level evidence indicating the existence of the software on a device was detected"
+    },
+    {
+      "name": "LastSeenTime",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Date and time when the device was last seen by this service"
+    }
+  ],
+  "adx": {
+    "mappingName": "DeviceTvmSoftwareEvidenceBeta_JsonMapping"
+  }
+}
