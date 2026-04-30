@@ -270,6 +270,22 @@ Close and reopen the terminal after installing PowerShell 7 or Azure CLI.
 - MITRE mapping: [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json)
 - Scenario summary: [`data\scenario-summary.json`](data/scenario-summary.json)
 
+## Deployment duration estimate
+
+For a fresh deployment to the existing `dibsecadx` cluster, plan for **25-40 minutes end-to-end** with the current defaults: 48 tables, 5K-10K rows per table, approximately 357K total rows, 6,000 synthetic users, and 4,000 synthetic service accounts.
+
+| Step | Estimate |
+| --- | ---: |
+| Create ADX database with 1-year retention/hot cache | 2-5 min |
+| Create/validate 48 tables + mappings | 2-5 min |
+| Generate synthetic telemetry locally | 15-20 min |
+| Ingest telemetry into ADX tables | 8-15 min |
+| Final validation/checks | 1-3 min |
+
+For a brand-new database, expected deployment time is closer to **25-35 minutes**. If overwriting/recreating a database or clearing existing data first, plan for **30-45 minutes**.
+
+The 6,000 users and 4,000 service accounts are synthetic identities in the telemetry, not actual Entra users. Real student/user provisioning is separate and is not part of the default deployment path.
+
 ## KQL Resources
 
 - [Bert-JanP](https://github.com/Bert-JanP)
