@@ -25,9 +25,11 @@ if (-not $schemaFiles) {
     throw 'No schema files selected.'
 }
 
+$expectedTableNames = New-Object System.Collections.Generic.List[string]
 foreach ($schemaFile in $schemaFiles) {
     $schema = Get-Content -Path $schemaFile.FullName -Raw | ConvertFrom-Json
     $table = [string]$schema.tableName
+    $expectedTableNames.Add($table) | Out-Null
     $tableIdentifier = ConvertTo-WorkshopKustoIdentifier -Name $table
     $tableLiteral = ConvertTo-WorkshopKustoStringLiteral -Value $table
 
@@ -66,3 +68,12 @@ foreach ($schemaFile in $schemaFiles) {
     Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command $mappingCommand | Out-Null
     Write-Host "Created or updated JSON mapping $mappingName"
 }
+
+$showTablesResponse = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command '.show tables | project TableName'
+$existingTableNames = @(ConvertFrom-WorkshopAdxResponseRows -Response $showTablesResponse | ForEach-Object { [string]$_.TableName })
+$missingTables = @($expectedTableNames | Where-Object { $existingTableNames -notcontains $_ })
+if ($missingTables.Count -gt 0) {
+    throw "ADX table validation failed. Missing table(s): $($missingTables -join ', ')"
+}
+
+Write-Host "Validated $($expectedTableNames.Count) ADX table(s) exist in database $DatabaseName."

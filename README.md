@@ -61,25 +61,37 @@ The repository already includes generated schemas. Use this command only when yo
 
 ### 2. Create the ADX database, tables, mappings, synthetic telemetry, and ingest data
 
+The default deployment target is the existing `dibsecadx` cluster in the `ADX` resource group:
+
+- Cluster URI: `https://dibsecadx.eastus2.kusto.windows.net`
+- Data ingestion URI: `https://ingest-dibsecadx.eastus2.kusto.windows.net`
+- Subscription: `Security` (`192ad012-896e-4f14-8525-c37a2a9640f9`)
+- Default database: `CyberDefenseKqlWorkshop`
+- Retention: 1 year
+- Hot cache: 1 year
+
 ```powershell
 .\scripts\Initialize-Workshop.ps1 `
-  -ResourceGroupName '<resource-group>' `
-  -ClusterName '<adx-cluster-name>' `
-  -DatabaseName 'CyberDefenseKqlWorkshop' `
-  -ForceRecreateTables
+  -SubscriptionId '192ad012-896e-4f14-8525-c37a2a9640f9' `
+  -ResourceGroupName 'ADX' `
+  -ClusterName 'dibsecadx' `
+  -DatabaseName 'CyberDefenseKqlWorkshop'
 ```
 
-If the database already exists and you only need to create tables and load data:
+If `CyberDefenseKqlWorkshop` already exists and `-OverwriteDatabase` is **not** supplied, the deploy script creates a new timestamped database, for example `CyberDefenseKqlWorkshop_20260430133500`, with the same one-year retention and hot-cache settings.
+
+To intentionally replace the existing database and reuse the same database name:
 
 ```powershell
 .\scripts\Initialize-Workshop.ps1 `
-  -ResourceGroupName '<resource-group>' `
-  -ClusterName '<adx-cluster-name>' `
-  -ClusterUri 'https://<cluster>.<region>.kusto.windows.net' `
+  -SubscriptionId '192ad012-896e-4f14-8525-c37a2a9640f9' `
+  -ResourceGroupName 'ADX' `
+  -ClusterName 'dibsecadx' `
   -DatabaseName 'CyberDefenseKqlWorkshop' `
-  -SkipDatabaseCreate `
-  -ForceRecreateTables
+  -OverwriteDatabase
 ```
+
+After the database exists, the deploy script creates or updates table schemas and ingestion mappings, validates that all expected tables exist, generates synthetic telemetry, and ingests the scenario data.
 
 ### 3. Create or stage student identities
 
