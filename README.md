@@ -26,8 +26,8 @@ The diagram below traces the kill chain across the cloud, endpoint, and identity
 
 Notional infrastructure:
 
-- 2 domain controllers with MDI
-- 10 Windows 11 25H2 endpoints with MDE
+- 2 x domain controllers (server 2022) with MDI
+- 10 x Windows 11 25H2 endpoints with MDE
 - 5 Ubuntu Linux endpoints with MDE
 - 1 Entra Connect server with MDI/MDE-relevant identity telemetry
 - Hybrid Active Directory and Microsoft Entra ID environment
@@ -226,3 +226,12 @@ Close and reopen the terminal after installing PowerShell 7 or Azure CLI.
 - Student access guide: [`docs\student_access.md`](docs/student_access.md)
 - MITRE mapping: [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json)
 - Scenario summary: [`data\scenario-summary.json`](data/scenario-summary.json)
+
+## KQL Resources
+
+- [Bert-JanP](https://github.com/Bert-JanP)
+- [Rod Trent](https://github.com/rod-trent)
+- [Kusto Detective Agency](https://detective.kusto.io/)
+- [KQL Query](https://kqlquery.com/)
+- [Microsoft Learn: Kusto Query Language](https://learn.microsoft.com/en-us/kusto/query/?view=microsoft-fabric)
+- [reprise99](https://github.com/reprise99)
