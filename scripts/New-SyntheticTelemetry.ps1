@@ -2,7 +2,9 @@
 param(
     [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),
     [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\data\generated'),
-    [datetime]$StartTime = '2026-04-30T13:00:00Z',
+    [string]$SummaryPath,
+    [Alias('StartTime')]
+    [datetime]$TelemetryEndTime = (Get-Date).ToUniversalTime(),
     [int]$NormalRowsPerTable = -1,
     [int]$NormalMinRowsPerTable = 5000,
     [int]$NormalMaxRowsPerTable = 10000,
@@ -15,6 +17,10 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $script:Random = [System.Random]::new($RandomSeed)
+$script:TelemetryEndTime = $TelemetryEndTime.ToUniversalTime()
+
+# Keep default telemetry bounded to the seven-day lookback ending at script runtime.
+$StartTime = $script:TelemetryEndTime.AddMinutes(-90)
 
 function Format-WorkshopTime {
     param([Parameter(Mandatory)][datetime]$Time)
@@ -113,7 +119,7 @@ function Resolve-WorkshopTemplatePath {
 function New-WorkshopNormalTime {
     $minutesBack = Get-WorkshopRandomInt -Minimum 1 -Maximum ([Math]::Max(2, $NormalLookbackDays * 24 * 60))
     $seconds = Get-WorkshopRandomInt -Minimum 0 -Maximum 60
-    return $StartTime.AddMinutes(-$minutesBack).AddSeconds($seconds)
+    return $script:TelemetryEndTime.AddMinutes(-$minutesBack).AddSeconds($seconds)
 }
 
 function New-WorkshopRecordObject {
@@ -159,7 +165,13 @@ if (-not (Test-Path $SchemaDirectory)) {
 }
 
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
-New-Item -ItemType Directory -Path (Join-Path $PSScriptRoot '..\data') -Force | Out-Null
+if ([string]::IsNullOrWhiteSpace($SummaryPath)) {
+    $SummaryPath = Join-Path (Split-Path -Path $OutputDirectory -Parent) 'scenario-summary.json'
+}
+$summaryDirectory = Split-Path -Path $SummaryPath -Parent
+if (-not [string]::IsNullOrWhiteSpace($summaryDirectory)) {
+    New-Item -ItemType Directory -Path $summaryDirectory -Force | Out-Null
+}
 
 $script:Schemas = @{}
 $script:Records = @{}
@@ -1245,6 +1257,11 @@ foreach ($table in ($script:Schemas.Keys | Sort-Object)) {
 $summary = [ordered]@{
     scenarioName = 'FIN7-inspired hybrid identity credential access'
     startTime = Format-WorkshopTime $StartTime
+    telemetryWindow = [ordered]@{
+        endTime = Format-WorkshopTime $script:TelemetryEndTime
+        lookbackDays = $NormalLookbackDays
+        earliestNormalTime = Format-WorkshopTime $script:TelemetryEndTime.AddDays(-$NormalLookbackDays)
+    }
     tenantDomain = $tenantDomain
     adDomain = $adDomain
     infrastructure = [ordered]@{
@@ -1262,4 +1279,4 @@ $summary = [ordered]@{
     attackVectors = $attackSteps | Select-Object Title, Technique, Offset, Command
 }
 
-$summary | ConvertTo-Json -Depth 10 | Set-Content -Path (Join-Path $PSScriptRoot '..\data\scenario-summary.json') -Encoding UTF8
+$summary | ConvertTo-Json -Depth 10 | Set-Content -Path $SummaryPath -Encoding UTF8

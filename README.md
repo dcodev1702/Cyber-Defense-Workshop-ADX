@@ -94,7 +94,7 @@ To intentionally replace the existing database and reuse the same database name:
 
 After the database exists, the deploy script creates or updates table schemas and ingestion mappings, validates that all expected tables exist, generates synthetic telemetry, and ingests the scenario data.
 
-By default, deployment generates **5,000-10,000 final records per table** across a seven-day lookback, including the malicious FIN7-inspired storyline so suspicious records blend into normal telemetry. Tune volume with:
+By default, deployment generates **5,000-10,000 final records per table** across a seven-day lookback ending at the time the script runs, including the malicious FIN7-inspired storyline so suspicious records blend into normal telemetry. Tune volume with:
 
 ```powershell
 .\scripts\Initialize-Workshop.ps1 `

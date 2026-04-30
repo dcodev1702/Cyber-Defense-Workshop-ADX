@@ -21,7 +21,8 @@ param(
     [int]$RandomSeed = 1702,
     [int]$SyntheticUserCount = 6000,
     [int]$SyntheticServiceAccountCount = 4000,
-    [datetime]$ScenarioStartTime = '2026-04-30T13:00:00Z'
+    [Alias('ScenarioStartTime')]
+    [datetime]$TelemetryEndTime = (Get-Date).ToUniversalTime()
 )
 
 Set-StrictMode -Version Latest
@@ -135,7 +136,7 @@ if (-not $SkipGenerateData) {
     & (Join-Path $PSScriptRoot 'New-SyntheticTelemetry.ps1') `
         -SchemaDirectory $schemaDirectory `
         -OutputDirectory $dataDirectory `
-        -StartTime $ScenarioStartTime `
+        -TelemetryEndTime $TelemetryEndTime `
         -NormalRowsPerTable $NormalRowsPerTable `
         -NormalMinRowsPerTable $NormalMinRowsPerTable `
         -NormalMaxRowsPerTable $NormalMaxRowsPerTable `
