@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 760" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowDashed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- Outer frame -->
+  <rect x="20" y="20" width="960" height="720" rx="14" fill="#0b1220" stroke="#1f2937" stroke-width="1.5"/>
+
+  <!-- Title -->
+  <text x="500" y="58" text-anchor="middle" fill="#f1f5f9" font-size="20" font-weight="700">Cyber Defense KQL Workshop — Lab Topology</text>
+  <text x="500" y="80" text-anchor="middle" fill="#94a3b8" font-size="13">Hybrid Active Directory + Microsoft Entra ID · synthetic Defender XDR telemetry</text>
+
+  <!-- External actor -->
+  <g>
+    <rect x="380" y="105" width="240" height="60" rx="30" fill="#0b2a4a" stroke="#3b82f6" stroke-width="2"/>
+    <text x="500" y="132" text-anchor="middle" fill="#dbeafe" font-size="14" font-weight="700">FIN7-Inspired Operator</text>
+    <text x="500" y="150" text-anchor="middle" fill="#93c5fd" font-size="11">External actor · 185.225.73.18</text>
+  </g>
+
+  <!-- Microsoft Entra ID -->
+  <g>
+    <rect x="340" y="200" width="320" height="64" rx="10" fill="#3a1d05" stroke="#f97316" stroke-width="2"/>
+    <text x="500" y="226" text-anchor="middle" fill="#fed7aa" font-size="14" font-weight="700">Microsoft Entra ID</text>
+    <text x="500" y="246" text-anchor="middle" fill="#fdba74" font-size="11">SigninLogs · CloudAppEvents · GraphApiAuditEvents</text>
+  </g>
+
+  <!-- Endpoint subgraph (dashed enclave) -->
+  <g>
+    <rect x="50" y="305" width="430" height="200" rx="12" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="6 5"/>
+    <text x="70" y="328" fill="#cbd5e1" font-size="12" font-weight="600">MDE Endpoint Estate</text>
+
+    <!-- Windows endpoints -->
+    <rect x="76" y="345" width="180" height="70" rx="10" fill="#0f3a1f" stroke="#22c55e" stroke-width="2"/>
+    <text x="166" y="370" text-anchor="middle" fill="#bbf7d0" font-size="13" font-weight="700">10 × Windows 11 25H2</text>
+    <text x="166" y="388" text-anchor="middle" fill="#86efac" font-size="11">MDE onboarded</text>
+    <text x="166" y="403" text-anchor="middle" fill="#86efac" font-size="11">WIN11-04 · patient zero</text>
+
+    <!-- Linux endpoints -->
+    <rect x="276" y="345" width="180" height="70" rx="10" fill="#0f3a1f" stroke="#22c55e" stroke-width="2"/>
+    <text x="366" y="370" text-anchor="middle" fill="#bbf7d0" font-size="13" font-weight="700">5 × Ubuntu Linux</text>
+    <text x="366" y="388" text-anchor="middle" fill="#86efac" font-size="11">MDE onboarded</text>
+    <text x="366" y="403" text-anchor="middle" fill="#86efac" font-size="11">22.04 LTS</text>
+
+    <!-- Caption inside endpoint enclave -->
+    <text x="265" y="450" text-anchor="middle" fill="#64748b" font-size="11" font-style="italic">DeviceProcessEvents · DeviceFileEvents · DeviceRegistryEvents · DeviceNetworkEvents</text>
+    <text x="265" y="478" text-anchor="middle" fill="#64748b" font-size="11" font-style="italic">Endpoint TTPs: T1552.002 · T1003.001 · T1003.002 · T1555 · T1555.003</text>
+  </g>
+
+  <!-- Identity tier subgraph (dashed enclave) -->
+  <g>
+    <rect x="520" y="305" width="430" height="200" rx="12" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="6 5"/>
+    <text x="540" y="328" fill="#cbd5e1" font-size="12" font-weight="600">Identity Tier — Hybrid AD / Entra Connect</text>
+
+    <!-- Domain Controllers -->
+    <rect x="546" y="345" width="180" height="70" rx="10" fill="#3a1212" stroke="#ef4444" stroke-width="2"/>
+    <text x="636" y="370" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="700">2 × Domain Controllers</text>
+    <text x="636" y="388" text-anchor="middle" fill="#fca5a5" font-size="11">DC01 · DC02</text>
+    <text x="636" y="403" text-anchor="middle" fill="#fca5a5" font-size="11">MDI sensors</text>
+
+    <!-- Entra Connect -->
+    <rect x="746" y="345" width="180" height="70" rx="10" fill="#3a1212" stroke="#ef4444" stroke-width="2"/>
+    <text x="836" y="370" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="700">Entra Connect Server</text>
+    <text x="836" y="388" text-anchor="middle" fill="#fca5a5" font-size="11">AADCONNECT01</text>
+    <text x="836" y="403" text-anchor="middle" fill="#fca5a5" font-size="11">MDI + MDE telemetry</text>
+
+    <!-- Caption inside identity enclave -->
+    <text x="735" y="450" text-anchor="middle" fill="#64748b" font-size="11" font-style="italic">IdentityQueryEvents · IdentityLogonEvents · IdentityDirectoryEvents</text>
+    <text x="735" y="478" text-anchor="middle" fill="#64748b" font-size="11" font-style="italic">Identity TTPs: T1558.003 (Kerberoasting) · service-account abuse</text>
+  </g>
+
+  <!-- ADX sink -->
+  <g>
+    <rect x="320" y="565" width="360" height="80" rx="10" fill="#0f172a" stroke="#94a3b8" stroke-width="2"/>
+    <text x="500" y="592" text-anchor="middle" fill="#f1f5f9" font-size="15" font-weight="700">Azure Data Explorer</text>
+    <text x="500" y="612" text-anchor="middle" fill="#cbd5e1" font-size="12">CyberDefenseKqlWorkshop database</text>
+    <text x="500" y="630" text-anchor="middle" fill="#94a3b8" font-size="11">48 tables · MDE · MDI · Entra · Graph · Alerts</text>
+  </g>
+
+  <!-- MITRE footer caption -->
+  <text x="500" y="685" text-anchor="middle" fill="#94a3b8" font-size="12" font-style="italic">MITRE ATT&amp;CK coverage</text>
+  <text x="500" y="705" text-anchor="middle" fill="#cbd5e1" font-size="12" font-weight="600">T1552.002 · T1003.001 · T1003.002 · T1555 · T1555.003 · T1558.003</text>
+  <text x="500" y="724" text-anchor="middle" fill="#64748b" font-size="11" font-style="italic">Tactic: Credential Access</text>
+
+  <!-- Solid attack-flow edges -->
+  <!-- Attacker -> Entra -->
+  <line x1="500" y1="165" x2="500" y2="200" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="510" y="187" fill="#cbd5e1" font-size="10">compromised sign-in</text>
+
+  <!-- Entra -> Endpoint estate (down-left) -->
+  <path d="M 420 264 Q 380 290 320 345" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="295" y="300" fill="#cbd5e1" font-size="10">endpoint pivot</text>
+
+  <!-- Endpoint -> Identity (Kerberoasting flow) -->
+  <path d="M 480 415 Q 500 470 520 415" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="500" y="468" text-anchor="middle" fill="#cbd5e1" font-size="10">Kerberoasting · svc_sql lateral move</text>
+
+  <!-- Dashed telemetry edges to ADX -->
+  <!-- Entra -> ADX -->
+  <path d="M 580 264 Q 700 380 600 565" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrowDashed)"/>
+  <text x="700" y="430" fill="#64748b" font-size="10" font-style="italic">cloud · sign-in</text>
+  <text x="700" y="444" fill="#64748b" font-size="10" font-style="italic">graph telemetry</text>
+
+  <!-- Endpoints -> ADX -->
+  <path d="M 265 505 Q 300 530 400 565" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrowDashed)"/>
+  <text x="240" y="540" fill="#64748b" font-size="10" font-style="italic">device telemetry</text>
+
+  <!-- Identity -> ADX -->
+  <path d="M 735 505 Q 700 530 600 565" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrowDashed)"/>
+  <text x="755" y="540" fill="#64748b" font-size="10" font-style="italic">identity telemetry</text>
+</svg>
