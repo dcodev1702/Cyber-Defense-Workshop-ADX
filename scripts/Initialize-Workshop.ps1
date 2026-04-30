@@ -14,6 +14,9 @@ param(
     [switch]$ForceRecreateTables,
     [switch]$SkipGenerateData,
     [switch]$SkipIngest,
+    [int]$NormalRowsPerTable = 2000,
+    [int]$NormalLookbackDays = 7,
+    [int]$RandomSeed = 1702,
     [datetime]$ScenarioStartTime = '2026-04-30T13:00:00Z'
 )
 
@@ -125,7 +128,13 @@ if ([string]::IsNullOrWhiteSpace($ClusterUri)) {
 & (Join-Path $PSScriptRoot 'Initialize-AdxTables.ps1') -ClusterUri $ClusterUri -DatabaseName $DatabaseName -SchemaDirectory $schemaDirectory -ForceRecreate:$ForceRecreateTables
 
 if (-not $SkipGenerateData) {
-    & (Join-Path $PSScriptRoot 'New-SyntheticTelemetry.ps1') -SchemaDirectory $schemaDirectory -OutputDirectory $dataDirectory -StartTime $ScenarioStartTime
+    & (Join-Path $PSScriptRoot 'New-SyntheticTelemetry.ps1') `
+        -SchemaDirectory $schemaDirectory `
+        -OutputDirectory $dataDirectory `
+        -StartTime $ScenarioStartTime `
+        -NormalRowsPerTable $NormalRowsPerTable `
+        -NormalLookbackDays $NormalLookbackDays `
+        -RandomSeed $RandomSeed
 }
 
 if (-not $SkipIngest) {

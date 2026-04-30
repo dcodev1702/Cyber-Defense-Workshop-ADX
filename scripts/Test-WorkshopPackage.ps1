@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-    [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+    [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path,
+    [string]$DataDirectory
 )
 
 Set-StrictMode -Version Latest
@@ -70,12 +71,17 @@ foreach ($schemaFile in $schemaFiles) {
     }
 }
 
-$dataDirectory = Join-Path $Root 'data\generated'
-if (-not (Test-Path $dataDirectory)) {
-    Add-TestError "Missing generated data directory: $dataDirectory"
+if ([string]::IsNullOrWhiteSpace($DataDirectory)) {
+    $DataDirectory = Join-Path $Root 'data\generated'
+}
+elseif (-not [System.IO.Path]::IsPathRooted($DataDirectory)) {
+    $DataDirectory = Join-Path (Get-Location).Path $DataDirectory
+}
+if (-not (Test-Path $DataDirectory)) {
+    Add-TestError "Missing generated data directory: $DataDirectory"
 }
 else {
-    foreach ($dataFile in (Get-ChildItem -Path $dataDirectory -Filter '*.json')) {
+    foreach ($dataFile in (Get-ChildItem -Path $DataDirectory -Filter '*.json')) {
         $table = $dataFile.BaseName
         $schemaPath = Join-Path $Root "schemas\$table.schema.json"
         if (-not (Test-Path $schemaPath)) {

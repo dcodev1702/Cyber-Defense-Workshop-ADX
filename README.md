@@ -40,7 +40,8 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | --- | --- | --- |
 | ADX setup | Creates the ADX database tables, JSON ingestion mappings, generated telemetry, and ingestion flow | [`scripts\Initialize-Workshop.ps1`](scripts/Initialize-Workshop.ps1), [`scripts\Initialize-AdxTables.ps1`](scripts/Initialize-AdxTables.ps1), [`scripts\Import-SyntheticTelemetry.ps1`](scripts/Import-SyntheticTelemetry.ps1), [`scripts\AdxWorkshop.Common.psm1`](scripts/AdxWorkshop.Common.psm1) |
 | Schemas | Holds one Microsoft Learn-derived JSON schema file per ADX table | [`schemas\`](schemas/), [`metadata\tables.manifest.json`](metadata/tables.manifest.json), [`tools\Build-SchemasFromMicrosoftLearn.ps1`](tools/Build-SchemasFromMicrosoftLearn.ps1) |
-| Synthetic data | Holds generated schema-aligned NDJSON telemetry files | [`data\generated\`](data/generated/), [`data\scenario-summary.json`](data/scenario-summary.json), [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1) |
+| Synthetic data | Holds generated schema-aligned NDJSON telemetry files and high-volume normal telemetry generation | [`data\generated\`](data/generated/), [`data\scenario-summary.json`](data/scenario-summary.json), [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1) |
+| Telemetry samples | Exports local-only Log Analytics CSV samples used to tune synthetic telemetry shape and field realism | [`scripts\Export-LogAnalyticsSamples.ps1`](scripts/Export-LogAnalyticsSamples.ps1), `sample\*.csv` |
 | Student access | Creates or stages student users, TAP values, group access, and ADX viewer permissions | [`scripts\New-WorkshopStudents.ps1`](scripts/New-WorkshopStudents.ps1), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1), [`docs\student_access.md`](docs/student_access.md) |
 | Scenario and MITRE | Documents the threat actor framing, infrastructure, and attack-vector to ATT&CK mapping | [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json), [`data\scenario-summary.json`](data/scenario-summary.json), [`docs\workshop_design.md`](docs/workshop_design.md) |
 | Workshop content | Provides the student lab, instructor guide, design notes, and diagrams | [`workshop\student_lab.kql`](workshop/student_lab.kql), [`docs\instructor_guide.md`](docs/instructor_guide.md), [`docs\workshop_design.md`](docs/workshop_design.md), [`docs\diagrams.md`](docs/diagrams.md) |
@@ -92,6 +93,32 @@ To intentionally replace the existing database and reuse the same database name:
 ```
 
 After the database exists, the deploy script creates or updates table schemas and ingestion mappings, validates that all expected tables exist, generates synthetic telemetry, and ingests the scenario data.
+
+By default, deployment generates at least **2,000 normal baseline records per table** across a seven-day lookback, then layers in the malicious FIN7-inspired storyline so suspicious records blend into normal telemetry. Tune volume with:
+
+```powershell
+.\scripts\Initialize-Workshop.ps1 `
+  -SubscriptionId '192ad012-896e-4f14-8525-c37a2a9640f9' `
+  -ResourceGroupName 'ADX' `
+  -ClusterName 'dibsecadx' `
+  -DatabaseName 'CyberDefenseKqlWorkshop' `
+  -NormalRowsPerTable 5000 `
+  -NormalLookbackDays 7 `
+  -RandomSeed 1702
+```
+
+To refresh local-only Log Analytics samples from the Security workspace for generator tuning:
+
+```powershell
+.\scripts\Export-LogAnalyticsSamples.ps1 `
+  -SubscriptionId '192ad012-896e-4f14-8525-c37a2a9640f9' `
+  -WorkspaceName 'DIBSecCom' `
+  -ResourceGroupName 'sentinel' `
+  -LookbackDays 7 `
+  -MaxRowsPerTable 5000
+```
+
+The `sample\*.csv` files are intentionally ignored by Git because they can contain real tenant telemetry.
 
 ### 3. Create or stage student identities
 
@@ -225,6 +252,7 @@ Close and reopen the terminal after installing PowerShell 7 or Azure CLI.
 
 - Use workshop-only identities; do not use real employee accounts for student access.
 - Treat generated student roster CSV files as sensitive because they may contain initial passwords or TAP values.
+- Treat `sample\*.csv` Log Analytics exports as sensitive local artifacts; they are used only to tune synthetic telemetry realism.
 - Keep the scenario synthetic and isolated to ADX telemetry; no real attack execution is required.
 - Delete or disable workshop users after the event.
 - If reusing the ADX database for another class, rerun setup with `-ForceRecreateTables`.

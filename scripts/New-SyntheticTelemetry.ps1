@@ -2,11 +2,15 @@
 param(
     [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),
     [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\data\generated'),
-    [datetime]$StartTime = '2026-04-30T13:00:00Z'
+    [datetime]$StartTime = '2026-04-30T13:00:00Z',
+    [int]$NormalRowsPerTable = 2000,
+    [int]$NormalLookbackDays = 7,
+    [int]$RandomSeed = 1702
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+$script:Random = [System.Random]::new($RandomSeed)
 
 function Format-WorkshopTime {
     param([Parameter(Mandatory)][datetime]$Time)
@@ -39,6 +43,57 @@ function New-StableGuid {
     finally {
         $md5.Dispose()
     }
+}
+
+function New-StableHex {
+    param(
+        [Parameter(Mandatory)][string]$Seed,
+        [ValidateRange(1, 128)][int]$Length = 64
+    )
+
+    $material = ''
+    $counter = 0
+    while ($material.Length -lt $Length) {
+        $sha = [System.Security.Cryptography.SHA256]::Create()
+        try {
+            $bytes = $sha.ComputeHash([Text.Encoding]::UTF8.GetBytes("$Seed|$counter"))
+            $material += -join ($bytes | ForEach-Object { $_.ToString('x2') })
+        }
+        finally {
+            $sha.Dispose()
+        }
+        $counter++
+    }
+
+    return $material.Substring(0, $Length)
+}
+
+function New-WorkshopHashSet {
+    param([Parameter(Mandatory)][string]$Seed)
+
+    [pscustomobject]@{
+        SHA1 = New-StableHex "$Seed|sha1" 40
+        SHA256 = New-StableHex "$Seed|sha256" 64
+        MD5 = New-StableHex "$Seed|md5" 32
+    }
+}
+
+function Get-WorkshopRandomItem {
+    param([Parameter(Mandatory)][object[]]$Items)
+
+    return $Items[$script:Random.Next(0, $Items.Count)]
+}
+
+function Get-WorkshopRandomInt {
+    param([int]$Minimum, [int]$Maximum)
+
+    return $script:Random.Next($Minimum, $Maximum)
+}
+
+function New-WorkshopNormalTime {
+    $minutesBack = Get-WorkshopRandomInt -Minimum 1 -Maximum ([Math]::Max(2, $NormalLookbackDays * 24 * 60))
+    $seconds = Get-WorkshopRandomInt -Minimum 0 -Maximum 60
+    return $StartTime.AddMinutes(-$minutesBack).AddSeconds($seconds)
 }
 
 function Add-Record {
@@ -117,16 +172,16 @@ $svcSql = $users[2]
 $svcSync = $users[3]
 
 $devices = @(
-    [pscustomobject]@{ Name = "DC01.$corpFqdn"; ShortName = 'DC01'; DeviceId = 'mdi-dc-01'; IP = '10.42.0.10'; PublicIP = '198.51.100.10'; OS = 'WindowsServer2025'; Type = 'DomainController'; AssetValue = 'High' },
-    [pscustomobject]@{ Name = "DC02.$corpFqdn"; ShortName = 'DC02'; DeviceId = 'mdi-dc-02'; IP = '10.42.0.11'; PublicIP = '198.51.100.11'; OS = 'WindowsServer2025'; Type = 'DomainController'; AssetValue = 'High' },
-    [pscustomobject]@{ Name = "AADCONNECT01.$corpFqdn"; ShortName = 'AADCONNECT01'; DeviceId = 'mde-aadc-01'; IP = '10.42.0.20'; PublicIP = '198.51.100.20'; OS = 'WindowsServer2025'; Type = 'EntraConnect'; AssetValue = 'High' }
+    [pscustomobject]@{ Name = "DC01.$corpFqdn"; ShortName = 'DC01'; DeviceId = New-StableHex 'DC01' 40; IP = '10.42.0.10'; PublicIP = '198.51.100.10'; OS = 'WindowsServer2025'; Type = 'DomainController'; AssetValue = 'High' },
+    [pscustomobject]@{ Name = "DC02.$corpFqdn"; ShortName = 'DC02'; DeviceId = New-StableHex 'DC02' 40; IP = '10.42.0.11'; PublicIP = '198.51.100.11'; OS = 'WindowsServer2025'; Type = 'DomainController'; AssetValue = 'High' },
+    [pscustomobject]@{ Name = "AADCONNECT01.$corpFqdn"; ShortName = 'AADCONNECT01'; DeviceId = New-StableHex 'AADCONNECT01' 40; IP = '10.42.0.20'; PublicIP = '198.51.100.20'; OS = 'WindowsServer2025'; Type = 'EntraConnect'; AssetValue = 'High' }
 )
 
 for ($i = 1; $i -le 10; $i++) {
     $devices += [pscustomobject]@{
         Name = ('WIN11-{0:D2}.{1}' -f $i, $corpFqdn)
         ShortName = ('WIN11-{0:D2}' -f $i)
-        DeviceId = ('mde-win11-{0:D2}' -f $i)
+        DeviceId = New-StableHex ('WIN11-{0:D2}' -f $i) 40
         IP = ('10.42.10.{0}' -f (20 + $i))
         PublicIP = '198.51.100.50'
         OS = 'Windows11'
@@ -138,7 +193,7 @@ for ($i = 1; $i -le 5; $i++) {
     $devices += [pscustomobject]@{
         Name = ('UBUNTU-{0:D2}.{1}' -f $i, $corpFqdn)
         ShortName = ('UBUNTU-{0:D2}' -f $i)
-        DeviceId = ('mde-ubuntu-{0:D2}' -f $i)
+        DeviceId = New-StableHex ('UBUNTU-{0:D2}' -f $i) 40
         IP = ('10.42.20.{0}' -f (30 + $i))
         PublicIP = '198.51.100.60'
         OS = 'Ubuntu'
@@ -293,6 +348,325 @@ function Add-NetworkEvent {
         AdditionalFields = '{"Scenario":"FIN7 credential access"}'
     }
 }
+
+function New-NormalTelemetryValues {
+    param(
+        [Parameter(Mandatory)][string]$Table,
+        [Parameter(Mandatory)][datetime]$Time,
+        [Parameter(Mandatory)][int]$Index
+    )
+
+    $user = Get-WorkshopRandomItem $users
+    $device = Get-WorkshopRandomItem $devices
+    $processPool = @(
+        [pscustomobject]@{ File = 'svchost.exe'; Path = 'C:\Windows\System32\svchost.exe'; Parent = 'services.exe'; Command = 'C:\Windows\System32\svchost.exe -k netsvcs -p' },
+        [pscustomobject]@{ File = 'msedge.exe'; Path = 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'; Parent = 'explorer.exe'; Command = 'msedge.exe --type=renderer --lang=en-US' },
+        [pscustomobject]@{ File = 'Teams.exe'; Path = "C:\Users\$($user.Name)\AppData\Local\Microsoft\Teams\current\Teams.exe"; Parent = 'explorer.exe'; Command = 'Teams.exe --process-start-args --system-initiated' },
+        [pscustomobject]@{ File = 'OneDrive.exe'; Path = "C:\Users\$($user.Name)\AppData\Local\Microsoft\OneDrive\OneDrive.exe"; Parent = 'explorer.exe'; Command = 'OneDrive.exe /background' },
+        [pscustomobject]@{ File = 'SenseIR.exe'; Path = 'C:\Program Files\Windows Defender Advanced Threat Protection\SenseIR.exe'; Parent = 'MsSense.exe'; Command = 'SenseIR.exe telemetry' },
+        [pscustomobject]@{ File = 'apt'; Path = '/usr/bin/apt'; Parent = 'bash'; Command = 'apt list --upgradable' }
+    )
+    $filePool = @(
+        [pscustomobject]@{ Name = 'settings.json'; Path = "C:\Users\$($user.Name)\AppData\Roaming\Microsoft\Teams\settings.json"; Size = 8192 },
+        [pscustomobject]@{ Name = 'cache.db'; Path = "C:\Users\$($user.Name)\AppData\Local\Microsoft\Edge\User Data\Default\Cache\cache.db"; Size = 262144 },
+        [pscustomobject]@{ Name = 'document.docx'; Path = "C:\Users\$($user.Name)\Documents\Operations\document.docx"; Size = 153600 },
+        [pscustomobject]@{ Name = 'DefenderUpdate.log'; Path = 'C:\ProgramData\Microsoft\Windows Defender\Support\DefenderUpdate.log'; Size = 32768 },
+        [pscustomobject]@{ Name = 'syslog'; Path = '/var/log/syslog'; Size = 65536 }
+    )
+    $dllPool = @(
+        [pscustomobject]@{ Name = 'samlib.dll'; Path = 'C:\Windows\System32\samlib.dll'; Size = 176128 },
+        [pscustomobject]@{ Name = 'sechost.dll'; Path = 'C:\Windows\System32\sechost.dll'; Size = 761856 },
+        [pscustomobject]@{ Name = 'winhttp.dll'; Path = 'C:\Windows\System32\winhttp.dll'; Size = 1089536 },
+        [pscustomobject]@{ Name = 'crypt32.dll'; Path = 'C:\Windows\System32\crypt32.dll'; Size = 1869824 }
+    )
+    $remotePool = @(
+        [pscustomobject]@{ Url = 'login.microsoftonline.com'; IP = '20.190.160.10'; Port = 443 },
+        [pscustomobject]@{ Url = 'graph.microsoft.com'; IP = '20.190.128.12'; Port = 443 },
+        [pscustomobject]@{ Url = 'officecdn.microsoft.com'; IP = '13.107.246.40'; Port = 443 },
+        [pscustomobject]@{ Url = 'wdcp.microsoft.com'; IP = '52.152.110.14'; Port = 443 },
+        [pscustomobject]@{ Url = 'packages.microsoft.com'; IP = '13.107.246.45'; Port = 443 }
+    )
+    $appPool = @(
+        [pscustomobject]@{ Name = 'Microsoft Teams'; Id = '1fec8e78-bce4-4aaf-ab1b-5451cc387264'; Resource = 'Microsoft Graph' },
+        [pscustomobject]@{ Name = 'Office 365 Exchange Online'; Id = '00000002-0000-0ff1-ce00-000000000000'; Resource = 'Office 365 Exchange Online' },
+        [pscustomobject]@{ Name = 'Microsoft Azure PowerShell'; Id = '1950a258-227b-4e31-a9cf-717495945fc2'; Resource = 'Azure Resource Manager' },
+        [pscustomobject]@{ Name = 'Windows Sign In'; Id = '38aa3b87-a06d-4817-b275-7a316988d93b'; Resource = 'Microsoft Entra ID' }
+    )
+
+    $process = Get-WorkshopRandomItem $processPool
+    $file = Get-WorkshopRandomItem $filePool
+    $dll = Get-WorkshopRandomItem $dllPool
+    $remote = Get-WorkshopRandomItem $remotePool
+    $app = Get-WorkshopRandomItem $appPool
+    $hashes = New-WorkshopHashSet "$Table|$Index|$($file.Name)|$($device.ShortName)"
+    $processHashes = New-WorkshopHashSet "$Table|$Index|$($process.File)|process"
+    $reportId = 700000 + $Index
+    $timeText = Format-WorkshopTime $Time
+
+    $values = @{
+        Timestamp = $timeText
+        TimeGenerated = $timeText
+        CreatedDateTime = $timeText
+        ActivityDateTime = $timeText
+        DeviceId = $device.DeviceId
+        DeviceName = $device.Name
+        PublicIP = $device.PublicIP
+        LocalIP = $device.IP
+        AccountDomain = $adDomain
+        AccountName = $user.Name
+        AccountSid = $user.Sid
+        AccountUpn = $user.Upn
+        AccountObjectId = $user.ObjectId
+        AccountDisplayName = $user.DisplayName
+        InitiatingProcessAccountDomain = $adDomain
+        InitiatingProcessAccountName = $user.Name
+        InitiatingProcessAccountSid = $user.Sid
+        InitiatingProcessAccountUpn = $user.Upn
+        InitiatingProcessAccountObjectId = $user.ObjectId
+        InitiatingProcessIntegrityLevel = 'Medium'
+        InitiatingProcessTokenElevation = 'TokenElevationTypeLimited'
+        InitiatingProcessFileName = $process.File
+        InitiatingProcessFolderPath = $process.Path
+        InitiatingProcessCommandLine = $process.Command
+        InitiatingProcessParentFileName = $process.Parent
+        InitiatingProcessSHA1 = $processHashes.SHA1
+        InitiatingProcessSHA256 = $processHashes.SHA256
+        InitiatingProcessMD5 = $processHashes.MD5
+        SHA1 = $hashes.SHA1
+        SHA256 = $hashes.SHA256
+        MD5 = $hashes.MD5
+        FileName = $file.Name
+        FolderPath = $file.Path
+        FileSize = $file.Size
+        AADTenantId = $tenantId
+        TenantId = $tenantId
+        ReportId = $reportId
+        Type = $Table
+        AdditionalFields = @{ Workload = 'WorkshopNormal'; Baseline = $true }
+    }
+
+    switch ($Table) {
+        'DeviceProcessEvents' {
+            $values.ActionType = 'ProcessCreated'
+            $values.FileName = $process.File
+            $values.FolderPath = $process.Path
+            $values.ProcessCommandLine = $process.Command
+            $values.ProcessCreationTime = $timeText
+            $values.ProcessId = 2000 + ($Index % 40000)
+            $values.ProcessIntegrityLevel = 'Medium'
+            $values.ProcessTokenElevation = 'TokenElevationTypeLimited'
+        }
+        'DeviceFileEvents' {
+            $values.ActionType = Get-WorkshopRandomItem @('FileCreated', 'FileModified', 'FileRenamed', 'FileDeleted')
+        }
+        'DeviceImageLoadEvents' {
+            $values.ActionType = 'ImageLoaded'
+            $values.FileName = $dll.Name
+            $values.FolderPath = $dll.Path
+            $values.FileSize = $dll.Size
+            $dllHashes = New-WorkshopHashSet "$Table|$Index|$($dll.Name)"
+            $values.SHA1 = $dllHashes.SHA1
+            $values.SHA256 = $dllHashes.SHA256
+            $values.MD5 = $dllHashes.MD5
+        }
+        'DeviceEvents' {
+            $values.ActionType = Get-WorkshopRandomItem @('ScheduledTaskCreated', 'ScheduledTaskDeleted', 'ServiceInstalled', 'AntivirusSignatureUpdated', 'PowerShellCommand', 'AppControlCodeIntegrityPolicyAudited')
+            $values.FileName = $process.File
+            $values.FolderPath = $process.Path
+            $values.ProcessCommandLine = $process.Command
+        }
+        'DeviceNetworkEvents' {
+            $values.ActionType = 'ConnectionSuccess'
+            $values.RemoteUrl = $remote.Url
+            $values.RemoteIP = $remote.IP
+            $values.RemotePort = $remote.Port
+            $values.LocalPort = 49152 + ($Index % 12000)
+            $values.Protocol = 'Tcp'
+        }
+        'DeviceLogonEvents' {
+            $values.ActionType = if (($Index % 17) -eq 0) { 'LogonFailed' } else { 'LogonSuccess' }
+            $values.LogonType = Get-WorkshopRandomItem @('Interactive', 'Network', 'RemoteInteractive', 'CachedInteractive')
+            $values.Protocol = Get-WorkshopRandomItem @('Kerberos', 'NTLM', 'Negotiate')
+            $values.IsLocalAdmin = ($user.Name -like 'svc_*' -or $device.Type -in @('DomainController', 'EntraConnect'))
+            $values.LogonId = 800000 + $Index
+            $values.RemoteDeviceName = (Get-WorkshopRandomItem $devices).Name
+            $values.RemoteIP = (Get-WorkshopRandomItem $devices).IP
+        }
+        'DeviceRegistryEvents' {
+            $values.ActionType = Get-WorkshopRandomItem @('RegistryValueSet', 'RegistryKeyCreated', 'RegistryValueDeleted')
+            $values.RegistryKey = Get-WorkshopRandomItem @('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run', 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Sense', 'HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Common')
+            $values.RegistryValueName = Get-WorkshopRandomItem @('TelemetryLevel', 'LastSyncTime', 'UpdateChannel')
+            $values.RegistryValueData = Get-WorkshopRandomItem @('Enabled', 'Current', 'MonthlyEnterprise')
+            $values.RegistryValueType = 'REG_SZ'
+        }
+        'DeviceInfo' {
+            $values.OSPlatform = $device.OS
+            $values.OSBuild = if ($device.OS -eq 'Windows11') { '25H2' } elseif ($device.OS -like 'Windows*') { '26100' } else { '22.04' }
+            $values.OSDistribution = if ($device.OS -eq 'Ubuntu') { 'Ubuntu' } else { '' }
+            $values.IsAzureADJoined = $true
+            $values.JoinType = 'Hybrid Azure AD joined'
+            $values.AadDeviceId = New-StableGuid $device.DeviceId
+            $values.LoggedOnUsers = @(@{ UserName = $user.Name; DomainName = $adDomain })
+            $values.MachineGroup = if ($device.Type -eq 'DomainController') { 'Domain Controllers' } elseif ($device.Type -eq 'EntraConnect') { 'Identity Tier 0' } else { 'Workstations' }
+            $values.OnboardingStatus = 'Onboarded'
+            $values.DeviceType = $device.Type
+            $values.SensorHealthState = 'Active'
+            $values.ExposureLevel = if ($device.AssetValue -eq 'High') { 'Medium' } else { 'Low' }
+            $values.AssetValue = $device.AssetValue
+            $values.ConnectivityType = 'Corporate'
+        }
+        'DeviceNetworkInfo' {
+            $values.NetworkAdapterName = 'Ethernet0'
+            $values.ConnectedNetworks = @(@{ Name = 'CorpNet'; Category = 'DomainAuthenticated' })
+            $values.IPAddresses = @($device.IP)
+            $values.MacAddress = ('00-15-5D-{0:X2}-{1:X2}-{2:X2}' -f ($Index % 255), (($Index + 42) % 255), (($Index + 99) % 255))
+        }
+        { $_ -in @('SigninLogs', 'AADNonInteractiveUserSignInLogs', 'AADManagedIdentitySignInLogs', 'AADServicePrincipalSignInLogs', 'EntraIdSignInEvents', 'AADSignInEventsBeta', 'AADSpnSignInEventsBeta', 'EntraIdSpnSignInEvents') } {
+            $values.Application = $app.Name
+            $values.ApplicationId = $app.Id
+            $values.AppDisplayName = $app.Name
+            $values.AppId = $app.Id
+            $values.ResourceDisplayName = $app.Resource
+            $values.UserPrincipalName = $user.Upn
+            $values.UserDisplayName = $user.DisplayName
+            $values.UserId = $user.ObjectId
+            $values.Identity = $user.DisplayName
+            $values.IPAddress = Get-WorkshopRandomItem @('198.51.100.50', '198.51.100.60', '203.0.113.25', '192.0.2.44')
+            $values.Country = 'DE'
+            $values.State = 'Hesse'
+            $values.City = 'Wiesbaden'
+            $values.Location = 'DE'
+            $values.ResultType = '0'
+            $values.ResultDescription = 'Success'
+            $values.ErrorCode = 0
+            $values.IsInteractive = $Table -notlike '*NonInteractive*'
+            $values.IsRisky = $false
+            $values.RiskLevel = 'none'
+            $values.RiskLevelDuringSignIn = 'none'
+            $values.RiskState = 'none'
+            $values.ConditionalAccessStatus = 'success'
+            $values.AuthenticationRequirement = if (($Index % 4) -eq 0) { 'multiFactorAuthentication' } else { 'singleFactorAuthentication' }
+            $values.AuthenticationMethodsUsed = if (($Index % 4) -eq 0) { 'Password,Authenticator App' } else { 'Password' }
+            $values.ClientAppUsed = Get-WorkshopRandomItem @('Browser', 'Mobile Apps and Desktop clients', 'Exchange ActiveSync')
+            $values.UserAgent = Get-WorkshopRandomItem @('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'Microsoft Office/16.0', 'Teams/24215.1007.3082.1590')
+            $values.CorrelationId = New-StableGuid "$Table|signin-correlation|$Index"
+            $values.Id = New-StableGuid "$Table|signin|$Index"
+            $values.Status = @{ errorCode = 0; failureReason = 'Other'; additionalDetails = 'MFA requirement satisfied' }
+            $values.DeviceDetail = @{ operatingSystem = if ($device.OS -eq 'Ubuntu') { 'Linux' } else { 'Windows' }; browser = 'Edge'; isCompliant = $true; trustType = 'Hybrid Azure AD joined' }
+        }
+        'CloudAppEvents' {
+            $values.ActionType = Get-WorkshopRandomItem @('FileDownloaded', 'FileUploaded', 'UserLoggedIn', 'MailItemsAccessed', 'OAuthAppConsent')
+            $values.Application = Get-WorkshopRandomItem @('Microsoft 365', 'Microsoft Teams', 'SharePoint Online', 'Exchange Online')
+            $values.IPAddress = Get-WorkshopRandomItem @('198.51.100.50', '198.51.100.60', '203.0.113.25')
+            $values.AccountId = $user.Upn
+            $values.AccountType = 'Regular'
+            $values.ObjectName = Get-WorkshopRandomItem @('QuarterlyPlanning.docx', 'Team Chat', 'Inbox', 'Operations Notebook')
+            $values.ObjectType = Get-WorkshopRandomItem @('File', 'Message', 'MailItem', 'OAuthApplication')
+            $values.ActivityType = $values.ActionType
+            $values.RawEventData = @{ baseline = $true; workload = $values.Application }
+        }
+        'AuditLogs' {
+            $values.ActivityDisplayName = Get-WorkshopRandomItem @('Update user', 'Add member to group', 'Update application', 'User registered security info')
+            $values.OperationName = $values.ActivityDisplayName
+            $values.Category = Get-WorkshopRandomItem @('UserManagement', 'GroupManagement', 'ApplicationManagement', 'AuthenticationMethods')
+            $values.Result = 'success'
+            $values.ResultType = 'Success'
+            $values.Identity = $user.Upn
+            $values.InitiatedBy = @{ user = @{ userPrincipalName = $user.Upn; id = $user.ObjectId; ipAddress = '198.51.100.50' } }
+            $values.TargetResources = @(@{ displayName = $user.DisplayName; type = 'User'; id = $user.ObjectId })
+            $values.LoggedByService = 'Core Directory'
+            $values.Id = New-StableGuid "$Table|audit|$Index"
+        }
+        { $_ -in @('GraphApiAuditEvents', 'MicrosoftGraphActivityLogs') } {
+            $values.ApplicationId = $app.Id
+            $values.AppId = $app.Id
+            $values.IPAddress = Get-WorkshopRandomItem @('198.51.100.50', '198.51.100.60', '203.0.113.25')
+            $values.RequestMethod = Get-WorkshopRandomItem @('GET', 'POST', 'PATCH')
+            $values.RequestUri = Get-WorkshopRandomItem @('/v1.0/me', '/v1.0/users', '/v1.0/me/messages', '/v1.0/sites/root/drive/root/children')
+            $values.ResponseStatusCode = if (($Index % 31) -eq 0) { 429 } else { 200 }
+            $values.UserId = $user.ObjectId
+            $values.AccountObjectId = $user.ObjectId
+            $values.ServicePrincipalId = New-StableGuid "$($app.Id)|sp"
+            $values.UniqueTokenIdentifier = New-StableGuid "$Table|token|$Index"
+            $values.UniqueTokenId = $values.UniqueTokenIdentifier
+            $values.TargetWorkload = 'MicrosoftGraph'
+            $values.ResponseSize = Get-WorkshopRandomInt -Minimum 512 -Maximum 65536
+            $values.RequestDuration = Get-WorkshopRandomInt -Minimum 20 -Maximum 1200
+        }
+        { $_ -in @('AlertInfo', 'AlertEvidence') } {
+            $alertId = "BASE-$('{0:D6}' -f $Index)"
+            $values.AlertId = $alertId
+            $values.Title = Get-WorkshopRandomItem @('Informational Defender sensor event', 'Suspicious but remediated sign-in', 'Low severity malware blocked', 'Cloud app policy match')
+            $values.Category = Get-WorkshopRandomItem @('InitialAccess', 'Execution', 'DefenseEvasion', 'Discovery')
+            $values.Severity = Get-WorkshopRandomItem @('Informational', 'Low', 'Low', 'Medium')
+            $values.ServiceSource = Get-WorkshopRandomItem @('Microsoft Defender for Endpoint', 'Microsoft Defender for Identity', 'Microsoft Defender for Cloud Apps')
+            $values.DetectionSource = 'AutomatedInvestigation'
+            $values.EntityType = Get-WorkshopRandomItem @('Device', 'User', 'File', 'Process')
+            $values.EvidenceRole = 'Related'
+            $values.EvidenceDirection = 'Source'
+            $values.AttackTechniques = ''
+            $values.Categories = @($values.Category)
+        }
+        { $_ -like 'Identity*' } {
+            $values.ActionType = Get-WorkshopRandomItem @('LogonSuccess', 'LdapSearch', 'AccountModified', 'GroupMembershipChanged', 'IdentitySnapshot')
+            $values.Application = Get-WorkshopRandomItem @('Active Directory', 'Kerberos', 'LDAP', 'Microsoft Entra Connect')
+            $values.Protocol = Get-WorkshopRandomItem @('Kerberos', 'LDAP', 'NTLM')
+            $values.QueryType = 'Search'
+            $values.QueryTarget = Get-WorkshopRandomItem @('user', 'group', 'servicePrincipalName')
+            $values.Query = '(objectClass=user)'
+            $values.IPAddress = $device.IP
+            $values.DestinationDeviceName = (Get-WorkshopRandomItem ($devices | Where-Object Type -eq 'DomainController')).Name
+            $values.DestinationIPAddress = (Get-WorkshopRandomItem ($devices | Where-Object Type -eq 'DomainController')).IP
+            $values.DestinationPort = Get-WorkshopRandomItem @(88, 389, 636)
+            $values.AccountObjectId = $user.ObjectId
+            $values.AccountUpn = $user.Upn
+            $values.AccountDisplayName = $user.DisplayName
+            $values.OnPremSid = $user.Sid
+            $values.IsAccountEnabled = $true
+            $values.CriticalityLevel = if ($user.Name -like 'svc_*') { 2 } else { 1 }
+            $values.BlastRadius = if ($user.Name -like 'svc_*') { 'High' } else { 'Low' }
+            $values.Tags = if ($user.Name -like 'svc_*') { @('ServiceAccount') } else { @('Employee') }
+            $values.SourceProviders = @('ActiveDirectory', 'EntraID')
+            $values.GroupMembership = @('Domain Users')
+        }
+        { $_ -like 'DeviceTvm*' -or $_ -like 'DeviceBaseline*' } {
+            $values.ActionType = 'InventorySnapshot'
+            $values.SoftwareName = Get-WorkshopRandomItem @('Microsoft Edge', 'Microsoft Teams', 'OpenSSL', 'Microsoft Defender for Endpoint')
+            $values.SoftwareVendor = Get-WorkshopRandomItem @('Microsoft', 'Canonical', 'OpenSSL Software Foundation')
+            $values.SoftwareVersion = Get-WorkshopRandomItem @('125.0.2535.67', '1.1.1w', '24215.1007.3082.1590', '4.18.24040.4')
+            $values.CveId = Get-WorkshopRandomItem @('CVE-2024-21338', 'CVE-2024-30078', 'CVE-2023-48795')
+            $values.ConfigurationId = New-StableGuid "$Table|config|$Index"
+            $values.IsCompliant = ($Index % 7) -ne 0
+            $values.ComplianceStatus = if ($values.IsCompliant) { 'Compliant' } else { 'NonCompliant' }
+            $values.RiskScore = Get-WorkshopRandomInt -Minimum 1 -Maximum 60
+        }
+        default {
+            $values.ActionType = 'WorkshopNormalBaseline'
+            $values.Application = 'WorkshopNormalBaseline'
+        }
+    }
+
+    return $values
+}
+
+function Add-NormalTelemetryVolume {
+    if ($NormalRowsPerTable -le 0) {
+        return
+    }
+
+    foreach ($table in ($script:Schemas.Keys | Sort-Object)) {
+        $existingCount = $script:Records[$table].Count
+        $rowsToAdd = [Math]::Max(0, $NormalRowsPerTable - $existingCount)
+        for ($i = 0; $i -lt $rowsToAdd; $i++) {
+            $time = New-WorkshopNormalTime
+            $index = ($table.GetHashCode() -band 0x7fffffff) + $i
+            $values = New-NormalTelemetryValues -Table $table -Time $time -Index $index
+            Add-Record -Table $table -Time $time -Values $values
+        }
+    }
+}
+
+Add-NormalTelemetryVolume
 
 $stage = 'C:\ProgramData\wrstage'
 $attackSteps = @(

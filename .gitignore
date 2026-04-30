@@ -1,5 +1,7 @@
 # Local student rosters can contain passwords or TAP values.
 students/*.csv
+sample/*.csv
+samples/*.csv
 
 # Local environment and logs.
 .env
