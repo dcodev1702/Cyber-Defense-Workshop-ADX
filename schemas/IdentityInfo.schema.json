@@ -11,13 +11,13 @@
   "schemaSource": "Microsoft Learn",
   "columns": [
     {
-      "name": "Timestamp *",
+      "name": "Timestamp",
       "type": "datetime",
       "sourceType": "datetime",
       "description": "The date and time that the line was written to the database. This is used when there are multiple lines for each identity, such as when a change is detected, or if 24 hours have passed since the last database line was added."
     },
     {
-      "name": "ReportId *",
+      "name": "ReportId",
       "type": "string",
       "sourceType": "string",
       "description": "Unique identifier for the event"
@@ -53,7 +53,7 @@
       "description": "User name of the account"
     },
     {
-      "name": "AccountDomain *",
+      "name": "AccountDomain",
       "type": "string",
       "sourceType": "string",
       "description": "Domain of the account"
@@ -65,13 +65,13 @@
       "description": "The criticality score of the account"
     },
     {
-      "name": "Type *",
+      "name": "Type",
       "type": "string",
       "sourceType": "string",
       "description": "Type of identity; possible values: User, ServiceAccount"
     },
     {
-      "name": "DistinguishedName *",
+      "name": "DistinguishedName",
       "type": "string",
       "sourceType": "string",
       "description": "The user's distinguished name"
@@ -143,55 +143,55 @@
       "description": "Indicates whether the account is enabled or not"
     },
     {
-      "name": "Manager *",
+      "name": "Manager",
       "type": "string",
       "sourceType": "string",
       "description": "The listed manager of the account user"
     },
     {
-      "name": "Phone *",
+      "name": "Phone",
       "type": "string",
       "sourceType": "string",
       "description": "The listed phone number of the account user"
     },
     {
-      "name": "CreatedDateTime *",
+      "name": "CreatedDateTime",
       "type": "datetime",
       "sourceType": "datetime",
       "description": "Date and time when the account user was created"
     },
     {
-      "name": "ChangeSource *",
+      "name": "ChangeSource",
       "type": "string",
       "sourceType": "string",
       "description": "Identifies which identity provider or process triggered the addition of the new row. For example, the System-UserPersistence value is used for any rows added by an automated process."
     },
     {
-      "name": "BlastRadius **",
+      "name": "BlastRadius",
       "type": "string",
       "sourceType": "string",
       "description": "A calculation based on the position of the user in the org tree and the user's Microsoft Entra roles and permissions; possible values: Low, Medium, High"
     },
     {
-      "name": "CompanyName **",
+      "name": "CompanyName",
       "type": "string",
       "sourceType": "string",
       "description": "Name of the company for which the user works"
     },
     {
-      "name": "DeletedDateTime **",
+      "name": "DeletedDateTime",
       "type": "datetime",
       "sourceType": "datetime",
       "description": "Date and time when the user account was deleted"
     },
     {
-      "name": "EmployeeId **",
+      "name": "EmployeeId",
       "type": "string",
       "sourceType": "string",
       "description": "Employee identifier assigned to the user by the organization"
     },
     {
-      "name": "OtherMailAddresses **",
+      "name": "OtherMailAddresses",
       "type": "dynamic",
       "sourceType": "dynamic",
       "description": "Additional email addresses of the user account"
@@ -209,25 +209,25 @@
       "description": "Details regarding the Microsoft Entra ID risk level"
     },
     {
-      "name": "State **",
+      "name": "State",
       "type": "string",
       "sourceType": "string",
       "description": "State where the sign-in occurred, if available"
     },
     {
-      "name": "Tags *",
+      "name": "Tags",
       "type": "dynamic",
       "sourceType": "dynamic",
       "description": "Tags assigned to the account user by Defender for Identity"
     },
     {
-      "name": "AssignedRoles *",
+      "name": "AssignedRoles",
       "type": "dynamic",
       "sourceType": "dynamic",
       "description": "For identities from Microsoft Entra-only, the roles assigned to the account user"
     },
     {
-      "name": "PrivilegedEntraPimRoles (Preview) ***",
+      "name": "PrivilegedEntraPimRoles",
       "type": "dynamic",
       "sourceType": "dynamic",
       "description": "A snapshot of privileged role assignment schedules and eligibility schedules for the account as maintained by Microsoft Entra Privileged Identity Management (excluding activated assignments)"
@@ -239,7 +239,7 @@
       "description": "Unique identifier representing your organization's instance of Microsoft Entra ID"
     },
     {
-      "name": "SourceSystem *",
+      "name": "SourceSystem",
       "type": "string",
       "sourceType": "string",
       "description": "The source system for the record"
@@ -281,7 +281,7 @@
       "description": "Source providers of the accounts for the identity; possible values: ActiveDirectory, EntraID, Okta"
     },
     {
-      "name": "GroupMembership **",
+      "name": "GroupMembership",
       "type": "dynamic",
       "sourceType": "dynamic",
       "description": "Microsoft Entra ID groups where the user account is a member"

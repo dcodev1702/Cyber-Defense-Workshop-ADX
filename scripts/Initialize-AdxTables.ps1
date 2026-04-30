@@ -35,7 +35,7 @@ foreach ($schemaFile in $schemaFiles) {
 
     Write-Host "Preparing table $table"
     $existsResponse = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show tables | where TableName == $tableLiteral | project TableName"
-    $exists = (ConvertFrom-WorkshopAdxResponseRows -Response $existsResponse).Count -gt 0
+    $exists = @(ConvertFrom-WorkshopAdxResponseRows -Response $existsResponse).Count -gt 0
 
     if ($ForceRecreate -and $exists) {
         Write-Host "Dropping existing table $table"

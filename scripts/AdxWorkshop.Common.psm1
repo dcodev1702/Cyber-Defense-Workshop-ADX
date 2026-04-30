@@ -64,7 +64,7 @@ function Invoke-WorkshopAdxManagementCommand {
     )
 
     $token = Get-WorkshopAdxAccessToken
-    $uri = "$($ClusterUri.TrimEnd('/'))/v2/rest/mgmt"
+    $uri = "$($ClusterUri.TrimEnd('/'))/v1/rest/mgmt"
     $body = @{
         db = $DatabaseName
         csl = $Command
@@ -80,7 +80,7 @@ function Invoke-WorkshopAdxManagementCommand {
         'Content-Type' = 'application/json'
     }
 
-    Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $body
+    Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $body -ErrorAction Stop
 }
 
 function ConvertFrom-WorkshopAdxResponseRows {
