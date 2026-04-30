@@ -22,55 +22,7 @@ The scenario uses a **FIN7-inspired hybrid identity credential-access intrusion*
 
 The diagram below traces the kill chain across the cloud, endpoint, and identity tiers. Each credential-access node is annotated with its MITRE ATT&CK technique, and the dotted edges show where each phase deposits telemetry into Azure Data Explorer for student investigation.
 
-```mermaid
-flowchart TB
-    Actor["<b>FIN7-Inspired Operator</b><br/>Hybrid Identity Credential Access"]:::actor
-
-    subgraph Cloud["Initial Access — Microsoft Entra ID & Graph"]
-      direction LR
-      Signin["<b>Risky Entra Sign-In</b><br/>SigninLogs · EntraIdSignInEvents"]:::cloud
-      OAuth["<b>OAuth App Consent</b><br/>CloudAppEvents"]:::cloud
-      Graph["<b>Graph API Enumeration</b><br/>GraphApiAuditEvents · MicrosoftGraphActivityLogs"]:::cloud
-    end
-
-    Endpoint["<b>WIN11-04 — Compromised Endpoint</b><br/>DeviceProcessEvents · DeviceNetworkEvents · DeviceFileEvents"]:::endpoint
-
-    subgraph Cred["Credential Access on Endpoint"]
-      direction LR
-      C1["<b>Unsecured Creds in Registry</b><br/>T1552.002"]:::cred
-      C2["<b>Browser Credential Stores</b><br/>T1555.003"]:::cred
-      C3["<b>Password Manager Stores</b><br/>T1555"]:::cred
-      C4["<b>LSASS Memory Dump</b><br/>T1003.001"]:::cred
-      C5["<b>SAM Database Dump</b><br/>T1003.002"]:::cred
-    end
-
-    Kerb["<b>Kerberoasting · SPN Enumeration</b><br/>T1558.003<br/>IdentityQueryEvents · IdentityLogonEvents"]:::identity
-
-    subgraph Identity["Identity Tier — Hybrid AD & Entra Connect"]
-      direction LR
-      DC["<b>DC01 · DC02</b><br/>MDI Sensors · 10.42.0.10/.11"]:::identity
-      AADC["<b>AADCONNECT01</b><br/>Entra Connect + MDE · 10.42.0.20"]:::identity
-    end
-
-    ADX[("<b>Azure Data Explorer</b><br/>CyberDefenseKqlWorkshop")]:::sink
-
-    Actor --> Cloud
-    Cloud --> Endpoint
-    Endpoint --> Cred
-    Cred --> Kerb
-    Kerb --> Identity
-
-    Cloud -. sign-in · cloud · graph telemetry .-> ADX
-    Endpoint -. device telemetry .-> ADX
-    Identity -. identity telemetry .-> ADX
-
-    classDef actor fill:#0b2a4a,stroke:#3b82f6,stroke-width:2px,color:#dbeafe
-    classDef cloud fill:#3a1d05,stroke:#f97316,stroke-width:2px,color:#fed7aa
-    classDef endpoint fill:#0f3a1f,stroke:#22c55e,stroke-width:2px,color:#bbf7d0
-    classDef cred fill:#2a1252,stroke:#a855f7,stroke-width:2px,color:#e9d5ff
-    classDef identity fill:#3a1212,stroke:#ef4444,stroke-width:2px,color:#fecaca
-    classDef sink fill:#0f172a,stroke:#94a3b8,stroke-width:2px,color:#f1f5f9
-```
+![Cyber Defense KQL Workshop lab topology](images/lab-topology.svg)
 
 Notional infrastructure:
 
@@ -255,7 +207,7 @@ Close and reopen the terminal after installing PowerShell 7 or Azure CLI.
 - Azure PowerShell Az module: <https://learn.microsoft.com/powershell/azure/install-azure-powershell>
 - Az.Kusto module reference: <https://learn.microsoft.com/powershell/module/az.kusto/>
 - Azure CLI on Windows: <https://learn.microsoft.com/cli/azure/install-azure-cli-windows>
-- Microsoft Graph PowerShell SDK: <https://learn.microsoft.com/powershell/microsoftgraph/installation>
+- Microsoft Graph PowerShell SDK: <https://learn.microsoft.com/microsoftgraph/installation>
 
 ## Security and operations notes
 
