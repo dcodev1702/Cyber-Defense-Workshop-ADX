@@ -3,9 +3,13 @@ param(
     [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),
     [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\data\generated'),
     [datetime]$StartTime = '2026-04-30T13:00:00Z',
-    [int]$NormalRowsPerTable = 2000,
+    [int]$NormalRowsPerTable = -1,
+    [int]$NormalMinRowsPerTable = 5000,
+    [int]$NormalMaxRowsPerTable = 10000,
     [int]$NormalLookbackDays = 7,
-    [int]$RandomSeed = 1702
+    [int]$RandomSeed = 1702,
+    [int]$SyntheticUserCount = 6000,
+    [int]$SyntheticServiceAccountCount = 4000
 )
 
 Set-StrictMode -Version Latest
@@ -51,21 +55,18 @@ function New-StableHex {
         [ValidateRange(1, 128)][int]$Length = 64
     )
 
-    $material = ''
-    $counter = 0
-    while ($material.Length -lt $Length) {
-        $sha = [System.Security.Cryptography.SHA256]::Create()
-        try {
-            $bytes = $sha.ComputeHash([Text.Encoding]::UTF8.GetBytes("$Seed|$counter"))
-            $material += -join ($bytes | ForEach-Object { $_.ToString('x2') })
-        }
-        finally {
-            $sha.Dispose()
-        }
-        $counter++
+    $state = [uint32]2166136261
+    foreach ($char in $Seed.ToCharArray()) {
+        $state = [uint32](([uint64]($state -bxor [uint32][char]$char) * 16777619) % 4294967296)
     }
 
-    return $material.Substring(0, $Length)
+    $builder = [System.Text.StringBuilder]::new($Length + 8)
+    while ($builder.Length -lt $Length) {
+        $state = [uint32](((1664525 * [uint64]$state) + 1013904223) % 4294967296)
+        [void]$builder.Append($state.ToString('x8'))
+    }
+
+    return $builder.ToString(0, $Length)
 }
 
 function New-WorkshopHashSet {
@@ -90,13 +91,32 @@ function Get-WorkshopRandomInt {
     return $script:Random.Next($Minimum, $Maximum)
 }
 
+function Resolve-WorkshopTemplatePath {
+    param(
+        [Parameter(Mandatory)]$Template,
+        [Parameter(Mandatory)][string]$UserName
+    )
+
+    $pathTemplateProperty = $Template.PSObject.Properties['PathTemplate']
+    if ($pathTemplateProperty) {
+        return $pathTemplateProperty.Value -f $UserName
+    }
+
+    $pathProperty = $Template.PSObject.Properties['Path']
+    if ($pathProperty) {
+        return $pathProperty.Value
+    }
+
+    throw "Template '$($Template | ConvertTo-Json -Compress)' does not include Path or PathTemplate."
+}
+
 function New-WorkshopNormalTime {
     $minutesBack = Get-WorkshopRandomInt -Minimum 1 -Maximum ([Math]::Max(2, $NormalLookbackDays * 24 * 60))
     $seconds = Get-WorkshopRandomInt -Minimum 0 -Maximum 60
     return $StartTime.AddMinutes(-$minutesBack).AddSeconds($seconds)
 }
 
-function Add-Record {
+function New-WorkshopRecordObject {
     param(
         [Parameter(Mandatory)][string]$Table,
         [Parameter(Mandatory)][hashtable]$Values,
@@ -118,7 +138,20 @@ function Add-Record {
         }
     }
 
-    $script:Records[$Table].Add([pscustomobject]$record) | Out-Null
+    return [pscustomobject]$record
+}
+
+function Add-Record {
+    param(
+        [Parameter(Mandatory)][string]$Table,
+        [Parameter(Mandatory)][hashtable]$Values,
+        [datetime]$Time = $script:StartTime
+    )
+
+    $record = New-WorkshopRecordObject -Table $Table -Values $Values -Time $Time
+    if ($null -ne $record) {
+        $script:Records[$Table].Add($record) | Out-Null
+    }
 }
 
 if (-not (Test-Path $SchemaDirectory)) {
@@ -138,9 +171,9 @@ foreach ($schemaFile in (Get-ChildItem -Path $SchemaDirectory -Filter '*.schema.
 }
 
 $tenantId = '11111111-2222-3333-4444-555555555555'
-$tenantDomain = 'wiesbadenresearch.example'
-$adDomain = 'WIESBADEN'
-$corpFqdn = 'corp.wiesbaden.example'
+$tenantDomain = 'usag-cyber.local'
+$adDomain = 'USAG-CYBER'
+$corpFqdn = 'usag-cyber.local'
 $externalIp = '185.225.73.18'
 $c2Host = 'cdn.update-check.example'
 $c2Ip = '203.0.113.77'
@@ -159,17 +192,63 @@ $kerbCmd = 'Invoke-' + 'Kerberoast'
 $secretVerb = 'seku' + 'rlsa::logo' + 'npasswords'
 $debugVerb = 'privilege::' + 'debug'
 
-$users = @(
-    [pscustomobject]@{ Name = 'victor.alvarez'; DisplayName = 'Victor Alvarez'; Upn = "victor.alvarez@$tenantDomain"; Sid = 'S-1-5-21-4100420042-5200520052-6300630063-1104'; ObjectId = New-StableGuid 'victor.alvarez' },
-    [pscustomobject]@{ Name = 'alice.weber'; DisplayName = 'Alice Weber'; Upn = "alice.weber@$tenantDomain"; Sid = 'S-1-5-21-4100420042-5200520052-6300630063-1105'; ObjectId = New-StableGuid 'alice.weber' },
-    [pscustomobject]@{ Name = 'svc_sql'; DisplayName = 'SQL Reporting Service'; Upn = "svc_sql@$tenantDomain"; Sid = 'S-1-5-21-4100420042-5200520052-6300630063-2101'; ObjectId = New-StableGuid 'svc_sql' },
-    [pscustomobject]@{ Name = 'svc_azureadconnect'; DisplayName = 'Azure AD Connect Sync'; Upn = "svc_azureadconnect@$tenantDomain"; Sid = 'S-1-5-21-4100420042-5200520052-6300630063-2102'; ObjectId = New-StableGuid 'svc_azureadconnect' },
-    [pscustomobject]@{ Name = 'ina.hoffmann'; DisplayName = 'Ina Hoffmann'; Upn = "ina.hoffmann@$tenantDomain"; Sid = 'S-1-5-21-4100420042-5200520052-6300630063-5001'; ObjectId = New-StableGuid 'ina.hoffmann' }
+$sidPrefix = 'S-1-5-21-4100420042-5200520052-6300630063'
+function New-WorkshopIdentity {
+    param(
+        [Parameter(Mandatory)][string]$Name,
+        [Parameter(Mandatory)][string]$DisplayName,
+        [Parameter(Mandatory)][int]$Rid,
+        [switch]$ServiceAccount,
+        [switch]$Privileged
+    )
+
+    [pscustomobject]@{
+        Name = $Name
+        DisplayName = $DisplayName
+        Upn = "$Name@$tenantDomain"
+        Sid = "$sidPrefix-$Rid"
+        ObjectId = New-StableGuid $Name
+        IsServiceAccount = [bool]$ServiceAccount
+        IsPrivileged = [bool]$Privileged
+    }
+}
+
+$seedUsers = @(
+    New-WorkshopIdentity -Name 'victor.alvarez' -DisplayName 'Victor Alvarez' -Rid 1104
+    New-WorkshopIdentity -Name 'alice.weber' -DisplayName 'Alice Weber' -Rid 1105
+    New-WorkshopIdentity -Name 'ina.hoffmann' -DisplayName 'Ina Hoffmann' -Rid 5001 -Privileged
+)
+$seedServiceAccounts = @(
+    New-WorkshopIdentity -Name 'svc_sql' -DisplayName 'SQL Reporting Service' -Rid 2101 -ServiceAccount -Privileged
+    New-WorkshopIdentity -Name 'svc_azureadconnect' -DisplayName 'Azure AD Connect Sync' -Rid 2102 -ServiceAccount -Privileged
 )
 
-$victor = $users[0]
-$svcSql = $users[2]
-$svcSync = $users[3]
+if ($SyntheticUserCount -lt $seedUsers.Count) {
+    throw "SyntheticUserCount must be at least $($seedUsers.Count) to include required scenario users."
+}
+if ($SyntheticServiceAccountCount -lt $seedServiceAccounts.Count) {
+    throw "SyntheticServiceAccountCount must be at least $($seedServiceAccounts.Count) to include required scenario service accounts."
+}
+
+$firstNames = @('Alex', 'Amelia', 'Avery', 'Blake', 'Casey', 'Dakota', 'Devon', 'Elliot', 'Emerson', 'Finley', 'Harper', 'Hayden', 'Jamie', 'Jordan', 'Kai', 'Kendall', 'Logan', 'Morgan', 'Parker', 'Quinn', 'Reese', 'Riley', 'Rowan', 'Sage', 'Skyler', 'Taylor')
+$lastNames = @('Adams', 'Baker', 'Bennett', 'Brooks', 'Carter', 'Cooper', 'Diaz', 'Edwards', 'Evans', 'Foster', 'Garcia', 'Gray', 'Harris', 'Hayes', 'Hughes', 'Jackson', 'Kelly', 'Lewis', 'Martinez', 'Miller', 'Morgan', 'Nelson', 'Parker', 'Reed', 'Rivera', 'Roberts', 'Scott', 'Smith', 'Taylor', 'Turner', 'Walker', 'Ward', 'Wood', 'Young')
+
+$generatedUsers = for ($i = 1; $i -le ($SyntheticUserCount - $seedUsers.Count); $i++) {
+    $first = $firstNames[($i - 1) % $firstNames.Count]
+    $lastIndex = [int]([Math]::Floor(($i - 1) / $firstNames.Count) % $lastNames.Count)
+    $last = $lastNames[$lastIndex]
+    $name = ('{0}.{1}{2:D4}' -f $first.ToLowerInvariant(), $last.ToLowerInvariant(), $i)
+    New-WorkshopIdentity -Name $name -DisplayName "$first $last" -Rid (1200 + $i)
+}
+$generatedServiceAccounts = for ($i = 1; $i -le ($SyntheticServiceAccountCount - $seedServiceAccounts.Count); $i++) {
+    $name = 'svc_app{0:D4}' -f $i
+    New-WorkshopIdentity -Name $name -DisplayName ('Application Service {0:D4}' -f $i) -Rid (3000 + $i) -ServiceAccount:($true) -Privileged:($i % 50 -eq 0)
+}
+
+$users = @($seedUsers + $generatedUsers + $seedServiceAccounts + $generatedServiceAccounts)
+$victor = $users | Where-Object Name -eq 'victor.alvarez' | Select-Object -First 1
+$svcSql = $users | Where-Object Name -eq 'svc_sql' | Select-Object -First 1
+$svcSync = $users | Where-Object Name -eq 'svc_azureadconnect' | Select-Object -First 1
 
 $devices = @(
     [pscustomobject]@{ Name = "DC01.$corpFqdn"; ShortName = 'DC01'; DeviceId = New-StableHex 'DC01' 40; IP = '10.42.0.10'; PublicIP = '198.51.100.10'; OS = 'WindowsServer2025'; Type = 'DomainController'; AssetValue = 'High' },
@@ -205,6 +284,42 @@ for ($i = 1; $i -le 5; $i++) {
 $win04 = $devices | Where-Object ShortName -eq 'WIN11-04'
 $dc01 = $devices | Where-Object ShortName -eq 'DC01'
 $aadc = $devices | Where-Object ShortName -eq 'AADCONNECT01'
+$domainControllers = @($devices | Where-Object Type -eq 'DomainController')
+
+$normalProcessTemplates = @(
+    [pscustomobject]@{ File = 'svchost.exe'; Path = 'C:\Windows\System32\svchost.exe'; Parent = 'services.exe'; Command = 'C:\Windows\System32\svchost.exe -k netsvcs -p' },
+    [pscustomobject]@{ File = 'msedge.exe'; Path = 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'; Parent = 'explorer.exe'; Command = 'msedge.exe --type=renderer --lang=en-US' },
+    [pscustomobject]@{ File = 'Teams.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\Teams\current\Teams.exe'; Parent = 'explorer.exe'; Command = 'Teams.exe --process-start-args --system-initiated' },
+    [pscustomobject]@{ File = 'OneDrive.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\OneDrive\OneDrive.exe'; Parent = 'explorer.exe'; Command = 'OneDrive.exe /background' },
+    [pscustomobject]@{ File = 'SenseIR.exe'; Path = 'C:\Program Files\Windows Defender Advanced Threat Protection\SenseIR.exe'; Parent = 'MsSense.exe'; Command = 'SenseIR.exe telemetry' },
+    [pscustomobject]@{ File = 'apt'; Path = '/usr/bin/apt'; Parent = 'bash'; Command = 'apt list --upgradable' }
+)
+$normalFileTemplates = @(
+    [pscustomobject]@{ Name = 'settings.json'; PathTemplate = 'C:\Users\{0}\AppData\Roaming\Microsoft\Teams\settings.json'; Size = 8192 },
+    [pscustomobject]@{ Name = 'cache.db'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\Edge\User Data\Default\Cache\cache.db'; Size = 262144 },
+    [pscustomobject]@{ Name = 'document.docx'; PathTemplate = 'C:\Users\{0}\Documents\Operations\document.docx'; Size = 153600 },
+    [pscustomobject]@{ Name = 'DefenderUpdate.log'; Path = 'C:\ProgramData\Microsoft\Windows Defender\Support\DefenderUpdate.log'; Size = 32768 },
+    [pscustomobject]@{ Name = 'syslog'; Path = '/var/log/syslog'; Size = 65536 }
+)
+$normalDllTemplates = @(
+    [pscustomobject]@{ Name = 'samlib.dll'; Path = 'C:\Windows\System32\samlib.dll'; Size = 176128 },
+    [pscustomobject]@{ Name = 'sechost.dll'; Path = 'C:\Windows\System32\sechost.dll'; Size = 761856 },
+    [pscustomobject]@{ Name = 'winhttp.dll'; Path = 'C:\Windows\System32\winhttp.dll'; Size = 1089536 },
+    [pscustomobject]@{ Name = 'crypt32.dll'; Path = 'C:\Windows\System32\crypt32.dll'; Size = 1869824 }
+)
+$normalRemoteEndpoints = @(
+    [pscustomobject]@{ Url = 'login.microsoftonline.com'; IP = '20.190.160.10'; Port = 443 },
+    [pscustomobject]@{ Url = 'graph.microsoft.com'; IP = '20.190.128.12'; Port = 443 },
+    [pscustomobject]@{ Url = 'officecdn.microsoft.com'; IP = '13.107.246.40'; Port = 443 },
+    [pscustomobject]@{ Url = 'wdcp.microsoft.com'; IP = '52.152.110.14'; Port = 443 },
+    [pscustomobject]@{ Url = 'packages.microsoft.com'; IP = '13.107.246.45'; Port = 443 }
+)
+$normalApplications = @(
+    [pscustomobject]@{ Name = 'Microsoft Teams'; Id = '1fec8e78-bce4-4aaf-ab1b-5451cc387264'; Resource = 'Microsoft Graph' },
+    [pscustomobject]@{ Name = 'Office 365 Exchange Online'; Id = '00000002-0000-0ff1-ce00-000000000000'; Resource = 'Office 365 Exchange Online' },
+    [pscustomobject]@{ Name = 'Microsoft Azure PowerShell'; Id = '1950a258-227b-4e31-a9cf-717495945fc2'; Resource = 'Azure Resource Manager' },
+    [pscustomobject]@{ Name = 'Windows Sign In'; Id = '38aa3b87-a06d-4817-b275-7a316988d93b'; Resource = 'Microsoft Entra ID' }
+)
 
 foreach ($device in $devices) {
     $deviceIndex = [array]::IndexOf($devices, $device) + 1
@@ -255,10 +370,10 @@ foreach ($user in $users) {
             AccountDomain = $adDomain
             AccountSid = $user.Sid
             IsAccountEnabled = $true
-            IsServiceAccount = $user.Name -like 'svc_*'
-            CriticalityLevel = if ($user.Name -like 'svc_*' -or $user.Name -eq 'ina.hoffmann') { 'High' } else { 'Medium' }
-            BlastRadius = if ($user.Name -like 'svc_*') { 'High' } else { 'Low' }
-            Tags = if ($user.Name -eq 'svc_azureadconnect') { '["Tier0","EntraConnect"]' } else { '[]' }
+            IsServiceAccount = $user.IsServiceAccount
+            CriticalityLevel = if ($user.IsServiceAccount -or $user.IsPrivileged) { 2 } else { 1 }
+            BlastRadius = if ($user.IsServiceAccount -or $user.IsPrivileged) { 'High' } else { 'Low' }
+            Tags = if ($user.Name -eq 'svc_azureadconnect') { @('Tier0', 'EntraConnect') } elseif ($user.IsServiceAccount) { @('ServiceAccount') } else { @('Employee') }
             OnPremSid = $user.Sid
         }
     }
@@ -358,46 +473,13 @@ function New-NormalTelemetryValues {
 
     $user = Get-WorkshopRandomItem $users
     $device = Get-WorkshopRandomItem $devices
-    $processPool = @(
-        [pscustomobject]@{ File = 'svchost.exe'; Path = 'C:\Windows\System32\svchost.exe'; Parent = 'services.exe'; Command = 'C:\Windows\System32\svchost.exe -k netsvcs -p' },
-        [pscustomobject]@{ File = 'msedge.exe'; Path = 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'; Parent = 'explorer.exe'; Command = 'msedge.exe --type=renderer --lang=en-US' },
-        [pscustomobject]@{ File = 'Teams.exe'; Path = "C:\Users\$($user.Name)\AppData\Local\Microsoft\Teams\current\Teams.exe"; Parent = 'explorer.exe'; Command = 'Teams.exe --process-start-args --system-initiated' },
-        [pscustomobject]@{ File = 'OneDrive.exe'; Path = "C:\Users\$($user.Name)\AppData\Local\Microsoft\OneDrive\OneDrive.exe"; Parent = 'explorer.exe'; Command = 'OneDrive.exe /background' },
-        [pscustomobject]@{ File = 'SenseIR.exe'; Path = 'C:\Program Files\Windows Defender Advanced Threat Protection\SenseIR.exe'; Parent = 'MsSense.exe'; Command = 'SenseIR.exe telemetry' },
-        [pscustomobject]@{ File = 'apt'; Path = '/usr/bin/apt'; Parent = 'bash'; Command = 'apt list --upgradable' }
-    )
-    $filePool = @(
-        [pscustomobject]@{ Name = 'settings.json'; Path = "C:\Users\$($user.Name)\AppData\Roaming\Microsoft\Teams\settings.json"; Size = 8192 },
-        [pscustomobject]@{ Name = 'cache.db'; Path = "C:\Users\$($user.Name)\AppData\Local\Microsoft\Edge\User Data\Default\Cache\cache.db"; Size = 262144 },
-        [pscustomobject]@{ Name = 'document.docx'; Path = "C:\Users\$($user.Name)\Documents\Operations\document.docx"; Size = 153600 },
-        [pscustomobject]@{ Name = 'DefenderUpdate.log'; Path = 'C:\ProgramData\Microsoft\Windows Defender\Support\DefenderUpdate.log'; Size = 32768 },
-        [pscustomobject]@{ Name = 'syslog'; Path = '/var/log/syslog'; Size = 65536 }
-    )
-    $dllPool = @(
-        [pscustomobject]@{ Name = 'samlib.dll'; Path = 'C:\Windows\System32\samlib.dll'; Size = 176128 },
-        [pscustomobject]@{ Name = 'sechost.dll'; Path = 'C:\Windows\System32\sechost.dll'; Size = 761856 },
-        [pscustomobject]@{ Name = 'winhttp.dll'; Path = 'C:\Windows\System32\winhttp.dll'; Size = 1089536 },
-        [pscustomobject]@{ Name = 'crypt32.dll'; Path = 'C:\Windows\System32\crypt32.dll'; Size = 1869824 }
-    )
-    $remotePool = @(
-        [pscustomobject]@{ Url = 'login.microsoftonline.com'; IP = '20.190.160.10'; Port = 443 },
-        [pscustomobject]@{ Url = 'graph.microsoft.com'; IP = '20.190.128.12'; Port = 443 },
-        [pscustomobject]@{ Url = 'officecdn.microsoft.com'; IP = '13.107.246.40'; Port = 443 },
-        [pscustomobject]@{ Url = 'wdcp.microsoft.com'; IP = '52.152.110.14'; Port = 443 },
-        [pscustomobject]@{ Url = 'packages.microsoft.com'; IP = '13.107.246.45'; Port = 443 }
-    )
-    $appPool = @(
-        [pscustomobject]@{ Name = 'Microsoft Teams'; Id = '1fec8e78-bce4-4aaf-ab1b-5451cc387264'; Resource = 'Microsoft Graph' },
-        [pscustomobject]@{ Name = 'Office 365 Exchange Online'; Id = '00000002-0000-0ff1-ce00-000000000000'; Resource = 'Office 365 Exchange Online' },
-        [pscustomobject]@{ Name = 'Microsoft Azure PowerShell'; Id = '1950a258-227b-4e31-a9cf-717495945fc2'; Resource = 'Azure Resource Manager' },
-        [pscustomobject]@{ Name = 'Windows Sign In'; Id = '38aa3b87-a06d-4817-b275-7a316988d93b'; Resource = 'Microsoft Entra ID' }
-    )
-
-    $process = Get-WorkshopRandomItem $processPool
-    $file = Get-WorkshopRandomItem $filePool
-    $dll = Get-WorkshopRandomItem $dllPool
-    $remote = Get-WorkshopRandomItem $remotePool
-    $app = Get-WorkshopRandomItem $appPool
+    $process = Get-WorkshopRandomItem $normalProcessTemplates
+    $file = Get-WorkshopRandomItem $normalFileTemplates
+    $dll = Get-WorkshopRandomItem $normalDllTemplates
+    $remote = Get-WorkshopRandomItem $normalRemoteEndpoints
+    $app = Get-WorkshopRandomItem $normalApplications
+    $processPath = Resolve-WorkshopTemplatePath -Template $process -UserName $user.Name
+    $filePath = Resolve-WorkshopTemplatePath -Template $file -UserName $user.Name
     $hashes = New-WorkshopHashSet "$Table|$Index|$($file.Name)|$($device.ShortName)"
     $processHashes = New-WorkshopHashSet "$Table|$Index|$($process.File)|process"
     $reportId = 700000 + $Index
@@ -426,7 +508,7 @@ function New-NormalTelemetryValues {
         InitiatingProcessIntegrityLevel = 'Medium'
         InitiatingProcessTokenElevation = 'TokenElevationTypeLimited'
         InitiatingProcessFileName = $process.File
-        InitiatingProcessFolderPath = $process.Path
+        InitiatingProcessFolderPath = $processPath
         InitiatingProcessCommandLine = $process.Command
         InitiatingProcessParentFileName = $process.Parent
         InitiatingProcessSHA1 = $processHashes.SHA1
@@ -436,7 +518,7 @@ function New-NormalTelemetryValues {
         SHA256 = $hashes.SHA256
         MD5 = $hashes.MD5
         FileName = $file.Name
-        FolderPath = $file.Path
+        FolderPath = $filePath
         FileSize = $file.Size
         AADTenantId = $tenantId
         TenantId = $tenantId
@@ -449,7 +531,7 @@ function New-NormalTelemetryValues {
         'DeviceProcessEvents' {
             $values.ActionType = 'ProcessCreated'
             $values.FileName = $process.File
-            $values.FolderPath = $process.Path
+            $values.FolderPath = $processPath
             $values.ProcessCommandLine = $process.Command
             $values.ProcessCreationTime = $timeText
             $values.ProcessId = 2000 + ($Index % 40000)
@@ -472,7 +554,7 @@ function New-NormalTelemetryValues {
         'DeviceEvents' {
             $values.ActionType = Get-WorkshopRandomItem @('ScheduledTaskCreated', 'ScheduledTaskDeleted', 'ServiceInstalled', 'AntivirusSignatureUpdated', 'PowerShellCommand', 'AppControlCodeIntegrityPolicyAudited')
             $values.FileName = $process.File
-            $values.FolderPath = $process.Path
+            $values.FolderPath = $processPath
             $values.ProcessCommandLine = $process.Command
         }
         'DeviceNetworkEvents' {
@@ -615,8 +697,8 @@ function New-NormalTelemetryValues {
             $values.QueryTarget = Get-WorkshopRandomItem @('user', 'group', 'servicePrincipalName')
             $values.Query = '(objectClass=user)'
             $values.IPAddress = $device.IP
-            $values.DestinationDeviceName = (Get-WorkshopRandomItem ($devices | Where-Object Type -eq 'DomainController')).Name
-            $values.DestinationIPAddress = (Get-WorkshopRandomItem ($devices | Where-Object Type -eq 'DomainController')).IP
+            $values.DestinationDeviceName = (Get-WorkshopRandomItem $domainControllers).Name
+            $values.DestinationIPAddress = (Get-WorkshopRandomItem $domainControllers).IP
             $values.DestinationPort = Get-WorkshopRandomItem @(88, 389, 636)
             $values.AccountObjectId = $user.ObjectId
             $values.AccountUpn = $user.Upn
@@ -649,24 +731,62 @@ function New-NormalTelemetryValues {
     return $values
 }
 
-function Add-NormalTelemetryVolume {
-    if ($NormalRowsPerTable -le 0) {
-        return
+function Get-WorkshopTargetRowCount {
+    param([Parameter(Mandatory)][string]$Table)
+
+    $existingCount = $script:Records[$Table].Count
+    if ($NormalRowsPerTable -eq 0) {
+        return $existingCount
+    }
+    if ($NormalRowsPerTable -lt 0 -and $NormalMinRowsPerTable -gt $NormalMaxRowsPerTable) {
+        throw 'NormalMinRowsPerTable cannot be greater than NormalMaxRowsPerTable.'
     }
 
-    foreach ($table in ($script:Schemas.Keys | Sort-Object)) {
-        $existingCount = $script:Records[$table].Count
-        $rowsToAdd = [Math]::Max(0, $NormalRowsPerTable - $existingCount)
-        for ($i = 0; $i -lt $rowsToAdd; $i++) {
-            $time = New-WorkshopNormalTime
-            $index = ($table.GetHashCode() -band 0x7fffffff) + $i
-            $values = New-NormalTelemetryValues -Table $table -Time $time -Index $index
-            Add-Record -Table $table -Time $time -Values $values
-        }
+    $targetRows = if ($NormalRowsPerTable -gt 0) {
+        $NormalRowsPerTable
     }
+    else {
+        Get-WorkshopRandomInt -Minimum $NormalMinRowsPerTable -Maximum ($NormalMaxRowsPerTable + 1)
+    }
+
+    return [Math]::Max($existingCount, $targetRows)
 }
 
-Add-NormalTelemetryVolume
+function Write-WorkshopTableData {
+    param([Parameter(Mandatory)][string]$Table)
+
+    $path = Join-Path $OutputDirectory "$Table.json"
+    $targetRows = Get-WorkshopTargetRowCount -Table $Table
+    $existingCount = $script:Records[$Table].Count
+    $rowsToAdd = [Math]::Max(0, $targetRows - $existingCount)
+    $tableSeed = [Convert]::ToInt32((New-StableHex $Table 7), 16)
+    $encoding = [System.Text.UTF8Encoding]::new($false)
+    $writer = [System.IO.StreamWriter]::new($path, $false, $encoding)
+    $written = 0
+
+    try {
+        foreach ($record in $script:Records[$Table]) {
+            $writer.WriteLine(($record | ConvertTo-Json -Compress -Depth 20))
+            $written++
+        }
+
+        for ($i = 0; $i -lt $rowsToAdd; $i++) {
+            $time = New-WorkshopNormalTime
+            $index = $tableSeed + $i
+            $values = New-NormalTelemetryValues -Table $Table -Time $time -Index $index
+            $record = New-WorkshopRecordObject -Table $Table -Values $values -Time $time
+            if ($null -ne $record) {
+                $writer.WriteLine(($record | ConvertTo-Json -Compress -Depth 20))
+                $written++
+            }
+        }
+    }
+    finally {
+        $writer.Dispose()
+    }
+
+    Write-Host "Wrote $written row(s) to $path"
+}
 
 $stage = 'C:\ProgramData\wrstage'
 $attackSteps = @(
@@ -708,7 +828,7 @@ Add-Record -Table 'DeviceRegistryEvents' -Time $StartTime.AddMinutes(16) -Values
     DeviceId = $win04.DeviceId
     DeviceName = $win04.Name
     ActionType = 'RegistryValueCreated'
-    RegistryKey = 'HKEY_CURRENT_USER\Software\WiesbadenResearch\VPN'
+    RegistryKey = 'HKEY_CURRENT_USER\Software\USAGCyber\VPN'
     RegistryValueType = 'REG_SZ'
     RegistryValueName = 'SavedPassword'
     RegistryValueData = 'REDACTED_SYNTHETIC_SECRET'
@@ -808,7 +928,7 @@ Add-Record -Table 'IdentityLogonEvents' -Time $StartTime.AddMinutes(37) -Values 
     DestinationPort = 88
     TargetAccountDisplayName = $svcSql.DisplayName
     ReportId = 5601
-    AdditionalFields = '{"ServicePrincipalName":"MSSQLSvc/sql01.corp.wiesbaden.example:1433","TicketEncryptionType":"RC4_HMAC"}'
+    AdditionalFields = '{"ServicePrincipalName":"MSSQLSvc/sql01.usag-cyber.local:1433","TicketEncryptionType":"RC4_HMAC"}'
 }
 Add-Record -Table 'IdentityLogonEvents' -Time $StartTime.AddMinutes(81) -Values @{
     Timestamp = Format-WorkshopTime $StartTime.AddMinutes(81)
@@ -957,7 +1077,7 @@ Add-Record -Table 'CloudAppEvents' -Time $StartTime.AddMinutes(5) -Values @{
     City = 'Frankfurt am Main'
     UserAgent = 'Mozilla/5.0 FIN7-workshop'
     ActivityType = 'Consent to application'
-    ObjectName = 'Wiesbaden Research Sync Helper'
+    ObjectName = 'USAG Cyber Sync Helper'
     ObjectType = 'OAuthApplication'
     ReportId = 5901
     AccountType = 'Regular'
@@ -980,7 +1100,7 @@ Add-Record -Table 'AuditLogs' -Time $StartTime.AddMinutes(5) -Values @{
     OperationName = 'Consent to application'
     Result = 'success'
     ResultType = 'Success'
-    TargetResources = @(@{ displayName = 'Wiesbaden Research Sync Helper'; type = 'ServicePrincipal'; id = New-StableGuid 'malicious-oauth' })
+    TargetResources = @(@{ displayName = 'USAG Cyber Sync Helper'; type = 'ServicePrincipal'; id = New-StableGuid 'malicious-oauth' })
     Type = 'AuditLogs'
 }
 
@@ -1119,12 +1239,7 @@ foreach ($table in $script:Schemas.Keys) {
 }
 
 foreach ($table in ($script:Schemas.Keys | Sort-Object)) {
-    $path = Join-Path $OutputDirectory "$table.json"
-    $lines = foreach ($record in $script:Records[$table]) {
-        $record | ConvertTo-Json -Compress -Depth 20
-    }
-    $lines | Set-Content -Path $path -Encoding UTF8
-    Write-Host "Wrote $($script:Records[$table].Count) row(s) to $path"
+    Write-WorkshopTableData -Table $table
 }
 
 $summary = [ordered]@{
@@ -1137,6 +1252,10 @@ $summary = [ordered]@{
         windows11Endpoints = 10
         ubuntuEndpoints = 5
         entraConnectServers = 1
+    }
+    identities = [ordered]@{
+        users = $SyntheticUserCount
+        serviceAccounts = $SyntheticServiceAccountCount
     }
     compromisedUser = $victor.Upn
     initialDevice = $win04.Name

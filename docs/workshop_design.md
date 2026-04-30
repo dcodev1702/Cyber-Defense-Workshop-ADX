@@ -11,7 +11,7 @@ By the end of the workshop, students can:
 
 ## Scenario
 
-The intrusion is a FIN7-inspired emulation against Wiesbaden Research, a hybrid AD/Entra organization. The attacker compromises `victor.alvarez@wiesbadenresearch.example`, completes MFA, grants a suspicious OAuth app, enumerates Graph data, lands on `WIN11-04`, then performs a credential-access sequence covering registry credentials, SAM hive saves, browser credential harvesting, Kerberoasting, LSASS dumping, password-store harvesting tools, and Mimikatz-style credential dumping. The attacker later uses a cracked service account to access `AADCONNECT01`.
+The intrusion is a FIN7-inspired emulation against a hybrid AD/Entra organization using `usag-cyber.local` and account domain `USAG-CYBER`. The attacker compromises `victor.alvarez@usag-cyber.local`, completes MFA, grants a suspicious OAuth app, enumerates Graph data, lands on `WIN11-04`, then performs a credential-access sequence covering registry credentials, SAM hive saves, browser credential harvesting, Kerberoasting, LSASS dumping, password-store harvesting tools, and Mimikatz-style credential dumping. The attacker later uses a cracked service account to access `AADCONNECT01`.
 
 ## Agenda
 

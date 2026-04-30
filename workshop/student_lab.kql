@@ -43,7 +43,7 @@ GraphApiAuditEvents
 | order by Timestamp asc
 
 // 5. Pivot from compromised user to endpoint process activity.
-let compromisedUser = "victor.alvarez@wiesbadenresearch.example";
+let compromisedUser = "victor.alvarez@usag-cyber.local";
 DeviceProcessEvents
 | where AccountUpn =~ compromisedUser
 | project Timestamp, DeviceName, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields

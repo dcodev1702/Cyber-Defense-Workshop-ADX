@@ -13,7 +13,7 @@ flowchart LR
         CloudApp[CloudAppEvents]
     end
 
-    subgraph OnPrem[Hybrid AD: corp.wiesbaden.example]
+    subgraph OnPrem[Hybrid AD: usag-cyber.local]
         DC01[DC01<br/>MDI Sensor<br/>10.42.0.10]
         DC02[DC02<br/>MDI Sensor<br/>10.42.0.11]
         AADC[AADCONNECT01<br/>Entra Connect + MDE<br/>10.42.0.20]

@@ -1,16 +1,20 @@
 {
   "scenarioName": "FIN7-inspired hybrid identity credential access",
   "startTime": "2026-04-30T13:00:00.0000000Z",
-  "tenantDomain": "wiesbadenresearch.example",
-  "adDomain": "WIESBADEN",
+  "tenantDomain": "usag-cyber.local",
+  "adDomain": "USAG-CYBER",
   "infrastructure": {
     "domainControllers": 2,
     "windows11Endpoints": 10,
     "ubuntuEndpoints": 5,
     "entraConnectServers": 1
   },
-  "compromisedUser": "victor.alvarez@wiesbadenresearch.example",
-  "initialDevice": "WIN11-04.corp.wiesbaden.example",
+  "identities": {
+    "users": 6000,
+    "serviceAccounts": 4000
+  },
+  "compromisedUser": "victor.alvarez@usag-cyber.local",
+  "initialDevice": "WIN11-04.usag-cyber.local",
   "attackVectors": [
     {
       "Title": "Credentials in Registry Script",

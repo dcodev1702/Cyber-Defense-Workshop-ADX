@@ -18,7 +18,7 @@ The purpose of this workshop is to help defenders learn how to:
 
 ## Scenario summary
 
-The scenario uses a **FIN7-inspired hybrid identity credential-access intrusion** against a notional organization named Wiesbaden Research. The intrusion begins with a risky Entra sign-in, suspicious OAuth consent, and Microsoft Graph activity, then pivots to a compromised Windows endpoint where the attacker performs credential-access activity. The attack path later touches domain controller telemetry and service-account activity against the Entra Connect server.
+The scenario uses a **FIN7-inspired hybrid identity credential-access intrusion** against a notional hybrid AD/Entra environment using `usag-cyber.local` and account domain `USAG-CYBER`. The intrusion begins with a risky Entra sign-in, suspicious OAuth consent, and Microsoft Graph activity, then pivots to a compromised Windows endpoint where the attacker performs credential-access activity. The attack path later touches domain controller telemetry and service-account activity against the Entra Connect server.
 
 The diagram below traces the kill chain across the cloud, endpoint, and identity tiers. Each credential-access node is annotated with its MITRE ATT&CK technique, and the dotted edges show where each phase deposits telemetry into Azure Data Explorer for student investigation.
 
@@ -94,7 +94,7 @@ To intentionally replace the existing database and reuse the same database name:
 
 After the database exists, the deploy script creates or updates table schemas and ingestion mappings, validates that all expected tables exist, generates synthetic telemetry, and ingests the scenario data.
 
-By default, deployment generates at least **2,000 normal baseline records per table** across a seven-day lookback, then layers in the malicious FIN7-inspired storyline so suspicious records blend into normal telemetry. Tune volume with:
+By default, deployment generates **5,000-10,000 final records per table** across a seven-day lookback, including the malicious FIN7-inspired storyline so suspicious records blend into normal telemetry. Tune volume with:
 
 ```powershell
 .\scripts\Initialize-Workshop.ps1 `
@@ -102,7 +102,10 @@ By default, deployment generates at least **2,000 normal baseline records per ta
   -ResourceGroupName 'ADX' `
   -ClusterName 'dibsecadx' `
   -DatabaseName 'CyberDefenseKqlWorkshop' `
-  -NormalRowsPerTable 5000 `
+  -NormalMinRowsPerTable 5000 `
+  -NormalMaxRowsPerTable 10000 `
+  -SyntheticUserCount 6000 `
+  -SyntheticServiceAccountCount 4000 `
   -NormalLookbackDays 7 `
   -RandomSeed 1702
 ```

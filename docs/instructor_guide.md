@@ -11,7 +11,7 @@
 
 ## Instructor storyline
 
-Start with the sign-in. Students should find a high-risk interactive sign-in for `victor.alvarez@wiesbadenresearch.example` from `185.225.73.18`, followed by OAuth consent and Graph enumeration. The endpoint pivot is `WIN11-04.corp.wiesbaden.example`. The credential-access chain begins with PowerShell staging and progresses through registry credential discovery, SAM hive save, browser database copy, Kerberoasting, LSASS dump, password-store harvesting, and Mimikatz-style credential dumping. The identity pivot is the service account `svc_sql`, which is later used against `AADCONNECT01`.
+Start with the sign-in. Students should find a high-risk interactive sign-in for `victor.alvarez@usag-cyber.local` from `185.225.73.18`, followed by OAuth consent and Graph enumeration. The endpoint pivot is `WIN11-04.usag-cyber.local`. The credential-access chain begins with PowerShell staging and progresses through registry credential discovery, SAM hive save, browser database copy, Kerberoasting, LSASS dump, password-store harvesting, and Mimikatz-style credential dumping. The identity pivot is the service account `svc_sql`, which is later used against `AADCONNECT01`.
 
 ## Expected key findings
 

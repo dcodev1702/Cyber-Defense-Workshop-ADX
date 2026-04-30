@@ -14,9 +14,13 @@ param(
     [switch]$ForceRecreateTables,
     [switch]$SkipGenerateData,
     [switch]$SkipIngest,
-    [int]$NormalRowsPerTable = 2000,
+    [int]$NormalRowsPerTable = -1,
+    [int]$NormalMinRowsPerTable = 5000,
+    [int]$NormalMaxRowsPerTable = 10000,
     [int]$NormalLookbackDays = 7,
     [int]$RandomSeed = 1702,
+    [int]$SyntheticUserCount = 6000,
+    [int]$SyntheticServiceAccountCount = 4000,
     [datetime]$ScenarioStartTime = '2026-04-30T13:00:00Z'
 )
 
@@ -133,8 +137,12 @@ if (-not $SkipGenerateData) {
         -OutputDirectory $dataDirectory `
         -StartTime $ScenarioStartTime `
         -NormalRowsPerTable $NormalRowsPerTable `
+        -NormalMinRowsPerTable $NormalMinRowsPerTable `
+        -NormalMaxRowsPerTable $NormalMaxRowsPerTable `
         -NormalLookbackDays $NormalLookbackDays `
-        -RandomSeed $RandomSeed
+        -RandomSeed $RandomSeed `
+        -SyntheticUserCount $SyntheticUserCount `
+        -SyntheticServiceAccountCount $SyntheticServiceAccountCount
 }
 
 if (-not $SkipIngest) {
