@@ -17,9 +17,9 @@
 
   <!-- External actor -->
   <g>
-    <rect x="380" y="105" width="240" height="60" rx="30" fill="#0b2a4a" stroke="#3b82f6" stroke-width="2"/>
-    <text x="500" y="132" text-anchor="middle" fill="#dbeafe" font-size="14" font-weight="700">FIN7-Inspired Operator</text>
-    <text x="500" y="150" text-anchor="middle" fill="#93c5fd" font-size="11">External actor · 185.225.73.18</text>
+    <rect x="380" y="105" width="240" height="60" rx="30" fill="#3a1212" stroke="#ef4444" stroke-width="2"/>
+    <text x="500" y="132" text-anchor="middle" fill="#fecaca" font-size="14" font-weight="700">FIN7-Inspired Operator</text>
+    <text x="500" y="150" text-anchor="middle" fill="#fca5a5" font-size="11">External actor · 185.225.73.18</text>
   </g>
 
   <!-- Microsoft Entra ID -->
@@ -57,16 +57,16 @@
     <text x="540" y="328" fill="#cbd5e1" font-size="12" font-weight="600">Identity Tier — Hybrid AD / Entra Connect</text>
 
     <!-- Domain Controllers -->
-    <rect x="546" y="345" width="180" height="70" rx="10" fill="#3a1212" stroke="#ef4444" stroke-width="2"/>
-    <text x="636" y="370" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="700">2 × Domain Controllers</text>
-    <text x="636" y="388" text-anchor="middle" fill="#fca5a5" font-size="11">DC01 · DC02</text>
-    <text x="636" y="403" text-anchor="middle" fill="#fca5a5" font-size="11">MDI sensors</text>
+    <rect x="546" y="345" width="180" height="70" rx="10" fill="#0b2a4a" stroke="#3b82f6" stroke-width="2"/>
+    <text x="636" y="370" text-anchor="middle" fill="#dbeafe" font-size="13" font-weight="700">2 × Domain Controllers</text>
+    <text x="636" y="388" text-anchor="middle" fill="#93c5fd" font-size="11">DC01 · DC02</text>
+    <text x="636" y="403" text-anchor="middle" fill="#93c5fd" font-size="11">MDI sensors</text>
 
     <!-- Entra Connect -->
-    <rect x="746" y="345" width="180" height="70" rx="10" fill="#3a1212" stroke="#ef4444" stroke-width="2"/>
-    <text x="836" y="370" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="700">Entra Connect Server</text>
-    <text x="836" y="388" text-anchor="middle" fill="#fca5a5" font-size="11">AADCONNECT01</text>
-    <text x="836" y="403" text-anchor="middle" fill="#fca5a5" font-size="11">MDI + MDE telemetry</text>
+    <rect x="746" y="345" width="180" height="70" rx="10" fill="#0b2a4a" stroke="#3b82f6" stroke-width="2"/>
+    <text x="836" y="370" text-anchor="middle" fill="#dbeafe" font-size="13" font-weight="700">Entra Connect Server</text>
+    <text x="836" y="388" text-anchor="middle" fill="#93c5fd" font-size="11">AADCONNECT01</text>
+    <text x="836" y="403" text-anchor="middle" fill="#93c5fd" font-size="11">MDI + MDE telemetry</text>
 
     <!-- Caption inside identity enclave -->
     <text x="735" y="450" text-anchor="middle" fill="#64748b" font-size="11" font-style="italic">IdentityQueryEvents · IdentityLogonEvents · IdentityDirectoryEvents</text>
@@ -100,10 +100,10 @@
   <text x="500" y="468" text-anchor="middle" fill="#cbd5e1" font-size="10">Kerberoasting · svc_sql lateral move</text>
 
   <!-- Dashed telemetry edges to ADX -->
-  <!-- Entra -> ADX -->
-  <path d="M 580 264 Q 700 380 600 565" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrowDashed)"/>
-  <text x="700" y="430" fill="#64748b" font-size="10" font-style="italic">cloud · sign-in</text>
-  <text x="700" y="444" fill="#64748b" font-size="10" font-style="italic">graph telemetry</text>
+  <!-- Entra -> ADX (straight down center) -->
+  <line x1="500" y1="264" x2="500" y2="565" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrowDashed)"/>
+  <text x="510" y="410" fill="#64748b" font-size="10" font-style="italic">cloud · sign-in</text>
+  <text x="510" y="424" fill="#64748b" font-size="10" font-style="italic">graph telemetry</text>
 
   <!-- Endpoints -> ADX -->
   <path d="M 265 505 Q 300 530 400 565" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arrowDashed)"/>
