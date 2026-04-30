@@ -66,14 +66,16 @@ The default deployment target is the existing `dibsecadx` cluster in the `ADX` r
 
 - Cluster URI: `https://dibsecadx.eastus2.kusto.windows.net`
 - Data ingestion URI: `https://ingest-dibsecadx.eastus2.kusto.windows.net`
-- Subscription: `Security` (`192ad012-896e-4f14-8525-c37a2a9640f9`)
+- Subscription: `Security`
 - Default database: `CyberDefenseKqlWorkshop`
 - Retention: 1 year
 - Hot cache: 1 year
 
 ```powershell
+$securitySubscription = Get-AzSubscription -SubscriptionName 'Security'
+
 .\scripts\Initialize-Workshop.ps1 `
-  -SubscriptionId '192ad012-896e-4f14-8525-c37a2a9640f9' `
+  -SubscriptionId $securitySubscription.Id `
   -ResourceGroupName 'ADX' `
   -ClusterName 'dibsecadx' `
   -DatabaseName 'CyberDefenseKqlWorkshop'
@@ -84,8 +86,10 @@ If `CyberDefenseKqlWorkshop` already exists and `-OverwriteDatabase` is **not** 
 To intentionally replace the existing database and reuse the same database name:
 
 ```powershell
+$securitySubscription = Get-AzSubscription -SubscriptionName 'Security'
+
 .\scripts\Initialize-Workshop.ps1 `
-  -SubscriptionId '192ad012-896e-4f14-8525-c37a2a9640f9' `
+  -SubscriptionId $securitySubscription.Id `
   -ResourceGroupName 'ADX' `
   -ClusterName 'dibsecadx' `
   -DatabaseName 'CyberDefenseKqlWorkshop' `
@@ -97,8 +101,10 @@ After the database exists, the deploy script creates or updates table schemas an
 By default, deployment generates **5,000-10,000 final records per table** across a seven-day lookback ending at the time the script runs, including the malicious FIN7-inspired storyline so suspicious records blend into normal telemetry. Tune volume with:
 
 ```powershell
+$securitySubscription = Get-AzSubscription -SubscriptionName 'Security'
+
 .\scripts\Initialize-Workshop.ps1 `
-  -SubscriptionId '192ad012-896e-4f14-8525-c37a2a9640f9' `
+  -SubscriptionId $securitySubscription.Id `
   -ResourceGroupName 'ADX' `
   -ClusterName 'dibsecadx' `
   -DatabaseName 'CyberDefenseKqlWorkshop' `
@@ -113,8 +119,10 @@ By default, deployment generates **5,000-10,000 final records per table** across
 To refresh local-only Log Analytics samples from the Security workspace for generator tuning:
 
 ```powershell
+$securitySubscription = Get-AzSubscription -SubscriptionName 'Security'
+
 .\scripts\Export-LogAnalyticsSamples.ps1 `
-  -SubscriptionId '192ad012-896e-4f14-8525-c37a2a9640f9' `
+  -SubscriptionId $securitySubscription.Id `
   -WorkspaceName 'DIBSecCom' `
   -ResourceGroupName 'sentinel' `
   -LookbackDays 7 `
