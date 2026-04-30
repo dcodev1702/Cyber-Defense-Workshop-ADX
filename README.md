@@ -28,9 +28,9 @@ Notional infrastructure:
 
 - 2 x domain controllers (server 2022) with MDI
 - 10 x Windows 11 25H2 endpoints with MDE
-- 5 Ubuntu Linux endpoints with MDE
-- 1 Entra Connect server with MDI/MDE-relevant identity telemetry
-- Hybrid Active Directory and Microsoft Entra ID environment
+- 5 x Ubuntu Linux endpoints with MDE
+- 1 x Entra Connect server with MDI/MDE-relevant identity telemetry
+- Hybrid Active Directory and Microsoft Entra ID environment (6K users / 4K service accounts)
 
 The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including `T1552.002`, `T1003.002`, `T1555.003`, `T1558.003`, `T1003.001`, and `T1555`.
 
