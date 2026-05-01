@@ -431,12 +431,101 @@ function New-WorkshopIdentity {
     [pscustomobject]@{
         Name = $Name
         DisplayName = $DisplayName
+        Rid = $Rid
         Upn = "$Name@$tenantDomain"
         Sid = "$sidPrefix-$Rid"
         ObjectId = New-StableGuid $Name
         IsServiceAccount = [bool]$ServiceAccount
         IsPrivileged = [bool]$Privileged
     }
+}
+
+function Get-WorkshopIdentityNameParts {
+    param([Parameter(Mandatory)]$Identity)
+
+    if ($Identity.IsServiceAccount) {
+        return [pscustomobject]@{ GivenName = ''; Surname = '' }
+    }
+
+    $parts = @($Identity.DisplayName -split '\s+', 2)
+    [pscustomobject]@{
+        GivenName = $parts[0]
+        Surname = if ($parts.Count -gt 1) { $parts[1] } else { '' }
+    }
+}
+
+function Get-WorkshopIdentityStatus {
+    param([Parameter(Mandatory)]$Identity)
+
+    if ($Identity.Name -in @('victor.alvarez', 'alice.weber', 'ina.hoffmann', 'svc_sql', 'svc_azureadconnect')) {
+        return 'Enabled'
+    }
+    if (($Identity.Rid % 20) -eq 0) {
+        return 'Deleted'
+    }
+    if (($Identity.Rid % 5) -eq 0) {
+        return 'Disabled'
+    }
+
+    return 'Enabled'
+}
+
+function Get-WorkshopIdentitySourceProvider {
+    param([Parameter(Mandatory)]$Identity)
+
+    if (($Identity.Rid % 25) -lt 14) {
+        return 'ActiveDirectory'
+    }
+
+    return 'AzureActiveDirectory'
+}
+
+function Get-WorkshopIdentityGroups {
+    param([Parameter(Mandatory)]$Identity)
+
+    $groups = @(
+        (New-StableGuid 'group|Domain Users'),
+        (New-StableGuid ("group|department|{0}" -f ($Identity.Rid % 12)))
+    )
+    if ($Identity.IsServiceAccount) {
+        $groups += New-StableGuid 'group|Service Accounts'
+    }
+    if ($Identity.IsPrivileged) {
+        $groups += New-StableGuid 'group|Tier 0 Operators'
+    }
+
+    return @($groups)
+}
+
+function Get-WorkshopIdentityAssignedRoles {
+    param([Parameter(Mandatory)]$Identity)
+
+    $roles = @()
+    if ($Identity.IsPrivileged) {
+        $roles += New-StableGuid 'role|Global Reader'
+        $roles += New-StableGuid 'role|Privileged Authentication Administrator'
+    }
+    elseif ($Identity.IsServiceAccount -or (($Identity.Rid % 9) -lt 4)) {
+        $roles += New-StableGuid ("role|workload|{0}" -f ($Identity.Rid % 8))
+    }
+
+    return @($roles)
+}
+
+function Get-WorkshopIdentityTags {
+    param([Parameter(Mandatory)]$Identity)
+
+    if ($Identity.Name -eq 'svc_azureadconnect') {
+        return @('Tier0', 'EntraConnect')
+    }
+    if ($Identity.IsPrivileged) {
+        return @('Privileged')
+    }
+    if ($Identity.IsServiceAccount) {
+        return @('ServiceAccount')
+    }
+
+    return @()
 }
 
 $seedUsers = @(
@@ -747,23 +836,140 @@ foreach ($device in $devices) {
     }
 }
 
+$identityDepartments = @('Information Technology', 'Cyber Defense', 'Finance', 'Operations', 'Human Resources', 'Legal', 'Research', 'Logistics', 'Executive Office', 'Facilities', 'Training', 'Public Affairs')
+$identityJobTitles = @('Security Analyst', 'Systems Administrator', 'Program Manager', 'Financial Analyst', 'Operations Planner', 'Help Desk Technician', 'Cloud Engineer', 'Identity Engineer', 'Database Administrator', 'Executive Assistant', 'Training Coordinator', 'Logistics Specialist')
+$identityAddresses = @('Clay Kaserne Building 1023', 'Hainerberg Office Center', 'Wiesbaden Mission Command Center', 'Mainz-Kastel Annex', 'Remote Workforce')
+
 foreach ($user in $users) {
-    foreach ($table in 'IdentityInfo', 'IdentityAccountInfo') {
-        Add-Record -Table $table -Time $StartTime.AddMinutes(-25) -Values @{
-            Timestamp = Format-WorkshopTime $StartTime.AddMinutes(-25)
-            AccountObjectId = $user.ObjectId
-            AccountUpn = $user.Upn
-            AccountDisplayName = $user.DisplayName
-            AccountName = $user.Name
-            AccountDomain = $adDomain
-            AccountSid = $user.Sid
-            IsAccountEnabled = $true
-            IsServiceAccount = $user.IsServiceAccount
-            CriticalityLevel = if ($user.IsServiceAccount -or $user.IsPrivileged) { 2 } else { 1 }
-            BlastRadius = if ($user.IsServiceAccount -or $user.IsPrivileged) { 'High' } else { 'Low' }
-            Tags = if ($user.Name -eq 'svc_azureadconnect') { @('Tier0', 'EntraConnect') } elseif ($user.IsServiceAccount) { @('ServiceAccount') } else { @('Employee') }
-            OnPremSid = $user.Sid
-        }
+    $identityTime = $StartTime.AddMinutes(-25)
+    $nameParts = Get-WorkshopIdentityNameParts -Identity $user
+    $accountStatus = Get-WorkshopIdentityStatus -Identity $user
+    $sourceProvider = Get-WorkshopIdentitySourceProvider -Identity $user
+    $identityGroups = @(Get-WorkshopIdentityGroups -Identity $user)
+    $assignedRoles = @(Get-WorkshopIdentityAssignedRoles -Identity $user)
+    $identityTags = @(Get-WorkshopIdentityTags -Identity $user)
+    $createdTime = $script:TelemetryEndTime.AddDays(-1 * (30 + ($user.Rid % 1800))).AddMinutes(-1 * ($user.Rid % 1440))
+    $passwordTime = $script:TelemetryEndTime.AddDays(-1 * (7 + ($user.Rid % 120))).AddMinutes(-1 * ($user.Rid % 240))
+    $deletedTime = if ($accountStatus -eq 'Deleted') { $script:TelemetryEndTime.AddDays(-1 * (1 + ($user.Rid % 30))) } else { [datetime]'0001-01-01T00:00:00Z' }
+    $department = $identityDepartments[$user.Rid % $identityDepartments.Count]
+    $jobTitle = if ($user.IsServiceAccount) { 'Application Service Account' } else { $identityJobTitles[$user.Rid % $identityJobTitles.Count] }
+    $employeeId = if ($user.IsServiceAccount) { '' } else { 'E{0:D6}' -f $user.Rid }
+    $manager = if ($user.IsServiceAccount -or $user.IsPrivileged) { '' } else { ($users[[Math]::Min(2, $users.Count - 1)]).Upn }
+    $blastRadius = if ($user.IsServiceAccount -or $user.IsPrivileged) { 'High' } elseif (($user.Rid % 11) -eq 0) { 'Medium' } else { 'Low' }
+    $criticality = if ($blastRadius -eq 'High') { 2 } elseif ($blastRadius -eq 'Medium') { 1 } else { 0 }
+    $riskLevel = if ($user.Name -eq 'victor.alvarez') { 'High' } elseif (($user.Rid % 37) -eq 0) { 'Medium' } else { 'None' }
+    $riskStatus = if ($riskLevel -eq 'High') { 'AtRisk' } elseif ($riskLevel -eq 'Medium') { 'Remediated' } else { 'None' }
+    $accountId = New-StableGuid "identity-account|$sourceProvider|$($user.Name)"
+    $identityId = New-StableGuid "identity-link|$($user.Name)"
+    $sourceProviderAccountId = if ($sourceProvider -eq 'ActiveDirectory') { $user.Sid } else { $user.ObjectId }
+    $emailAddress = if ($user.IsServiceAccount) { '' } else { $user.Upn -replace "@$tenantDomain$", '@usag-cyber.example' }
+    $sparseDisplayName = if (($user.Rid % 3) -ne 0) { $user.DisplayName } else { '' }
+    $sparseUpn = if (($user.Rid % 10) -lt 7) { $user.Upn } else { '' }
+    $sparseEmail = if (-not $user.IsServiceAccount -and (($user.Rid % 4) -eq 0)) { $emailAddress } else { '' }
+    $sparseGivenName = if (-not $user.IsServiceAccount -and (($user.Rid % 12) -lt 5)) { $nameParts.GivenName } else { '' }
+    $sparseSurname = if (-not $user.IsServiceAccount -and (($user.Rid % 8) -lt 3)) { $nameParts.Surname } else { '' }
+    $sparseAddress = if (($user.Rid % 67) -eq 0) { $identityAddresses[$user.Rid % $identityAddresses.Count] } else { '' }
+    $sparseCountry = if ($sparseAddress) { 'Germany' } else { '' }
+    $sparsePhone = if (($user.Rid % 20) -eq 0) { '+49-611-143-{0:D4}' -f ($user.Rid % 10000) } else { '' }
+    $sourceProviderRisk = if (($user.Rid % 30) -eq 0) { 'None' } else { $null }
+    $accountTags = if ($identityTags.Count -gt 0) { $identityTags } else { @() }
+
+    Add-Record -Table 'IdentityInfo' -Time $identityTime -Values @{
+        Timestamp = Format-WorkshopTime $identityTime
+        ReportId = "IDINFO-$($user.Rid)"
+        AccountObjectId = $user.ObjectId
+        AccountUpn = $user.Upn
+        OnPremSid = $user.Sid
+        AccountDisplayName = $user.DisplayName
+        AccountName = $user.Name
+        AccountDomain = $adDomain
+        CriticalityLevel = $criticality
+        Type = if ($user.IsServiceAccount) { 'ServiceAccount' } else { 'User' }
+        DistinguishedName = "CN=$($user.DisplayName),OU=$(if ($user.IsServiceAccount) { 'Service Accounts' } else { 'Users' }),DC=usag-cyber,DC=local"
+        CloudSid = "S-1-12-1-$($user.ObjectId.Replace('-', '-'))"
+        GivenName = $nameParts.GivenName
+        Surname = $nameParts.Surname
+        Department = $department
+        JobTitle = $jobTitle
+        EmailAddress = $emailAddress
+        SipProxyAddress = if ($emailAddress) { "sip:$emailAddress" } else { '' }
+        Address = $identityAddresses[$user.Rid % $identityAddresses.Count]
+        City = 'Wiesbaden'
+        Country = 'Germany'
+        IsAccountEnabled = $accountStatus -eq 'Enabled'
+        Manager = $manager
+        Phone = '+49-611-143-{0:D4}' -f ($user.Rid % 10000)
+        CreatedDateTime = Format-WorkshopTime $createdTime
+        ChangeSource = 'System-UserPersistence'
+        BlastRadius = $blastRadius
+        CompanyName = 'USAG Cyber'
+        DeletedDateTime = Format-WorkshopTime $deletedTime
+        EmployeeId = $employeeId
+        OtherMailAddresses = if ($emailAddress) { @($emailAddress -replace '@usag-cyber.example$', '@usag-cyber.local') } else { @() }
+        RiskLevel = $riskLevel
+        RiskLevelDetails = if ($riskLevel -eq 'None') { 'none' } else { 'syntheticWorkshopRisk' }
+        State = 'Hesse'
+        Tags = $identityTags
+        AssignedRoles = $assignedRoles
+        PrivilegedEntraPimRoles = if ($user.IsPrivileged) { @(New-StableGuid 'pim|eligible|privileged-auth-admin') } else { @() }
+        TenantId = $tenantId
+        SourceSystem = 'AzureAD'
+        OnPremObjectId = New-StableGuid "onprem|$($user.Name)"
+        TenantMembershipType = 'Member'
+        RiskStatus = $riskStatus
+        UserAccountControl = if ($accountStatus -eq 'Disabled') { 'ACCOUNTDISABLE' } else { 'NORMAL_ACCOUNT' }
+        IdentityEnvironment = if ($sourceProvider -eq 'ActiveDirectory') { 'Hybrid' } else { 'CloudOnly' }
+        SourceProviders = if ($sourceProvider -eq 'ActiveDirectory') { @('ActiveDirectory', 'EntraID') } else { @('EntraID') }
+        GroupMembership = $identityGroups
+    }
+
+    Add-Record -Table 'IdentityAccountInfo' -Time $identityTime -Values @{
+        Timestamp = Format-WorkshopTime $identityTime
+        ReportId = "IDACCT-$($user.Rid)"
+        SourceProviderAccountId = $sourceProviderAccountId
+        AccountId = $accountId
+        IdentityId = $identityId
+        IsPrimary = $true
+        IdentityLinkType = 'StrongId'
+        IdentityLinkReason = ''
+        IdentityLinkTime = Format-WorkshopTime $createdTime.AddDays(1)
+        IdentityLinkBy = ''
+        DisplayName = $sparseDisplayName
+        AccountUpn = $sparseUpn
+        EmailAddress = $sparseEmail
+        CriticalityLevel = $null
+        DefenderRiskLevel = $null
+        DefenderRiskUpdateTime = Format-WorkshopTime $identityTime
+        Type = if ($user.IsServiceAccount) { 'ServiceAccount' } else { 'User' }
+        GivenName = $sparseGivenName
+        Surname = $sparseSurname
+        EmployeeId = ''
+        Department = ''
+        JobTitle = ''
+        Address = $sparseAddress
+        City = ''
+        Country = $sparseCountry
+        Phone = $sparsePhone
+        Manager = ''
+        Sid = $user.Sid
+        AccountStatus = $accountStatus
+        SourceProvider = $sourceProvider
+        SourceProviderInstanceId = ''
+        SourceProviderInstanceDisplayName = ''
+        AuthenticationMethod = ''
+        AuthenticationSourceAcccountId = ''
+        EnrolledMfas = $null
+        LastPasswordChangeTime = Format-WorkshopTime $passwordTime
+        GroupMembership = $identityGroups
+        AssignedRoles = if ($assignedRoles.Count -gt 0) { $assignedRoles } else { $null }
+        EligibleRoles = $null
+        TenantMembershipType = ''
+        CreatedDateTime = Format-WorkshopTime $createdTime
+        DeletedDateTime = Format-WorkshopTime $deletedTime
+        Tags = $accountTags
+        SourceProvderRiskLevel = $sourceProviderRisk
+        AdditionalFields = $null
+        TenantId = $tenantId
     }
 }
 
