@@ -10,7 +10,9 @@ Where the data comes from. Twenty students and the instructor query an ADX datab
 
 ## Attack storyline
 
-How the FIN7-inspired intrusion unfolds in time. Each lifeline is an actor or system; each numbered solid arrow is an attacker action; each dashed arrow shows where that action deposits telemetry into ADX. Read top to bottom — the time axis on the left marks scenario minutes (`T+0` through `T+81m`).
+How the Midnight Blizzard-inspired intrusion unfolds in time. Each lifeline is an actor or system; each numbered solid arrow is an attacker action; each dashed arrow shows where that action deposits telemetry into ADX. Read top to bottom — the time axis on the left marks scenario minutes (`T+0` through `T+81m`).
+
+For background on Midnight Blizzard tradecraft and how the steps below map to real-world TTPs, see [`docs/threat-actor-midnight-blizzard.md`](threat-actor-midnight-blizzard.md).
 
 ![Attack storyline sequence diagram](../images/attack-storyline.svg)
 

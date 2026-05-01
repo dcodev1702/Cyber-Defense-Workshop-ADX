@@ -15,10 +15,10 @@
   <text x="500" y="58" text-anchor="middle" fill="#f1f5f9" font-size="20" font-weight="700">Cyber Defense KQL Workshop — Lab Topology</text>
   <text x="500" y="80" text-anchor="middle" fill="#94a3b8" font-size="13">Hybrid Active Directory + Microsoft Entra ID · synthetic Defender XDR telemetry</text>
 
-  <!-- External actor -->
+  <!-- External actor (RED) -->
   <g>
     <rect x="380" y="105" width="240" height="60" rx="30" fill="#3a1212" stroke="#ef4444" stroke-width="2"/>
-    <text x="500" y="132" text-anchor="middle" fill="#fecaca" font-size="14" font-weight="700">FIN7-Inspired Operator</text>
+    <text x="500" y="132" text-anchor="middle" fill="#fecaca" font-size="14" font-weight="700">Midnight Blizzard</text>
     <text x="500" y="150" text-anchor="middle" fill="#fca5a5" font-size="11">External actor · 185.225.73.18</text>
   </g>
 
@@ -44,7 +44,7 @@
     <rect x="276" y="345" width="180" height="70" rx="10" fill="#0f3a1f" stroke="#22c55e" stroke-width="2"/>
     <text x="366" y="370" text-anchor="middle" fill="#bbf7d0" font-size="13" font-weight="700">5 × Ubuntu Linux</text>
     <text x="366" y="388" text-anchor="middle" fill="#86efac" font-size="11">MDE onboarded</text>
-    <text x="366" y="403" text-anchor="middle" fill="#86efac" font-size="11">22.04/24.04 LTS · UBUNTU-05 Oracle</text>
+    <text x="366" y="403" text-anchor="middle" fill="#86efac" font-size="11">22.04 LTS</text>
 
     <!-- Caption inside endpoint enclave -->
     <text x="265" y="450" text-anchor="middle" fill="#64748b" font-size="11" font-style="italic">DeviceProcessEvents · DeviceFileEvents · DeviceRegistryEvents · DeviceNetworkEvents</text>
@@ -56,13 +56,13 @@
     <rect x="520" y="305" width="430" height="200" rx="12" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="6 5"/>
     <text x="540" y="328" fill="#cbd5e1" font-size="12" font-weight="600">Identity Tier — Hybrid AD / Entra Connect</text>
 
-    <!-- Domain Controllers -->
+    <!-- Domain Controllers (BLUE) -->
     <rect x="546" y="345" width="180" height="70" rx="10" fill="#0b2a4a" stroke="#3b82f6" stroke-width="2"/>
     <text x="636" y="370" text-anchor="middle" fill="#dbeafe" font-size="13" font-weight="700">2 × Domain Controllers</text>
     <text x="636" y="388" text-anchor="middle" fill="#93c5fd" font-size="11">DC01 · DC02</text>
     <text x="636" y="403" text-anchor="middle" fill="#93c5fd" font-size="11">MDI sensors</text>
 
-    <!-- Entra Connect -->
+    <!-- Entra Connect (BLUE) -->
     <rect x="746" y="345" width="180" height="70" rx="10" fill="#0b2a4a" stroke="#3b82f6" stroke-width="2"/>
     <text x="836" y="370" text-anchor="middle" fill="#dbeafe" font-size="13" font-weight="700">Entra Connect Server</text>
     <text x="836" y="388" text-anchor="middle" fill="#93c5fd" font-size="11">AADCONNECT01</text>

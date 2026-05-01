@@ -1,4 +1,4 @@
-# 🚀 Student Guide — Cyber Defense KQL Workshop
+# Student Guide — Cyber Defense KQL Workshop
 
 Welcome. Over the next two hours you're going to investigate a credential-access intrusion against a notional company called **Wiesbaden Research**. You'll do it the way a real Defender XDR analyst would — by writing KQL queries against telemetry already loaded into Azure Data Explorer (ADX). No live attack, no production systems, just you, the data, and a story to uncover.
 
@@ -20,9 +20,14 @@ If you've used Linux shell pipes (`grep | awk | sort`), KQL will feel familiar. 
 - A **pipe** (`|`) hands all the rows from one step to the next.
 - An **operator** does something to those rows: filter them (`where`), pick columns (`project`), count them (`summarize`), sort them (`order by`).
 
-The five operators you'll use the most — plus the two bits of syntax that show up everywhere:
+The five operators you'll use the most, plus all the others, are documented in the operator reference card you'll see in a moment.
 
-![KQL primer — the 5 operators and 2 syntax bits you'll use most](../images/kql-primer.svg)
+![KQL primer — five core operators with examples](../images/kql-primer.svg)
+
+Two more bits of syntax to know:
+
+- `==` means "exactly equals" (case-sensitive). Use `=~` for case-insensitive.
+- `has` means "contains the word" (e.g., `ProcessCommandLine has "kerberoast"`).
 
 That's the entire foundation. Everything else is detail.
 
@@ -32,13 +37,15 @@ That's the entire foundation. Everything else is detail.
 
 ## The scenario in one paragraph
 
-A user named **Victor Alvarez** had his account compromised by an attacker emulating FIN7 tradecraft. The attacker signed in from an unfamiliar IP, granted themselves access to mailbox and file data via a malicious OAuth app, then pivoted to Victor's workstation (`WIN11-04`). On that endpoint they ran a credential-access playbook — registry creds, SAM hive dump, browser passwords, LSASS memory dump, Kerberoasting, password-store harvesting tools, Mimikatz. They cracked a service-account hash from the Kerberoasting and used it to reach `AADCONNECT01`, the Entra Connect server.
+A user named **Victor Alvarez** had his account compromised by an attacker emulating **Midnight Blizzard** tradecraft. The attacker signed in from an unfamiliar IP, granted themselves access to mailbox and file data via a malicious OAuth app, then pivoted to Victor's workstation (`WIN11-04`). On that endpoint they ran a credential-access playbook — registry creds, SAM hive dump, browser passwords, LSASS memory dump, Kerberoasting, password-store harvesting tools, Mimikatz. They cracked a service-account hash from the Kerberoasting and used it to reach `AADCONNECT01`, the Entra Connect server.
+
+> **About the threat actor.** Midnight Blizzard (also tracked as APT29 / Cozy Bear, attributed by multiple Western governments to Russia's SVR) is one of the most active state-sponsored adversaries targeting Microsoft cloud environments. The tradecraft you'll see today — risky sign-in → malicious OAuth app consent → Graph enumeration → hybrid identity pivot — is a direct echo of the real-world Microsoft and HPE breaches in 2023–2024. For attribution, recent activity, and the full TTP-to-MITRE mapping that backs every query in this guide, see [`docs/threat-actor-midnight-blizzard.md`](../docs/threat-actor-midnight-blizzard.md).
 
 Your job is to find every step. Let's go.
 
 ---
 
-## 🔌 Act 0 — Are we connected?
+## Act 0 — Are we connected?
 
 Before anything else, confirm you can see the data. Open the ADX Web UI, make sure the database `CyberDefenseKqlWorkshop` is selected in the left panel, and run this:
 
@@ -63,7 +70,7 @@ You should get nine rows back, one per table, each with a row count. If a table 
 
 ---
 
-## 🧭 Act 1 — Know your terrain
+## Act 1 — Know your terrain
 
 Before chasing the attacker, let's understand the lab. Where do hosts live? What's high value?
 
@@ -85,7 +92,7 @@ You'll see:
 
 ---
 
-## 🔎 Act 2 — Find the suspicious sign-in
+## Act 2 — Find the suspicious sign-in
 
 The intrusion starts in the cloud. An identity provider sees the attacker first, before any endpoint does. So that's where we start.
 
@@ -116,7 +123,7 @@ You'll use all three about ten more times today.
 
 ---
 
-## 🌐 Act 3 — Follow the IP, not just the user
+## Act 3 — Follow the IP, not just the user
 
 The same IP that did the suspicious sign-in might have done other things in the same minute. Let's check OAuth consent and Graph API activity.
 
@@ -148,7 +155,7 @@ CloudAppEvents
 | order by Timestamp asc
 ```
 
-You should find **`OAuthAppConsentGranted`** for an app called **"Wiesbaden Research Sync Helper"**, with scopes `Mail.Read Files.Read.All offline_access`. That's the attacker installing a backdoor app that survives password resets — classic FIN7-style persistence.
+You should find **`OAuthAppConsentGranted`** for an app called **"Wiesbaden Research Sync Helper"**, with scopes `Mail.Read Files.Read.All offline_access`. That's the attacker installing a backdoor app that survives password resets — exactly the persistence pattern Midnight Blizzard used in the 2024 Microsoft and HPE breaches.
 
 **And the Graph API calls that came after:**
 
@@ -172,7 +179,7 @@ You'll see the app pulling Victor's mailbox messages, his OneDrive root, and the
 
 ---
 
-## 💻 Act 4 — Land on the endpoint
+## Act 4 — Land on the endpoint
 
 The attacker has cloud access. Now they need a foothold. We know the compromised user — let's see what *their* endpoint did.
 
@@ -192,11 +199,11 @@ You'll see process activity on **`WIN11-04.corp.wiesbaden.example`** starting ar
 
 ---
 
-## 🔐 Act 5 — The credential-access playbook
+## Act 5 — The credential-access playbook
 
 This is the meat of the intrusion. The attacker ran nearly a dozen credential-access tools, each mapped to a MITRE ATT&CK technique. We don't need to know the names of all of them — we just need to spot the patterns.
 
-Here's a query that hunts the screenshot attack vectors using both **filenames** and **suspicious command-line text**:
+Here's a query that hunts the attack vectors using both **filenames** and **suspicious command-line text**:
 
 ```kql
 let suspiciousTools = dynamic(["reg.exe", "esentutl.exe", "Rubeus.exe", "procdump64.exe", "PwDump7.exe", "gsecdump.exe", "lazagne.exe", "mimikatz.exe", "rundll32.exe"]);
@@ -226,7 +233,7 @@ Read down the result set. You'll see ten distinct credential-access actions, eac
 
 ---
 
-## 🧾 Act 6 — Find the artifacts they left behind
+## Act 6 — Find the artifacts they left behind
 
 Processes are ephemeral. The files and registry values they create stick around. Two queries — one for registry, one for filesystem.
 
@@ -263,7 +270,7 @@ You'll see the smoking guns dropped into `C:\ProgramData\wrstage`:
 
 ---
 
-## 🎟 Act 7 — Confirm Kerberoasting from the identity side
+## Act 7 — Confirm Kerberoasting from the identity side
 
 The endpoint told us `Rubeus` ran. But did the domain controller actually issue Kerberos tickets? That's where MDI telemetry comes in.
 
@@ -293,7 +300,7 @@ Look for the row where `victor.alvarez` requests a service ticket targeting `SQL
 
 ---
 
-## 🚪 Act 8 — The lateral move
+## Act 8 — The lateral move
 
 A cracked service account is only useful if the attacker can *use* it somewhere. Let's see if `svc_sql` showed up where it shouldn't.
 
@@ -304,13 +311,13 @@ DeviceLogonEvents
 | order by Timestamp asc
 ```
 
-You should see `svc_sql` performing a `RemoteInteractive` (WinRM) logon to `AADCONNECT01.corp.wiesbaden.example` from `WIN11-04` — about 80 minutes after the original sign-in. That's the lateral move, and it's a big deal: `AADCONNECT01` is the server that syncs on-prem AD passwords to Entra ID. From there, the attacker could potentially compromise the entire hybrid identity.
+You should see `svc_sql` performing a `RemoteInteractive` (WinRM) logon to `AADCONNECT01.corp.wiesbaden.example` from `WIN11-04` — about 80 minutes after the original sign-in. That's the lateral move, and it's a big deal: `AADCONNECT01` is the server that syncs on-prem AD passwords to Entra ID. From there, the attacker could potentially compromise the entire hybrid identity. **This is exactly the kind of seam — between on-prem and cloud — that Midnight Blizzard targets in real-world intrusions.**
 
 > **Mentor moment.** A service account that signs in *interactively* from a *workstation* is almost always wrong. Service accounts should run as services, not as people. `LogonType == "RemoteInteractive"` for an `svc_*` account is a high-fidelity detection signal.
 
 ---
 
-## 🚨 Act 9 — Connect the alerts to the evidence
+## Act 9 — Connect the alerts to the evidence
 
 Defender XDR raised five alerts during this incident. Each alert is a one-line summary in `AlertInfo`, with the gory details in `AlertEvidence`. To get the full picture, we **join** them.
 
@@ -341,7 +348,7 @@ You'll get one row per piece of evidence per alert — about 5 rows total — an
 
 ---
 
-## 🕒 Act 10 — Build the timeline
+## Act 10 — Build the timeline
 
 Final exercise. We've collected evidence from four different telemetry sources — endpoint processes, identity queries, cloud OAuth events, and alerts. Let's stitch them into one chronological story.
 
@@ -420,21 +427,23 @@ Take a minute and answer these for yourself before the instructor leads the disc
 3. **Which activity required identity telemetry rather than endpoint telemetry?** (Something the endpoint sensors couldn't see on their own.)
 4. **What prevention or hardening would have reduced the blast radius?** (Pick one — there are at least four good answers.)
 5. **What detections would you operationalize after this hunt?** (What query would you turn into a scheduled alert?)
+6. **Which Midnight Blizzard TTPs from the threat actor profile did you actually hunt today?** Open [`docs/threat-actor-midnight-blizzard.md`](../docs/threat-actor-midnight-blizzard.md) and check the "TTPs — what to hunt for" tables. How many can you tick off?
 
 ---
 
 ## KQL operators you used today
 
-The 16 operators you touched today fall into **6 families** based on what they do. Internalizing the families is more useful than memorizing the individual operators — once you know "I need to filter," the rest is just remembering which word to type.
+A quick reference card for after the workshop:
 
-![KQL Operator Reference Card](../images/kql-reference-card.svg)
+![KQL operator reference card](../images/kql-reference-card.svg)
 
-The bottom strip shows the typical order operators appear in a real query: `Table → where → project → summarize → join → order by`. That's not a rule — you can put operators in almost any order — but it's the order that runs fastest and reads cleanest. Filter early so the later steps work on smaller data. Sort last so you don't waste effort sorting rows you'll throw away.
+The 16 operators above are grouped into six families (filter, shape, aggregate, sort, combine, glue). Each one carries a per-act color chip showing where you used it in the workshop, so you can see at a glance which operators belong to which phase of an investigation.
 
 ---
 
 ## Where to go next
 
+- **Threat actor profile** — [`docs/threat-actor-midnight-blizzard.md`](../docs/threat-actor-midnight-blizzard.md) ties every query you ran today back to a specific Midnight Blizzard TTP, with public sources and recent campaign references.
 - **Microsoft Defender XDR Advanced Hunting docs** — every table you used has a public schema page on Microsoft Learn. Bookmark them.
 - **`docs/diagrams.md`** in this repository — the topology, attack storyline, and investigation-pivots diagrams. Worth re-reading now that the queries make sense.
 - **`docs/instructor_guide.md`** — has the "expected key findings" table, useful as a self-check.
