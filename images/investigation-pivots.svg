@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 880" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <marker id="arrowFlow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Outer frame -->
+  <rect x="20" y="20" width="1160" height="840" rx="14" fill="#0b1220" stroke="#1f2937" stroke-width="1.5"/>
+
+  <!-- Title -->
+  <text x="600" y="58" text-anchor="middle" fill="#f1f5f9" font-size="20" font-weight="700">Investigation Pivots — Hunter Workflow</text>
+  <text x="600" y="80" text-anchor="middle" fill="#94a3b8" font-size="13">An analyst's path through the synthetic intrusion · each step names the evidence and the ADX table that yields it</text>
+
+  <!-- Phase headers down the left margin -->
+  <text x="55" y="160" fill="#fdba74" font-size="11" font-weight="700" letter-spacing="1">CLOUD</text>
+  <text x="55" y="395" fill="#86efac" font-size="11" font-weight="700" letter-spacing="1">ENDPOINT</text>
+  <text x="55" y="640" fill="#fca5a5" font-size="11" font-weight="700" letter-spacing="1">IDENTITY</text>
+  <text x="55" y="775" fill="#d8b4fe" font-size="11" font-weight="700" letter-spacing="1">ALERTS</text>
+
+  <!-- ================ STEP 1: Risky sign-in (cloud) ================ -->
+  <g>
+    <rect x="100" y="120" width="300" height="100" rx="12" fill="#1a1208" stroke="#f97316" stroke-width="2"/>
+    <!-- step number badge -->
+    <circle cx="125" cy="145" r="14" fill="#f97316"/>
+    <text x="125" y="150" text-anchor="middle" fill="#0b1220" font-size="13" font-weight="700">1</text>
+    <text x="150" y="150" fill="#fed7aa" font-size="14" font-weight="700">Risky sign-in</text>
+    <text x="115" y="174" fill="#fdba74" font-size="11">High-risk interactive auth from</text>
+    <text x="115" y="190" fill="#fdba74" font-size="11">unfamiliar IP / geography</text>
+    <!-- table chip -->
+    <rect x="115" y="200" width="200" height="16" rx="8" fill="#3a1d05" stroke="#f97316" stroke-width="1"/>
+    <text x="215" y="212" text-anchor="middle" fill="#fed7aa" font-size="10" font-weight="600">SigninLogs · EntraIdSignInEvents</text>
+  </g>
+
+  <!-- ================ STEP 2: OAuth consent (cloud) ================ -->
+  <g>
+    <rect x="450" y="120" width="300" height="100" rx="12" fill="#1a1208" stroke="#f97316" stroke-width="2"/>
+    <circle cx="475" cy="145" r="14" fill="#f97316"/>
+    <text x="475" y="150" text-anchor="middle" fill="#0b1220" font-size="13" font-weight="700">2</text>
+    <text x="500" y="150" fill="#fed7aa" font-size="14" font-weight="700">OAuth consent</text>
+    <text x="465" y="174" fill="#fdba74" font-size="11">Same user grants suspicious app</text>
+    <text x="465" y="190" fill="#fdba74" font-size="11">Mail.Read · Files.Read.All</text>
+    <rect x="465" y="200" width="180" height="16" rx="8" fill="#3a1d05" stroke="#f97316" stroke-width="1"/>
+    <text x="555" y="212" text-anchor="middle" fill="#fed7aa" font-size="10" font-weight="600">CloudAppEvents · AuditLogs</text>
+  </g>
+
+  <!-- ================ STEP 3: Graph enumeration (cloud) ================ -->
+  <g>
+    <rect x="800" y="120" width="300" height="100" rx="12" fill="#1a1208" stroke="#f97316" stroke-width="2"/>
+    <circle cx="825" cy="145" r="14" fill="#f97316"/>
+    <text x="825" y="150" text-anchor="middle" fill="#0b1220" font-size="13" font-weight="700">3</text>
+    <text x="850" y="150" fill="#fed7aa" font-size="14" font-weight="700">Graph enumeration</text>
+    <text x="815" y="174" fill="#fdba74" font-size="11">App reads mail, files, user list</text>
+    <text x="815" y="190" fill="#fdba74" font-size="11">via /v1.0/users/* endpoints</text>
+    <rect x="815" y="200" width="270" height="16" rx="8" fill="#3a1d05" stroke="#f97316" stroke-width="1"/>
+    <text x="950" y="212" text-anchor="middle" fill="#fed7aa" font-size="10" font-weight="600">GraphApiAuditEvents · MicrosoftGraphActivityLogs</text>
+  </g>
+
+  <!-- Cloud row arrows -->
+  <line x1="400" y1="170" x2="445" y2="170" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowFlow)"/>
+  <line x1="750" y1="170" x2="795" y2="170" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowFlow)"/>
+
+  <!-- Pivot down arrow: from Graph card down to Endpoint hunt -->
+  <path d="M 950 220 L 950 290 Q 950 320 920 320 L 600 320 Q 570 320 570 350" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowFlow)"/>
+  <text x="780" y="312" text-anchor="middle" fill="#cbd5e1" font-size="10" font-style="italic">Pivot: same user · same IP · find their endpoint</text>
+
+  <!-- ================ STEP 4: Compromised endpoint (endpoint) ================ -->
+  <g>
+    <rect x="420" y="355" width="300" height="100" rx="12" fill="#0a1f12" stroke="#22c55e" stroke-width="2"/>
+    <circle cx="445" cy="380" r="14" fill="#22c55e"/>
+    <text x="445" y="385" text-anchor="middle" fill="#0b1220" font-size="13" font-weight="700">4</text>
+    <text x="470" y="385" fill="#bbf7d0" font-size="14" font-weight="700">Compromised endpoint</text>
+    <text x="435" y="409" fill="#86efac" font-size="11">WIN11-04 · victor.alvarez logon</text>
+    <text x="435" y="425" fill="#86efac" font-size="11">PowerShell stager + C2 callback</text>
+    <rect x="435" y="435" width="270" height="16" rx="8" fill="#0f3a1f" stroke="#22c55e" stroke-width="1"/>
+    <text x="570" y="447" text-anchor="middle" fill="#bbf7d0" font-size="10" font-weight="600">DeviceLogonEvents · DeviceNetworkEvents</text>
+  </g>
+
+  <!-- Branch from step 4 into THREE parallel endpoint hunts (5a, 5b, 5c) -->
+  <!-- Branch lines -->
+  <path d="M 570 455 L 570 480 L 200 480 L 200 510" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowFlow)"/>
+  <path d="M 570 455 L 570 510" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowFlow)"/>
+  <path d="M 570 455 L 570 480 L 950 480 L 950 510" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowFlow)"/>
+
+  <text x="600" y="475" fill="#cbd5e1" font-size="10" font-style="italic">Branch into the credential-access chain</text>
+
+  <!-- ================ STEP 5a: Process chain (endpoint) ================ -->
+  <g>
+    <rect x="80" y="510" width="240" height="90" rx="12" fill="#0a1f12" stroke="#22c55e" stroke-width="2"/>
+    <circle cx="105" cy="535" r="13" fill="#22c55e"/>
+    <text x="105" y="540" text-anchor="middle" fill="#0b1220" font-size="12" font-weight="700">5a</text>
+    <text x="128" y="540" fill="#bbf7d0" font-size="13" font-weight="700">Process chain</text>
+    <text x="95" y="563" fill="#86efac" font-size="10">Rubeus · procdump · LaZagne</text>
+    <text x="95" y="577" fill="#86efac" font-size="10">PwDump7 · Mimikatz · esentutl</text>
+    <rect x="95" y="582" width="210" height="14" rx="7" fill="#0f3a1f" stroke="#22c55e" stroke-width="1"/>
+    <text x="200" y="593" text-anchor="middle" fill="#bbf7d0" font-size="9" font-weight="600">DeviceProcessEvents</text>
+  </g>
+
+  <!-- ================ STEP 5b: File + registry artifacts ================ -->
+  <g>
+    <rect x="450" y="510" width="240" height="90" rx="12" fill="#0a1f12" stroke="#22c55e" stroke-width="2"/>
+    <circle cx="475" cy="535" r="13" fill="#22c55e"/>
+    <text x="475" y="540" text-anchor="middle" fill="#0b1220" font-size="12" font-weight="700">5b</text>
+    <text x="498" y="540" fill="#bbf7d0" font-size="13" font-weight="700">File + registry</text>
+    <text x="465" y="563" fill="#86efac" font-size="10">sam.save · LoginData.db · lsass.dmp</text>
+    <text x="465" y="577" fill="#86efac" font-size="10">SavedPassword reg value</text>
+    <rect x="465" y="582" width="210" height="14" rx="7" fill="#0f3a1f" stroke="#22c55e" stroke-width="1"/>
+    <text x="570" y="593" text-anchor="middle" fill="#bbf7d0" font-size="9" font-weight="600">DeviceFileEvents · DeviceRegistryEvents</text>
+  </g>
+
+  <!-- ================ STEP 5c: Network egress + DC traffic ================ -->
+  <g>
+    <rect x="820" y="510" width="240" height="90" rx="12" fill="#0a1f12" stroke="#22c55e" stroke-width="2"/>
+    <circle cx="845" cy="535" r="13" fill="#22c55e"/>
+    <text x="845" y="540" text-anchor="middle" fill="#0b1220" font-size="12" font-weight="700">5c</text>
+    <text x="868" y="540" fill="#bbf7d0" font-size="13" font-weight="700">Network egress</text>
+    <text x="835" y="563" fill="#86efac" font-size="10">C2 callback · LDAP to DC</text>
+    <text x="835" y="577" fill="#86efac" font-size="10">WinRM to AADCONNECT01</text>
+    <rect x="835" y="582" width="210" height="14" rx="7" fill="#0f3a1f" stroke="#22c55e" stroke-width="1"/>
+    <text x="940" y="593" text-anchor="middle" fill="#bbf7d0" font-size="9" font-weight="600">DeviceNetworkEvents</text>
+  </g>
+
+  <!-- ================ STEP 6: Identity-tier corroboration ================ -->
+  <!-- Converge from 5a, 5c down to identity step -->
+  <path d="M 200 600 L 200 625 L 570 625 L 570 660" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowFlow)"/>
+  <path d="M 940 600 L 940 625 L 570 625" fill="none" stroke="#94a3b8" stroke-width="2"/>
+  <text x="370" y="618" fill="#cbd5e1" font-size="10" font-style="italic">Confirm Kerberoasting from the identity side</text>
+
+  <g>
+    <rect x="370" y="665" width="400" height="90" rx="12" fill="#1c0a0a" stroke="#ef4444" stroke-width="2"/>
+    <circle cx="395" cy="690" r="14" fill="#ef4444"/>
+    <text x="395" y="695" text-anchor="middle" fill="#0b1220" font-size="13" font-weight="700">6</text>
+    <text x="420" y="695" fill="#fecaca" font-size="14" font-weight="700">Kerberoasting from MDI</text>
+    <text x="385" y="719" fill="#fca5a5" font-size="11">SPN LDAP search · RC4 ticket request for svc_sql</text>
+    <text x="385" y="734" fill="#fca5a5" font-size="11">Cross-references the endpoint process chain</text>
+    <rect x="385" y="738" width="280" height="14" rx="7" fill="#3a1212" stroke="#ef4444" stroke-width="1"/>
+    <text x="525" y="749" text-anchor="middle" fill="#fecaca" font-size="9" font-weight="600">IdentityQueryEvents · IdentityLogonEvents</text>
+  </g>
+
+  <!-- Side branch: lateral movement to AADCONNECT01 -->
+  <path d="M 770 710 L 870 710 L 870 690" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowFlow)"/>
+  <g>
+    <rect x="800" y="660" width="280" height="100" rx="12" fill="#1c0a0a" stroke="#ef4444" stroke-width="2"/>
+    <circle cx="825" cy="685" r="14" fill="#ef4444"/>
+    <text x="825" y="690" text-anchor="middle" fill="#0b1220" font-size="13" font-weight="700">7</text>
+    <text x="850" y="690" fill="#fecaca" font-size="14" font-weight="700">Lateral move</text>
+    <text x="815" y="714" fill="#fca5a5" font-size="11">svc_sql signs into AADCONNECT01</text>
+    <text x="815" y="729" fill="#fca5a5" font-size="11">via WinRM · cracked Kerberoast hash</text>
+    <rect x="815" y="738" width="240" height="14" rx="7" fill="#3a1212" stroke="#ef4444" stroke-width="1"/>
+    <text x="935" y="749" text-anchor="middle" fill="#fecaca" font-size="9" font-weight="600">DeviceLogonEvents · IdentityLogonEvents</text>
+  </g>
+
+  <!-- ================ STEP 8: Alert correlation ================ -->
+  <path d="M 570 755 L 570 780 L 600 780 L 600 800" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowFlow)"/>
+  <path d="M 940 760 L 940 780 L 600 780" fill="none" stroke="#94a3b8" stroke-width="2"/>
+
+  <g>
+    <rect x="100" y="780" width="1000" height="64" rx="12" fill="#150829" stroke="#a855f7" stroke-width="2"/>
+    <circle cx="125" cy="812" r="14" fill="#a855f7"/>
+    <text x="125" y="817" text-anchor="middle" fill="#0b1220" font-size="13" font-weight="700">8</text>
+    <text x="150" y="811" fill="#e9d5ff" font-size="14" font-weight="700">Alert correlation + timeline</text>
+    <text x="150" y="828" fill="#d8b4fe" font-size="11">Join AlertInfo with AlertEvidence on AlertId · stitch endpoint · identity · cloud evidence into one timeline · map to MITRE ATT&amp;CK</text>
+    <rect x="845" y="800" width="245" height="16" rx="8" fill="#2a1252" stroke="#a855f7" stroke-width="1"/>
+    <text x="967" y="812" text-anchor="middle" fill="#e9d5ff" font-size="10" font-weight="600">AlertInfo · AlertEvidence · timeline join</text>
+  </g>
+</svg>

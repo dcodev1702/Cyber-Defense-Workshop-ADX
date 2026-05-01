@@ -1,80 +1,21 @@
 # Workshop diagrams
 
+Three diagrams describe the workshop from three angles: where the lab lives, how the attack unfolds, and how a hunter pivots through the resulting telemetry.
+
 ## Hybrid lab topology
 
-```mermaid
-flowchart LR
-    Students[20 Students<br/>ADX Web UI] --> ADX[(Azure Data Explorer<br/>CyberDefenseKqlWorkshop DB)]
-    Instructor[Instructor Workstation] --> ADX
+Where the data comes from. Twenty students and the instructor query an ADX database that holds synthetic telemetry from a hybrid Active Directory / Microsoft Entra ID environment. The cloud identity plane sits at the top, the on-prem hybrid AD enclave and MDE endpoint estate sit side by side in the middle, and ADX collects everything at the bottom.
 
-    subgraph Entra[Microsoft Entra ID]
-        Signins[Sign-in Logs]
-        Graph[Microsoft Graph Activity]
-        CloudApp[CloudAppEvents]
-    end
-
-    subgraph OnPrem[Hybrid AD: usag-cyber.local]
-        DC01[DC01<br/>MDI Sensor<br/>10.42.0.10]
-        DC02[DC02<br/>MDI Sensor<br/>10.42.0.11]
-        AADC[AADCONNECT01<br/>Entra Connect + MDE<br/>10.42.0.20]
-    end
-
-    subgraph Endpoints[MDE endpoints]
-        Win[10 x Windows 11 25H2]
-        Linux[5 x Ubuntu<br/>MDE only]
-        Oracle[UBUNTU-05<br/>Oracle DB<br/>10.42.20.35]
-    end
-
-    Entra --> ADX
-    OnPrem --> ADX
-    Endpoints --> ADX
-```
+![Hybrid lab topology](../images/topology-hybrid-lab.svg)
 
 ## Attack storyline
 
-```mermaid
-sequenceDiagram
-    participant Attacker
-    participant Entra
-    participant Graph
-    participant WIN11 as WIN11-04
-    participant LINUX as UBUNTU-03
-    participant ORACLE as UBUNTU-05 Oracle
-    participant DC as DC01/DC02
-    participant AADC as AADCONNECT01
-    participant ADX
+How the FIN7-inspired intrusion unfolds in time. Each lifeline is an actor or system; each numbered solid arrow is an attacker action; each dashed arrow shows where that action deposits telemetry into ADX. Read top to bottom — the time axis on the left marks scenario minutes (`T+0` through `T+81m`).
 
-    Attacker->>Entra: Compromised user sign-in with MFA
-    Entra->>ADX: SigninLogs / EntraIdSignInEvents
-    Attacker->>Graph: OAuth app consent and Graph enumeration
-    Graph->>ADX: GraphApiAuditEvents / MicrosoftGraphActivityLogs
-    Attacker->>WIN11: PowerShell staging
-    WIN11->>ADX: DeviceProcessEvents / DeviceNetworkEvents
-    Attacker->>WIN11: Registry, SAM, browser, LSASS, password-store collection
-    WIN11->>ADX: DeviceProcessEvents / DeviceFileEvents / DeviceRegistryEvents
-    Attacker->>LINUX: SSH and suspicious sudo activity
-    LINUX->>ADX: DeviceLogonEvents / DeviceProcessEvents / DeviceEvents / DeviceImageLoadEvents
-    Attacker->>LINUX: Stage Python helper and Go collection binary
-    LINUX->>ORACLE: Oracle TNS access over TCP/1521
-    ORACLE->>ADX: Oracle process and synthetic export file telemetry
-    Attacker->>DC: SPN enumeration and Kerberos requests
-    DC->>ADX: IdentityQueryEvents / IdentityLogonEvents
-    Attacker->>AADC: Service-account remote logon
-    AADC->>ADX: DeviceLogonEvents / IdentityDirectoryEvents
-```
+![Attack storyline sequence diagram](../images/attack-storyline.svg)
 
 ## Investigation pivots
 
-```mermaid
-flowchart TD
-    A[Risky sign-in] --> B[OAuth consent]
-    B --> C[Graph API enumeration]
-    C --> D[Compromised endpoint]
-    D --> E[Credential access process chain]
-    E --> F[File and registry artifacts]
-    E --> L[Ubuntu SSH, sudo, auditd, .so telemetry]
-    L --> O[Oracle TNS and synthetic data export]
-    E --> G[Kerberoasting from identity telemetry]
-    G --> H[Service account use on Entra Connect]
-    E --> I[AlertInfo + AlertEvidence correlation]
-```
+How an analyst works through the evidence. The flow starts in the cloud (risky sign-in → OAuth consent → Graph enumeration), pivots to the compromised endpoint, branches into three parallel hunts (process chain, file/registry artifacts, network egress), corroborates from the identity tier, and ends with alert correlation. Each card names the ADX table that yields the evidence for that step.
+
+![Investigation pivots — hunter workflow](../images/investigation-pivots.svg)
