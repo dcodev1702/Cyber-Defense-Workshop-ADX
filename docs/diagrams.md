@@ -21,7 +21,7 @@ flowchart LR
 
     subgraph Endpoints[MDE endpoints]
         Win[10 x Windows 11 25H2]
-        Linux[5 x Ubuntu]
+        Linux[5 x Ubuntu<br/>MDE only]
     end
 
     Entra --> ADX
@@ -37,6 +37,7 @@ sequenceDiagram
     participant Entra
     participant Graph
     participant WIN11 as WIN11-04
+    participant LINUX as UBUNTU-03
     participant DC as DC01/DC02
     participant AADC as AADCONNECT01
     participant ADX
@@ -49,6 +50,8 @@ sequenceDiagram
     WIN11->>ADX: DeviceProcessEvents / DeviceNetworkEvents
     Attacker->>WIN11: Registry, SAM, browser, LSASS, password-store collection
     WIN11->>ADX: DeviceProcessEvents / DeviceFileEvents / DeviceRegistryEvents
+    Attacker->>LINUX: SSH and suspicious sudo activity
+    LINUX->>ADX: DeviceLogonEvents / DeviceProcessEvents / DeviceEvents / DeviceImageLoadEvents
     Attacker->>DC: SPN enumeration and Kerberos requests
     DC->>ADX: IdentityQueryEvents / IdentityLogonEvents
     Attacker->>AADC: Service-account remote logon
@@ -64,6 +67,7 @@ flowchart TD
     C --> D[Compromised endpoint]
     D --> E[Credential access process chain]
     E --> F[File and registry artifacts]
+    E --> L[Ubuntu SSH, sudo, auditd, .so telemetry]
     E --> G[Kerberoasting from identity telemetry]
     G --> H[Service account use on Entra Connect]
     E --> I[AlertInfo + AlertEvidence correlation]

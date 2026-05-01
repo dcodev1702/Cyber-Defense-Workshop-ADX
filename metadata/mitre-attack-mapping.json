@@ -89,6 +89,30 @@
       "techniqueId": "T1003.001",
       "techniqueName": "OS Credential Dumping: LSASS Memory",
       "primaryTables": ["DeviceProcessEvents", "AlertInfo", "AlertEvidence"]
+    },
+    {
+      "scenarioMinute": 61,
+      "attackVector": "Suspicious SSH attempts against Ubuntu server",
+      "tactic": "Lateral Movement",
+      "techniqueId": "T1021.004",
+      "techniqueName": "Remote Services: SSH",
+      "primaryTables": ["DeviceLogonEvents", "DeviceNetworkEvents", "AlertInfo", "AlertEvidence"]
+    },
+    {
+      "scenarioMinute": 65,
+      "attackVector": "Suspicious sudo chroot usage on Ubuntu server",
+      "tactic": "Privilege Escalation",
+      "techniqueId": "T1548.003",
+      "techniqueName": "Abuse Elevation Control Mechanism: Sudo and Sudo Caching",
+      "primaryTables": ["DeviceProcessEvents", "DeviceFileEvents", "DeviceEvents", "DeviceImageLoadEvents", "AlertInfo", "AlertEvidence"]
+    },
+    {
+      "scenarioMinute": 68,
+      "attackVector": "Unix shell and auditd evidence on Ubuntu server",
+      "tactic": "Execution",
+      "techniqueId": "T1059.004",
+      "techniqueName": "Command and Scripting Interpreter: Unix Shell",
+      "primaryTables": ["DeviceProcessEvents", "DeviceEvents", "DeviceFileEvents"]
     }
   ]
 }

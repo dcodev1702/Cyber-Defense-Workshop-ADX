@@ -32,6 +32,8 @@ Notional infrastructure:
 - 1 x Entra Connect server with MDI/MDE-relevant identity telemetry
 - Hybrid Active Directory and Microsoft Entra ID environment (6K users / 4K service accounts)
 
+Linux servers are modeled as **MDE-onboarded Ubuntu hosts only**. They do not emit MDI sensor telemetry; MDI remains scoped to supported Windows Server domain controllers and identity-role servers.
+
 The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including `T1552.002`, `T1003.002`, `T1555.003`, `T1558.003`, `T1003.001`, and `T1555`.
 
 ## Artifact index
@@ -129,6 +131,20 @@ $securitySubscription = Get-AzSubscription -SubscriptionName 'Security'
   -MaxRowsPerTable 5000
 ```
 
+To export Linux-only MDE samples for Ubuntu telemetry tuning:
+
+```powershell
+$securitySubscription = Get-AzSubscription -SubscriptionName 'Security'
+
+.\scripts\Export-LogAnalyticsSamples.ps1 `
+  -SubscriptionId $securitySubscription.Id `
+  -WorkspaceName 'DIBSecCom' `
+  -ResourceGroupName 'sentinel' `
+  -SampleProfile Linux `
+  -LookbackDays 7 `
+  -MaxRowsPerTable 5000
+```
+
 The `sample\*.csv` files are intentionally ignored by Git because they can contain real tenant telemetry.
 
 ### 3. Create or stage student identities
@@ -204,6 +220,8 @@ The package creates 48 tables from Microsoft Learn-derived schema JSON. The most
 - `DeviceRegistryEvents`
 - `DeviceNetworkEvents`
 - `DeviceLogonEvents`
+- `DeviceImageLoadEvents`
+- `DeviceTvmSoftwareVulnerabilities`
 - `IdentityInfo`
 - `IdentityAccountInfo`
 - `IdentityQueryEvents`

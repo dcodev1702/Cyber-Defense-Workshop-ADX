@@ -123,6 +123,123 @@ else {
             }
         }
     }
+
+    $linuxDeviceIds = @{}
+    $linuxDeviceNames = @{}
+    $deviceInfoPath = Join-Path $DataDirectory 'DeviceInfo.json'
+    if (Test-Path $deviceInfoPath) {
+        foreach ($line in (Get-Content -Path $deviceInfoPath)) {
+            if ([string]::IsNullOrWhiteSpace($line)) {
+                continue
+            }
+
+            $record = $line | ConvertFrom-Json
+            if ([string]$record.OSPlatform -match 'Ubuntu|Linux' -or [string]$record.OSDistribution -match 'Ubuntu|Linux') {
+                if ($record.DeviceId) {
+                    $linuxDeviceIds[[string]$record.DeviceId] = $true
+                }
+                if ($record.DeviceName) {
+                    $linuxDeviceNames[[string]$record.DeviceName] = $true
+                }
+            }
+        }
+    }
+
+    $linuxEvidence = @{
+        LinuxPath = 0
+        SharedObject = 0
+        SshOrSudo = 0
+        Vulnerability = 0
+    }
+    $linuxCves = @(
+        'CVE-2024-6387',
+        'CVE-2024-47176',
+        'CVE-2024-47076',
+        'CVE-2024-47175',
+        'CVE-2024-47177',
+        'CVE-2025-32463',
+        'CVE-2025-32462',
+        'CVE-2023-4911',
+        'CVE-2024-53197',
+        'CVE-2024-5535'
+    )
+
+    foreach ($dataFile in (Get-ChildItem -Path $DataDirectory -Filter '*.json')) {
+        $table = $dataFile.BaseName
+        $lineNumber = 0
+        foreach ($line in (Get-Content -Path $dataFile.FullName)) {
+            $lineNumber++
+            if ([string]::IsNullOrWhiteSpace($line)) {
+                continue
+            }
+
+            $record = $line | ConvertFrom-Json
+            $deviceIdProperty = $record.PSObject.Properties['DeviceId']
+            $deviceNameProperty = $record.PSObject.Properties['DeviceName']
+            $deviceId = if ($deviceIdProperty) { [string]$deviceIdProperty.Value } else { '' }
+            $deviceName = if ($deviceNameProperty) { [string]$deviceNameProperty.Value } else { '' }
+            $isLinuxRecord = ($deviceId -and $linuxDeviceIds.ContainsKey($deviceId)) -or ($deviceName -and $linuxDeviceNames.ContainsKey($deviceName))
+            if (-not $isLinuxRecord) {
+                continue
+            }
+
+            if ($table -eq 'DeviceRegistryEvents') {
+                Add-TestError "$($dataFile.Name) line $lineNumber is a Linux device row in Windows-only DeviceRegistryEvents."
+            }
+
+            foreach ($fieldName in @('FolderPath', 'InitiatingProcessFolderPath', 'ProcessCommandLine', 'InitiatingProcessCommandLine', 'RegistryKey', 'FileName')) {
+                $property = $record.PSObject.Properties[$fieldName]
+                if (-not $property -or $null -eq $property.Value) {
+                    continue
+                }
+
+                $value = [string]$property.Value
+                if ($value -match '^[A-Za-z]:\\|\\Windows\\|HKEY_|\.dll(\s|$|")') {
+                    Add-TestError "$($dataFile.Name) line $lineNumber has Windows artifact '$fieldName=$value' on Linux device $deviceName."
+                }
+                if ($value -match '^/| /') {
+                    $linuxEvidence.LinuxPath++
+                }
+                if ($table -eq 'DeviceImageLoadEvents' -and $value -match '\.so(\.|$)') {
+                    $linuxEvidence.SharedObject++
+                }
+                if ($value -match '\b(sshd|ssh|sudo|auditd|apt|dpkg|bash)\b') {
+                    $linuxEvidence.SshOrSudo++
+                }
+            }
+
+            if ($table -eq 'DeviceLogonEvents') {
+                if ([string]$record.Protocol -in @('Kerberos', 'NTLM', 'Negotiate')) {
+                    Add-TestError "$($dataFile.Name) line $lineNumber has Windows auth protocol '$($record.Protocol)' on Linux device $deviceName."
+                }
+                if ([string]$record.LogonType -in @('RemoteInteractive', 'CachedInteractive')) {
+                    Add-TestError "$($dataFile.Name) line $lineNumber has Windows logon type '$($record.LogonType)' on Linux device $deviceName."
+                }
+            }
+
+            if ($table -like 'DeviceTvm*') {
+                $cveProperty = $record.PSObject.Properties['CveId']
+                if ($cveProperty -and [string]$cveProperty.Value -in $linuxCves) {
+                    $linuxEvidence.Vulnerability++
+                }
+            }
+        }
+    }
+
+    if ($linuxDeviceIds.Count -gt 0) {
+        if ($linuxEvidence.LinuxPath -eq 0) {
+            Add-TestError 'Linux validation expected at least one Linux path in generated device telemetry.'
+        }
+        if ($linuxEvidence.SharedObject -eq 0) {
+            Add-TestError 'Linux validation expected at least one .so shared object image-load row.'
+        }
+        if ($linuxEvidence.SshOrSudo -eq 0) {
+            Add-TestError 'Linux validation expected at least one SSH/sudo/audit/package process indicator.'
+        }
+        if ($linuxEvidence.Vulnerability -eq 0) {
+            Add-TestError 'Linux validation expected at least one Linux TVM CVE row.'
+        }
+    }
 }
 
 if ($errors.Count -gt 0) {

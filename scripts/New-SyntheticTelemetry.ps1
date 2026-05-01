@@ -259,6 +259,7 @@ $generatedServiceAccounts = for ($i = 1; $i -le ($SyntheticServiceAccountCount -
 
 $users = @($seedUsers + $generatedUsers + $seedServiceAccounts + $generatedServiceAccounts)
 $victor = $users | Where-Object Name -eq 'victor.alvarez' | Select-Object -First 1
+$alice = $users | Where-Object Name -eq 'alice.weber' | Select-Object -First 1
 $svcSql = $users | Where-Object Name -eq 'svc_sql' | Select-Object -First 1
 $svcSync = $users | Where-Object Name -eq 'svc_azureadconnect' | Select-Object -First 1
 
@@ -297,34 +298,86 @@ $win04 = $devices | Where-Object ShortName -eq 'WIN11-04'
 $dc01 = $devices | Where-Object ShortName -eq 'DC01'
 $aadc = $devices | Where-Object ShortName -eq 'AADCONNECT01'
 $domainControllers = @($devices | Where-Object Type -eq 'DomainController')
+$windowsDevices = @($devices | Where-Object OS -ne 'Ubuntu')
+$linuxDevices = @($devices | Where-Object OS -eq 'Ubuntu')
+$linux03 = $linuxDevices | Where-Object ShortName -eq 'UBUNTU-03'
 
-$normalProcessTemplates = @(
+$windowsProcessTemplates = @(
     [pscustomobject]@{ File = 'svchost.exe'; Path = 'C:\Windows\System32\svchost.exe'; Parent = 'services.exe'; Command = 'C:\Windows\System32\svchost.exe -k netsvcs -p' },
     [pscustomobject]@{ File = 'msedge.exe'; Path = 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'; Parent = 'explorer.exe'; Command = 'msedge.exe --type=renderer --lang=en-US' },
     [pscustomobject]@{ File = 'Teams.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\Teams\current\Teams.exe'; Parent = 'explorer.exe'; Command = 'Teams.exe --process-start-args --system-initiated' },
     [pscustomobject]@{ File = 'OneDrive.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\OneDrive\OneDrive.exe'; Parent = 'explorer.exe'; Command = 'OneDrive.exe /background' },
-    [pscustomobject]@{ File = 'SenseIR.exe'; Path = 'C:\Program Files\Windows Defender Advanced Threat Protection\SenseIR.exe'; Parent = 'MsSense.exe'; Command = 'SenseIR.exe telemetry' },
-    [pscustomobject]@{ File = 'apt'; Path = '/usr/bin/apt'; Parent = 'bash'; Command = 'apt list --upgradable' }
+    [pscustomobject]@{ File = 'SenseIR.exe'; Path = 'C:\Program Files\Windows Defender Advanced Threat Protection\SenseIR.exe'; Parent = 'MsSense.exe'; Command = 'SenseIR.exe telemetry' }
 )
-$normalFileTemplates = @(
+$linuxProcessTemplates = @(
+    [pscustomobject]@{ File = 'systemd'; Path = '/usr/lib/systemd/systemd'; Parent = 'kernel'; Command = '/usr/lib/systemd/systemd --system' },
+    [pscustomobject]@{ File = 'sshd'; Path = '/usr/sbin/sshd'; Parent = 'systemd'; Command = 'sshd: {0} [priv]' },
+    [pscustomobject]@{ File = 'bash'; Path = '/usr/bin/bash'; Parent = 'sshd'; Command = '-bash' },
+    [pscustomobject]@{ File = 'sudo'; Path = '/usr/bin/sudo'; Parent = 'bash'; Command = 'sudo -l' },
+    [pscustomobject]@{ File = 'apt'; Path = '/usr/bin/apt'; Parent = 'bash'; Command = 'apt list --upgradable' },
+    [pscustomobject]@{ File = 'dpkg'; Path = '/usr/bin/dpkg'; Parent = 'apt'; Command = 'dpkg --status openssh-server' },
+    [pscustomobject]@{ File = 'auditd'; Path = '/usr/sbin/auditd'; Parent = 'systemd'; Command = '/usr/sbin/auditd -n' },
+    [pscustomobject]@{ File = 'mdatp'; Path = '/opt/microsoft/mdatp/sbin/mdatp'; Parent = 'systemd'; Command = 'mdatp health --field healthy' },
+    [pscustomobject]@{ File = 'rsyslogd'; Path = '/usr/sbin/rsyslogd'; Parent = 'systemd'; Command = '/usr/sbin/rsyslogd -n -iNONE' },
+    [pscustomobject]@{ File = 'cron'; Path = '/usr/sbin/cron'; Parent = 'systemd'; Command = '/usr/sbin/cron -f' }
+)
+$windowsFileTemplates = @(
     [pscustomobject]@{ Name = 'settings.json'; PathTemplate = 'C:\Users\{0}\AppData\Roaming\Microsoft\Teams\settings.json'; Size = 8192 },
     [pscustomobject]@{ Name = 'cache.db'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\Edge\User Data\Default\Cache\cache.db'; Size = 262144 },
     [pscustomobject]@{ Name = 'document.docx'; PathTemplate = 'C:\Users\{0}\Documents\Operations\document.docx'; Size = 153600 },
-    [pscustomobject]@{ Name = 'DefenderUpdate.log'; Path = 'C:\ProgramData\Microsoft\Windows Defender\Support\DefenderUpdate.log'; Size = 32768 },
-    [pscustomobject]@{ Name = 'syslog'; Path = '/var/log/syslog'; Size = 65536 }
+    [pscustomobject]@{ Name = 'DefenderUpdate.log'; Path = 'C:\ProgramData\Microsoft\Windows Defender\Support\DefenderUpdate.log'; Size = 32768 }
 )
-$normalDllTemplates = @(
+$linuxFileTemplates = @(
+    [pscustomobject]@{ Name = 'auth.log'; Path = '/var/log/auth.log'; Size = 65536 },
+    [pscustomobject]@{ Name = 'audit.log'; Path = '/var/log/audit/audit.log'; Size = 131072 },
+    [pscustomobject]@{ Name = 'syslog'; Path = '/var/log/syslog'; Size = 196608 },
+    [pscustomobject]@{ Name = 'kern.log'; Path = '/var/log/kern.log'; Size = 65536 },
+    [pscustomobject]@{ Name = 'sshd_config'; Path = '/etc/ssh/sshd_config'; Size = 4096 },
+    [pscustomobject]@{ Name = 'sudoers'; Path = '/etc/sudoers'; Size = 6144 },
+    [pscustomobject]@{ Name = 'status'; Path = '/var/lib/dpkg/status'; Size = 524288 },
+    [pscustomobject]@{ Name = 'mdatp_managed.json'; Path = '/etc/opt/microsoft/mdatp/managed/mdatp_managed.json'; Size = 4096 },
+    [pscustomobject]@{ Name = 'unattended-upgrades.log'; Path = '/var/log/unattended-upgrades/unattended-upgrades.log'; Size = 32768 },
+    [pscustomobject]@{ Name = 'bash_history'; PathTemplate = '/home/{0}/.bash_history'; Size = 8192 }
+)
+$windowsDllTemplates = @(
     [pscustomobject]@{ Name = 'samlib.dll'; Path = 'C:\Windows\System32\samlib.dll'; Size = 176128 },
     [pscustomobject]@{ Name = 'sechost.dll'; Path = 'C:\Windows\System32\sechost.dll'; Size = 761856 },
     [pscustomobject]@{ Name = 'winhttp.dll'; Path = 'C:\Windows\System32\winhttp.dll'; Size = 1089536 },
     [pscustomobject]@{ Name = 'crypt32.dll'; Path = 'C:\Windows\System32\crypt32.dll'; Size = 1869824 }
 )
-$normalRemoteEndpoints = @(
+$linuxSharedObjectTemplates = @(
+    [pscustomobject]@{ Name = 'libc.so.6'; Path = '/lib/x86_64-linux-gnu/libc.so.6'; Size = 2216304 },
+    [pscustomobject]@{ Name = 'libpam.so.0'; Path = '/lib/x86_64-linux-gnu/libpam.so.0'; Size = 67584 },
+    [pscustomobject]@{ Name = 'libssl.so.3'; Path = '/usr/lib/x86_64-linux-gnu/libssl.so.3'; Size = 688160 },
+    [pscustomobject]@{ Name = 'libcrypto.so.3'; Path = '/usr/lib/x86_64-linux-gnu/libcrypto.so.3'; Size = 4730136 },
+    [pscustomobject]@{ Name = 'libsystemd.so.0'; Path = '/usr/lib/x86_64-linux-gnu/libsystemd.so.0'; Size = 856432 },
+    [pscustomobject]@{ Name = 'libaudit.so.1'; Path = '/usr/lib/x86_64-linux-gnu/libaudit.so.1'; Size = 137520 },
+    [pscustomobject]@{ Name = 'libnss_files.so.2'; Path = '/lib/x86_64-linux-gnu/libnss_files.so.2'; Size = 55936 }
+)
+$windowsRemoteEndpoints = @(
     [pscustomobject]@{ Url = 'login.microsoftonline.com'; IP = '20.190.160.10'; Port = 443 },
     [pscustomobject]@{ Url = 'graph.microsoft.com'; IP = '20.190.128.12'; Port = 443 },
     [pscustomobject]@{ Url = 'officecdn.microsoft.com'; IP = '13.107.246.40'; Port = 443 },
     [pscustomobject]@{ Url = 'wdcp.microsoft.com'; IP = '52.152.110.14'; Port = 443 },
     [pscustomobject]@{ Url = 'packages.microsoft.com'; IP = '13.107.246.45'; Port = 443 }
+)
+$linuxRemoteEndpoints = @(
+    [pscustomobject]@{ Url = 'packages.microsoft.com'; IP = '13.107.246.45'; Port = 443; Protocol = 'Tcp' },
+    [pscustomobject]@{ Url = 'archive.ubuntu.com'; IP = '91.189.91.82'; Port = 443; Protocol = 'Tcp' },
+    [pscustomobject]@{ Url = 'security.ubuntu.com'; IP = '91.189.91.83'; Port = 443; Protocol = 'Tcp' },
+    [pscustomobject]@{ Url = 'ntp.ubuntu.com'; IP = '91.189.89.198'; Port = 123; Protocol = 'Udp' },
+    [pscustomobject]@{ Url = 'print-gw01.usag-cyber.local'; IP = '10.42.20.15'; Port = 631; Protocol = 'Udp' },
+    [pscustomobject]@{ Url = 'admin-jump01.usag-cyber.local'; IP = '10.42.30.10'; Port = 22; Protocol = 'Tcp' }
+)
+$linuxSoftwareCatalog = @(
+    [pscustomobject]@{ Name = 'openssh-server'; Vendor = 'OpenBSD'; Version = '1:9.6p1-3ubuntu13.5'; CveId = 'CVE-2024-6387'; Package = 'openssh-server'; Risk = 88 },
+    [pscustomobject]@{ Name = 'cups'; Vendor = 'OpenPrinting'; Version = '2.4.7-1.2ubuntu7.3'; CveId = 'CVE-2024-47176'; Package = 'cups-browsed'; Risk = 74 },
+    [pscustomobject]@{ Name = 'sudo'; Vendor = 'Sudo Project'; Version = '1.9.15p5-3ubuntu5.24.04.1'; CveId = 'CVE-2025-32463'; Package = 'sudo'; Risk = 82 },
+    [pscustomobject]@{ Name = 'glibc'; Vendor = 'GNU C Library'; Version = '2.39-0ubuntu8.4'; CveId = 'CVE-2023-4911'; Package = 'libc6'; Risk = 70 },
+    [pscustomobject]@{ Name = 'linux-image'; Vendor = 'Canonical'; Version = '6.8.0-58-generic'; CveId = 'CVE-2024-53197'; Package = 'linux-image-generic'; Risk = 67 },
+    [pscustomobject]@{ Name = 'openssl'; Vendor = 'OpenSSL Software Foundation'; Version = '3.0.13-0ubuntu3.5'; CveId = 'CVE-2024-5535'; Package = 'openssl'; Risk = 55 },
+    [pscustomobject]@{ Name = 'bash'; Vendor = 'GNU Project'; Version = '5.2.21-2ubuntu4'; CveId = 'CVE-2014-6271'; Package = 'bash'; Risk = 45 },
+    [pscustomobject]@{ Name = 'mdatp'; Vendor = 'Microsoft'; Version = '101.25042.0000'; CveId = ''; Package = 'mdatp'; Risk = 10 }
 )
 $normalApplications = @(
     [pscustomobject]@{ Name = 'Microsoft Teams'; Id = '1fec8e78-bce4-4aaf-ab1b-5451cc387264'; Resource = 'Microsoft Graph' },
@@ -341,13 +394,13 @@ foreach ($device in $devices) {
         DeviceName = $device.Name
         PublicIP = $device.PublicIP
         OSPlatform = $device.OS
-        OSBuild = if ($device.OS -eq 'Windows11') { '25H2' } elseif ($device.OS -like 'Windows*') { '26100' } else { '22.04' }
+        OSBuild = if ($device.OS -eq 'Windows11') { '25H2' } elseif ($device.OS -like 'Windows*') { '26100' } else { '24.04' }
         OSDistribution = if ($device.OS -eq 'Ubuntu') { 'Ubuntu' } else { '' }
-        IsAzureADJoined = $true
-        JoinType = 'Hybrid Azure AD joined'
+        IsAzureADJoined = $device.OS -ne 'Ubuntu'
+        JoinType = if ($device.OS -eq 'Ubuntu') { '' } else { 'Hybrid Azure AD joined' }
         AadDeviceId = New-StableGuid $device.DeviceId
-        LoggedOnUsers = if ($device.ShortName -eq 'WIN11-04') { '[{"UserName":"victor.alvarez"}]' } else { '[]' }
-        MachineGroup = if ($device.Type -eq 'DomainController') { 'Domain Controllers' } elseif ($device.Type -eq 'EntraConnect') { 'Identity Tier 0' } else { 'Workstations' }
+        LoggedOnUsers = if ($device.ShortName -eq 'WIN11-04') { '[{"UserName":"victor.alvarez"}]' } elseif ($device.OS -eq 'Ubuntu') { '[{"UserName":"svc_app0001"}]' } else { '[]' }
+        MachineGroup = if ($device.Type -eq 'DomainController') { 'Domain Controllers' } elseif ($device.Type -eq 'EntraConnect') { 'Identity Tier 0' } elseif ($device.OS -eq 'Ubuntu') { 'Linux Servers' } else { 'Workstations' }
         OnboardingStatus = 'Onboarded'
         DeviceType = $device.Type
         IsInternetFacing = $false
@@ -356,17 +409,17 @@ foreach ($device in $devices) {
         AssetValue = $device.AssetValue
         ConnectivityType = 'Corporate'
         ReportId = 1000 + $deviceIndex
-        AdditionalFields = '{"Workshop":"CyberDefenseKQL","Sensor":"MDE"}'
+        AdditionalFields = if ($device.OS -eq 'Ubuntu') { '{"Workshop":"CyberDefenseKQL","Sensor":"MDE","Distribution":"Ubuntu 24.04 LTS","KernelVersion":"6.8.0-58-generic"}' } else { '{"Workshop":"CyberDefenseKQL","Sensor":"MDE"}' }
     }
 
     Add-Record -Table 'DeviceNetworkInfo' -Time $StartTime.AddMinutes(-29) -Values @{
         Timestamp = Format-WorkshopTime $StartTime.AddMinutes(-29)
         DeviceId = $device.DeviceId
         DeviceName = $device.Name
-        NetworkAdapterName = 'Ethernet0'
-        ConnectedNetworks = '[{"Name":"CorpNet","Category":"DomainAuthenticated"}]'
+        NetworkAdapterName = if ($device.OS -eq 'Ubuntu') { 'ens160' } else { 'Ethernet0' }
+        ConnectedNetworks = if ($device.OS -eq 'Ubuntu') { '[{"Name":"CorpLinux","Category":"Private"}]' } else { '[{"Name":"CorpNet","Category":"DomainAuthenticated"}]' }
         IPAddresses = "[`"$($device.IP)`"]"
-        MacAddress = ('00-15-5D-{0:X2}-2A-63' -f $deviceIndex)
+        MacAddress = if ($device.OS -eq 'Ubuntu') { ('00:15:5d:{0:x2}:2a:63' -f $deviceIndex) } else { ('00-15-5D-{0:X2}-2A-63' -f $deviceIndex) }
         ReportId = 2000 + $deviceIndex
     }
 }
@@ -484,11 +537,13 @@ function New-NormalTelemetryValues {
     )
 
     $user = Get-WorkshopRandomItem $users
-    $device = Get-WorkshopRandomItem $devices
-    $process = Get-WorkshopRandomItem $normalProcessTemplates
-    $file = Get-WorkshopRandomItem $normalFileTemplates
-    $dll = Get-WorkshopRandomItem $normalDllTemplates
-    $remote = Get-WorkshopRandomItem $normalRemoteEndpoints
+    $devicePool = if ($Table -eq 'DeviceRegistryEvents' -or $Table -like 'Identity*') { $windowsDevices } else { $devices }
+    $device = Get-WorkshopRandomItem $devicePool
+    $isUbuntuDevice = $device.OS -eq 'Ubuntu'
+    $process = Get-WorkshopRandomItem $(if ($isUbuntuDevice) { $linuxProcessTemplates } else { $windowsProcessTemplates })
+    $file = Get-WorkshopRandomItem $(if ($isUbuntuDevice) { $linuxFileTemplates } else { $windowsFileTemplates })
+    $dll = Get-WorkshopRandomItem $(if ($isUbuntuDevice) { $linuxSharedObjectTemplates } else { $windowsDllTemplates })
+    $remote = Get-WorkshopRandomItem $(if ($isUbuntuDevice) { $linuxRemoteEndpoints } else { $windowsRemoteEndpoints })
     $app = Get-WorkshopRandomItem $normalApplications
     $processPath = Resolve-WorkshopTemplatePath -Template $process -UserName $user.Name
     $filePath = Resolve-WorkshopTemplatePath -Template $file -UserName $user.Name
@@ -496,6 +551,10 @@ function New-NormalTelemetryValues {
     $processHashes = New-WorkshopHashSet "$Table|$Index|$($process.File)|process"
     $reportId = 700000 + $Index
     $timeText = Format-WorkshopTime $Time
+    $accountDomain = if ($isUbuntuDevice) { $device.ShortName } else { $adDomain }
+    $linuxLocalUser = if ($user.Name -like 'svc_*') { $user.Name } else { ($user.Name -replace '\.', '') }
+    $processCommand = if ($process.Command -like '*{0}*') { $process.Command -f $linuxLocalUser } else { $process.Command }
+    $software = $null
 
     $values = @{
         Timestamp = $timeText
@@ -506,14 +565,14 @@ function New-NormalTelemetryValues {
         DeviceName = $device.Name
         PublicIP = $device.PublicIP
         LocalIP = $device.IP
-        AccountDomain = $adDomain
-        AccountName = $user.Name
+        AccountDomain = $accountDomain
+        AccountName = if ($isUbuntuDevice) { $linuxLocalUser } else { $user.Name }
         AccountSid = $user.Sid
         AccountUpn = $user.Upn
         AccountObjectId = $user.ObjectId
         AccountDisplayName = $user.DisplayName
-        InitiatingProcessAccountDomain = $adDomain
-        InitiatingProcessAccountName = $user.Name
+        InitiatingProcessAccountDomain = $accountDomain
+        InitiatingProcessAccountName = if ($isUbuntuDevice) { $linuxLocalUser } else { $user.Name }
         InitiatingProcessAccountSid = $user.Sid
         InitiatingProcessAccountUpn = $user.Upn
         InitiatingProcessAccountObjectId = $user.ObjectId
@@ -521,7 +580,7 @@ function New-NormalTelemetryValues {
         InitiatingProcessTokenElevation = 'TokenElevationTypeLimited'
         InitiatingProcessFileName = $process.File
         InitiatingProcessFolderPath = $processPath
-        InitiatingProcessCommandLine = $process.Command
+        InitiatingProcessCommandLine = $processCommand
         InitiatingProcessParentFileName = $process.Parent
         InitiatingProcessSHA1 = $processHashes.SHA1
         InitiatingProcessSHA256 = $processHashes.SHA256
@@ -536,7 +595,7 @@ function New-NormalTelemetryValues {
         TenantId = $tenantId
         ReportId = $reportId
         Type = $Table
-        AdditionalFields = @{ Workload = 'WorkshopNormal'; Baseline = $true }
+        AdditionalFields = @{ Workload = 'WorkshopNormal'; Baseline = $true; OSProfile = if ($isUbuntuDevice) { 'Ubuntu' } else { 'Windows' } }
     }
 
     switch ($Table) {
@@ -544,11 +603,11 @@ function New-NormalTelemetryValues {
             $values.ActionType = 'ProcessCreated'
             $values.FileName = $process.File
             $values.FolderPath = $processPath
-            $values.ProcessCommandLine = $process.Command
+            $values.ProcessCommandLine = $processCommand
             $values.ProcessCreationTime = $timeText
             $values.ProcessId = 2000 + ($Index % 40000)
-            $values.ProcessIntegrityLevel = 'Medium'
-            $values.ProcessTokenElevation = 'TokenElevationTypeLimited'
+            $values.ProcessIntegrityLevel = if ($isUbuntuDevice) { 'Unknown' } else { 'Medium' }
+            $values.ProcessTokenElevation = if ($isUbuntuDevice) { 'None' } else { 'TokenElevationTypeLimited' }
         }
         'DeviceFileEvents' {
             $values.ActionType = Get-WorkshopRandomItem @('FileCreated', 'FileModified', 'FileRenamed', 'FileDeleted')
@@ -564,10 +623,15 @@ function New-NormalTelemetryValues {
             $values.MD5 = $dllHashes.MD5
         }
         'DeviceEvents' {
-            $values.ActionType = Get-WorkshopRandomItem @('ScheduledTaskCreated', 'ScheduledTaskDeleted', 'ServiceInstalled', 'AntivirusSignatureUpdated', 'PowerShellCommand', 'AppControlCodeIntegrityPolicyAudited')
+            $values.ActionType = if ($isUbuntuDevice) {
+                Get-WorkshopRandomItem @('AuditdProcessExecution', 'SshSessionStarted', 'SudoCommand', 'PackageInstalled', 'ServiceStarted', 'AntivirusSignatureUpdated')
+            }
+            else {
+                Get-WorkshopRandomItem @('ScheduledTaskCreated', 'ScheduledTaskDeleted', 'ServiceInstalled', 'AntivirusSignatureUpdated', 'PowerShellCommand', 'AppControlCodeIntegrityPolicyAudited')
+            }
             $values.FileName = $process.File
             $values.FolderPath = $processPath
-            $values.ProcessCommandLine = $process.Command
+            $values.ProcessCommandLine = $processCommand
         }
         'DeviceNetworkEvents' {
             $values.ActionType = 'ConnectionSuccess'
@@ -575,16 +639,16 @@ function New-NormalTelemetryValues {
             $values.RemoteIP = $remote.IP
             $values.RemotePort = $remote.Port
             $values.LocalPort = 49152 + ($Index % 12000)
-            $values.Protocol = 'Tcp'
+            $values.Protocol = if ($remote.PSObject.Properties['Protocol']) { $remote.Protocol } else { 'Tcp' }
         }
         'DeviceLogonEvents' {
             $values.ActionType = if (($Index % 17) -eq 0) { 'LogonFailed' } else { 'LogonSuccess' }
-            $values.LogonType = Get-WorkshopRandomItem @('Interactive', 'Network', 'RemoteInteractive', 'CachedInteractive')
-            $values.Protocol = Get-WorkshopRandomItem @('Kerberos', 'NTLM', 'Negotiate')
-            $values.IsLocalAdmin = ($user.Name -like 'svc_*' -or $device.Type -in @('DomainController', 'EntraConnect'))
+            $values.LogonType = if ($isUbuntuDevice) { Get-WorkshopRandomItem @('Ssh', 'Local', 'Sudo') } else { Get-WorkshopRandomItem @('Interactive', 'Network', 'RemoteInteractive', 'CachedInteractive') }
+            $values.Protocol = if ($isUbuntuDevice) { if ($values.LogonType -eq 'Ssh') { 'Ssh' } else { 'PAM' } } else { Get-WorkshopRandomItem @('Kerberos', 'NTLM', 'Negotiate') }
+            $values.IsLocalAdmin = if ($isUbuntuDevice) { $values.LogonType -eq 'Sudo' -or $user.Name -like 'svc_*' } else { ($user.Name -like 'svc_*' -or $device.Type -in @('DomainController', 'EntraConnect')) }
             $values.LogonId = 800000 + $Index
-            $values.RemoteDeviceName = (Get-WorkshopRandomItem $devices).Name
-            $values.RemoteIP = (Get-WorkshopRandomItem $devices).IP
+            $values.RemoteDeviceName = if ($isUbuntuDevice) { 'ADMIN-JUMP01.usag-cyber.local' } else { (Get-WorkshopRandomItem $devices).Name }
+            $values.RemoteIP = if ($isUbuntuDevice) { '10.42.30.10' } else { (Get-WorkshopRandomItem $devices).IP }
         }
         'DeviceRegistryEvents' {
             $values.ActionType = Get-WorkshopRandomItem @('RegistryValueSet', 'RegistryKeyCreated', 'RegistryValueDeleted')
@@ -595,13 +659,13 @@ function New-NormalTelemetryValues {
         }
         'DeviceInfo' {
             $values.OSPlatform = $device.OS
-            $values.OSBuild = if ($device.OS -eq 'Windows11') { '25H2' } elseif ($device.OS -like 'Windows*') { '26100' } else { '22.04' }
+            $values.OSBuild = if ($device.OS -eq 'Windows11') { '25H2' } elseif ($device.OS -like 'Windows*') { '26100' } else { '24.04' }
             $values.OSDistribution = if ($device.OS -eq 'Ubuntu') { 'Ubuntu' } else { '' }
-            $values.IsAzureADJoined = $true
-            $values.JoinType = 'Hybrid Azure AD joined'
+            $values.IsAzureADJoined = -not $isUbuntuDevice
+            $values.JoinType = if ($isUbuntuDevice) { '' } else { 'Hybrid Azure AD joined' }
             $values.AadDeviceId = New-StableGuid $device.DeviceId
-            $values.LoggedOnUsers = @(@{ UserName = $user.Name; DomainName = $adDomain })
-            $values.MachineGroup = if ($device.Type -eq 'DomainController') { 'Domain Controllers' } elseif ($device.Type -eq 'EntraConnect') { 'Identity Tier 0' } else { 'Workstations' }
+            $values.LoggedOnUsers = @(@{ UserName = if ($isUbuntuDevice) { $linuxLocalUser } else { $user.Name }; DomainName = $accountDomain })
+            $values.MachineGroup = if ($device.Type -eq 'DomainController') { 'Domain Controllers' } elseif ($device.Type -eq 'EntraConnect') { 'Identity Tier 0' } elseif ($isUbuntuDevice) { 'Linux Servers' } else { 'Workstations' }
             $values.OnboardingStatus = 'Onboarded'
             $values.DeviceType = $device.Type
             $values.SensorHealthState = 'Active'
@@ -610,10 +674,10 @@ function New-NormalTelemetryValues {
             $values.ConnectivityType = 'Corporate'
         }
         'DeviceNetworkInfo' {
-            $values.NetworkAdapterName = 'Ethernet0'
-            $values.ConnectedNetworks = @(@{ Name = 'CorpNet'; Category = 'DomainAuthenticated' })
+            $values.NetworkAdapterName = if ($isUbuntuDevice) { Get-WorkshopRandomItem @('ens160', 'eth0') } else { 'Ethernet0' }
+            $values.ConnectedNetworks = if ($isUbuntuDevice) { @(@{ Name = 'CorpLinux'; Category = 'Private' }) } else { @(@{ Name = 'CorpNet'; Category = 'DomainAuthenticated' }) }
             $values.IPAddresses = @($device.IP)
-            $values.MacAddress = ('00-15-5D-{0:X2}-{1:X2}-{2:X2}' -f ($Index % 255), (($Index + 42) % 255), (($Index + 99) % 255))
+            $values.MacAddress = if ($isUbuntuDevice) { ('00:15:5d:{0:x2}:{1:x2}:{2:x2}' -f ($Index % 255), (($Index + 42) % 255), (($Index + 99) % 255)) } else { ('00-15-5D-{0:X2}-{1:X2}-{2:X2}' -f ($Index % 255), (($Index + 42) % 255), (($Index + 99) % 255)) }
         }
         { $_ -in @('SigninLogs', 'AADNonInteractiveUserSignInLogs', 'AADManagedIdentitySignInLogs', 'AADServicePrincipalSignInLogs', 'EntraIdSignInEvents', 'AADSignInEventsBeta', 'AADSpnSignInEventsBeta', 'EntraIdSpnSignInEvents') } {
             $values.Application = $app.Name
@@ -642,7 +706,7 @@ function New-NormalTelemetryValues {
             $values.AuthenticationRequirement = if (($Index % 4) -eq 0) { 'multiFactorAuthentication' } else { 'singleFactorAuthentication' }
             $values.AuthenticationMethodsUsed = if (($Index % 4) -eq 0) { 'Password,Authenticator App' } else { 'Password' }
             $values.ClientAppUsed = Get-WorkshopRandomItem @('Browser', 'Mobile Apps and Desktop clients', 'Exchange ActiveSync')
-            $values.UserAgent = Get-WorkshopRandomItem @('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'Microsoft Office/16.0', 'Teams/24215.1007.3082.1590')
+            $values.UserAgent = if ($isUbuntuDevice) { Get-WorkshopRandomItem @('Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36', 'curl/8.5.0', 'Microsoft-MDATP/101.25042.0000') } else { Get-WorkshopRandomItem @('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'Microsoft Office/16.0', 'Teams/24215.1007.3082.1590') }
             $values.CorrelationId = New-StableGuid "$Table|signin-correlation|$Index"
             $values.Id = New-StableGuid "$Table|signin|$Index"
             $values.Status = @{ errorCode = 0; failureReason = 'Other'; additionalDetails = 'MFA requirement satisfied' }
@@ -725,14 +789,31 @@ function New-NormalTelemetryValues {
         }
         { $_ -like 'DeviceTvm*' -or $_ -like 'DeviceBaseline*' } {
             $values.ActionType = 'InventorySnapshot'
-            $values.SoftwareName = Get-WorkshopRandomItem @('Microsoft Edge', 'Microsoft Teams', 'OpenSSL', 'Microsoft Defender for Endpoint')
-            $values.SoftwareVendor = Get-WorkshopRandomItem @('Microsoft', 'Canonical', 'OpenSSL Software Foundation')
-            $values.SoftwareVersion = Get-WorkshopRandomItem @('125.0.2535.67', '1.1.1w', '24215.1007.3082.1590', '4.18.24040.4')
-            $values.CveId = Get-WorkshopRandomItem @('CVE-2024-21338', 'CVE-2024-30078', 'CVE-2023-48795')
+            $values.OSPlatform = if ($isUbuntuDevice) { 'Ubuntu' } else { $device.OS }
+            $values.OSVersion = if ($isUbuntuDevice) { '24.04 LTS' } elseif ($device.OS -eq 'Windows11') { '25H2' } else { 'Server 2025' }
+            $values.OSArchitecture = 'x64'
+            if ($isUbuntuDevice) {
+                $software = Get-WorkshopRandomItem $linuxSoftwareCatalog
+                $values.SoftwareName = $software.Name
+                $values.SoftwareVendor = $software.Vendor
+                $values.SoftwareVersion = $software.Version
+                $values.CveId = $software.CveId
+                $values.PackageName = $software.Package
+                $values.VulnerabilitySeverityLevel = if ($software.Risk -ge 80) { 'High' } elseif ($software.Risk -ge 60) { 'Medium' } else { 'Low' }
+                $values.RecommendedSecurityUpdate = if ($software.CveId) { "Update Ubuntu package $($software.Package)" } else { 'No security update required' }
+                $values.CveTags = if ($software.CveId) { @('Linux', 'Ubuntu') } else { @('Inventory') }
+                $values.AdditionalFields = @{ OSProfile = 'Ubuntu'; Package = $software.Package; CveId = $software.CveId }
+            }
+            else {
+                $values.SoftwareName = Get-WorkshopRandomItem @('Microsoft Edge', 'Microsoft Teams', 'OpenSSL', 'Microsoft Defender for Endpoint')
+                $values.SoftwareVendor = Get-WorkshopRandomItem @('Microsoft', 'Canonical', 'OpenSSL Software Foundation')
+                $values.SoftwareVersion = Get-WorkshopRandomItem @('125.0.2535.67', '1.1.1w', '24215.1007.3082.1590', '4.18.24040.4')
+                $values.CveId = Get-WorkshopRandomItem @('CVE-2024-21338', 'CVE-2024-30078', 'CVE-2023-48795')
+            }
             $values.ConfigurationId = New-StableGuid "$Table|config|$Index"
             $values.IsCompliant = ($Index % 7) -ne 0
             $values.ComplianceStatus = if ($values.IsCompliant) { 'Compliant' } else { 'NonCompliant' }
-            $values.RiskScore = Get-WorkshopRandomInt -Minimum 1 -Maximum 60
+            $values.RiskScore = if ($isUbuntuDevice -and $software) { $software.Risk } else { Get-WorkshopRandomInt -Minimum 1 -Maximum 60 }
         }
         default {
             $values.ActionType = 'WorkshopNormalBaseline'
@@ -1203,6 +1284,205 @@ foreach ($alert in $alerts) {
     }
 }
 
+$linuxAdminUser = $alice.Name -replace '\.', ''
+$linuxExternalIp = '203.0.113.91'
+$linuxAlertTime = $StartTime.AddMinutes(68)
+Add-Record -Table 'DeviceLogonEvents' -Time $StartTime.AddMinutes(61) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(61)
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    ActionType = 'LogonFailed'
+    LogonType = 'Ssh'
+    Protocol = 'Ssh'
+    AccountDomain = $linux03.ShortName
+    AccountName = $linuxAdminUser
+    AccountSid = $alice.Sid
+    AccountUpn = $alice.Upn
+    RemoteIP = $linuxExternalIp
+    RemoteDeviceName = 'unknown-internet-host'
+    IsLocalAdmin = $false
+    LogonId = 860061
+    ReportId = 860061
+    AdditionalFields = '{"SourceLog":"/var/log/auth.log","PamResult":"authentication failure","Scenario":"Linux SSH brute force"}'
+}
+Add-Record -Table 'DeviceLogonEvents' -Time $StartTime.AddMinutes(64) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(64)
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    ActionType = 'LogonSuccess'
+    LogonType = 'Ssh'
+    Protocol = 'Ssh'
+    AccountDomain = $linux03.ShortName
+    AccountName = $linuxAdminUser
+    AccountSid = $alice.Sid
+    AccountUpn = $alice.Upn
+    RemoteIP = '10.42.30.10'
+    RemoteDeviceName = 'ADMIN-JUMP01.usag-cyber.local'
+    IsLocalAdmin = $false
+    LogonId = 860064
+    ReportId = 860064
+    AdditionalFields = '{"SourceLog":"/var/log/auth.log","PamResult":"Accepted publickey","Scenario":"Linux SSH login"}'
+}
+Add-Record -Table 'DeviceProcessEvents' -Time $StartTime.AddMinutes(65) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(65)
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    ActionType = 'ProcessCreated'
+    FileName = 'sudo'
+    FolderPath = '/usr/bin/sudo'
+    ProcessId = 18650
+    ProcessCommandLine = 'sudo -R /tmp/.cache/nss /bin/bash -p'
+    ProcessCreationTime = Format-WorkshopTime $StartTime.AddMinutes(65)
+    ProcessIntegrityLevel = 'Unknown'
+    ProcessTokenElevation = 'None'
+    AccountDomain = $linux03.ShortName
+    AccountName = $linuxAdminUser
+    AccountSid = $alice.Sid
+    AccountUpn = $alice.Upn
+    InitiatingProcessAccountDomain = $linux03.ShortName
+    InitiatingProcessAccountName = $linuxAdminUser
+    InitiatingProcessAccountSid = $alice.Sid
+    InitiatingProcessAccountUpn = $alice.Upn
+    InitiatingProcessFileName = 'bash'
+    InitiatingProcessFolderPath = '/usr/bin/bash'
+    InitiatingProcessCommandLine = '-bash'
+    InitiatingProcessParentFileName = 'sshd'
+    ReportId = 860065
+    AdditionalFields = '{"Technique":"T1548.003","SourceLog":"/var/log/auth.log","Scenario":"Suspicious sudo chroot usage"}'
+}
+Add-Record -Table 'DeviceFileEvents' -Time $StartTime.AddMinutes(66) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(66)
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    ActionType = 'FileCreated'
+    FileName = 'nsswitch.conf'
+    FolderPath = '/tmp/.cache/nss/etc/nsswitch.conf'
+    FileSize = 512
+    InitiatingProcessAccountDomain = $linux03.ShortName
+    InitiatingProcessAccountName = $linuxAdminUser
+    InitiatingProcessAccountSid = $alice.Sid
+    InitiatingProcessAccountUpn = $alice.Upn
+    InitiatingProcessFileName = 'bash'
+    InitiatingProcessCommandLine = 'printf passwd: files > /tmp/.cache/nss/etc/nsswitch.conf'
+    InitiatingProcessId = 18649
+    InitiatingProcessCreationTime = Format-WorkshopTime $StartTime.AddMinutes(65)
+    ReportId = 860066
+    AdditionalFields = '{"Technique":"T1548.003","SourceLog":"/var/log/audit/audit.log","Scenario":"Linux privilege escalation staging"}'
+}
+Add-Record -Table 'DeviceImageLoadEvents' -Time $StartTime.AddMinutes(66) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(66)
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    ActionType = 'ImageLoaded'
+    FileName = 'libnss_files.so.2'
+    FolderPath = '/lib/x86_64-linux-gnu/libnss_files.so.2'
+    FileSize = 55936
+    SHA1 = New-StableHex 'linux-libnss-files-sha1' 40
+    SHA256 = New-StableHex 'linux-libnss-files-sha256' 64
+    MD5 = New-StableHex 'linux-libnss-files-md5' 32
+    InitiatingProcessAccountDomain = $linux03.ShortName
+    InitiatingProcessAccountName = $linuxAdminUser
+    InitiatingProcessAccountSid = $alice.Sid
+    InitiatingProcessAccountUpn = $alice.Upn
+    InitiatingProcessFileName = 'sudo'
+    InitiatingProcessFolderPath = '/usr/bin/sudo'
+    InitiatingProcessCommandLine = 'sudo -R /tmp/.cache/nss /bin/bash -p'
+    ReportId = 860067
+    AdditionalFields = '{"Scenario":"Linux shared object load","Source":"ld.so"}'
+}
+Add-Record -Table 'DeviceNetworkEvents' -Time $StartTime.AddMinutes(67) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(67)
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    ActionType = 'ConnectionSuccess'
+    LocalIP = $linux03.IP
+    LocalPort = 49322
+    RemoteIP = '198.51.100.88'
+    RemoteUrl = 'ipp-printer-discovery.example'
+    RemotePort = 631
+    Protocol = 'Udp'
+    InitiatingProcessFileName = 'cups-browsed'
+    InitiatingProcessCommandLine = '/usr/sbin/cups-browsed'
+    InitiatingProcessAccountDomain = 'root'
+    InitiatingProcessAccountName = 'root'
+    ReportId = 8600671
+    AdditionalFields = '{"CveContext":"CVE-2024-47176","Scenario":"CUPS IPP exposure"}'
+}
+Add-Record -Table 'DeviceEvents' -Time $StartTime.AddMinutes(68) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(68)
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    ActionType = 'AuditdProcessExecution'
+    FileName = 'sudo'
+    FolderPath = '/usr/bin/sudo'
+    ProcessCommandLine = 'sudo -R /tmp/.cache/nss /bin/bash -p'
+    AccountDomain = $linux03.ShortName
+    AccountName = $linuxAdminUser
+    AccountSid = $alice.Sid
+    AccountUpn = $alice.Upn
+    ReportId = 860068
+    AdditionalFields = '{"SourceLog":"/var/log/audit/audit.log","AuditKey":"priv_esc","Technique":"T1548.003"}'
+}
+Add-Record -Table 'AlertInfo' -Time $linuxAlertTime -Values @{
+    Timestamp = Format-WorkshopTime $linuxAlertTime
+    AlertId = 'LINUX-001'
+    Title = 'Suspicious sudo chroot usage on Linux server'
+    Category = 'PrivilegeEscalation'
+    Severity = 'High'
+    ServiceSource = 'Microsoft Defender for Endpoint'
+    DetectionSource = 'MDE sensor'
+    AttackTechniques = 'T1548.003,T1059.004'
+}
+Add-Record -Table 'AlertEvidence' -Time $linuxAlertTime -Values @{
+    Timestamp = Format-WorkshopTime $linuxAlertTime
+    AlertId = 'LINUX-001'
+    Title = 'Suspicious sudo chroot usage on Linux server'
+    Categories = '["PrivilegeEscalation"]'
+    AttackTechniques = 'T1548.003,T1059.004'
+    ServiceSource = 'Microsoft Defender for Endpoint'
+    DetectionSource = 'MDE sensor'
+    EntityType = 'Process'
+    EvidenceRole = 'Impacted'
+    EvidenceDirection = 'Source'
+    FileName = 'sudo'
+    FolderPath = '/usr/bin/sudo'
+    AccountName = $linuxAdminUser
+    AccountDomain = $linux03.ShortName
+    AccountSid = $alice.Sid
+    AccountObjectId = $alice.ObjectId
+    AccountUpn = $alice.Upn
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    LocalIP = $linux03.IP
+    ProcessCommandLine = 'sudo -R /tmp/.cache/nss /bin/bash -p'
+    AdditionalFields = '{"OSProfile":"Ubuntu","SourceLogs":["/var/log/auth.log","/var/log/audit/audit.log"],"CveContext":"CVE-2025-32463"}'
+    Severity = 'High'
+}
+$linuxScenarioVulnerabilities = @(
+    [pscustomobject]@{ Minute = 62; SoftwareName = 'openssh-server'; SoftwareVendor = 'OpenBSD'; SoftwareVersion = '1:9.6p1-3ubuntu13.5'; CveId = 'CVE-2024-6387'; Severity = 'High'; Update = 'Install patched openssh-server package' },
+    [pscustomobject]@{ Minute = 66; SoftwareName = 'sudo'; SoftwareVendor = 'Sudo Project'; SoftwareVersion = '1.9.15p5-3ubuntu5.24.04.1'; CveId = 'CVE-2025-32463'; Severity = 'High'; Update = 'Install patched sudo package' },
+    [pscustomobject]@{ Minute = 67; SoftwareName = 'cups'; SoftwareVendor = 'OpenPrinting'; SoftwareVersion = '2.4.7-1.2ubuntu7.3'; CveId = 'CVE-2024-47176'; Severity = 'Medium'; Update = 'Disable cups-browsed or install patched CUPS packages' },
+    [pscustomobject]@{ Minute = 68; SoftwareName = 'glibc'; SoftwareVendor = 'GNU C Library'; SoftwareVersion = '2.39-0ubuntu8.4'; CveId = 'CVE-2023-4911'; Severity = 'Medium'; Update = 'Install patched libc6 package' }
+)
+foreach ($vulnerability in $linuxScenarioVulnerabilities) {
+    $vulnTime = $StartTime.AddMinutes($vulnerability.Minute)
+    Add-Record -Table 'DeviceTvmSoftwareVulnerabilities' -Time $vulnTime -Values @{
+        DeviceId = $linux03.DeviceId
+        DeviceName = $linux03.Name
+        OSPlatform = 'Ubuntu'
+        OSVersion = '24.04 LTS'
+        OSArchitecture = 'x64'
+        SoftwareVendor = $vulnerability.SoftwareVendor
+        SoftwareName = $vulnerability.SoftwareName
+        SoftwareVersion = $vulnerability.SoftwareVersion
+        CveId = $vulnerability.CveId
+        VulnerabilitySeverityLevel = $vulnerability.Severity
+        RecommendedSecurityUpdate = $vulnerability.Update
+        RecommendedSecurityUpdateId = $vulnerability.CveId
+        CveTags = @('Linux', 'Ubuntu', 'Workshop')
+    }
+}
+
 Add-Record -Table 'AADRiskyUsers' -Time $StartTime.AddMinutes(2) -Values @{
     TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(2)
     AADTenantId = $tenantId
@@ -1277,6 +1557,11 @@ $summary = [ordered]@{
     compromisedUser = $victor.Upn
     initialDevice = $win04.Name
     attackVectors = $attackSteps | Select-Object Title, Technique, Offset, Command
+    linuxAttackVectors = @(
+        [ordered]@{ Title = 'Suspicious SSH attempts against Ubuntu server'; Technique = 'T1021.004'; Offset = 61; Command = 'sshd authentication activity in /var/log/auth.log' }
+        [ordered]@{ Title = 'Suspicious sudo chroot usage on Ubuntu server'; Technique = 'T1548.003'; Offset = 65; Command = 'sudo -R /tmp/.cache/nss /bin/bash -p' }
+        [ordered]@{ Title = 'Unix shell and auditd evidence on Ubuntu server'; Technique = 'T1059.004'; Offset = 68; Command = 'auditd process execution evidence for sudo and bash' }
+    )
 }
 
 $summary | ConvertTo-Json -Depth 10 | Set-Content -Path $SummaryPath -Encoding UTF8

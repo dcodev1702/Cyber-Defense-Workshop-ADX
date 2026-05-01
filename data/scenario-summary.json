@@ -1,6 +1,11 @@
 {
   "scenarioName": "FIN7-inspired hybrid identity credential access",
-  "startTime": "2026-04-30T13:00:00.0000000Z",
+  "startTime": "2026-05-01T03:58:14.2364198Z",
+  "telemetryWindow": {
+    "endTime": "2026-05-01T05:28:14.2364198Z",
+    "lookbackDays": 7,
+    "earliestNormalTime": "2026-04-24T05:28:14.2364198Z"
+  },
   "tenantDomain": "usag-cyber.local",
   "adDomain": "USAG-CYBER",
   "infrastructure": {
@@ -10,8 +15,8 @@
     "entraConnectServers": 1
   },
   "identities": {
-    "users": 6000,
-    "serviceAccounts": 4000
+    "users": 10,
+    "serviceAccounts": 5
   },
   "compromisedUser": "victor.alvarez@usag-cyber.local",
   "initialDevice": "WIN11-04.usag-cyber.local",
@@ -81,6 +86,26 @@
       "Technique": "T1003.001",
       "Offset": 73,
       "Command": "mimikatz.exe \"privilege::debug\" \"sekurlsa::logonpasswords\" \"exit\""
+    }
+  ],
+  "linuxAttackVectors": [
+    {
+      "Title": "Suspicious SSH attempts against Ubuntu server",
+      "Technique": "T1021.004",
+      "Offset": 61,
+      "Command": "sshd authentication activity in /var/log/auth.log"
+    },
+    {
+      "Title": "Suspicious sudo chroot usage on Ubuntu server",
+      "Technique": "T1548.003",
+      "Offset": 65,
+      "Command": "sudo -R /tmp/.cache/nss /bin/bash -p"
+    },
+    {
+      "Title": "Unix shell and auditd evidence on Ubuntu server",
+      "Technique": "T1059.004",
+      "Offset": 68,
+      "Command": "auditd process execution evidence for sudo and bash"
     }
   ]
 }

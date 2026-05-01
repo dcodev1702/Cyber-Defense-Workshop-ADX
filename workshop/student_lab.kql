@@ -91,10 +91,51 @@ AlertInfo
 | project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, ServiceSource=ServiceSource1, AttackTechniques=AttackTechniques1, EntityType, DeviceName, AccountUpn, FileName, ProcessCommandLine
 | order by Timestamp asc
 
-// 11. Build a concise incident timeline.
+// 11. Optional Linux MDE branch: compare Ubuntu SSH/sudo/auditd telemetry with Windows endpoint rows.
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName;
+linuxDevices
+| join kind=inner (
+    DeviceLogonEvents
+    | where Protocol in~ ("Ssh", "PAM") or LogonType in~ ("Ssh", "Sudo")
+    | project Timestamp, DeviceId, DeviceName, ActionType, LogonType, Protocol, AccountName, RemoteIP, AdditionalFields
+) on DeviceId, DeviceName
+| order by Timestamp asc
+
+linuxDevices
+| join kind=inner (
+    DeviceProcessEvents
+    | where FolderPath startswith "/" or ProcessCommandLine has_any ("sshd", "sudo", "auditd", "apt", "dpkg")
+    | project Timestamp, DeviceId, DeviceName, AccountName, FileName, FolderPath, ProcessCommandLine, AdditionalFields
+) on DeviceId, DeviceName
+| order by Timestamp asc
+
+linuxDevices
+| join kind=inner (
+    DeviceImageLoadEvents
+    | where FileName has ".so" or FolderPath startswith "/lib" or FolderPath startswith "/usr/lib"
+    | project Timestamp, DeviceId, DeviceName, FileName, FolderPath, InitiatingProcessFileName, InitiatingProcessCommandLine
+) on DeviceId, DeviceName
+| order by Timestamp asc
+
+linuxDevices
+| join kind=inner (
+    DeviceTvmSoftwareVulnerabilities
+    | where CveId in~ ("CVE-2024-6387", "CVE-2024-47176", "CVE-2025-32463", "CVE-2023-4911", "CVE-2024-53197")
+    | project DeviceId, DeviceName, SoftwareName, SoftwareVersion, CveId, VulnerabilitySeverityLevel, RecommendedSecurityUpdate
+) on DeviceId, DeviceName
+| order by CveId asc
+
+// 12. Build a concise incident timeline.
 let endpoint =
     DeviceProcessEvents
     | where DeviceName has "WIN11-04"
+    | project Timestamp, SourceTable="DeviceProcessEvents", Entity=DeviceName, Detail=strcat(FileName, " :: ", ProcessCommandLine);
+let linux =
+    DeviceProcessEvents
+    | where DeviceName has "UBUNTU-03" and ProcessCommandLine has_any ("sudo", "auditd", "sshd")
     | project Timestamp, SourceTable="DeviceProcessEvents", Entity=DeviceName, Detail=strcat(FileName, " :: ", ProcessCommandLine);
 let identity =
     IdentityQueryEvents
@@ -105,5 +146,5 @@ let cloud =
 let alerts =
     AlertInfo
     | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
-union endpoint, identity, cloud, alerts
+union endpoint, linux, identity, cloud, alerts
 | order by Timestamp asc
