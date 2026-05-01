@@ -128,15 +128,7 @@ Students should sign in with their workshop username/password and complete MFA u
 
 The recommended two-hour flow is documented in [`docs\workshop_design.md`](docs/workshop_design.md). At a high level:
 
-| Segment | Duration | Focus |
-| --- | ---: | --- |
-| Access check and KQL warm-up | 10 min | Confirm ADX Web UI access and table inventory |
-| Scenario and infrastructure | 15 min | Explain hybrid topology, threat actor framing, and telemetry sources |
-| Entra and Graph investigation | 20 min | Hunt risky sign-in, OAuth consent, and Graph activity |
-| Endpoint credential access | 35 min | Hunt process, registry, file, and network telemetry |
-| MDI and lateral movement | 20 min | Correlate SPN enumeration, Kerberos activity, and service-account use |
-| Alert correlation and timeline | 15 min | Join `AlertInfo` and `AlertEvidence`; build the incident timeline |
-| Debrief | 5 min | Discuss detections, controls, and operational takeaways |
+![Workshop flow — two hours, seven segments](images/workshop-flow.svg)
 
 ## Key tables
 
