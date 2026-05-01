@@ -397,6 +397,7 @@ foreach ($schemaFile in (Get-ChildItem -Path $SchemaDirectory -Filter '*.schema.
 }
 
 $tenantId = '11111111-2222-3333-4444-555555555555'
+$subscriptionId = '22222222-3333-4444-5555-666666666666'
 $tenantDomain = 'usag-cyber.local'
 $adDomain = 'USAG-CYBER'
 $corpFqdn = 'usag-cyber.local'
@@ -815,6 +816,18 @@ $servicePrincipalResourceCatalog = @(
     [pscustomobject]@{ Name = 'Azure SQL Database'; Id = New-StableGuid 'resource|azure-sql' },
     [pscustomobject]@{ Name = 'Microsoft Purview'; Id = New-StableGuid 'resource|purview' },
     [pscustomobject]@{ Name = 'Azure Automation'; Id = New-StableGuid 'resource|automation' }
+)
+$managedIdentityResourceCatalog = @(
+    [pscustomobject]@{ Name = 'vm-aadconnect-sync-01'; ResourceGroup = 'rg-identity-tier0'; Provider = 'Microsoft.Compute/virtualMachines'; Region = 'Germany West Central'; PrivateIp = '10.42.0.20'; IdentityType = 'SystemAssigned'; UserAgent = 'ImdsIdentityProvider/150.870.65.1854' },
+    [pscustomobject]@{ Name = 'func-telemetry-collector'; ResourceGroup = 'rg-security-automation'; Provider = 'Microsoft.Web/sites'; Region = 'Germany West Central'; PrivateIp = '10.42.40.12'; IdentityType = 'SystemAssigned'; UserAgent = 'azsdk-net-Identity/1.13.2 (.NET 8.0.6; Microsoft Windows 10.0.20348)' },
+    [pscustomobject]@{ Name = 'auto-patch-orchestrator'; ResourceGroup = 'rg-operations'; Provider = 'Microsoft.Automation/automationAccounts'; Region = 'West Europe'; PrivateIp = '10.42.40.23'; IdentityType = 'UserAssigned'; UserAgent = 'azsdk-net-Identity/1.12.1 (.NET 6.0.36; Microsoft Windows 10.0.20348)' },
+    [pscustomobject]@{ Name = 'aks-workload-inventory'; ResourceGroup = 'rg-containers'; Provider = 'Microsoft.ContainerService/managedClusters'; Region = 'Germany West Central'; PrivateIp = '10.42.50.15'; IdentityType = 'UserAssigned'; UserAgent = 'Go-http-client/1.1' },
+    [pscustomobject]@{ Name = 'logicapp-incident-router'; ResourceGroup = 'rg-sentinel-soar'; Provider = 'Microsoft.Logic/workflows'; Region = 'West Europe'; PrivateIp = '10.42.40.44'; IdentityType = 'SystemAssigned'; UserAgent = 'azsdk-net-Identity/1.11.0 (.NET 6.0.36; Microsoft Windows 10.0.20348)' },
+    [pscustomobject]@{ Name = 'vm-linux-inventory-01'; ResourceGroup = 'rg-linux-servers'; Provider = 'Microsoft.Compute/virtualMachines'; Region = 'Germany West Central'; PrivateIp = '10.42.20.31'; IdentityType = 'SystemAssigned'; UserAgent = 'Azure-Identity/1.15.0 Python/3.12.3' },
+    [pscustomobject]@{ Name = 'datafactory-export-runner'; ResourceGroup = 'rg-data-platform'; Provider = 'Microsoft.DataFactory/factories'; Region = 'North Europe'; PrivateIp = '10.42.60.18'; IdentityType = 'UserAssigned'; UserAgent = 'azsdk-java-identity/1.14.0' },
+    [pscustomobject]@{ Name = 'app-purview-label-sync'; ResourceGroup = 'rg-compliance'; Provider = 'Microsoft.Web/sites'; Region = 'West Europe'; PrivateIp = '10.42.40.61'; IdentityType = 'SystemAssigned'; UserAgent = 'azsdk-net-Identity/1.13.2 (.NET 8.0.6; Microsoft Windows 10.0.20348)' },
+    [pscustomobject]@{ Name = 'vm-oracle-backup-01'; ResourceGroup = 'rg-database'; Provider = 'Microsoft.Compute/virtualMachines'; Region = 'Germany West Central'; PrivateIp = '10.42.20.35'; IdentityType = 'SystemAssigned'; UserAgent = 'ImdsIdentityProvider/150.870.65.1854' },
+    [pscustomobject]@{ Name = 'func-keyvault-rotation'; ResourceGroup = 'rg-key-management'; Provider = 'Microsoft.Web/sites'; Region = 'Germany West Central'; PrivateIp = '10.42.40.72'; IdentityType = 'UserAssigned'; UserAgent = 'azsdk-js-identity/4.4.1 core-rest-pipeline/1.17.0 Node/20.11.1' }
 )
 $servicePrincipalLocationCatalog = @(
     [pscustomobject]@{ Country = 'DE'; State = 'Hesse'; City = 'Wiesbaden'; Latitude = '50.0782'; Longitude = '8.2398' },
@@ -1304,7 +1317,80 @@ function New-NormalTelemetryValues {
             $values.IPAddresses = @($device.IP)
             $values.MacAddress = if ($isUbuntuDevice) { ('00:15:5d:{0:x2}:{1:x2}:{2:x2}' -f ($Index % 255), (($Index + 42) % 255), (($Index + 99) % 255)) } else { ('00-15-5D-{0:X2}-{1:X2}-{2:X2}' -f ($Index % 255), (($Index + 42) % 255), (($Index + 99) % 255)) }
         }
-        { $_ -in @('SigninLogs', 'AADNonInteractiveUserSignInLogs', 'AADManagedIdentitySignInLogs', 'AADServicePrincipalSignInLogs', 'EntraIdSignInEvents', 'AADSignInEventsBeta', 'AADSpnSignInEventsBeta', 'EntraIdSpnSignInEvents') } {
+        'AADManagedIdentitySignInLogs' {
+            $managedResource = $managedIdentityResourceCatalog[$Index % $managedIdentityResourceCatalog.Count]
+            $targetResource = $servicePrincipalResourceCatalog[$Index % $servicePrincipalResourceCatalog.Count]
+            $isFailure = ($Index % 97) -eq 0
+            $managedIdentityName = '{0}-mi' -f $managedResource.Name
+            $managedIdentityResourceId = '/subscriptions/{0}/resourceGroups/{1}/providers/{2}/{3}' -f $subscriptionId, $managedResource.ResourceGroup, $managedResource.Provider, $managedResource.Name
+            $servicePrincipalSeed = "$Table|managed-identity|$($managedResource.Name)"
+            $servicePrincipalId = New-StableGuid "$servicePrincipalSeed|servicePrincipal"
+            $appIdValue = New-StableGuid "$servicePrincipalSeed|appId"
+            $correlationId = New-StableGuid "$Table|correlation|$Index"
+            $locationDetails = @{
+                countryOrRegion = 'DE'
+                state = 'Hesse'
+                city = 'Wiesbaden'
+                geoCoordinates = @{ latitude = 50.0782; longitude = 8.2398 }
+            }
+            $managedIdentityDetails = @{
+                azureResourceId = $managedIdentityResourceId
+                clientId = $appIdValue
+                identityType = $managedResource.IdentityType
+                name = $managedIdentityName
+                principalId = $servicePrincipalId
+                resourceName = $managedResource.Name
+                resourceProvider = $managedResource.Provider
+            }
+            $authenticationDetails = @(
+                @{
+                    key = 'ManagedIdentityTokenSource'
+                    value = if ($managedResource.Provider -eq 'Microsoft.Compute/virtualMachines') { 'Azure Instance Metadata Service' } else { 'Azure Resource Managed Identity Endpoint' }
+                }
+            )
+
+            $values.AADTenantId = $tenantId
+            $values.AppId = $appIdValue
+            $values.AppOwnerTenantId = $tenantId
+            $values.AuthenticationProcessingDetails = ConvertTo-Json -InputObject $authenticationDetails -Compress -Depth 8
+            $values.Category = 'ManagedIdentitySignInLogs'
+            $values.ClientCredentialType = 'ManagedIdentity'
+            $values.ConditionalAccessAudiences = '[]'
+            $values.ConditionalAccessPolicies = '[]'
+            $values.ConditionalAccessStatus = 'notApplied'
+            $values.CorrelationId = $correlationId
+            $values.CreatedDateTime = $timeText
+            $values.DurationMs = 20 + ($Index % 900)
+            $values.Id = New-StableGuid "$Table|signin|$Index"
+            $values.Identity = $managedIdentityName
+            $values.IPAddress = $managedResource.PrivateIp
+            $values.Level = if ($isFailure) { 'Warning' } else { 'Informational' }
+            $values.Location = $managedResource.Region
+            $values.LocationDetails = ConvertTo-Json -InputObject $locationDetails -Compress -Depth 8
+            $values.ManagedServiceIdentity = ConvertTo-Json -InputObject $managedIdentityDetails -Compress -Depth 8
+            $values.NetworkLocationDetails = '[]'
+            $values.OperationName = 'Sign-in activity'
+            $values.OperationVersion = '1.0'
+            $values.ResourceDisplayName = $targetResource.Name
+            $values.ResourceGroup = $managedResource.ResourceGroup
+            $values.ResourceIdentity = $targetResource.Id
+            $values.ResourceOwnerTenantId = $tenantId
+            $values.ResourceServicePrincipalId = New-StableGuid "resource-service-principal|$($targetResource.Id)"
+            $values.ResultDescription = if ($isFailure) { 'Managed identity token request failed synthetic policy evaluation' } else { 'Success' }
+            $values.ResultSignature = if ($isFailure) { '53003' } else { '0' }
+            $values.ResultType = if ($isFailure) { 'Failure' } else { 'Success' }
+            $values.ServicePrincipalId = $servicePrincipalId
+            $values.ServicePrincipalName = $managedIdentityName
+            $values.SessionId = New-StableGuid "$Table|session|$Index"
+            $values.SourceAppClientId = $appIdValue
+            $values.SourceSystem = 'Azure'
+            $values.TenantId = $tenantId
+            $values.TimeGenerated = $timeText
+            $values.Type = $Table
+            $values.UniqueTokenIdentifier = New-StableGuid "$Table|token|$Index"
+            $values.UserAgent = $managedResource.UserAgent
+        }
+        { $_ -in @('SigninLogs', 'AADNonInteractiveUserSignInLogs', 'AADServicePrincipalSignInLogs', 'EntraIdSignInEvents', 'AADSignInEventsBeta', 'AADSpnSignInEventsBeta', 'EntraIdSpnSignInEvents') } {
             $values.Application = $app.Name
             $values.ApplicationId = $app.Id
             $values.AppDisplayName = $app.Name
@@ -2568,7 +2654,7 @@ foreach ($table in $script:Schemas.Keys) {
         continue
     }
     $fallbackTime = $StartTime.AddMinutes(-10)
-    $fallbackValues = if ($table -in @('AADSpnSignInEventsBeta', 'EntraIdSpnSignInEvents')) {
+    $fallbackValues = if ($table -in @('AADManagedIdentitySignInLogs', 'AADSpnSignInEventsBeta', 'EntraIdSpnSignInEvents')) {
         New-NormalTelemetryValues -Table $table -Time $fallbackTime -Index ([Convert]::ToInt32((New-StableHex "$table|fallback" 7), 16))
     }
     else {
