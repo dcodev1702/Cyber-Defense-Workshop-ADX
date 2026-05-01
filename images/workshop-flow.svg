@@ -13,7 +13,7 @@
   <!-- Column hint headers -->
   <text x="80" y="132" fill="#64748b" font-size="10" font-weight="700" letter-spacing="2">WHEN</text>
   <text x="240" y="132" fill="#64748b" font-size="10" font-weight="700" letter-spacing="2">SEGMENT &amp; FOCUS</text>
-  <text x="965" y="132" fill="#64748b" font-size="10" font-weight="700" letter-spacing="2" text-anchor="end">DURATION</text>
+  <text x="985" y="132" fill="#64748b" font-size="10" font-weight="700" letter-spacing="2" text-anchor="middle">DURATION</text>
 
   <!-- ===== SEGMENT 1: 0:00 – 0:10 (10 min) ===== -->
   <line x1="50" y1="148" x2="1050" y2="148" stroke="#1e3a5f" stroke-width="1"/>
@@ -25,8 +25,8 @@
   <text x="240" y="178" fill="#f1f5f9" font-size="14" font-weight="700">Access check &amp; KQL warm-up</text>
   <text x="240" y="198" fill="#93c5fd" font-size="12">Confirm ADX Web UI access · run table-inventory query · meet the data</text>
   <!-- Duration badge -->
-  <rect x="985" y="170" width="55" height="28" rx="14" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="1012" y="189" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">10 min</text>
+  <rect x="958" y="170" width="55" height="28" rx="14" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="985" y="189" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">10 min</text>
 
   <!-- ===== SEGMENT 2: 0:10 – 0:25 (15 min) ===== -->
   <line x1="50" y1="220" x2="1050" y2="220" stroke="#1e3a5f" stroke-width="1"/>
@@ -35,8 +35,8 @@
   <text x="134" y="270" text-anchor="middle" fill="#93c5fd" font-size="10">segment 2 of 7</text>
   <text x="240" y="250" fill="#f1f5f9" font-size="14" font-weight="700">Scenario &amp; infrastructure</text>
   <text x="240" y="270" fill="#93c5fd" font-size="12">Walk the hybrid topology · introduce the FIN7-inspired threat actor</text>
-  <rect x="985" y="242" width="55" height="28" rx="14" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="1012" y="261" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">15 min</text>
+  <rect x="958" y="242" width="55" height="28" rx="14" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="985" y="261" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">15 min</text>
 
   <!-- ===== SEGMENT 3: 0:25 – 0:45 (20 min) ===== -->
   <line x1="50" y1="292" x2="1050" y2="292" stroke="#1e3a5f" stroke-width="1"/>
@@ -45,8 +45,8 @@
   <text x="134" y="342" text-anchor="middle" fill="#93c5fd" font-size="10">segment 3 of 7</text>
   <text x="240" y="322" fill="#f1f5f9" font-size="14" font-weight="700">Entra &amp; Graph investigation</text>
   <text x="240" y="342" fill="#93c5fd" font-size="12">Hunt risky sign-in · OAuth consent · Microsoft Graph activity</text>
-  <rect x="985" y="314" width="55" height="28" rx="14" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="1012" y="333" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">20 min</text>
+  <rect x="958" y="314" width="55" height="28" rx="14" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="985" y="333" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">20 min</text>
 
   <!-- ===== SEGMENT 4: 0:45 – 1:20 (35 min — the longest) ===== -->
   <line x1="50" y1="364" x2="1050" y2="364" stroke="#1e3a5f" stroke-width="1"/>
@@ -55,8 +55,8 @@
   <text x="134" y="414" text-anchor="middle" fill="#bfdbfe" font-size="10">segment 4 · longest</text>
   <text x="240" y="394" fill="#f8fafc" font-size="14" font-weight="700">Endpoint credential access</text>
   <text x="240" y="414" fill="#bfdbfe" font-size="12">Hunt process · registry · file · network telemetry on WIN11-04 (the meat)</text>
-  <rect x="985" y="386" width="55" height="28" rx="14" fill="#1e40af" stroke="#60a5fa" stroke-width="2"/>
-  <text x="1012" y="405" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="700">35 min</text>
+  <rect x="958" y="386" width="55" height="28" rx="14" fill="#1e40af" stroke="#60a5fa" stroke-width="2"/>
+  <text x="985" y="405" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="700">35 min</text>
 
   <!-- ===== SEGMENT 5: 1:20 – 1:40 (20 min) ===== -->
   <line x1="50" y1="436" x2="1050" y2="436" stroke="#1e3a5f" stroke-width="1"/>
@@ -65,8 +65,8 @@
   <text x="134" y="486" text-anchor="middle" fill="#93c5fd" font-size="10">segment 5 of 7</text>
   <text x="240" y="466" fill="#f1f5f9" font-size="14" font-weight="700">MDI &amp; lateral movement</text>
   <text x="240" y="486" fill="#93c5fd" font-size="12">Correlate SPN enumeration · Kerberos activity · service-account use</text>
-  <rect x="985" y="458" width="55" height="28" rx="14" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="1012" y="477" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">20 min</text>
+  <rect x="958" y="458" width="55" height="28" rx="14" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="985" y="477" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">20 min</text>
 
   <!-- ===== SEGMENT 6: 1:40 – 1:55 (15 min) ===== -->
   <line x1="50" y1="508" x2="1050" y2="508" stroke="#1e3a5f" stroke-width="1"/>
@@ -75,8 +75,8 @@
   <text x="134" y="558" text-anchor="middle" fill="#93c5fd" font-size="10">segment 6 of 7</text>
   <text x="240" y="538" fill="#f1f5f9" font-size="14" font-weight="700">Alert correlation &amp; timeline</text>
   <text x="240" y="558" fill="#93c5fd" font-size="12">Join AlertInfo + AlertEvidence on AlertId · build the incident timeline</text>
-  <rect x="985" y="530" width="55" height="28" rx="14" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="1012" y="549" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">15 min</text>
+  <rect x="958" y="530" width="55" height="28" rx="14" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="985" y="549" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">15 min</text>
 
   <!-- ===== SEGMENT 7: 1:55 – 2:00 (5 min) ===== -->
   <line x1="50" y1="580" x2="1050" y2="580" stroke="#1e3a5f" stroke-width="1"/>
@@ -85,8 +85,8 @@
   <text x="134" y="619" text-anchor="middle" fill="#93c5fd" font-size="10">segment 7 of 7</text>
   <text x="240" y="603" fill="#f1f5f9" font-size="14" font-weight="700">Debrief</text>
   <text x="240" y="621" fill="#93c5fd" font-size="12">Discuss detections · controls · operational takeaways</text>
-  <rect x="990" y="595" width="50" height="28" rx="14" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="1015" y="614" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">5 min</text>
+  <rect x="963" y="595" width="50" height="28" rx="14" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="988" y="614" text-anchor="middle" fill="#dbeafe" font-size="12" font-weight="700">5 min</text>
 
   <!-- ============ RELATIVE-SIZE FOOTER STRIP ============ -->
   <text x="50" y="660" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="2">— TIME ALLOCATION AT A GLANCE</text>
