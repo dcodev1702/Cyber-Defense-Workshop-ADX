@@ -11,7 +11,7 @@ By the end of the workshop, students can:
 
 ## Scenario
 
-The intrusion is a FIN7-inspired emulation against a hybrid AD/Entra organization using `usag-cyber.local` and account domain `USAG-CYBER`. The attacker compromises `victor.alvarez@usag-cyber.local`, completes MFA, grants a suspicious OAuth app, enumerates Graph data, lands on `WIN11-04`, then performs a credential-access sequence covering registry credentials, SAM hive saves, browser credential harvesting, Kerberoasting, LSASS dumping, password-store harvesting tools, and Mimikatz-style credential dumping. The attacker later uses a cracked service account to access `AADCONNECT01`.
+The intrusion is a MIDNIGHT BLIZZARD emulation against a hybrid AD/Entra organization using `usag-cyber.local` and account domain `USAG-CYBER`. The attacker compromises `victor.alvarez@usag-cyber.local`, completes MFA, grants a suspicious OAuth app, enumerates Graph data, lands on `WIN11-04`, then performs a credential-access sequence covering registry credentials, SAM hive saves, browser credential harvesting, Kerberoasting, LSASS dumping, password-store harvesting tools, and Mimikatz-style credential dumping. The attacker later uses a cracked service account to access `AADCONNECT01`.
 
 An additive Linux branch gives students realistic Ubuntu/MDE pivots without replacing the Windows path. The Linux branch includes SSH logons, `sudo`, `auditd`, CUPS/IPP exposure, package/vulnerability context, Linux paths under `/etc`, `/usr`, `/var/log`, and `.so` shared-object image loads. A secondary branch follows synthetic Python and Go tooling from `UBUNTU-03` to Oracle TNS access against `UBUNTU-05`, ending in a synthetic sensitive-data export from an Oracle database.
 
@@ -20,7 +20,7 @@ An additive Linux branch gives students realistic Ubuntu/MDE pivots without repl
 | Segment | Duration | Instructor flow | Student activity |
 | --- | ---: | --- | --- |
 | Access check and KQL warm-up | 10 min | Confirm ADX Web UI access and explain the table families | Run inventory queries |
-| Scenario and infrastructure | 15 min | Walk through hybrid topology and FIN7-inspired objectives | Identify users, hosts, and high-value assets |
+| Scenario and infrastructure | 15 min | Walk through hybrid topology and MIDNIGHT BLIZZARD objectives | Identify users, hosts, and high-value assets |
 | Entra and Graph investigation | 20 min | Start with risky sign-in and OAuth/Graph activity | Correlate SigninLogs, CloudAppEvents, AuditLogs, GraphApiAuditEvents |
 | Endpoint credential access | 35 min | Pivot from compromised user to `WIN11-04` process/file/registry telemetry | Hunt the 11 screenshot attack vectors in MDE-style tables |
 | MDI and lateral movement | 20 min | Show SPN enumeration, Kerberos activity, and service-account use | Correlate IdentityQueryEvents, IdentityLogonEvents, DeviceLogonEvents |

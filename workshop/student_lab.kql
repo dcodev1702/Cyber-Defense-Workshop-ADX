@@ -3,7 +3,7 @@
 //
 // How to use this file:
 // - Highlight and run one numbered section at a time in the ADX Web UI.
-// - Each section teaches one investigation pivot in the FIN7-inspired scenario.
+// - Each section teaches one investigation pivot in the MIDNIGHT BLIZZARD scenario.
 // - Comments explain why the query matters and how each KQL operator helps the hunt.
 
 // 1. Confirm that core table families are populated.

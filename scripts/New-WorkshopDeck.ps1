@@ -39,7 +39,7 @@ $slides = @(
     @{ Title = 'Cyber Defense with KQL in ADX'; Body = 'Two-hour instructor-led workshop`nSynthetic Defender XDR, MDE, MDI, Entra, Graph, and alert telemetry' },
     @{ Title = 'Learning objectives'; Body = 'Use KQL across security telemetry`nCorrelate endpoint, identity, cloud, Graph, and alerts`nMap evidence to MITRE ATT&CK`nBuild an incident timeline' },
     @{ Title = 'Lab environment'; Body = '2 DCs with MDI`n10 Windows 11 25H2 endpoints with MDE`n5 Ubuntu endpoints with MDE`nEntra Connect server`nHybrid Entra ID' },
-    @{ Title = 'Threat actor framing'; Body = 'FIN7-inspired credential-access intrusion`nCompromised user: Victor Alvarez`nInitial endpoint: WIN11-04`nHigh-value pivot: AADCONNECT01' },
+    @{ Title = 'Threat actor framing'; Body = 'MIDNIGHT BLIZZARD credential-access intrusion`nCompromised user: Victor Alvarez`nInitial endpoint: WIN11-04`nHigh-value pivot: AADCONNECT01' },
     @{ Title = 'Scenario timeline'; Body = 'Risky sign-in -> OAuth consent -> Graph enumeration`nEndpoint staging -> credential access -> Kerberoasting`nService-account use -> alert correlation' },
     @{ Title = 'Table families'; Body = 'MDE Device* tables`nMDI Identity* tables`nSigninLogs and EntraId* tables`nGraphApiAuditEvents and MicrosoftGraphActivityLogs`nCloudAppEvents, AlertInfo, AlertEvidence' },
     @{ Title = 'MITRE coverage'; Body = 'T1552.002 Credentials in Registry`nT1003.002 SAM dumping`nT1555.003 Browser credentials`nT1558.003 Kerberoasting`nT1003.001 LSASS memory`nT1555 Password stores' },

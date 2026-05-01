@@ -24,7 +24,7 @@ Speaker note: Frame this as a detection and investigation exercise using synthet
 
 ## Slide 4 - Threat actor framing
 
-FIN7-inspired intrusion emulation focused on credential access and hybrid identity pivoting.
+MIDNIGHT BLIZZARD intrusion emulation focused on credential access and hybrid identity pivoting.
 
 ## Slide 5 - Scenario timeline
 

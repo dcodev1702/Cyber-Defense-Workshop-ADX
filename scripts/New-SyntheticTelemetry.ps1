@@ -4,7 +4,7 @@ Generates schema-aligned synthetic telemetry for the ADX workshop.
 
 .DESCRIPTION
 Creates NDJSON files for all workshop table schemas, including normal telemetry
-and the FIN7-inspired hybrid identity scenario. The generator models Windows MDE,
+and the MIDNIGHT BLIZZARD hybrid identity scenario. The generator models Windows MDE,
 MDI identity, Entra, Graph, alert, and grounded Ubuntu MDE telemetry, including the
 optional Linux SSH/sudo/Oracle branch. Synthetic identities and hashes are
 deterministic for repeatable reimports.
@@ -797,7 +797,7 @@ function Add-ProcessEvent {
         InitiatingProcessCreationTime = Format-WorkshopTime $Time.AddMinutes(-1)
         InitiatingProcessParentFileName = 'explorer.exe'
         ReportId = $ProcessId
-        AdditionalFields = "{`"Technique`":`"$Technique`",`"ThreatActor`":`"FIN7-inspired`"}"
+        AdditionalFields = "{`"Technique`":`"$Technique`",`"ThreatActor`":`"MIDNIGHT BLIZZARD`"}"
     }
 }
 
@@ -848,7 +848,7 @@ function Add-NetworkEvent {
         InitiatingProcessAccountSid = $victor.Sid
         InitiatingProcessAccountUpn = $victor.Upn
         ReportId = $ReportId
-        AdditionalFields = '{"Scenario":"FIN7 credential access"}'
+        AdditionalFields = '{"Scenario":"MIDNIGHT BLIZZARD credential access"}'
     }
 }
 
@@ -1410,7 +1410,7 @@ $signinCommon = @{
     City = 'Frankfurt am Main'
     Latitude = '50.1109'
     Longitude = '8.6821'
-    UserAgent = 'Mozilla/5.0 FIN7-workshop'
+    UserAgent = 'Mozilla/5.0 MIDNIGHT-BLIZZARD-workshop'
     ClientAppUsed = 'Browser'
     ConditionalAccessStatus = 'success'
     DeviceTrustType = 'Unmanaged'
@@ -1454,7 +1454,7 @@ Add-Record -Table 'SigninLogs' -Time $signinTime -Values @{
     RiskEventTypes = 'unfamiliarFeatures,anonymousIPAddress'
     Status = @{ errorCode = 0; failureReason = 'Other'; additionalDetails = 'MFA completed by SMS' }
     Type = 'SigninLogs'
-    UserAgent = 'Mozilla/5.0 FIN7-workshop'
+    UserAgent = 'Mozilla/5.0 MIDNIGHT-BLIZZARD-workshop'
     UserDisplayName = $victor.DisplayName
     UserId = $victor.ObjectId
     UserPrincipalName = $victor.Upn
@@ -1491,7 +1491,7 @@ Add-Record -Table 'CloudAppEvents' -Time $StartTime.AddMinutes(5) -Values @{
     IPAddress = $externalIp
     CountryCode = 'DE'
     City = 'Frankfurt am Main'
-    UserAgent = 'Mozilla/5.0 FIN7-workshop'
+    UserAgent = 'Mozilla/5.0 MIDNIGHT-BLIZZARD-workshop'
     ActivityType = 'Consent to application'
     ObjectName = 'USAG Cyber Sync Helper'
     ObjectType = 'OAuthApplication'
@@ -1553,7 +1553,7 @@ foreach ($offset in 7, 8, 9) {
         RequestMethod = 'GET'
         RequestUri = $requestUri.Replace('https://graph.microsoft.com', '')
         ResponseStatusCode = 200
-        UserAgent = 'Mozilla/5.0 FIN7-workshop'
+        UserAgent = 'Mozilla/5.0 MIDNIGHT-BLIZZARD-workshop'
         ServicePrincipalId = New-StableGuid 'malicious-oauth-sp'
         SignInActivityId = New-StableGuid 'signin-log'
         UniqueTokenId = New-StableGuid 'graph-token'
@@ -1562,11 +1562,11 @@ foreach ($offset in 7, 8, 9) {
 }
 
 $alerts = @(
-    [pscustomobject]@{ Id = 'FIN7-001'; Offset = 15; Title = 'Suspicious PowerShell credential discovery'; Category = 'CredentialAccess'; Severity = 'Medium'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1552.002'; Entity = 'Process'; File = 'powershell.exe'; Command = 'collect-reg-creds.ps1' },
-    [pscustomobject]@{ Id = 'FIN7-002'; Offset = 35; Title = 'Suspected Kerberoasting activity'; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Identity'; Technique = 'T1558.003'; Entity = 'User'; File = "$toolRu.exe"; Command = "$toolRu.exe kerberoast" },
-    [pscustomobject]@{ Id = 'FIN7-003'; Offset = 50; Title = "Credential dumping from $targetLs"; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1003.001'; Entity = 'File'; File = "$targetLsLower.dmp"; Command = "$toolProc.exe -ma $targetLsLower.exe" },
-    [pscustomobject]@{ Id = 'FIN7-004'; Offset = 65; Title = 'Password store harvesting tool observed'; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1555'; Entity = 'Process'; File = "$toolLa.exe"; Command = "$toolLa.exe all" },
-    [pscustomobject]@{ Id = 'FIN7-005'; Offset = 73; Title = "$toolMi credential dumping"; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1003.001'; Entity = 'Process'; File = "$($toolMi.ToLower()).exe"; Command = $secretVerb }
+    [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-001'; Offset = 15; Title = 'Suspicious PowerShell credential discovery'; Category = 'CredentialAccess'; Severity = 'Medium'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1552.002'; Entity = 'Process'; File = 'powershell.exe'; Command = 'collect-reg-creds.ps1' },
+    [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-002'; Offset = 35; Title = 'Suspected Kerberoasting activity'; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Identity'; Technique = 'T1558.003'; Entity = 'User'; File = "$toolRu.exe"; Command = "$toolRu.exe kerberoast" },
+    [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-003'; Offset = 50; Title = "Credential dumping from $targetLs"; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1003.001'; Entity = 'File'; File = "$targetLsLower.dmp"; Command = "$toolProc.exe -ma $targetLsLower.exe" },
+    [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-004'; Offset = 65; Title = 'Password store harvesting tool observed'; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1555'; Entity = 'Process'; File = "$toolLa.exe"; Command = "$toolLa.exe all" },
+    [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-005'; Offset = 73; Title = "$toolMi credential dumping"; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1003.001'; Entity = 'Process'; File = "$($toolMi.ToLower()).exe"; Command = $secretVerb }
 )
 foreach ($alert in $alerts) {
     $time = $StartTime.AddMinutes($alert.Offset)
@@ -1602,7 +1602,7 @@ foreach ($alert in $alerts) {
         DeviceName = $win04.Name
         LocalIP = $win04.IP
         ProcessCommandLine = $alert.Command
-        AdditionalFields = "{`"ThreatActor`":`"FIN7-inspired`",`"Technique`":`"$($alert.Technique)`"}"
+        AdditionalFields = "{`"ThreatActor`":`"MIDNIGHT BLIZZARD`",`"Technique`":`"$($alert.Technique)`"}"
         Severity = $alert.Severity
     }
 }
@@ -2041,7 +2041,7 @@ foreach ($table in ($script:Schemas.Keys | Sort-Object)) {
 }
 
 $summary = [ordered]@{
-    scenarioName = 'FIN7-inspired hybrid identity credential access'
+    scenarioName = 'MIDNIGHT BLIZZARD hybrid identity credential access'
     startTime = Format-WorkshopTime $StartTime
     telemetryWindow = [ordered]@{
         endTime = Format-WorkshopTime $script:TelemetryEndTime

@@ -131,7 +131,7 @@ The workshop's Act 5 covers a credential-access playbook with multiple tools per
 
 ## Why MB matches this scenario better than commodity actors
 
-If you've worked SOC for a while, you might wonder why the workshop scenario doesn't model a financially-motivated actor (like FIN7) where the goal is ransomware or POS card data. The answer: MB's tradecraft is far more representative of what a defender in a hybrid Microsoft environment is actually likely to face today. Specifically:
+If you've worked SOC for a while, you might wonder why the workshop scenario doesn't model a financially-motivated actor (like MIDNIGHT BLIZZARD) where the goal is ransomware or POS card data. The answer: MB's tradecraft is far more representative of what a defender in a hybrid Microsoft environment is actually likely to face today. Specifically:
 
 1. **Identity-first.** The compromise starts in the cloud (a risky sign-in, an OAuth consent), not on the endpoint. That mirrors how MB works, and how most modern intrusions begin.
 2. **Persistent OAuth abuse.** Granting consent to a malicious "Sync Helper" app (Act 3) is a near-direct lift from the Microsoft and HPE breaches.

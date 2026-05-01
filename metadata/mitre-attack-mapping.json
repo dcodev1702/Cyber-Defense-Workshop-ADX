@@ -1,6 +1,6 @@
 {
-  "threatActor": "FIN7-inspired intrusion emulation",
-  "note": "The scenario is inspired by FIN7 tradecraft and common intrusion patterns, but uses synthetic telemetry and ATT&CK technique coverage rather than asserting exact historical tool use for every item.",
+  "threatActor": "MIDNIGHT BLIZZARD intrusion emulation",
+  "note": "The scenario is inspired by MIDNIGHT BLIZZARD tradecraft and common intrusion patterns, but uses synthetic telemetry and ATT&CK technique coverage rather than asserting exact historical tool use for every item.",
   "attackVectors": [
     {
       "scenarioMinute": 15,
