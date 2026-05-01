@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 580" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <!-- Outer frame -->
+  <rect x="20" y="20" width="1060" height="540" rx="14" fill="#0b1220" stroke="#1f2937" stroke-width="1.5"/>
+
+  <!-- Title -->
+  <text x="550" y="58" text-anchor="middle" fill="#f1f5f9" font-size="20" font-weight="700">Key Tables — by Microsoft Platform</text>
+  <text x="550" y="80" text-anchor="middle" fill="#94a3b8" font-size="12">21 of the 48 tables in CyberDefenseKqlWorkshop carry the bulk of the investigation · grouped by where the telemetry comes from</text>
+
+  <!-- ==================== ENTRA PANEL (Top Left) ==================== -->
+  <g>
+    <rect x="50" y="105" width="492" height="210" rx="10" fill="#3a1d05" stroke="#f97316" stroke-width="2"/>
+    <rect x="50" y="105" width="6" height="210" fill="#f97316"/>
+
+    <!-- Cloud icon -->
+    <g transform="translate(70, 122)">
+      <path d="M 6 18 a 5 5 0 0 1 -1 -10 a 6 6 0 0 1 11 -2 a 4 4 0 0 1 4 7 a 4 4 0 0 1 -4 5 z" fill="none" stroke="#fed7aa" stroke-width="2" stroke-linejoin="round"/>
+    </g>
+
+    <text x="100" y="140" fill="#fed7aa" font-size="14" font-weight="700">Microsoft Entra ID</text>
+    <text x="100" y="156" fill="#fdba74" font-size="10" font-style="italic">Cloud identity, sign-in, and OAuth telemetry</text>
+
+    <!-- Count badge -->
+    <rect x="455" y="121" width="75" height="22" rx="11" fill="#1a0f02" stroke="#f97316" stroke-width="1"/>
+    <text x="492" y="137" text-anchor="middle" fill="#fed7aa" font-size="10" font-weight="700">6 tables</text>
+
+    <!-- Chips: row 1 -->
+    <rect x="62" y="172" width="230" height="28" rx="6" fill="#1a0f02" stroke="#f97316" stroke-width="1"/>
+    <text x="74" y="190" fill="#fed7aa" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">SigninLogs</text>
+    <rect x="300" y="172" width="230" height="28" rx="6" fill="#1a0f02" stroke="#f97316" stroke-width="1"/>
+    <text x="312" y="190" fill="#fed7aa" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">EntraIdSignInEvents</text>
+
+    <!-- Chips: row 2 -->
+    <rect x="62" y="208" width="230" height="28" rx="6" fill="#1a0f02" stroke="#f97316" stroke-width="1"/>
+    <text x="74" y="226" fill="#fed7aa" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">AADSignInEventsBeta</text>
+    <rect x="300" y="208" width="230" height="28" rx="6" fill="#1a0f02" stroke="#f97316" stroke-width="1"/>
+    <text x="312" y="226" fill="#fed7aa" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">CloudAppEvents</text>
+
+    <!-- Chips: row 3 -->
+    <rect x="62" y="244" width="230" height="28" rx="6" fill="#1a0f02" stroke="#f97316" stroke-width="1"/>
+    <text x="74" y="262" fill="#fed7aa" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">GraphApiAuditEvents</text>
+    <rect x="300" y="244" width="230" height="28" rx="6" fill="#1a0f02" stroke="#f97316" stroke-width="1"/>
+    <text x="312" y="262" fill="#fed7aa" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">MicrosoftGraphActivityLogs</text>
+
+    <!-- Tip -->
+    <text x="62" y="298" fill="#fdba74" font-size="10" font-style="italic">Hunt risky sign-ins, OAuth consent, and Graph activity here first.</text>
+  </g>
+
+  <!-- ==================== MDE PANEL (Top Right) ==================== -->
+  <g>
+    <rect x="558" y="105" width="492" height="210" rx="10" fill="#0f3a1f" stroke="#22c55e" stroke-width="2"/>
+    <rect x="558" y="105" width="6" height="210" fill="#22c55e"/>
+
+    <!-- Monitor/laptop icon -->
+    <g transform="translate(578, 122)">
+      <rect x="2" y="2" width="20" height="14" rx="2" fill="none" stroke="#bbf7d0" stroke-width="2"/>
+      <path d="M 8 20 L 16 20" stroke="#bbf7d0" stroke-width="2" stroke-linecap="round"/>
+      <path d="M 12 16 L 12 20" stroke="#bbf7d0" stroke-width="2"/>
+    </g>
+
+    <text x="608" y="140" fill="#bbf7d0" font-size="14" font-weight="700">Microsoft Defender for Endpoint</text>
+    <text x="608" y="156" fill="#86efac" font-size="10" font-style="italic">Endpoint detection &amp; response on Windows + Linux</text>
+
+    <!-- Count badge -->
+    <rect x="963" y="121" width="75" height="22" rx="11" fill="#051a0c" stroke="#22c55e" stroke-width="1"/>
+    <text x="1000" y="137" text-anchor="middle" fill="#bbf7d0" font-size="10" font-weight="700">8 tables</text>
+
+    <!-- Chips: row 1 -->
+    <rect x="570" y="172" width="230" height="28" rx="6" fill="#051a0c" stroke="#22c55e" stroke-width="1"/>
+    <text x="582" y="190" fill="#bbf7d0" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">DeviceInfo</text>
+    <rect x="808" y="172" width="230" height="28" rx="6" fill="#051a0c" stroke="#22c55e" stroke-width="1"/>
+    <text x="820" y="190" fill="#bbf7d0" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">DeviceProcessEvents</text>
+
+    <!-- Chips: row 2 -->
+    <rect x="570" y="208" width="230" height="28" rx="6" fill="#051a0c" stroke="#22c55e" stroke-width="1"/>
+    <text x="582" y="226" fill="#bbf7d0" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">DeviceFileEvents</text>
+    <rect x="808" y="208" width="230" height="28" rx="6" fill="#051a0c" stroke="#22c55e" stroke-width="1"/>
+    <text x="820" y="226" fill="#bbf7d0" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">DeviceRegistryEvents</text>
+
+    <!-- Chips: row 3 -->
+    <rect x="570" y="244" width="230" height="28" rx="6" fill="#051a0c" stroke="#22c55e" stroke-width="1"/>
+    <text x="582" y="262" fill="#bbf7d0" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">DeviceNetworkEvents</text>
+    <rect x="808" y="244" width="230" height="28" rx="6" fill="#051a0c" stroke="#22c55e" stroke-width="1"/>
+    <text x="820" y="262" fill="#bbf7d0" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">DeviceLogonEvents</text>
+
+    <!-- Chips: row 4 -->
+    <rect x="570" y="280" width="230" height="28" rx="6" fill="#051a0c" stroke="#22c55e" stroke-width="1"/>
+    <text x="582" y="298" fill="#bbf7d0" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">DeviceImageLoadEvents</text>
+    <rect x="808" y="280" width="230" height="28" rx="6" fill="#051a0c" stroke="#22c55e" stroke-width="1"/>
+    <text x="820" y="298" fill="#bbf7d0" font-size="10" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">DeviceTvmSoftwareVulnerabilities</text>
+  </g>
+
+  <!-- ==================== MDI PANEL (Bottom Left) ==================== -->
+  <g>
+    <rect x="50" y="335" width="492" height="210" rx="10" fill="#0b2a4a" stroke="#3b82f6" stroke-width="2"/>
+    <rect x="50" y="335" width="6" height="210" fill="#3b82f6"/>
+
+    <!-- Server icon -->
+    <g transform="translate(70, 352)">
+      <rect x="2" y="2" width="20" height="6" rx="1" fill="none" stroke="#dbeafe" stroke-width="2"/>
+      <rect x="2" y="10" width="20" height="6" rx="1" fill="none" stroke="#dbeafe" stroke-width="2"/>
+      <circle cx="6" cy="5" r="1" fill="#dbeafe"/>
+      <circle cx="6" cy="13" r="1" fill="#dbeafe"/>
+    </g>
+
+    <text x="100" y="370" fill="#dbeafe" font-size="14" font-weight="700">Microsoft Defender for Identity</text>
+    <text x="100" y="386" fill="#93c5fd" font-size="10" font-style="italic">On-prem Active Directory monitoring (MDI sensors on DCs)</text>
+
+    <!-- Count badge -->
+    <rect x="455" y="351" width="75" height="22" rx="11" fill="#051426" stroke="#3b82f6" stroke-width="1"/>
+    <text x="492" y="367" text-anchor="middle" fill="#dbeafe" font-size="10" font-weight="700">5 tables</text>
+
+    <!-- Chips: row 1 -->
+    <rect x="62" y="402" width="230" height="28" rx="6" fill="#051426" stroke="#3b82f6" stroke-width="1"/>
+    <text x="74" y="420" fill="#dbeafe" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">IdentityInfo</text>
+    <rect x="300" y="402" width="230" height="28" rx="6" fill="#051426" stroke="#3b82f6" stroke-width="1"/>
+    <text x="312" y="420" fill="#dbeafe" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">IdentityAccountInfo</text>
+
+    <!-- Chips: row 2 -->
+    <rect x="62" y="438" width="230" height="28" rx="6" fill="#051426" stroke="#3b82f6" stroke-width="1"/>
+    <text x="74" y="456" fill="#dbeafe" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">IdentityQueryEvents</text>
+    <rect x="300" y="438" width="230" height="28" rx="6" fill="#051426" stroke="#3b82f6" stroke-width="1"/>
+    <text x="312" y="456" fill="#dbeafe" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">IdentityLogonEvents</text>
+
+    <!-- Chips: row 3 (single chip, centered or left) -->
+    <rect x="62" y="474" width="230" height="28" rx="6" fill="#051426" stroke="#3b82f6" stroke-width="1"/>
+    <text x="74" y="492" fill="#dbeafe" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">IdentityDirectoryEvents</text>
+
+    <!-- Tip -->
+    <text x="62" y="528" fill="#93c5fd" font-size="10" font-style="italic">Surfaces SPN enumeration, Kerberoasting, and DC-side identity attacks.</text>
+  </g>
+
+  <!-- ==================== XDR PANEL (Bottom Right) ==================== -->
+  <g>
+    <rect x="558" y="335" width="492" height="210" rx="10" fill="#2a1252" stroke="#a855f7" stroke-width="2"/>
+    <rect x="558" y="335" width="6" height="210" fill="#a855f7"/>
+
+    <!-- Shield icon -->
+    <g transform="translate(578, 352)">
+      <path d="M 12 2 L 22 6 L 22 13 a 10 10 0 0 1 -10 9 a 10 10 0 0 1 -10 -9 L 2 6 z" fill="none" stroke="#e9d5ff" stroke-width="2" stroke-linejoin="round"/>
+    </g>
+
+    <text x="608" y="370" fill="#e9d5ff" font-size="14" font-weight="700">Microsoft Defender XDR</text>
+    <text x="608" y="386" fill="#d8b4fe" font-size="10" font-style="italic">Cross-platform alert correlation — the glue layer</text>
+
+    <!-- Count badge -->
+    <rect x="963" y="351" width="75" height="22" rx="11" fill="#180826" stroke="#a855f7" stroke-width="1"/>
+    <text x="1000" y="367" text-anchor="middle" fill="#e9d5ff" font-size="10" font-weight="700">2 tables</text>
+
+    <!-- Chips: row 1 -->
+    <rect x="570" y="402" width="230" height="28" rx="6" fill="#180826" stroke="#a855f7" stroke-width="1"/>
+    <text x="582" y="420" fill="#e9d5ff" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">AlertInfo</text>
+    <rect x="808" y="402" width="230" height="28" rx="6" fill="#180826" stroke="#a855f7" stroke-width="1"/>
+    <text x="820" y="420" fill="#e9d5ff" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">AlertEvidence</text>
+
+    <!-- Description (fills the empty space) -->
+    <text x="570" y="462" fill="#d8b4fe" font-size="11"><tspan font-family="ui-monospace, monospace" font-weight="700">AlertInfo</tspan> holds the headline (severity, technique).</text>
+    <text x="570" y="480" fill="#d8b4fe" font-size="11"><tspan font-family="ui-monospace, monospace" font-weight="700">AlertEvidence</tspan> holds the receipts (devices, files, accounts).</text>
+    <text x="570" y="498" fill="#d8b4fe" font-size="11">Join them on <tspan font-family="ui-monospace, monospace" font-weight="700">AlertId</tspan> for the full incident view.</text>
+
+    <!-- Tip -->
+    <text x="570" y="528" fill="#d8b4fe" font-size="10" font-style="italic">Receives signals from MDE, MDI, Entra ID Protection, and Defender for Cloud Apps.</text>
+  </g>
+</svg>
