@@ -1,3 +1,25 @@
+<#
+.SYNOPSIS
+Imports generated workshop telemetry files into Azure Data Explorer.
+
+.DESCRIPTION
+Verifies the configured ADX cluster is running (auto-starting it when permitted),
+loads schema-aligned NDJSON files from a data directory, optionally clears existing
+table data, and ingests each file into its matching ADX table in inline batches.
+
+.EXAMPLE
+.\scripts\Import-SyntheticTelemetry.ps1 -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName CyberDefenseKqlWorkshop -DataDirectory "$env:TEMP\CyberDefenseKqlWorkshop\CyberDefenseKqlWorkshop\generated" -ClearExistingData
+
+.EXAMPLE
+.\scripts\Import-SyntheticTelemetry.ps1 -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName CyberDefenseKqlWorkshop -TableName DeviceInfo,IdentityInfo
+
+.NOTES
+Name: Import-SyntheticTelemetry.ps1
+Date: 2026-05-01
+Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
+Dependencies: scripts\AdxWorkshop.Common.psm1, Az.Accounts/Az.Kusto or Azure CLI for cluster-state checks, ADX database access, generated NDJSON files, schema JSON files.
+Key commands: Assert-WorkshopAdxClusterRunning, .clear table data, .ingest inline, Invoke-WorkshopAdxManagementCommand.
+#>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$ClusterUri,

@@ -1,3 +1,27 @@
+<#
+.SYNOPSIS
+Generates schema-aligned synthetic telemetry for the ADX workshop.
+
+.DESCRIPTION
+Creates NDJSON files for all workshop table schemas, including normal telemetry
+and the FIN7-inspired hybrid identity scenario. The generator models Windows MDE,
+MDI identity, Entra, Graph, alert, and grounded Ubuntu MDE telemetry, including the
+optional Linux SSH/sudo/Oracle branch. Synthetic identities and hashes are
+deterministic for repeatable reimports.
+
+.EXAMPLE
+.\scripts\New-SyntheticTelemetry.ps1 -SchemaDirectory .\schemas -OutputDirectory .\data\generated -NormalRowsPerTable 0 -SyntheticUserCount 10 -SyntheticServiceAccountCount 5
+
+.EXAMPLE
+.\scripts\New-SyntheticTelemetry.ps1 -OutputDirectory "$env:TEMP\CyberDefenseKqlWorkshop\CyberDefenseKqlWorkshop\generated" -SyntheticUserCount 6000 -SyntheticServiceAccountCount 4000
+
+.NOTES
+Name: New-SyntheticTelemetry.ps1
+Date: 2026-05-01
+Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
+Dependencies: Local schema JSON files under schemas; no live ADX connection required.
+Key commands: ConvertTo-Json, StreamWriter.WriteLine, Set-Content, deterministic synthetic data helpers.
+#>
 [CmdletBinding()]
 param(
     [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),

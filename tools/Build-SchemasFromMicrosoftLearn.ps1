@@ -1,3 +1,22 @@
+<#
+.SYNOPSIS
+Builds ADX table schema JSON files from Microsoft Learn schema references.
+
+.DESCRIPTION
+Reads metadata\tables.manifest.json, downloads the referenced Microsoft Learn pages,
+extracts table column definitions, normalizes supported ADX column types, and writes
+one schema JSON file per table into the schemas directory.
+
+.EXAMPLE
+.\tools\Build-SchemasFromMicrosoftLearn.ps1 -Force
+
+.NOTES
+Name: Build-SchemasFromMicrosoftLearn.ps1
+Date: 2026-05-01
+Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
+Dependencies: Internet access to Microsoft Learn, metadata\tables.manifest.json, PowerShell Invoke-WebRequest.
+Key commands: Invoke-WebRequest, ConvertFrom-Json, ConvertTo-Json, Set-Content.
+#>
 [CmdletBinding()]
 param(
     [string]$ManifestPath = (Join-Path $PSScriptRoot '..\metadata\tables.manifest.json'),

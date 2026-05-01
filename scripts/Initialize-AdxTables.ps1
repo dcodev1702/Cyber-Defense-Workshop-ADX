@@ -1,3 +1,25 @@
+<#
+.SYNOPSIS
+Creates and validates ADX workshop tables and JSON ingestion mappings.
+
+.DESCRIPTION
+Reads workshop schema JSON files, creates missing ADX tables, optionally drops and
+recreates existing tables, creates or updates JSON ingestion mappings, and verifies
+the expected table set exists in the target database.
+
+.EXAMPLE
+.\scripts\Initialize-AdxTables.ps1 -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName CyberDefenseKqlWorkshop -SchemaDirectory .\schemas
+
+.EXAMPLE
+.\scripts\Initialize-AdxTables.ps1 -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName CyberDefenseKqlWorkshop -ForceRecreate
+
+.NOTES
+Name: Initialize-AdxTables.ps1
+Date: 2026-05-01
+Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
+Dependencies: scripts\AdxWorkshop.Common.psm1, ADX database access, schema JSON files.
+Key commands: .show tables, .drop table, .create table, .create-or-alter table ingestion json mapping.
+#>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$ClusterUri,

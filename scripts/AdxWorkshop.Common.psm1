@@ -1,3 +1,23 @@
+<#
+.SYNOPSIS
+Shared helper module for ADX workshop provisioning and ingestion scripts.
+
+.DESCRIPTION
+Provides common functions for acquiring ADX tokens, formatting Kusto identifiers
+and string literals, invoking ADX management commands, parsing ADX response rows,
+checking Azure resource permissions, and ensuring the ADX cluster is running
+before table or ingestion operations.
+
+.EXAMPLE
+Import-Module .\scripts\AdxWorkshop.Common.psm1 -Force
+
+.NOTES
+Name: AdxWorkshop.Common.psm1
+Date: 2026-05-01
+Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
+Dependencies: Az.Accounts/Az.Kusto or Azure CLI for authentication and cluster state, ADX REST API access.
+Key commands: Get-AzAccessToken, Invoke-AzRestMethod, Get-AzKustoCluster, Start-AzKustoCluster, Invoke-RestMethod.
+#>
 Set-StrictMode -Version Latest
 
 function ConvertTo-WorkshopPlainTextToken {

@@ -1,3 +1,26 @@
+<#
+.SYNOPSIS
+End-to-end setup driver for the ADX cyber defense workshop database.
+
+.DESCRIPTION
+Creates or reuses an Azure Data Explorer database, verifies the ADX cluster is
+running (auto-starting it when permitted), creates or updates table schemas and
+JSON mappings, generates or reuses cached synthetic telemetry, and imports the
+data into the target database.
+
+.EXAMPLE
+.\scripts\Initialize-Workshop.ps1 -SubscriptionName Security -ResourceGroupName ADX -ClusterName dibsecadx -DatabaseName CyberDefenseKqlWorkshop
+
+.EXAMPLE
+.\scripts\Initialize-Workshop.ps1 -DatabaseName CyberDefenseKqlWorkshop -TelemetryImport Existing -DataDirectory "$env:TEMP\CyberDefenseKqlWorkshop\CyberDefenseKqlWorkshop\generated" -ForceRecreateTables
+
+.NOTES
+Name: Initialize-Workshop.ps1
+Date: 2026-05-01
+Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
+Dependencies: Az.Accounts, Az.Kusto, scripts\AdxWorkshop.Common.psm1, schemas, generated telemetry cache or generator.
+Key commands: Get-AzKustoCluster, Start-AzKustoCluster, New-AzKustoDatabase, Remove-AzKustoDatabase, Initialize-AdxTables.ps1, New-SyntheticTelemetry.ps1, Import-SyntheticTelemetry.ps1.
+#>
 [CmdletBinding()]
 param(
     [string]$SubscriptionName,

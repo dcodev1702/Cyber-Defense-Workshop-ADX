@@ -1,3 +1,22 @@
+<#
+.SYNOPSIS
+Generates a PowerPoint deck from the workshop slide outline content.
+
+.DESCRIPTION
+Uses PowerPoint COM automation to create a concise instructor-led slide deck for
+the cyber defense KQL workshop. This is optional; workshop\slide_deck_outline.md
+remains the source for environments without PowerPoint.
+
+.EXAMPLE
+.\scripts\New-WorkshopDeck.ps1 -OutputPath .\workshop\CyberDefenseKqlWorkshop.pptx
+
+.NOTES
+Name: New-WorkshopDeck.ps1
+Date: 2026-05-01
+Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
+Dependencies: Windows workstation with Microsoft PowerPoint installed and COM automation available.
+Key commands: New-Object -ComObject PowerPoint.Application, Presentations.Add, SaveAs.
+#>
 [CmdletBinding()]
 param(
     [string]$OutputPath = (Join-Path $PSScriptRoot '..\workshop\CyberDefenseKqlWorkshop.pptx')

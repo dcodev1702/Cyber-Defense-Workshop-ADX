@@ -1,3 +1,26 @@
+<#
+.SYNOPSIS
+Exports Log Analytics sample rows to tune synthetic telemetry realism.
+
+.DESCRIPTION
+Queries a Log Analytics workspace for sample rows matching the workshop schema
+tables and writes local CSV samples. The Linux sample profile filters or joins on
+Ubuntu/Linux devices so Linux telemetry generation can be grounded in realistic
+MDE table shapes.
+
+.EXAMPLE
+.\scripts\Export-LogAnalyticsSamples.ps1 -SubscriptionName Security -WorkspaceName DIBSecCom -ResourceGroupName sentinel
+
+.EXAMPLE
+.\scripts\Export-LogAnalyticsSamples.ps1 -SampleProfile Linux -MaxRowsPerTable 1000
+
+.NOTES
+Name: Export-LogAnalyticsSamples.ps1
+Date: 2026-05-01
+Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
+Dependencies: Az.Accounts, Az.OperationalInsights, Log Analytics workspace access, local schema JSON files.
+Key commands: Get-AzSubscription, Set-AzContext, Get-AzOperationalInsightsWorkspace, Invoke-AzOperationalInsightsQuery, Export-Csv.
+#>
 [CmdletBinding()]
 param(
     [string]$SubscriptionName = 'Security',

@@ -1,3 +1,25 @@
+<#
+.SYNOPSIS
+Grants workshop student principals access to an ADX database.
+
+.DESCRIPTION
+Builds an ADX principal list from a group object ID, UPNs, or a student roster CSV
+and adds those principals as database viewers or unrestricted viewers for the
+workshop database.
+
+.EXAMPLE
+.\scripts\Grant-StudentAdxAccess.ps1 -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName CyberDefenseKqlWorkshop -GroupObjectId '<group-object-id>'
+
+.EXAMPLE
+.\scripts\Grant-StudentAdxAccess.ps1 -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName CyberDefenseKqlWorkshop -StudentCsvPath .\students\students.csv
+
+.NOTES
+Name: Grant-StudentAdxAccess.ps1
+Date: 2026-05-01
+Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
+Dependencies: scripts\AdxWorkshop.Common.psm1, ADX database admin permissions, Az.Accounts or Azure CLI token access.
+Key commands: Import-Csv, .add database viewers, .add database unrestrictedviewers, Invoke-WorkshopAdxManagementCommand.
+#>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$ClusterUri,

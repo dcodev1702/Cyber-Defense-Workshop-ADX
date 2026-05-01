@@ -1,3 +1,26 @@
+<#
+.SYNOPSIS
+Validates the workshop package, schemas, scripts, and generated telemetry.
+
+.DESCRIPTION
+Runs PowerShell parser checks across scripts/modules, verifies schema and manifest
+consistency, validates generated NDJSON files against table schemas, and enforces
+Linux telemetry realism checks such as Linux paths, .so image loads, SSH/sudo
+evidence, TVM CVEs, and Oracle branch evidence.
+
+.EXAMPLE
+.\scripts\Test-WorkshopPackage.ps1
+
+.EXAMPLE
+.\scripts\Test-WorkshopPackage.ps1 -DataDirectory "$env:TEMP\CyberDefenseKqlWorkshop\cyber-defend-q0xxzc\generated"
+
+.NOTES
+Name: Test-WorkshopPackage.ps1
+Date: 2026-05-01
+Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
+Dependencies: Local repository schemas, metadata manifest, generated NDJSON telemetry.
+Key commands: Parser.ParseFile, ConvertFrom-Json, Get-ChildItem, Get-Content.
+#>
 [CmdletBinding()]
 param(
     [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path,

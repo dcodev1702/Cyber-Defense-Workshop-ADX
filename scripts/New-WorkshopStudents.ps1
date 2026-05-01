@@ -1,3 +1,25 @@
+<#
+.SYNOPSIS
+Creates or stages ADX workshop student accounts and access roster data.
+
+.DESCRIPTION
+Builds a CSV roster for workshop students and, when requested, creates Microsoft
+Entra users, creates or reuses a security group, adds users to that group, and can
+issue Temporary Access Pass values for ADX Web UI sign-in.
+
+.EXAMPLE
+.\scripts\New-WorkshopStudents.ps1 -TenantDomain contoso.onmicrosoft.com -StudentCount 20
+
+.EXAMPLE
+.\scripts\New-WorkshopStudents.ps1 -TenantDomain contoso.onmicrosoft.com -CreateUsers -InitialPassword '<password>' -CreateTemporaryAccessPass
+
+.NOTES
+Name: New-WorkshopStudents.ps1
+Date: 2026-05-01
+Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
+Dependencies: Microsoft.Graph PowerShell modules when -CreateUsers or -CreateTemporaryAccessPass is used.
+Key commands: Connect-MgGraph, New-MgUser, Get-MgGroup, New-MgGroup, New-MgGroupMember, New-MgUserAuthenticationTemporaryAccessPassMethod, Export-Csv.
+#>
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][string]$TenantDomain,
