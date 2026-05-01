@@ -56,17 +56,64 @@ function Get-WorkshopAdxAccessToken {
     throw 'Could not obtain an Azure Data Explorer token. Run Connect-AzAccount or az login, then retry.'
 }
 
-function Assert-WorkshopAdxClusterRunning {
-    [CmdletBinding()]
+function Test-WorkshopAzureResourceActionAllowed {
+    param(
+        [Parameter(Mandatory)][string]$ResourceId,
+        [Parameter(Mandatory)][string]$Action
+    )
+
+    $permissions = $null
+    $permissionsPath = "$ResourceId/providers/Microsoft.Authorization/permissions?api-version=2022-04-01"
+    if (Get-Command Invoke-AzRestMethod -ErrorAction SilentlyContinue) {
+        $permissionsResponse = Invoke-AzRestMethod -Method GET -Path $permissionsPath -ErrorAction Stop
+        $permissions = ($permissionsResponse.Content | ConvertFrom-Json).value
+    }
+    elseif (Get-Command az -ErrorAction SilentlyContinue) {
+        $permissionsResponse = & az rest --method get --url "https://management.azure.com$permissionsPath" --output json 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not read effective permissions for '$ResourceId': $permissionsResponse"
+        }
+        $permissions = ($permissionsResponse | ConvertFrom-Json).value
+    }
+    else {
+        throw 'Az.Accounts/Az.Resources or Azure CLI is required to validate ADX cluster start permissions.'
+    }
+
+    foreach ($permission in @($permissions)) {
+        $actionAllowed = $false
+        foreach ($allowedAction in @($permission.actions)) {
+            if ($Action -like [string]$allowedAction) {
+                $actionAllowed = $true
+                break
+            }
+        }
+        if (-not $actionAllowed) {
+            continue
+        }
+
+        $actionDenied = $false
+        foreach ($deniedAction in @($permission.notActions)) {
+            if ($Action -like [string]$deniedAction) {
+                $actionDenied = $true
+                break
+            }
+        }
+        if (-not $actionDenied) {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+function Get-WorkshopAdxClusterResource {
     param(
         [Parameter(Mandatory)][string]$ResourceGroupName,
         [Parameter(Mandatory)][string]$ClusterName,
         [string]$SubscriptionId,
-        [string]$SubscriptionName,
-        [string]$ClusterUri
+        [string]$SubscriptionName
     )
 
-    $cluster = $null
     if ((Get-Command Get-AzContext -ErrorAction SilentlyContinue) -and (Get-Command Get-AzKustoCluster -ErrorAction SilentlyContinue)) {
         if (-not (Get-AzContext -ErrorAction SilentlyContinue)) {
             Connect-AzAccount | Out-Null
@@ -85,9 +132,11 @@ function Assert-WorkshopAdxClusterRunning {
         if (-not [string]::IsNullOrWhiteSpace($contextSubscriptionId)) {
             $scope['SubscriptionId'] = $contextSubscriptionId
         }
-        $cluster = Get-AzKustoCluster @scope -Name $ClusterName
+
+        return Get-AzKustoCluster @scope -Name $ClusterName
     }
-    elseif (Get-Command az -ErrorAction SilentlyContinue) {
+
+    if (Get-Command az -ErrorAction SilentlyContinue) {
         $azArgs = @('kusto', 'cluster', 'show', '--resource-group', $ResourceGroupName, '--name', $ClusterName, '--output', 'json')
         if (-not [string]::IsNullOrWhiteSpace($SubscriptionId)) {
             $azArgs += @('--subscription', $SubscriptionId)
@@ -100,12 +149,47 @@ function Assert-WorkshopAdxClusterRunning {
         if ($LASTEXITCODE -ne 0) {
             throw "Could not read ADX cluster state with Azure CLI: $azOutput"
         }
-        $cluster = $azOutput | ConvertFrom-Json
-    }
-    else {
-        throw 'Az.Accounts/Az.Kusto or Azure CLI is required to verify the ADX cluster state before import.'
+        return ($azOutput | ConvertFrom-Json)
     }
 
+    throw 'Az.Accounts/Az.Kusto or Azure CLI is required to verify the ADX cluster state before import.'
+}
+
+function Start-WorkshopAdxClusterResource {
+    param(
+        [Parameter(Mandatory)][string]$ResourceGroupName,
+        [Parameter(Mandatory)][string]$ClusterName,
+        [string]$SubscriptionId
+    )
+
+    if (-not (Get-Command Start-AzKustoCluster -ErrorAction SilentlyContinue)) {
+        throw 'Az.Kusto Start-AzKustoCluster is required to start a stopped ADX cluster automatically.'
+    }
+
+    $scope = @{
+        ResourceGroupName = $ResourceGroupName
+        Name = $ClusterName
+    }
+    if (-not [string]::IsNullOrWhiteSpace($SubscriptionId)) {
+        $scope['SubscriptionId'] = $SubscriptionId
+    }
+
+    Start-AzKustoCluster @scope | Out-Null
+}
+
+function Assert-WorkshopAdxClusterRunning {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$ResourceGroupName,
+        [Parameter(Mandatory)][string]$ClusterName,
+        [string]$SubscriptionId,
+        [string]$SubscriptionName,
+        [string]$ClusterUri,
+        [int]$StartTimeoutMinutes = 30,
+        [int]$StartPollSeconds = 30
+    )
+
+    $cluster = Get-WorkshopAdxClusterResource -ResourceGroupName $ResourceGroupName -ClusterName $ClusterName -SubscriptionId $SubscriptionId -SubscriptionName $SubscriptionName
     if (-not $cluster) {
         throw "ADX cluster '$ClusterName' was not found in resource group '$ResourceGroupName'."
     }
@@ -113,8 +197,41 @@ function Assert-WorkshopAdxClusterRunning {
     $state = [string](Get-WorkshopObjectPropertyValue -InputObject $cluster -Name @('State', 'state'))
     $provisioningState = [string](Get-WorkshopObjectPropertyValue -InputObject $cluster -Name @('ProvisioningState', 'provisioningState'))
     $reportedUri = [string](Get-WorkshopObjectPropertyValue -InputObject $cluster -Name @('Uri', 'uri'))
+    $resourceId = [string](Get-WorkshopObjectPropertyValue -InputObject $cluster -Name @('Id', 'id'))
+    if ($state -eq 'Stopped') {
+        if ([string]::IsNullOrWhiteSpace($resourceId)) {
+            throw "Could not determine the Azure resource ID for ADX cluster '$ClusterName'; cannot validate start permissions."
+        }
+
+        $startAction = 'Microsoft.Kusto/clusters/start/action'
+        if (-not (Test-WorkshopAzureResourceActionAllowed -ResourceId $resourceId -Action $startAction)) {
+            throw "The current Azure identity does not have '$startAction' on ADX cluster '$ClusterName'. Assign a role such as Contributor or another role containing that action, then retry."
+        }
+
+        Write-Host "ADX cluster $ClusterName is stopped. Current identity has '$startAction'; starting cluster."
+        Start-WorkshopAdxClusterResource -ResourceGroupName $ResourceGroupName -ClusterName $ClusterName -SubscriptionId $SubscriptionId
+        $state = 'Starting'
+    }
+
     if ($state -ne 'Running') {
-        throw "ADX cluster '$ClusterName' in resource group '$ResourceGroupName' is not running. Current state: '$state'; provisioning state: '$provisioningState'. Start it before import with Start-AzKustoCluster or the Azure portal, then retry."
+        if ($state -notin @('Starting', 'Stopped')) {
+            throw "ADX cluster '$ClusterName' is not in a startable/running state. Current state: '$state'; provisioning state: '$provisioningState'."
+        }
+
+        $deadline = (Get-Date).AddMinutes($StartTimeoutMinutes)
+        do {
+            Start-Sleep -Seconds $StartPollSeconds
+            $cluster = Get-WorkshopAdxClusterResource -ResourceGroupName $ResourceGroupName -ClusterName $ClusterName -SubscriptionId $SubscriptionId -SubscriptionName $SubscriptionName
+            $state = [string](Get-WorkshopObjectPropertyValue -InputObject $cluster -Name @('State', 'state'))
+            $provisioningState = [string](Get-WorkshopObjectPropertyValue -InputObject $cluster -Name @('ProvisioningState', 'provisioningState'))
+            Write-Host "ADX cluster $ClusterName state: $state; provisioning state: $provisioningState"
+        } while ($state -ne 'Running' -and (Get-Date) -lt $deadline)
+
+        if ($state -ne 'Running') {
+            throw "Timed out waiting for ADX cluster '$ClusterName' to reach Running state. Current state: '$state'; provisioning state: '$provisioningState'."
+        }
+
+        $reportedUri = [string](Get-WorkshopObjectPropertyValue -InputObject $cluster -Name @('Uri', 'uri'))
     }
     if (-not [string]::IsNullOrWhiteSpace($ClusterUri) -and -not [string]::IsNullOrWhiteSpace($reportedUri) -and $ClusterUri.TrimEnd('/') -ne $reportedUri.TrimEnd('/')) {
         Write-Warning "Configured ClusterUri '$ClusterUri' does not match Azure cluster URI '$reportedUri'."

@@ -117,7 +117,7 @@ $securitySubscription = Get-AzSubscription -SubscriptionName 'Security'
 
 Existing mode reuses the cached `IdentityInfo.json` and `IdentityAccountInfo.json` files, so the 6,000 synthetic users and 4,000 synthetic service accounts do **not** need to be regenerated for a reimport. The driver validates that every expected table JSON file exists in the cache and prints the identity row counts before ingestion.
 
-Import and reimport scripts verify that the configured ADX cluster is `Running` before table creation, table clearing, or ingestion starts. If the cluster is stopped, start it in the Azure portal or with `Start-AzKustoCluster`, then rerun the import.
+Import and reimport scripts verify that the configured ADX cluster is `Running` before table creation, table clearing, or ingestion starts. If the cluster is stopped, the preflight validates that the current Azure identity has `Microsoft.Kusto/clusters/start/action`, starts the cluster with `Start-AzKustoCluster`, waits until the cluster reports `Running`, and then proceeds.
 
 You can also reimport directly into an existing database if the tables already exist:
 
