@@ -450,3 +450,14 @@ The 16 operators above are grouped into six families (filter, shape, aggregate, 
 - **Your own environment** — most of these patterns work directly in Microsoft Sentinel and the Defender XDR portal. The queries you wrote today are real queries.
 
 Welcome to KQL. Have fun.
+
+---
+
+## KQL Resources
+
+- [Bert-JanP](https://github.com/Bert-JanP)
+- [Rod Trent](https://github.com/rod-trent)
+- [Kusto Detective Agency](https://detective.kusto.io/)
+- [KQL Query](https://kqlquery.com/)
+- [Microsoft Learn: Kusto Query Language](https://learn.microsoft.com/en-us/kusto/query/?view=microsoft-fabric)
+- [reprise99](https://github.com/reprise99)
