@@ -19,7 +19,7 @@ deterministic for repeatable reimports.
 Name: New-SyntheticTelemetry.ps1
 Date: 2026-05-01
 Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
-Dependencies: Local schema JSON files under schemas; no live ADX connection required.
+Dependencies: Local schema JSON files under schemas; optional TVM software inventory CSVs under sample; no live ADX connection required.
 Key commands: ConvertTo-Json, StreamWriter.WriteLine, Set-Content, deterministic synthetic data helpers.
 #>
 [CmdletBinding()]
@@ -119,6 +119,196 @@ function Get-WorkshopRandomInt {
     param([int]$Minimum, [int]$Maximum)
 
     return $script:Random.Next($Minimum, $Maximum)
+}
+
+function ConvertTo-WorkshopPackageName {
+    param([Parameter(Mandatory)][string]$Name)
+
+    $package = ($Name -replace '\s+For Linux$', '').Trim().ToLowerInvariant()
+    $package = $package -replace '[^a-z0-9+._-]+', '-'
+    return $package.Trim('-')
+}
+
+function Import-WorkshopTvmSoftwareCatalog {
+    param(
+        [Parameter(Mandatory)][string]$Path,
+        [ValidateRange(1, 1000)][int]$MinimumCount = 400
+    )
+
+    $catalog = @()
+    if (Test-Path -Path $Path) {
+        $rows = Get-Content -Path $Path | Select-Object -Skip 1 | ConvertFrom-Csv
+        $catalog = @(
+            foreach ($row in $rows) {
+                $name = ([string]$row.Name -replace '\s+For Linux$', '').Trim()
+                if ([string]::IsNullOrWhiteSpace($name)) {
+                    continue
+                }
+
+                $weaknesses = 0
+                [void][int]::TryParse([string]$row.Weaknesses, [ref]$weaknesses)
+                $productId = [string]$row.ProductId
+                $package = if ($productId -match '_-_(?<Package>.+)$') {
+                    ($Matches.Package -replace '_for_linux$', '') -replace '_', '-'
+                }
+                else {
+                    ConvertTo-WorkshopPackageName $name
+                }
+
+                [pscustomobject]@{
+                    Name = $name
+                    Vendor = if ([string]::IsNullOrWhiteSpace([string]$row.Vendor)) { 'Ubuntu' } else { [string]$row.Vendor }
+                    Version = if ([string]::IsNullOrWhiteSpace([string]$row.'Installed Version')) { '1.0.0' } else { [string]$row.'Installed Version' }
+                    CveId = ''
+                    Package = $package
+                    Risk = [Math]::Min(95, [Math]::Max(5, 10 + ($weaknesses * 2)))
+                }
+            }
+        )
+    }
+
+    if ($catalog.Count -lt $MinimumCount) {
+        $catalog += New-WorkshopFallbackLinuxSoftwareCatalog -Count ($MinimumCount - $catalog.Count)
+    }
+
+    return @($catalog | Select-Object -First $MinimumCount)
+}
+
+function New-WorkshopFallbackLinuxSoftwareCatalog {
+    param([ValidateRange(1, 1000)][int]$Count = 400)
+
+    $families = @(
+        [pscustomobject]@{ Name = 'nginx'; Vendor = 'Ubuntu'; Version = '1.24.0-2ubuntu7'; Package = 'nginx'; Risk = 38 },
+        [pscustomobject]@{ Name = 'postgresql-client'; Vendor = 'PostgreSQL Global Development Group'; Version = '16.4-0ubuntu0.24.04.1'; Package = 'postgresql-client'; Risk = 30 },
+        [pscustomobject]@{ Name = 'python3-module'; Vendor = 'Python Software Foundation'; Version = '3.12.3-0ubuntu2'; Package = 'python3-module'; Risk = 22 },
+        [pscustomobject]@{ Name = 'nodejs-library'; Vendor = 'Node.js Foundation'; Version = '20.19.0-1nodesource1'; Package = 'nodejs-library'; Risk = 28 },
+        [pscustomobject]@{ Name = 'libcloud-agent'; Vendor = 'Canonical'; Version = '2.11.1-0ubuntu1'; Package = 'libcloud-agent'; Risk = 18 },
+        [pscustomobject]@{ Name = 'oracle-client-tool'; Vendor = 'Oracle'; Version = '23.7.0.25.01'; Package = 'oracle-client-tool'; Risk = 42 },
+        [pscustomobject]@{ Name = 'container-runtime-plugin'; Vendor = 'Docker'; Version = '27.5.1-1'; Package = 'container-runtime-plugin'; Risk = 34 },
+        [pscustomobject]@{ Name = 'security-audit-tool'; Vendor = 'Ubuntu'; Version = '4.0.0-1ubuntu1'; Package = 'security-audit-tool'; Risk = 26 }
+    )
+
+    for ($i = 1; $i -le $Count; $i++) {
+        $family = $families[($i - 1) % $families.Count]
+        [pscustomobject]@{
+            Name = '{0}-{1:D3}' -f $family.Name, $i
+            Vendor = $family.Vendor
+            Version = $family.Version
+            CveId = ''
+            Package = '{0}-{1:D3}' -f $family.Package, $i
+            Risk = [Math]::Min(95, $family.Risk + ($i % 12))
+        }
+    }
+}
+
+function New-WorkshopWindowsFileTemplateCatalog {
+    param([ValidateRange(1, 500)][int]$Count = 100)
+
+    $subjects = @('OperationsPlan', 'BudgetForecast', 'TravelRoster', 'ContractAward', 'VendorInvoice', 'AfterAction', 'SecurityBrief', 'HelpDeskExport', 'AssetInventory', 'AccessReview', 'TrainingRoster', 'MeetingNotes', 'ProjectTimeline', 'NetworkDiagram', 'RiskRegister', 'PolicyDraft', 'IncidentReport', 'ChangeRequest', 'ProcurementList', 'ExecutiveReadout')
+    $extensions = @('.jpg', '.xlsx', '.xlsm', '.csv', '.docx', '.docm', '.doc', '.pptx', '.pptm', '.ppt', '.ost', '.pst', '.pdf', '.txt', '.rtf', '.zip', '.json', '.log', '.xml', '.one')
+    $folders = @(
+        'C:\Users\{0}\Documents\Operations',
+        'C:\Users\{0}\Documents\Finance',
+        'C:\Users\{0}\Downloads',
+        'C:\Users\{0}\Desktop',
+        'C:\Users\{0}\OneDrive - USAG Cyber',
+        'C:\Users\{0}\Pictures\FieldOps',
+        'C:\Users\{0}\AppData\Local\Microsoft\Outlook',
+        'C:\Users\{0}\AppData\Local\Temp',
+        'C:\Users\Public\Documents',
+        'C:\ProgramData\USAGCyber\Reports'
+    )
+
+    for ($i = 1; $i -le $Count; $i++) {
+        $extension = $extensions[($i - 1) % $extensions.Count]
+        $subject = $subjects[($i - 1) % $subjects.Count]
+        $folder = $folders[($i - 1) % $folders.Count]
+        $name = '{0}_{1:D3}{2}' -f $subject, $i, $extension
+        [pscustomobject]@{
+            Name = $name
+            PathTemplate = '{0}\{1}' -f $folder, $name
+            Size = 4096 + (($i * 32768) % 12582912)
+        }
+    }
+}
+
+function New-WorkshopWindowsDllTemplateCatalog {
+    param([ValidateRange(1, 500)][int]$Count = 100)
+
+    $moduleStems = @('msvcp140', 'vcruntime140', 'concrt140', 'ucrtbase', 'api-ms-win-core-file-l1-2-0', 'api-ms-win-core-synch-l1-2-0', 'bcryptprimitives', 'cryptbase', 'cryptsp', 'dnsapi', 'dwmapi', 'dxgi', 'gdiplus', 'iertutil', 'imm32', 'iphlpapi', 'kernel.appcore', 'msasn1', 'mscms', 'msctf', 'msi', 'msimg32', 'mso20win32client', 'msodbcsql', 'mswsock', 'netapi32', 'ncrypt', 'ntdll', 'ole32', 'oleacc', 'oleaut32', 'profapi', 'propsys', 'rpcrt4', 'secur32', 'shell32', 'shlwapi', 'sspicli', 'urlmon', 'userenv', 'uxtheme', 'version', 'wer', 'wininet', 'winmm', 'winspool', 'wldap32', 'wow64', 'ws2_32', 'xml-lite')
+    $locations = @(
+        'C:\Program Files\Microsoft Office\root\Office16',
+        'C:\Program Files\Microsoft\Edge\Application',
+        'C:\Program Files\Windows Defender Advanced Threat Protection',
+        'C:\Program Files\Docker\Docker\resources',
+        'C:\Program Files\Git\mingw64\bin',
+        'C:\Program Files\Microsoft VS Code',
+        'C:\Windows',
+        'C:\Windows\System32',
+        'C:\Windows\SysWOW64',
+        'C:\Users\Public\AppData\Temp'
+    )
+
+    for ($i = 1; $i -le $Count; $i++) {
+        $stem = $moduleStems[($i - 1) % $moduleStems.Count]
+        $name = if ($i -le $moduleStems.Count) { "$stem.dll" } else { '{0}{1:D2}.dll' -f $stem, [int][Math]::Ceiling($i / $moduleStems.Count) }
+        $location = $locations[($i - 1) % $locations.Count]
+        [pscustomobject]@{
+            Name = $name
+            Path = '{0}\{1}' -f $location, $name
+            Size = 20480 + (($i * 7919) % 7340032)
+        }
+    }
+}
+
+function New-WorkshopLinuxSharedObjectTemplateCatalog {
+    param([ValidateRange(1, 500)][int]$Count = 100)
+
+    $libraries = @('libacl.so.1', 'libapparmor.so.1', 'libarchive.so.13', 'libattr.so.1', 'libblkid.so.1', 'libbrotlicommon.so.1', 'libbrotlidec.so.1', 'libbsd.so.0', 'libbz2.so.1.0', 'libcap.so.2', 'libcap-ng.so.0', 'libcom-err.so.2', 'libcrypt.so.1', 'libcurl.so.4', 'libdbus-1.so.3', 'libdevmapper.so.1.02.1', 'libedit.so.2', 'libelf.so.1', 'libexpat.so.1', 'libffi.so.8', 'libfuse3.so.3', 'libgcc-s.so.1', 'libgcrypt.so.20', 'libgmp.so.10', 'libgnutls.so.30', 'libgpg-error.so.0', 'libgssapi-krb5.so.2', 'libhogweed.so.6', 'libidn2.so.0', 'libjson-c.so.5', 'libk5crypto.so.3', 'libkeyutils.so.1', 'libkrb5.so.3', 'libkrb5support.so.0', 'libldap-2.5.so.0', 'liblz4.so.1', 'liblzma.so.5', 'libm.so.6', 'libmount.so.1', 'libncursesw.so.6', 'libnettle.so.8', 'libnghttp2.so.14', 'libnsl.so.2', 'libnss-systemd.so.2', 'libp11-kit.so.0', 'libpcre2-8.so.0', 'libproc2.so.0', 'libpsl.so.5', 'libpython3.12.so.1.0', 'libreadline.so.8', 'librtmp.so.1', 'libsasl2.so.2', 'libseccomp.so.2', 'libselinux.so.1', 'libsmartcols.so.1', 'libsqlite3.so.0', 'libssh.so.4', 'libstdc++.so.6', 'libtasn1.so.6', 'libtinfo.so.6', 'libudev.so.1', 'libunistring.so.5', 'libuuid.so.1', 'libwrap.so.0', 'libxml2.so.2', 'libyaml-0.so.2', 'libz.so.1', 'libzstd.so.1', 'pam_unix.so', 'pam_sss.so', 'pam_systemd.so', 'audit_plugin.so', 'sssd_krb5_locator_plugin.so', 'oracle_net.so', 'libclntsh.so.23.1', 'libnnz23.so', 'libocci.so.23.1')
+    $locations = @('/lib/x86_64-linux-gnu', '/usr/lib/x86_64-linux-gnu', '/usr/lib', '/usr/local/lib', '/usr/lib/systemd', '/usr/lib/postgresql/16/lib', '/opt/microsoft/mdatp/lib', '/opt/oracle/product/23ai/client/lib', '/snap/core/current/lib/x86_64-linux-gnu', '/var/tmp/.cache/lib')
+
+    for ($i = 1; $i -le $Count; $i++) {
+        $baseName = $libraries[($i - 1) % $libraries.Count]
+        $name = if ($i -le $libraries.Count) { $baseName } else { $baseName -replace '\.so', ('-{0:D2}.so' -f [int][Math]::Ceiling($i / $libraries.Count)) }
+        $location = $locations[($i - 1) % $locations.Count]
+        [pscustomobject]@{
+            Name = $name
+            Path = '{0}/{1}' -f $location, $name
+            Size = 16384 + (($i * 12289) % 6291456)
+        }
+    }
+}
+
+function New-WorkshopRemoteEndpointCatalog {
+    param(
+        [Parameter(Mandatory)][string]$Prefix,
+        [Parameter(Mandatory)][string]$Domain,
+        [Parameter(Mandatory)][string]$IpPrefix,
+        [Parameter(Mandatory)][int[]]$Ports,
+        [string[]]$Protocols = @('Tcp'),
+        [ValidateRange(1, 500)][int]$Count = 200
+    )
+
+    for ($i = 1; $i -le $Count; $i++) {
+        [pscustomobject]@{
+            Url = '{0}-{1:D3}.{2}' -f $Prefix, $i, $Domain
+            IP = '{0}.{1}' -f $IpPrefix, (10 + (($i - 1) % 240))
+            Port = $Ports[($i - 1) % $Ports.Count]
+            Protocol = $Protocols[($i - 1) % $Protocols.Count]
+        }
+    }
+}
+
+function Assert-WorkshopCatalogMinimum {
+    param(
+        [Parameter(Mandatory)][string]$Name,
+        [Parameter(Mandatory)][object[]]$Items,
+        [Parameter(Mandatory)][int]$Minimum
+    )
+
+    if ($Items.Count -lt $Minimum) {
+        throw "$Name catalog expected at least $Minimum item(s), found $($Items.Count)."
+    }
 }
 
 function Resolve-WorkshopTemplatePath {
@@ -266,8 +456,20 @@ if ($SyntheticServiceAccountCount -lt $seedServiceAccounts.Count) {
     throw "SyntheticServiceAccountCount must be at least $($seedServiceAccounts.Count) to include required scenario service accounts."
 }
 
-$firstNames = @('Alex', 'Amelia', 'Avery', 'Blake', 'Casey', 'Dakota', 'Devon', 'Elliot', 'Emerson', 'Finley', 'Harper', 'Hayden', 'Jamie', 'Jordan', 'Kai', 'Kendall', 'Logan', 'Morgan', 'Parker', 'Quinn', 'Reese', 'Riley', 'Rowan', 'Sage', 'Skyler', 'Taylor')
-$lastNames = @('Adams', 'Baker', 'Bennett', 'Brooks', 'Carter', 'Cooper', 'Diaz', 'Edwards', 'Evans', 'Foster', 'Garcia', 'Gray', 'Harris', 'Hayes', 'Hughes', 'Jackson', 'Kelly', 'Lewis', 'Martinez', 'Miller', 'Morgan', 'Nelson', 'Parker', 'Reed', 'Rivera', 'Roberts', 'Scott', 'Smith', 'Taylor', 'Turner', 'Walker', 'Ward', 'Wood', 'Young')
+$firstNames = @('Alex', 'Amelia', 'Avery', 'Blake', 'Casey', 'Dakota', 'Devon', 'Elliot', 'Emerson', 'Finley', 'Harper', 'Hayden', 'Jamie', 'Jordan', 'Kai', 'Kendall', 'Logan', 'Morgan', 'Parker', 'Quinn', 'Reese', 'Riley', 'Rowan', 'Sage', 'Skyler', 'Taylor') + @(
+    'Mei', 'Lin', 'Wei', 'Chen', 'Hiro', 'Yuki', 'Aiko', 'Sora', 'Haru', 'Rina', 'Minh', 'Lan', 'Anh', 'Bao', 'Somchai', 'Niran', 'Dara', 'Siti', 'Putri', 'Budi',
+    'Jiho', 'Minjun', 'Seojun', 'Doyun', 'Jisoo', 'Hana', 'Minseo', 'Seoah', 'Yuna', 'Haeun', 'Joon', 'Taeyang', 'Hyunwoo', 'Eunji', 'Somin', 'Yerim', 'Nari', 'Bora', 'Sujin', 'Jiwon',
+    'Luca', 'Sofia', 'Matteo', 'Giulia', 'Leon', 'Emilia', 'Hugo', 'Camille', 'Lars', 'Freya', 'Astrid', 'Ingrid', 'Maja', 'Anika', 'Pieter', 'Femke', 'Marek', 'Kasia', 'Tomasz', 'Klara',
+    'Amara', 'Kwame', 'Kofi', 'Ama', 'Amina', 'Fatou', 'Zola', 'Thandi', 'Nia', 'Chidi', 'Ngozi', 'Ife', 'Ade', 'Temi', 'Sipho', 'Lerato', 'Mandla', 'Ayo', 'Sefu', 'Zuri',
+    'Aarav', 'Vivaan', 'Arjun', 'Vihaan', 'Isha', 'Anaya', 'Priya', 'Kavya', 'Rohan', 'Neha', 'Meera', 'Aditi', 'Nikhil', 'Sanjay', 'Kiran', 'Lakshmi', 'Deepa', 'Raj', 'Amit', 'Pooja'
+)
+$lastNames = @('Adams', 'Baker', 'Bennett', 'Brooks', 'Carter', 'Cooper', 'Diaz', 'Edwards', 'Evans', 'Foster', 'Garcia', 'Gray', 'Harris', 'Hayes', 'Hughes', 'Jackson', 'Kelly', 'Lewis', 'Martinez', 'Miller', 'Morgan', 'Nelson', 'Parker', 'Reed', 'Rivera', 'Roberts', 'Scott', 'Smith', 'Taylor', 'Turner', 'Walker', 'Ward', 'Wood', 'Young') + @(
+    'Chen', 'Wang', 'Li', 'Zhang', 'Liu', 'Tanaka', 'Sato', 'Suzuki', 'Nguyen', 'Tran', 'Le', 'Pham', 'Hoang', 'Lim', 'Wong', 'Chua', 'Rahman', 'Hidayat', 'Prasetyo', 'Santos',
+    'Kim', 'Lee', 'Park', 'Choi', 'Jung', 'Kang', 'Cho', 'Yoon', 'Jang', 'Im', 'Han', 'Oh', 'Seo', 'Shin', 'Kwon', 'Hwang', 'Ahn', 'Song', 'Yoo', 'Moon',
+    'Muller', 'Schmidt', 'Schneider', 'Fischer', 'Weber', 'Meyer', 'Wagner', 'Becker', 'Hoffmann', 'Schulz', 'Novak', 'Kowalski', 'Rossi', 'Bianchi', 'Romano', 'Dubois', 'Moreau', 'Laurent', 'Martin', 'Bernard',
+    'Okafor', 'Mensah', 'Ndlovu', 'Diop', 'Abebe', 'Tesfaye', 'Kamau', 'Mwangi', 'Diallo', 'Traore', 'Adeyemi', 'Okonkwo', 'Mbeki', 'Khumalo', 'Dlamini', 'Osei', 'Balogun', 'Nkrumah', 'Mbatha', 'Toure',
+    'Sharma', 'Singh', 'Kumar', 'Gupta', 'Iyer', 'Nair', 'Reddy', 'Rao', 'Pillai', 'Chatterjee', 'Banerjee', 'Desai', 'Mehta', 'Joshi', 'Kapoor', 'Malhotra', 'Agarwal', 'Bhat', 'Menon', 'Verma'
+)
 
 $generatedUsers = for ($i = 1; $i -le ($SyntheticUserCount - $seedUsers.Count); $i++) {
     $first = $firstNames[($i - 1) % $firstNames.Count]
@@ -333,6 +535,57 @@ $windowsProcessTemplates = @(
     [pscustomobject]@{ File = 'Teams.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\Teams\current\Teams.exe'; Parent = 'explorer.exe'; Command = 'Teams.exe --process-start-args --system-initiated' },
     [pscustomobject]@{ File = 'OneDrive.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\OneDrive\OneDrive.exe'; Parent = 'explorer.exe'; Command = 'OneDrive.exe /background' },
     [pscustomobject]@{ File = 'SenseIR.exe'; Path = 'C:\Program Files\Windows Defender Advanced Threat Protection\SenseIR.exe'; Parent = 'MsSense.exe'; Command = 'SenseIR.exe telemetry' }
+) + @(
+    [pscustomobject]@{ File = 'WhatsApp.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\WhatsApp\WhatsApp.exe'; Parent = 'explorer.exe'; Command = 'WhatsApp.exe --system-startup' },
+    [pscustomobject]@{ File = 'GitHubDesktop.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\GitHubDesktop\GitHubDesktop.exe'; Parent = 'explorer.exe'; Command = 'GitHubDesktop.exe --squirrel-firstrun' },
+    [pscustomobject]@{ File = 'wsl.exe'; Path = 'C:\Windows\System32\wsl.exe'; Parent = 'WindowsTerminal.exe'; Command = 'wsl.exe -d Ubuntu-24.04' },
+    [pscustomobject]@{ File = 'DockerDesktop.exe'; Path = 'C:\Program Files\Docker\Docker\Docker Desktop.exe'; Parent = 'explorer.exe'; Command = 'DockerDesktop.exe --autostart' },
+    [pscustomobject]@{ File = 'MSWord.exe'; Path = 'C:\Program Files\Microsoft Office\root\Office16\MSWord.exe'; Parent = 'explorer.exe'; Command = 'MSWord.exe /automation' },
+    [pscustomobject]@{ File = 'Excel.exe'; Path = 'C:\Program Files\Microsoft Office\root\Office16\Excel.exe'; Parent = 'explorer.exe'; Command = 'Excel.exe /dde' },
+    [pscustomobject]@{ File = 'Outlook.exe'; Path = 'C:\Program Files\Microsoft Office\root\Office16\Outlook.exe'; Parent = 'explorer.exe'; Command = 'Outlook.exe /recycle' },
+    [pscustomobject]@{ File = 'PowerPoint.exe'; Path = 'C:\Program Files\Microsoft Office\root\Office16\PowerPoint.exe'; Parent = 'explorer.exe'; Command = 'PowerPoint.exe /s' },
+    [pscustomobject]@{ File = 'Code.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Programs\Microsoft VS Code\Code.exe'; Parent = 'explorer.exe'; Command = 'Code.exe --unity-launch' },
+    [pscustomobject]@{ File = 'chrome.exe'; Path = 'C:\Program Files\Google\Chrome\Application\chrome.exe'; Parent = 'explorer.exe'; Command = 'chrome.exe --profile-directory=Default' },
+    [pscustomobject]@{ File = 'firefox.exe'; Path = 'C:\Program Files\Mozilla Firefox\firefox.exe'; Parent = 'explorer.exe'; Command = 'firefox.exe -contentproc' },
+    [pscustomobject]@{ File = 'slack.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\slack\slack.exe'; Parent = 'explorer.exe'; Command = 'slack.exe --process-start-args' },
+    [pscustomobject]@{ File = 'Zoom.exe'; PathTemplate = 'C:\Users\{0}\AppData\Roaming\Zoom\bin\Zoom.exe'; Parent = 'explorer.exe'; Command = 'Zoom.exe --url=zoommtg://' },
+    [pscustomobject]@{ File = 'Notepad.exe'; Path = 'C:\Windows\System32\Notepad.exe'; Parent = 'explorer.exe'; Command = 'Notepad.exe C:\Users\Public\Documents\notes.txt' },
+    [pscustomobject]@{ File = 'cmd.exe'; Path = 'C:\Windows\System32\cmd.exe'; Parent = 'explorer.exe'; Command = 'cmd.exe /c whoami' },
+    [pscustomobject]@{ File = 'powershell.exe'; Path = 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'; Parent = 'explorer.exe'; Command = 'powershell.exe -NoLogo -NoProfile' },
+    [pscustomobject]@{ File = 'pwsh.exe'; Path = 'C:\Program Files\PowerShell\7\pwsh.exe'; Parent = 'WindowsTerminal.exe'; Command = 'pwsh.exe -NoLogo' },
+    [pscustomobject]@{ File = 'WindowsTerminal.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\WindowsApps\WindowsTerminal.exe'; Parent = 'explorer.exe'; Command = 'WindowsTerminal.exe -p PowerShell' },
+    [pscustomobject]@{ File = 'explorer.exe'; Path = 'C:\Windows\explorer.exe'; Parent = 'userinit.exe'; Command = 'explorer.exe' },
+    [pscustomobject]@{ File = 'SearchHost.exe'; Path = 'C:\Windows\SystemApps\MicrosoftWindows.Client.CBS_cw5n1h2txyewy\SearchHost.exe'; Parent = 'svchost.exe'; Command = 'SearchHost.exe -Embedding' },
+    [pscustomobject]@{ File = 'OneNote.exe'; Path = 'C:\Program Files\Microsoft Office\root\Office16\OneNote.exe'; Parent = 'explorer.exe'; Command = 'OneNote.exe /tsr' },
+    [pscustomobject]@{ File = 'Acrobat.exe'; Path = 'C:\Program Files\Adobe\Acrobat DC\Acrobat\Acrobat.exe'; Parent = 'explorer.exe'; Command = 'Acrobat.exe /n' },
+    [pscustomobject]@{ File = 'MSAccess.exe'; Path = 'C:\Program Files\Microsoft Office\root\Office16\MSAccess.exe'; Parent = 'explorer.exe'; Command = 'MSAccess.exe /nostartup' },
+    [pscustomobject]@{ File = 'Visio.exe'; Path = 'C:\Program Files\Microsoft Office\root\Office16\Visio.exe'; Parent = 'explorer.exe'; Command = 'Visio.exe /embedding' },
+    [pscustomobject]@{ File = 'WinProj.exe'; Path = 'C:\Program Files\Microsoft Office\root\Office16\WinProj.exe'; Parent = 'explorer.exe'; Command = 'WinProj.exe /embedding' },
+    [pscustomobject]@{ File = 'OneDriveStandaloneUpdater.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\OneDrive\OneDriveStandaloneUpdater.exe'; Parent = 'OneDrive.exe'; Command = 'OneDriveStandaloneUpdater.exe /silent' },
+    [pscustomobject]@{ File = 'Dropbox.exe'; Path = 'C:\Program Files\Dropbox\Client\Dropbox.exe'; Parent = 'explorer.exe'; Command = 'Dropbox.exe /systemstartup' },
+    [pscustomobject]@{ File = 'Box.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Box\Box.exe'; Parent = 'explorer.exe'; Command = 'Box.exe --background' },
+    [pscustomobject]@{ File = 'java.exe'; Path = 'C:\Program Files\Eclipse Adoptium\jdk-21\bin\java.exe'; Parent = 'cmd.exe'; Command = 'java.exe -version' },
+    [pscustomobject]@{ File = 'python.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Programs\Python\Python312\python.exe'; Parent = 'Code.exe'; Command = 'python.exe -m pip list' },
+    [pscustomobject]@{ File = 'node.exe'; Path = 'C:\Program Files\nodejs\node.exe'; Parent = 'cmd.exe'; Command = 'node.exe server.js' },
+    [pscustomobject]@{ File = 'git.exe'; Path = 'C:\Program Files\Git\cmd\git.exe'; Parent = 'Code.exe'; Command = 'git.exe status --short' },
+    [pscustomobject]@{ File = 'ssh.exe'; Path = 'C:\Windows\System32\OpenSSH\ssh.exe'; Parent = 'WindowsTerminal.exe'; Command = 'ssh.exe admin-jump01.usag-cyber.local' },
+    [pscustomobject]@{ File = 'putty.exe'; Path = 'C:\Program Files\PuTTY\putty.exe'; Parent = 'explorer.exe'; Command = 'putty.exe -ssh ubuntu-03' },
+    [pscustomobject]@{ File = 'mstsc.exe'; Path = 'C:\Windows\System32\mstsc.exe'; Parent = 'explorer.exe'; Command = 'mstsc.exe /v:aadconnect01' },
+    [pscustomobject]@{ File = 'az.exe'; Path = 'C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin\az.exe'; Parent = 'pwsh.exe'; Command = 'az.exe account show' },
+    [pscustomobject]@{ File = 'kubectl.exe'; Path = 'C:\Program Files\Kubernetes\kubectl.exe'; Parent = 'pwsh.exe'; Command = 'kubectl.exe get pods -A' },
+    [pscustomobject]@{ File = 'terraform.exe'; Path = 'C:\Program Files\Terraform\terraform.exe'; Parent = 'pwsh.exe'; Command = 'terraform.exe plan' },
+    [pscustomobject]@{ File = 'bicep.exe'; Path = 'C:\Program Files\Azure CLI\bicep.exe'; Parent = 'az.exe'; Command = 'bicep.exe build main.bicep' },
+    [pscustomobject]@{ File = 'MSBuild.exe'; Path = 'C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe'; Parent = 'devenv.exe'; Command = 'MSBuild.exe WorkshopTools.sln /m' },
+    [pscustomobject]@{ File = 'devenv.exe'; Path = 'C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe'; Parent = 'explorer.exe'; Command = 'devenv.exe WorkshopTools.sln' },
+    [pscustomobject]@{ File = 'dotnet.exe'; Path = 'C:\Program Files\dotnet\dotnet.exe'; Parent = 'pwsh.exe'; Command = 'dotnet.exe test' },
+    [pscustomobject]@{ File = 'sqlcmd.exe'; Path = 'C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\sqlcmd.exe'; Parent = 'cmd.exe'; Command = 'sqlcmd.exe -S sql01 -Q "select @@version"' },
+    [pscustomobject]@{ File = 'SSMS.exe'; Path = 'C:\Program Files (x86)\Microsoft SQL Server Management Studio 20\Common7\IDE\Ssms.exe'; Parent = 'explorer.exe'; Command = 'SSMS.exe -nosplash' },
+    [pscustomobject]@{ File = 'Tableau.exe'; Path = 'C:\Program Files\Tableau\Tableau 2024.3\bin\Tableau.exe'; Parent = 'explorer.exe'; Command = 'Tableau.exe --safe-mode' },
+    [pscustomobject]@{ File = 'PBIDesktop.exe'; Path = 'C:\Program Files\Microsoft Power BI Desktop\bin\PBIDesktop.exe'; Parent = 'explorer.exe'; Command = 'PBIDesktop.exe' },
+    [pscustomobject]@{ File = 'Wireshark.exe'; Path = 'C:\Program Files\Wireshark\Wireshark.exe'; Parent = 'explorer.exe'; Command = 'Wireshark.exe -k' },
+    [pscustomobject]@{ File = 'Procmon64.exe'; Path = 'C:\Tools\Sysinternals\Procmon64.exe'; Parent = 'explorer.exe'; Command = 'Procmon64.exe /Quiet' },
+    [pscustomobject]@{ File = '7zFM.exe'; Path = 'C:\Program Files\7-Zip\7zFM.exe'; Parent = 'explorer.exe'; Command = '7zFM.exe' },
+    [pscustomobject]@{ File = 'OktaVerify.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Programs\OktaVerify\OktaVerify.exe'; Parent = 'explorer.exe'; Command = 'OktaVerify.exe --background' }
 )
 $linuxProcessTemplates = @(
     [pscustomobject]@{ File = 'systemd'; Path = '/usr/lib/systemd/systemd'; Parent = 'kernel'; Command = '/usr/lib/systemd/systemd --system' },
@@ -345,13 +598,44 @@ $linuxProcessTemplates = @(
     [pscustomobject]@{ File = 'mdatp'; Path = '/opt/microsoft/mdatp/sbin/mdatp'; Parent = 'systemd'; Command = 'mdatp health --field healthy' },
     [pscustomobject]@{ File = 'rsyslogd'; Path = '/usr/sbin/rsyslogd'; Parent = 'systemd'; Command = '/usr/sbin/rsyslogd -n -iNONE' },
     [pscustomobject]@{ File = 'cron'; Path = '/usr/sbin/cron'; Parent = 'systemd'; Command = '/usr/sbin/cron -f' }
+) + @(
+    [pscustomobject]@{ File = 'kthreadd'; Path = '/proc/2/comm'; Parent = 'kernel'; Command = '[kthreadd]' },
+    [pscustomobject]@{ File = 'kworker'; Path = '/proc/15/comm'; Parent = 'kthreadd'; Command = '[kworker/0:1-events]' },
+    [pscustomobject]@{ File = 'ksoftirqd'; Path = '/proc/16/comm'; Parent = 'kthreadd'; Command = '[ksoftirqd/0]' },
+    [pscustomobject]@{ File = 'migration'; Path = '/proc/17/comm'; Parent = 'kthreadd'; Command = '[migration/0]' },
+    [pscustomobject]@{ File = 'rcu_sched'; Path = '/proc/18/comm'; Parent = 'kthreadd'; Command = '[rcu_sched]' },
+    [pscustomobject]@{ File = 'watchdog'; Path = '/proc/19/comm'; Parent = 'kthreadd'; Command = '[watchdog/0]' },
+    [pscustomobject]@{ File = 'irqbalance'; Path = '/usr/sbin/irqbalance'; Parent = 'systemd'; Command = '/usr/sbin/irqbalance --foreground' },
+    [pscustomobject]@{ File = 'systemd-journald'; Path = '/usr/lib/systemd/systemd-journald'; Parent = 'systemd'; Command = '/usr/lib/systemd/systemd-journald' },
+    [pscustomobject]@{ File = 'systemd-logind'; Path = '/usr/lib/systemd/systemd-logind'; Parent = 'systemd'; Command = '/usr/lib/systemd/systemd-logind' },
+    [pscustomobject]@{ File = 'systemd-resolved'; Path = '/usr/lib/systemd/systemd-resolved'; Parent = 'systemd'; Command = '/usr/lib/systemd/systemd-resolved' },
+    [pscustomobject]@{ File = 'systemd-timesyncd'; Path = '/usr/lib/systemd/systemd-timesyncd'; Parent = 'systemd'; Command = '/usr/lib/systemd/systemd-timesyncd' },
+    [pscustomobject]@{ File = 'NetworkManager'; Path = '/usr/sbin/NetworkManager'; Parent = 'systemd'; Command = '/usr/sbin/NetworkManager --no-daemon' },
+    [pscustomobject]@{ File = 'dbus-daemon'; Path = '/usr/bin/dbus-daemon'; Parent = 'systemd'; Command = '/usr/bin/dbus-daemon --system' },
+    [pscustomobject]@{ File = 'snapd'; Path = '/usr/lib/snapd/snapd'; Parent = 'systemd'; Command = '/usr/lib/snapd/snapd' },
+    [pscustomobject]@{ File = 'unattended-upgrade'; Path = '/usr/bin/unattended-upgrade'; Parent = 'systemd'; Command = '/usr/bin/python3 /usr/bin/unattended-upgrade --download-only' },
+    [pscustomobject]@{ File = 'cloud-init'; Path = '/usr/bin/cloud-init'; Parent = 'systemd'; Command = '/usr/bin/python3 /usr/bin/cloud-init modules --mode=final' },
+    [pscustomobject]@{ File = 'python3'; Path = '/usr/bin/python3'; Parent = 'bash'; Command = 'python3 /opt/scripts/healthcheck.py' },
+    [pscustomobject]@{ File = 'perl'; Path = '/usr/bin/perl'; Parent = 'bash'; Command = 'perl /usr/share/debconf/frontend' },
+    [pscustomobject]@{ File = 'curl'; Path = '/usr/bin/curl'; Parent = 'bash'; Command = 'curl -fsSL https://packages.microsoft.com/config/ubuntu/24.04/prod.list' },
+    [pscustomobject]@{ File = 'wget'; Path = '/usr/bin/wget'; Parent = 'bash'; Command = 'wget -q https://archive.ubuntu.com/ubuntu/dists/noble/InRelease' },
+    [pscustomobject]@{ File = 'grep'; Path = '/usr/bin/grep'; Parent = 'bash'; Command = 'grep -R sudo /var/log/auth.log' },
+    [pscustomobject]@{ File = 'awk'; Path = '/usr/bin/awk'; Parent = 'bash'; Command = 'awk {print $1} /var/log/auth.log' },
+    [pscustomobject]@{ File = 'sed'; Path = '/usr/bin/sed'; Parent = 'bash'; Command = 'sed -n 1,40p /etc/ssh/sshd_config' },
+    [pscustomobject]@{ File = 'tar'; Path = '/usr/bin/tar'; Parent = 'bash'; Command = 'tar -czf /tmp/logs.tgz /var/log' },
+    [pscustomobject]@{ File = 'gzip'; Path = '/usr/bin/gzip'; Parent = 'tar'; Command = 'gzip -6 /tmp/logs.tar' },
+    [pscustomobject]@{ File = 'journalctl'; Path = '/usr/bin/journalctl'; Parent = 'bash'; Command = 'journalctl -u ssh --since today' },
+    [pscustomobject]@{ File = 'nginx'; Path = '/usr/sbin/nginx'; Parent = 'systemd'; Command = 'nginx: worker process' },
+    [pscustomobject]@{ File = 'apache2'; Path = '/usr/sbin/apache2'; Parent = 'systemd'; Command = '/usr/sbin/apache2 -k start' },
+    [pscustomobject]@{ File = 'mysqld'; Path = '/usr/sbin/mysqld'; Parent = 'systemd'; Command = '/usr/sbin/mysqld --daemonize' },
+    [pscustomobject]@{ File = 'tnslsnr'; Path = '/opt/oracle/product/23ai/dbhomeFree/bin/tnslsnr'; Parent = 'systemd'; Command = 'tnslsnr LISTENER -inherit' }
 )
 $windowsFileTemplates = @(
     [pscustomobject]@{ Name = 'settings.json'; PathTemplate = 'C:\Users\{0}\AppData\Roaming\Microsoft\Teams\settings.json'; Size = 8192 },
     [pscustomobject]@{ Name = 'cache.db'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\Edge\User Data\Default\Cache\cache.db'; Size = 262144 },
     [pscustomobject]@{ Name = 'document.docx'; PathTemplate = 'C:\Users\{0}\Documents\Operations\document.docx'; Size = 153600 },
     [pscustomobject]@{ Name = 'DefenderUpdate.log'; Path = 'C:\ProgramData\Microsoft\Windows Defender\Support\DefenderUpdate.log'; Size = 32768 }
-)
+) + @(New-WorkshopWindowsFileTemplateCatalog -Count 100)
 $linuxFileTemplates = @(
     [pscustomobject]@{ Name = 'auth.log'; Path = '/var/log/auth.log'; Size = 65536 },
     [pscustomobject]@{ Name = 'audit.log'; Path = '/var/log/audit/audit.log'; Size = 131072 },
@@ -369,7 +653,7 @@ $windowsDllTemplates = @(
     [pscustomobject]@{ Name = 'sechost.dll'; Path = 'C:\Windows\System32\sechost.dll'; Size = 761856 },
     [pscustomobject]@{ Name = 'winhttp.dll'; Path = 'C:\Windows\System32\winhttp.dll'; Size = 1089536 },
     [pscustomobject]@{ Name = 'crypt32.dll'; Path = 'C:\Windows\System32\crypt32.dll'; Size = 1869824 }
-)
+) + @(New-WorkshopWindowsDllTemplateCatalog -Count 100)
 $linuxSharedObjectTemplates = @(
     [pscustomobject]@{ Name = 'libc.so.6'; Path = '/lib/x86_64-linux-gnu/libc.so.6'; Size = 2216304 },
     [pscustomobject]@{ Name = 'libpam.so.0'; Path = '/lib/x86_64-linux-gnu/libpam.so.0'; Size = 67584 },
@@ -378,14 +662,14 @@ $linuxSharedObjectTemplates = @(
     [pscustomobject]@{ Name = 'libsystemd.so.0'; Path = '/usr/lib/x86_64-linux-gnu/libsystemd.so.0'; Size = 856432 },
     [pscustomobject]@{ Name = 'libaudit.so.1'; Path = '/usr/lib/x86_64-linux-gnu/libaudit.so.1'; Size = 137520 },
     [pscustomobject]@{ Name = 'libnss_files.so.2'; Path = '/lib/x86_64-linux-gnu/libnss_files.so.2'; Size = 55936 }
-)
+) + @(New-WorkshopLinuxSharedObjectTemplateCatalog -Count 100)
 $windowsRemoteEndpoints = @(
     [pscustomobject]@{ Url = 'login.microsoftonline.com'; IP = '20.190.160.10'; Port = 443 },
     [pscustomobject]@{ Url = 'graph.microsoft.com'; IP = '20.190.128.12'; Port = 443 },
     [pscustomobject]@{ Url = 'officecdn.microsoft.com'; IP = '13.107.246.40'; Port = 443 },
     [pscustomobject]@{ Url = 'wdcp.microsoft.com'; IP = '52.152.110.14'; Port = 443 },
     [pscustomobject]@{ Url = 'packages.microsoft.com'; IP = '13.107.246.45'; Port = 443 }
-)
+) + @(New-WorkshopRemoteEndpointCatalog -Prefix 'win-saas' -Domain 'workshop.example' -IpPrefix '203.0.113' -Ports @(443, 80, 8443, 8080, 22, 1433, 3389, 9418) -Protocols @('Tcp') -Count 200)
 $linuxRemoteEndpoints = @(
     [pscustomobject]@{ Url = 'packages.microsoft.com'; IP = '13.107.246.45'; Port = 443; Protocol = 'Tcp' },
     [pscustomobject]@{ Url = 'archive.ubuntu.com'; IP = '91.189.91.82'; Port = 443; Protocol = 'Tcp' },
@@ -394,6 +678,9 @@ $linuxRemoteEndpoints = @(
     [pscustomobject]@{ Url = 'print-gw01.usag-cyber.local'; IP = '10.42.20.15'; Port = 631; Protocol = 'Udp' },
     [pscustomobject]@{ Url = 'admin-jump01.usag-cyber.local'; IP = '10.42.30.10'; Port = 22; Protocol = 'Tcp' }
 )
+$linuxRemoteEndpoints += @(New-WorkshopRemoteEndpointCatalog -Prefix 'linux-repo' -Domain 'workshop.example' -IpPrefix '192.0.2' -Ports @(443, 80, 22, 123, 53, 514, 631, 1521, 8080, 9092) -Protocols @('Tcp', 'Tcp', 'Tcp', 'Udp', 'Udp') -Count 200)
+
+$linuxSoftwareInventoryPath = Join-Path $PSScriptRoot '..\sample\export-tvm-machine-software-inventory-linux.csv'
 $linuxSoftwareCatalog = @(
     [pscustomobject]@{ Name = 'openssh-server'; Vendor = 'OpenBSD'; Version = '1:9.6p1-3ubuntu13.5'; CveId = 'CVE-2024-6387'; Package = 'openssh-server'; Risk = 88 },
     [pscustomobject]@{ Name = 'cups'; Vendor = 'OpenPrinting'; Version = '2.4.7-1.2ubuntu7.3'; CveId = 'CVE-2024-47176'; Package = 'cups-browsed'; Risk = 74 },
@@ -403,13 +690,24 @@ $linuxSoftwareCatalog = @(
     [pscustomobject]@{ Name = 'openssl'; Vendor = 'OpenSSL Software Foundation'; Version = '3.0.13-0ubuntu3.5'; CveId = 'CVE-2024-5535'; Package = 'openssl'; Risk = 55 },
     [pscustomobject]@{ Name = 'bash'; Vendor = 'GNU Project'; Version = '5.2.21-2ubuntu4'; CveId = 'CVE-2014-6271'; Package = 'bash'; Risk = 45 },
     [pscustomobject]@{ Name = 'mdatp'; Vendor = 'Microsoft'; Version = '101.25042.0000'; CveId = ''; Package = 'mdatp'; Risk = 10 }
-)
+) + @(Import-WorkshopTvmSoftwareCatalog -Path $linuxSoftwareInventoryPath -MinimumCount 400)
 $normalApplications = @(
     [pscustomobject]@{ Name = 'Microsoft Teams'; Id = '1fec8e78-bce4-4aaf-ab1b-5451cc387264'; Resource = 'Microsoft Graph' },
     [pscustomobject]@{ Name = 'Office 365 Exchange Online'; Id = '00000002-0000-0ff1-ce00-000000000000'; Resource = 'Office 365 Exchange Online' },
     [pscustomobject]@{ Name = 'Microsoft Azure PowerShell'; Id = '1950a258-227b-4e31-a9cf-717495945fc2'; Resource = 'Azure Resource Manager' },
     [pscustomobject]@{ Name = 'Windows Sign In'; Id = '38aa3b87-a06d-4817-b275-7a316988d93b'; Resource = 'Microsoft Entra ID' }
 )
+
+Assert-WorkshopCatalogMinimum -Name 'First names' -Items $firstNames -Minimum 126
+Assert-WorkshopCatalogMinimum -Name 'Last names' -Items $lastNames -Minimum 134
+Assert-WorkshopCatalogMinimum -Name 'Windows process templates' -Items $windowsProcessTemplates -Minimum 55
+Assert-WorkshopCatalogMinimum -Name 'Linux process templates' -Items $linuxProcessTemplates -Minimum 40
+Assert-WorkshopCatalogMinimum -Name 'Windows file templates' -Items $windowsFileTemplates -Minimum 104
+Assert-WorkshopCatalogMinimum -Name 'Windows DLL templates' -Items $windowsDllTemplates -Minimum 104
+Assert-WorkshopCatalogMinimum -Name 'Linux shared object templates' -Items $linuxSharedObjectTemplates -Minimum 107
+Assert-WorkshopCatalogMinimum -Name 'Windows remote endpoints' -Items $windowsRemoteEndpoints -Minimum 205
+Assert-WorkshopCatalogMinimum -Name 'Linux remote endpoints' -Items $linuxRemoteEndpoints -Minimum 206
+Assert-WorkshopCatalogMinimum -Name 'Linux software catalog' -Items $linuxSoftwareCatalog -Minimum 408
 
 foreach ($device in $devices) {
     $deviceIndex = [array]::IndexOf($devices, $device) + 1
