@@ -7,8 +7,14 @@
   ],
   "sourceProduct": "Microsoft Defender XDR",
   "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-graphapiauditevents-table",
-  "schemaSource": "Microsoft Learn",
+  "schemaSource": "Microsoft Learn + real telemetry sample",
   "columns": [
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Exported telemetry timestamp observed in real Graph API audit telemetry"
+    },
     {
       "name": "IdentityProvider",
       "type": "string",
@@ -28,10 +34,10 @@
       "description": "Unique identifier for the application"
     },
     {
-      "name": "IPAddress",
+      "name": "IpAddress",
       "type": "string",
       "sourceType": "string",
-      "description": "The IP address of the client from where the request was made"
+      "description": "The IP address of the client from where the request was made, using the exported telemetry column casing observed in the real sample"
     },
     {
       "name": "ClientRequestId",
@@ -44,6 +50,12 @@
       "type": "string",
       "sourceType": "string",
       "description": "Type of object, such as a file, a process, a device, or a user, that made the request"
+    },
+    {
+      "name": "ReportId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique exported telemetry report identifier observed in the real sample"
     },
     {
       "name": "RequestUri",
@@ -128,6 +140,24 @@
       "type": "int",
       "sourceType": "int",
       "description": "The size of the response in bytes"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Tenant identifier when present in exported telemetry"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Table type label from exported telemetry"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Source system when present in exported telemetry"
     }
   ],
   "adx": {

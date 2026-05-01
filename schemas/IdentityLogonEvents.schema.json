@@ -8,13 +8,19 @@
   ],
   "sourceProduct": "Microsoft Defender for Identity",
   "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-identitylogonevents-table",
-  "schemaSource": "Microsoft Learn",
+  "schemaSource": "Microsoft Learn + real telemetry sample",
   "columns": [
     {
       "name": "Timestamp",
       "type": "datetime",
       "sourceType": "datetime",
       "description": "Date and time when the event was recorded"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Exported telemetry timestamp observed in real identity logon telemetry"
     },
     {
       "name": "ActionType",
@@ -149,10 +155,10 @@
       "description": "City, country/region, or other geographic location associated with the event"
     },
     {
-      "name": "Isp",
+      "name": "ISP",
       "type": "string",
       "sourceType": "string",
-      "description": "Internet service provider (ISP) associated with the endpoint IP address"
+      "description": "Internet service provider associated with the endpoint IP address, using the exported telemetry column casing observed in real identity logon telemetry"
     },
     {
       "name": "ReportId",
@@ -165,6 +171,36 @@
       "type": "dynamic",
       "sourceType": "dynamic",
       "description": "Additional information about the entity or event"
+    },
+    {
+      "name": "UncommonForUser",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Per-user rarity indicators observed in real identity logon telemetry"
+    },
+    {
+      "name": "LastSeenForUser",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Per-user last-seen indicators observed in real identity logon telemetry"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Tenant identifier when present in exported telemetry"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Table type label from exported telemetry"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Source system when present in exported telemetry"
     }
   ],
   "adx": {

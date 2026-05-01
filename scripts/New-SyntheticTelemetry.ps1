@@ -786,6 +786,102 @@ $normalApplications = @(
     [pscustomobject]@{ Name = 'Microsoft Azure PowerShell'; Id = '1950a258-227b-4e31-a9cf-717495945fc2'; Resource = 'Azure Resource Manager' },
     [pscustomobject]@{ Name = 'Windows Sign In'; Id = '38aa3b87-a06d-4817-b275-7a316988d93b'; Resource = 'Microsoft Entra ID' }
 )
+$servicePrincipalNames = @(
+    'Backup Vault Managed Identity', 'Azure Automation Runbook', 'USAG Cyber Sync Helper', 'Defender Export Connector', 'Sentinel SOAR Playbook', 'Logic App Incident Router', 'Key Vault Rotation Worker', 'Storage Lifecycle Manager',
+    'Arc Server Onboarding', 'AKS Workload Identity', 'Container Registry Puller', 'Data Factory Pipeline Runner', 'Event Hub Capture Writer', 'Function App Telemetry Collector', 'Graph Compliance Reader', 'Intune Device Sync',
+    'M365 Usage Reporter', 'MDI Sensor Deployment', 'MDE Device Tagger', 'Privileged Access Review Bot', 'SharePoint Migration Worker', 'Teams Recording Processor', 'Virtual Machine Patch Agent', 'Windows Update Compliance Exporter',
+    'Oracle Backup Exporter', 'Linux Package Inventory Collector', 'ServiceNow Ticket Sync', 'CMDB Asset Importer', 'Power BI Dataset Refresher', 'Azure Monitor Workbook Publisher', 'Policy Remediation Task', 'Certificate Expiry Watcher',
+    'Conditional Access Reporter', 'PIM Eligibility Auditor', 'Terraform Deployment Principal', 'Bicep WhatIf Runner', 'GitHub Actions OIDC Principal', 'DevOps Release Service Connection', 'Database Credential Scanner', 'Storage Malware Scan Worker',
+    'Purview Label Synchronizer', 'Exchange Transport Rule Auditor', 'Hybrid Identity Health Agent', 'Cloud App Discovery Uploader', 'Vulnerability Intake Processor', 'Security Score Exporter', 'Workshop Managed Identity'
+)
+$servicePrincipalSignInCatalog = for ($i = 0; $i -lt $servicePrincipalNames.Count; $i++) {
+    [pscustomobject]@{
+        Name = $servicePrincipalNames[$i]
+        Seed = 'spn-app|{0:D2}|{1}' -f $i, $servicePrincipalNames[$i]
+    }
+}
+$servicePrincipalResourceCatalog = @(
+    [pscustomobject]@{ Name = 'Microsoft Graph'; Id = '00000003-0000-0000-c000-000000000000' },
+    [pscustomobject]@{ Name = 'Azure Resource Manager'; Id = '797f4846-ba00-4fd7-ba43-dac1f8f63013' },
+    [pscustomobject]@{ Name = 'Azure Key Vault'; Id = New-StableGuid 'resource|key-vault' },
+    [pscustomobject]@{ Name = 'Azure Storage'; Id = New-StableGuid 'resource|storage' },
+    [pscustomobject]@{ Name = 'Microsoft Sentinel'; Id = New-StableGuid 'resource|sentinel' },
+    [pscustomobject]@{ Name = 'Microsoft Defender XDR'; Id = New-StableGuid 'resource|defender-xdr' },
+    [pscustomobject]@{ Name = 'Office 365 Exchange Online'; Id = '00000002-0000-0ff1-ce00-000000000000' },
+    [pscustomobject]@{ Name = 'SharePoint Online'; Id = New-StableGuid 'resource|sharepoint-online' },
+    [pscustomobject]@{ Name = 'Azure Monitor'; Id = New-StableGuid 'resource|azure-monitor' },
+    [pscustomobject]@{ Name = 'Azure Kubernetes Service'; Id = New-StableGuid 'resource|aks' },
+    [pscustomobject]@{ Name = 'Azure Container Registry'; Id = New-StableGuid 'resource|acr' },
+    [pscustomobject]@{ Name = 'Azure SQL Database'; Id = New-StableGuid 'resource|azure-sql' },
+    [pscustomobject]@{ Name = 'Microsoft Purview'; Id = New-StableGuid 'resource|purview' },
+    [pscustomobject]@{ Name = 'Azure Automation'; Id = New-StableGuid 'resource|automation' }
+)
+$servicePrincipalLocationCatalog = @(
+    [pscustomobject]@{ Country = 'DE'; State = 'Hesse'; City = 'Wiesbaden'; Latitude = '50.0782'; Longitude = '8.2398' },
+    [pscustomobject]@{ Country = 'DE'; State = 'Hesse'; City = 'Frankfurt am Main'; Latitude = '50.1109'; Longitude = '8.6821' },
+    [pscustomobject]@{ Country = 'DE'; State = 'Bavaria'; City = 'Munich'; Latitude = '48.1351'; Longitude = '11.5820' },
+    [pscustomobject]@{ Country = 'DE'; State = 'Berlin'; City = 'Berlin'; Latitude = '52.5200'; Longitude = '13.4050' },
+    [pscustomobject]@{ Country = 'DE'; State = 'Hamburg'; City = 'Hamburg'; Latitude = '53.5511'; Longitude = '9.9937' },
+    [pscustomobject]@{ Country = 'DE'; State = 'North Rhine-Westphalia'; City = 'Cologne'; Latitude = '50.9375'; Longitude = '6.9603' }
+)
+$servicePrincipalUserAgents = @(
+    'ImdsIdentityProvider/150.870.65.1854',
+    'azsdk-net-Identity/1.13.2 (.NET 6.0.36; Microsoft Windows 10.0.20348)',
+    'Go-http-client/1.1',
+    'azsdk-net-Identity/1.12.1 (.NET 6.0.36; Microsoft Windows 10.0.20348)',
+    'azsdk-net-Identity/1.11.0 (.NET 6.0.36; Microsoft Windows 10.0.20348)'
+)
+$servicePrincipalGatewayJa4Catalog = for ($i = 1; $i -le 16; $i++) {
+    't13d{0:D4}h2_{1}_{2}' -f $i, (New-StableHex "spn-ja4-left|$i" 12), (New-StableHex "spn-ja4-right|$i" 12)
+}
+$graphAuditRegions = @(
+    'East US 2', 'East US 2', 'East US 2', 'Central US', 'West US', 'East US', 'South Central US', 'North Central US',
+    'West Europe', 'Germany West Central', 'West US 3', 'West US 2', 'West Central US', 'France Central',
+    'North Europe', 'Italy North', 'Switzerland North', 'UK South', 'Japan East'
+)
+$graphAuditWorkloads = @(
+    'Microsoft.Identity.AuxiliaryStore',
+    'Microsoft.DataClassificationService',
+    'Microsoft.ESTS',
+    'Microsoft.People',
+    'Microsoft.FileServices',
+    'Microsoft.IdentityProtectionServices',
+    'Microsoft.Intune.Rbac',
+    'Microsoft.MCP.Enterprise',
+    'Microsoft.O365Reporting',
+    'Microsoft.PIM.AzureRBAC',
+    'Microsoft.SharePoint',
+    'Microsoft.Teams'
+)
+$graphAuditRequestTemplates = @(
+    'https://graph.microsoft.com/{0}/users/{1}',
+    'https://graph.microsoft.com/{0}/organization?$select=displayName',
+    'https://graph.microsoft.com/{0}/subscribedSkus',
+    'https://graph.microsoft.com/{0}/$batch',
+    'https://graph.microsoft.com/beta/dataClassification/classifyText',
+    'https://graph.microsoft.com/{0}/directory/subscriptions',
+    'https://graph.microsoft.com/{0}/identity/conditionalAccess/policies',
+    'https://graph.microsoft.com/{0}/me/photo/$Value',
+    'https://graph.microsoft.com/{0}/roleManagement/directory/roleAssignments',
+    'https://graph.microsoft.com/{0}/groups/{1}/members',
+    'https://graph.microsoft.com/{0}/security/alerts_v2',
+    'https://graph.microsoft.com/{0}/deviceManagement/managedDevices',
+    'https://graph.microsoft.com/{0}/reports/getOffice365ActiveUserDetail(period=''D7'')',
+    'https://graph.microsoft.com/{0}/organization/{1}',
+    'https://graph.microsoft.com/beta/me/drive/root/children'
+)
+$graphAuditScopeTemplates = @(
+    'email openid profile User.Read',
+    'Directory.Read.All email Group.Read.All Organization.Read.All profile User.ReadBasic.All',
+    'Calendars.Read Contacts.Read email Files.ReadWrite.All GroupMember.Read.All openid profile User.Read',
+    'DeviceManagementConfiguration.Read.All DeviceManagementConfiguration.ReadWrite.All Directory.Read.All email Group.Read.All',
+    'IdentityRiskEvent.Read.All IdentityRiskyUser.ReadWrite.All openid profile User.Read',
+    'AuditLog.Read.All Directory.Read.All RoleManagement.Read.Directory User.Read.All',
+    'CloudPC.Read.All CloudPC.ReadWrite.All DeviceManagementApps.ReadWrite.All',
+    'Files.Read Files.Read.All Files.ReadWrite Mail.Read openid profile Sites.Read.All',
+    'Policy.Read.All Policy.ReadWrite.ConditionalAccess SecurityEvents.Read.All',
+    'Team.ReadBasic.All Channel.ReadBasic.All Chat.Read Chat.ReadWrite'
+)
 
 Assert-WorkshopCatalogMinimum -Name 'First names' -Items $firstNames -Minimum 126
 Assert-WorkshopCatalogMinimum -Name 'Last names' -Items $lastNames -Minimum 134
@@ -1240,6 +1336,55 @@ function New-NormalTelemetryValues {
             $values.Id = New-StableGuid "$Table|signin|$Index"
             $values.Status = @{ errorCode = 0; failureReason = 'Other'; additionalDetails = 'MFA requirement satisfied' }
             $values.DeviceDetail = @{ operatingSystem = if ($device.OS -eq 'Ubuntu') { 'Linux' } else { 'Windows' }; browser = 'Edge'; isCompliant = $true; trustType = 'Hybrid Azure AD joined' }
+
+            if ($Table -in @('AADSpnSignInEventsBeta', 'EntraIdSpnSignInEvents')) {
+                $spn = $servicePrincipalSignInCatalog[$Index % $servicePrincipalSignInCatalog.Count]
+                $resource = $servicePrincipalResourceCatalog[$Index % $servicePrincipalResourceCatalog.Count]
+                $hasNetworkContext = ($Index % 1000) -lt 137
+                $hasUserAgent = ($Index % 1000) -lt 248
+                $appIdVariant = if (($Index % 13) -eq 0) { 2 } elseif (($Index % 5) -eq 0) { 1 } else { 0 }
+                $eventId = New-StableGuid "$Table|spn-signin|$Index"
+                $location = if ($hasNetworkContext) { $servicePrincipalLocationCatalog[$Index % $servicePrincipalLocationCatalog.Count] } else { $null }
+
+                $values.Application = $spn.Name
+                $values.ApplicationId = New-StableGuid "$($spn.Seed)|appId|$appIdVariant"
+                $values.AppDisplayName = $spn.Name
+                $values.AppId = $values.ApplicationId
+                $values.IsManagedIdentity = -not $hasNetworkContext
+                $values.IsConfidentialClient = ($Index % 1000) -lt 941
+                $values.ErrorCode = 0
+                $values.CorrelationId = $eventId
+                $values.RequestId = $eventId
+                $values.UniqueTokenId = $eventId
+                $values.ServicePrincipalName = $spn.Name
+                $values.ServicePrincipalId = if ($hasNetworkContext) { New-StableGuid "$($spn.Seed)|servicePrincipal|$($Index % 6)" } else { '' }
+                $values.ResourceDisplayName = $resource.Name
+                $values.ResourceId = $resource.Id
+                $values.ResourceTenantId = $tenantId
+                $values.IPAddress = if ($hasNetworkContext) { '198.51.100.{0}' -f (10 + ($Index % 55)) } else { '' }
+                $values.Country = if ($location) { $location.Country } else { '' }
+                $values.State = if ($location) { $location.State } else { '' }
+                $values.City = if ($location) { $location.City } else { '' }
+                $values.Latitude = if ($location) { $location.Latitude } else { '' }
+                $values.Longitude = if ($location) { $location.Longitude } else { '' }
+                $values.ReportId = "SPN-$Index"
+                $values.GatewayJA4 = $servicePrincipalGatewayJa4Catalog[$Index % $servicePrincipalGatewayJa4Catalog.Count]
+                $values.SessionId = if ($hasNetworkContext) { New-StableGuid "$Table|spn-session|$Index" } else { '' }
+                $values.UserAgent = if ($hasUserAgent) {
+                    if ($values.IsManagedIdentity) {
+                        $servicePrincipalUserAgents[0]
+                    }
+                    else {
+                        $servicePrincipalUserAgents[1 + ($Index % ($servicePrincipalUserAgents.Count - 1))]
+                    }
+                }
+                else {
+                    ''
+                }
+                $values.TenantId = ''
+                $values.Type = $Table
+                $values.SourceSystem = ''
+            }
         }
         'CloudAppEvents' {
             $values.ActionType = Get-WorkshopRandomItem @('FileDownloaded', 'FileUploaded', 'UserLoggedIn', 'MailItemsAccessed', 'OAuthAppConsent')
@@ -1264,7 +1409,53 @@ function New-NormalTelemetryValues {
             $values.LoggedByService = 'Core Directory'
             $values.Id = New-StableGuid "$Table|audit|$Index"
         }
-        { $_ -in @('GraphApiAuditEvents', 'MicrosoftGraphActivityLogs') } {
+        'GraphApiAuditEvents' {
+            $bucket = $Index % 1000
+            $isDelegatedUserCall = $bucket -lt 353
+            $apiVersion = if ($bucket -lt 707) { 'v1.0' } elseif ($bucket -lt 995) { 'beta' } else { 'rp' }
+            $requestMethod = if ($bucket -lt 788) { 'GET' } elseif ($bucket -lt 973) { 'POST' } elseif ($bucket -lt 995) { 'PATCH' } else { 'DELETE' }
+            $statusCode = if ($bucket -lt 891) {
+                200
+            }
+            elseif ($bucket -lt 940) { 404 }
+            elseif ($bucket -lt 962) { 204 }
+            elseif ($bucket -lt 973) { 201 }
+            elseif ($bucket -lt 984) { 401 }
+            elseif ($bucket -lt 990) { 304 }
+            elseif ($bucket -lt 995) { 403 }
+            else { 412 }
+            $requestObjectId = if ($isDelegatedUserCall) { $users[$Index % [Math]::Min(10, $users.Count)].ObjectId } else { New-StableGuid "$Table|request-object|$Index" }
+            $requestTemplate = $graphAuditRequestTemplates[$Index % $graphAuditRequestTemplates.Count]
+            $clientRequestId = if (($Index % 92) -eq 0) { New-StableGuid "$Table|client-request|duplicate|$($Index % 2)" } else { New-StableGuid "$Table|client-request|$Index" }
+            $ipPrefix = Get-WorkshopRandomItem @('20.80.224', '20.59.79', '185.207.61', '172.200.70', '20.106.9', '20.37.153', '20.97.10', '74.47.226', '40.70.151', '198.51.100')
+
+            $values.TimeGenerated = $timeText
+            $values.ApplicationId = New-StableGuid "$Table|application|$Index"
+            $values.IdentityProvider = 'AAD'
+            $values.ApiVersion = $apiVersion
+            $values.ClientRequestId = $clientRequestId
+            $values.OperationId = New-StableGuid "$Table|operation|$Index"
+            $values.AccountObjectId = if ($isDelegatedUserCall) { $requestObjectId } else { '' }
+            $values.Location = $graphAuditRegions[$Index % $graphAuditRegions.Count]
+            $values.RequestDuration = [string](15 + (($Index * 37) % 4800))
+            $values.RequestMethod = $requestMethod
+            $values.Timestamp = $timeText
+            $values.ResponseStatusCode = [string]$statusCode
+            $values.Scopes = if ($isDelegatedUserCall -or (($Index % 1000) -lt 359)) { $graphAuditScopeTemplates[$Index % $graphAuditScopeTemplates.Count] } else { '' }
+            $values.EntityType = if (($Index % 1000) -eq 999) { '' } elseif ($isDelegatedUserCall) { 'user' } else { 'app' }
+            $values.ReportId = New-StableGuid "$Table|report|$Index"
+            $values.RequestUri = $requestTemplate -f $apiVersion, $requestObjectId
+            $values.UniqueTokenIdentifier = if (($Index % 1000) -lt 995) { New-StableGuid "$Table|token|$Index" } else { '' }
+            $values.RequestId = New-StableGuid "$Table|request|$Index"
+            $values.IpAddress = if (($Index % 46) -eq 0) { '2603:1036:305:{0:x}::5' -f (0x5000 + ($Index % 255)) } else { '{0}.{1}' -f $ipPrefix, (10 + ($Index % 220)) }
+            $values.ServicePrincipalId = if ($isDelegatedUserCall) { New-StableGuid "$Table|service-principal|$($Index % 23)" } else { '' }
+            $values.TargetWorkload = if (($Index % 1000) -ge 946) { '' } elseif (($Index % 1000) -lt 761) { 'Microsoft.DirectoryServices' } else { $graphAuditWorkloads[$Index % $graphAuditWorkloads.Count] }
+            $values.ResponseSize = [int](256 + (([int64]$Index * 7919) % 131072))
+            $values.TenantId = ''
+            $values.Type = $Table
+            $values.SourceSystem = ''
+        }
+        'MicrosoftGraphActivityLogs' {
             $values.ApplicationId = $app.Id
             $values.AppId = $app.Id
             $values.IPAddress = Get-WorkshopRandomItem @('198.51.100.50', '198.51.100.60', '203.0.113.25')
@@ -1294,7 +1485,135 @@ function New-NormalTelemetryValues {
             $values.AttackTechniques = ''
             $values.Categories = @($values.Category)
         }
-        { $_ -like 'Identity*' } {
+        'IdentityLogonEvents' {
+            $bucket = $Index % 1000
+            $hasAccountContext = $bucket -lt 990
+            $hasDeviceProfile = $bucket -lt 991
+            $hasDeviceName = $bucket -lt 9
+            $hasDestinationDevice = $bucket -lt 9
+            $hasDestinationNetwork = $bucket -lt 3
+            $hasProtocol = $bucket -lt 9
+            $hasFailureReason = $bucket -lt 7
+            $hasRarityContext = $bucket -lt 991
+            $isActiveDirectoryEvent = $bucket -ge 991
+            $isFailure = ($Index % 139) -eq 0
+            $identityLogonType = if ($isActiveDirectoryEvent) {
+                Get-WorkshopRandomItem @('Interactive', 'Failed logon', 'Credentials validation')
+            }
+            elseif ($bucket -lt 977) { 'OAuth2:Authorize' }
+            elseif ($bucket -lt 983) { 'Login:reprocess' }
+            elseif ($bucket -lt 988) { 'Login:login' }
+            elseif ($bucket -lt 991) { 'Kmsi:kmsi' }
+            elseif ($bucket -lt 994) { 'Credentials validation' }
+            elseif ($bucket -lt 996) { 'Failed logon' }
+            elseif ($bucket -lt 998) { 'Resource access' }
+            else { Get-WorkshopRandomItem @('Failed logon with certificate', 'Rdp:rdp', 'Cmsi:Cmsi', 'Remote desktop', 'Consent:Set', 'OAuth2:ApproveSession') }
+            $networkContext = if ($bucket -lt 706) {
+                [pscustomobject]@{ Location = 'DE'; ISP = 'mainzer breitband gmbh'; Prefix = '198.51.100' }
+            }
+            elseif ($bucket -lt 944) {
+                [pscustomobject]@{ Location = 'US'; ISP = 'packethub s.a.'; Prefix = '203.0.113' }
+            }
+            elseif ($bucket -lt 986) {
+                [pscustomobject]@{ Location = 'US'; ISP = 'Microsoft Azure'; Prefix = '192.0.2' }
+            }
+            elseif ($bucket -lt 991) {
+                [pscustomobject]@{ Location = ''; ISP = ''; Prefix = '' }
+            }
+            else {
+                [pscustomobject]@{ Location = 'NL'; ISP = Get-WorkshopRandomItem @('microsoft corporation', 'frontier communications of america inc.', 'comcast cable communications inc.', 'INTERNAL_NETWORK'); Prefix = '198.51.100' }
+            }
+            $userAgent = if (($Index % 100) -lt 91) {
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.6 Safari/605.1.15'
+            }
+            elseif (($Index % 100) -lt 99) {
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0'
+            }
+            else {
+                'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148'
+            }
+
+            $values.ActionType = if ($isFailure) { 'LogonFailed' } else { 'LogonSuccess' }
+            $values.Application = if ($isActiveDirectoryEvent) { 'Active Directory' } elseif ($bucket -lt 953) { 'Microsoft Azure' } else { 'Microsoft 365' }
+            $values.LogonType = $identityLogonType
+            $values.Protocol = if ($hasProtocol) { if (($Index % 3) -eq 0) { 'Kerberos' } else { 'Ntlm' } } else { '' }
+            $values.FailureReason = if ($isFailure -or $hasFailureReason) {
+                Get-WorkshopRandomItem @(
+                    'WrongPassword',
+                    'General failure',
+                    'Generic',
+                    'This occurred due to Keep me signed in interrupt when the user was signing in.',
+                    'Administrator consent is required. The request needs admin approval.',
+                    'The user or administrator has not consented to use the application.'
+                )
+            }
+            else {
+                ''
+            }
+            $values.AccountName = if ($hasAccountContext) { $user.Name } else { '' }
+            $values.AccountDomain = if ($hasAccountContext) { $adDomain } else { '' }
+            $values.AccountUpn = if ($hasAccountContext) { $user.Upn } else { '' }
+            $values.AccountSid = if (($Index % 1000) -lt 7) { $user.Sid } else { '' }
+            $values.AccountObjectId = if ($hasAccountContext) { $user.ObjectId } else { '' }
+            $values.AccountDisplayName = if ($hasAccountContext) { $user.DisplayName } else { '' }
+            $values.DeviceName = if ($hasDeviceName) { $device.Name } else { '' }
+            $values.DeviceType = if (-not $hasDeviceProfile) { '' } elseif (($Index % 1000) -lt 989) { 'Desktop' } elseif (($Index % 1000) -lt 999) { 'Tablet' } else { 'Mobile' }
+            $values.OSPlatform = if (-not $hasDeviceProfile) { '' } elseif (($Index % 1000) -lt 915) { 'OS X' } elseif (($Index % 1000) -lt 999) { 'Windows 10' } else { 'iOS' }
+            $values.IPAddress = if ($networkContext.Prefix) { '{0}.{1}' -f $networkContext.Prefix, (10 + ($Index % 220)) } else { '' }
+            $values.Port = if (($Index % 1000) -lt 3) { 443 } else { 0 }
+            $values.DestinationDeviceName = if ($hasDestinationDevice) { (Get-WorkshopRandomItem $domainControllers).Name } else { '' }
+            $values.DestinationIPAddress = if ($hasDestinationNetwork) { (Get-WorkshopRandomItem $domainControllers).IP } else { '' }
+            $values.DestinationPort = if ($hasDestinationNetwork) { if ($values.Protocol -eq 'Kerberos') { 88 } else { 389 } } else { 0 }
+            $values.TargetDeviceName = if (($Index % 1000) -lt 2) { (Get-WorkshopRandomItem $windowsDevices).Name } else { '' }
+            $values.TargetAccountDisplayName = ''
+            $values.Location = $networkContext.Location
+            $values.ISP = $networkContext.ISP
+            $values.ReportId = "IDLOGON-$Index"
+            $values.AdditionalFields = @{
+                ClientAppUsed = if ($values.Application -eq 'Microsoft 365') { 'Browser' } else { 'Mobile Apps and Desktop clients' }
+                ConditionalAccessStatus = 'success'
+                UserAgent = $userAgent
+                SyntheticPopulationProfile = 'IdentityLogonEventsRealTelemetryShape'
+            }
+            $values.UncommonForUser = if (-not $hasRarityContext) { @() } elseif (($Index % 1000) -lt 970) { @() } else {
+                Get-WorkshopRandomItem @(
+                    @('ISP', 'CountryCode'),
+                    @('UserAgent'),
+                    @('ISP'),
+                    @('ActionType'),
+                    @('ActionType', 'ISP', 'UserAgent'),
+                    @('ActivityType', 'ActionType', 'OSPlatform', 'ISP', 'UserAgent', 'Application')
+                )
+            }
+            $values.LastSeenForUser = if (-not $hasRarityContext) {
+                @{}
+            }
+            elseif (($Index % 1000) -lt 985) {
+                @{
+                    ActionType = 0
+                    OSPlatform = 0
+                    ISP = 0
+                    UserAgent = 0
+                    CountryCode = 0
+                    IPAddress = 0
+                    Application = 0
+                }
+            }
+            else {
+                @{
+                    ActionType = Get-WorkshopRandomItem @(0, 1, 3, -1)
+                    OSPlatform = Get-WorkshopRandomItem @(0, 1, 3)
+                    ISP = Get-WorkshopRandomItem @(0, 1, 3, -1)
+                    UserAgent = Get-WorkshopRandomItem @(0, 1, -1)
+                    IPAddress = Get-WorkshopRandomItem @(0, 1, 3)
+                    Application = Get-WorkshopRandomItem @(0, 1)
+                }
+            }
+            $values.TenantId = ''
+            $values.Type = $Table
+            $values.SourceSystem = ''
+        }
+        { $_ -like 'Identity*' -and $_ -ne 'IdentityLogonEvents' } {
             $values.ActionType = Get-WorkshopRandomItem @('LogonSuccess', 'LdapSearch', 'AccountModified', 'GroupMembershipChanged', 'IdentitySnapshot')
             $values.Application = Get-WorkshopRandomItem @('Active Directory', 'Kerberos', 'LDAP', 'Microsoft Entra Connect')
             $values.Protocol = Get-WorkshopRandomItem @('Kerberos', 'LDAP', 'NTLM')
@@ -1533,6 +1852,7 @@ foreach ($queryOffset in 35, 42) {
 
 Add-Record -Table 'IdentityLogonEvents' -Time $StartTime.AddMinutes(37) -Values @{
     Timestamp = Format-WorkshopTime $StartTime.AddMinutes(37)
+    TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(37)
     ActionType = 'LogonSuccess'
     Application = 'Kerberos'
     LogonType = 'Network'
@@ -1544,16 +1864,26 @@ Add-Record -Table 'IdentityLogonEvents' -Time $StartTime.AddMinutes(37) -Values 
     AccountObjectId = $victor.ObjectId
     AccountDisplayName = $victor.DisplayName
     DeviceName = $win04.Name
+    DeviceType = 'Desktop'
+    OSPlatform = 'Windows 10'
     IPAddress = $win04.IP
     DestinationDeviceName = $dc01.Name
     DestinationIPAddress = $dc01.IP
     DestinationPort = 88
     TargetAccountDisplayName = $svcSql.DisplayName
+    Location = 'DE'
+    ISP = 'INTERNAL_NETWORK'
     ReportId = 5601
     AdditionalFields = '{"ServicePrincipalName":"MSSQLSvc/sql01.usag-cyber.local:1433","TicketEncryptionType":"RC4_HMAC"}'
+    UncommonForUser = @('ActionType', 'ISP')
+    LastSeenForUser = @{ ActionType = -1; OSPlatform = 0; ISP = -1; UserAgent = 0; IPAddress = -1; Application = -1 }
+    TenantId = ''
+    Type = 'IdentityLogonEvents'
+    SourceSystem = ''
 }
 Add-Record -Table 'IdentityLogonEvents' -Time $StartTime.AddMinutes(81) -Values @{
     Timestamp = Format-WorkshopTime $StartTime.AddMinutes(81)
+    TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(81)
     ActionType = 'LogonSuccess'
     Application = 'WinRM'
     LogonType = 'RemoteInteractive'
@@ -1565,12 +1895,21 @@ Add-Record -Table 'IdentityLogonEvents' -Time $StartTime.AddMinutes(81) -Values 
     AccountObjectId = $svcSql.ObjectId
     AccountDisplayName = $svcSql.DisplayName
     DeviceName = $win04.Name
+    DeviceType = 'Desktop'
+    OSPlatform = 'Windows 10'
     IPAddress = $win04.IP
     DestinationDeviceName = $aadc.Name
     DestinationIPAddress = $aadc.IP
     DestinationPort = 5985
+    Location = 'DE'
+    ISP = 'INTERNAL_NETWORK'
     ReportId = 5602
     AdditionalFields = '{"CredentialSource":"Kerberoasted service account"}'
+    UncommonForUser = @('ActionType', 'ISP')
+    LastSeenForUser = @{ ActionType = -1; OSPlatform = 0; ISP = -1; UserAgent = 0; IPAddress = -1; Application = -1 }
+    TenantId = ''
+    Type = 'IdentityLogonEvents'
+    SourceSystem = ''
 }
 Add-Record -Table 'IdentityDirectoryEvents' -Time $StartTime.AddMinutes(86) -Values @{
     Timestamp = Format-WorkshopTime $StartTime.AddMinutes(86)
@@ -1729,26 +2068,31 @@ Add-Record -Table 'AuditLogs' -Time $StartTime.AddMinutes(5) -Values @{
 foreach ($offset in 7, 8, 9) {
     $requestUri = if ($offset -eq 7) { "https://graph.microsoft.com/v1.0/users/$($victor.Upn)/messages" } elseif ($offset -eq 8) { "https://graph.microsoft.com/v1.0/users/$($victor.Upn)/drive/root/children" } else { 'https://graph.microsoft.com/v1.0/users' }
     Add-Record -Table 'GraphApiAuditEvents' -Time $StartTime.AddMinutes($offset) -Values @{
+        TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes($offset)
         Timestamp = Format-WorkshopTime $StartTime.AddMinutes($offset)
-        IdentityProvider = 'AzureAD'
+        IdentityProvider = 'AAD'
         ApiVersion = 'v1.0'
         ApplicationId = New-StableGuid 'malicious-oauth'
-        IPAddress = $externalIp
+        IpAddress = $externalIp
         ClientRequestId = New-StableGuid "client-graph-$offset"
-        EntityType = if ($offset -eq 7) { 'Message' } elseif ($offset -eq 8) { 'DriveItem' } else { 'User' }
+        EntityType = 'user'
+        ReportId = New-StableGuid "graph-report-$offset"
         RequestUri = $requestUri
         AccountObjectId = $victor.ObjectId
         OperationId = New-StableGuid "graph-op-$offset"
-        Location = 'DE'
-        RequestDuration = 143
+        Location = 'Germany West Central'
+        RequestDuration = '143'
         RequestId = New-StableGuid "graph-request-$offset"
         RequestMethod = 'GET'
-        ResponseStatusCode = 200
+        ResponseStatusCode = '200'
         Scopes = 'Mail.Read Files.Read.All offline_access'
-        UniqueTokenIdentifier = New-StableGuid 'graph-token'
-        TargetWorkload = 'MicrosoftGraph'
+        UniqueTokenIdentifier = New-StableGuid "graph-token-$offset"
+        TargetWorkload = if ($offset -eq 8) { 'Microsoft.FileServices' } elseif ($offset -eq 7) { 'Microsoft.People' } else { 'Microsoft.DirectoryServices' }
         ServicePrincipalId = New-StableGuid 'malicious-oauth-sp'
         ResponseSize = 40896
+        TenantId = ''
+        Type = 'GraphApiAuditEvents'
+        SourceSystem = ''
     }
     Add-Record -Table 'MicrosoftGraphActivityLogs' -Time $StartTime.AddMinutes($offset) -Values @{
         TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes($offset)
@@ -2223,23 +2567,30 @@ foreach ($table in $script:Schemas.Keys) {
     if ($script:Records[$table].Count -gt 0) {
         continue
     }
-    Add-Record -Table $table -Time $StartTime.AddMinutes(-10) -Values @{
-        Timestamp = Format-WorkshopTime $StartTime.AddMinutes(-10)
-        TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(-10)
-        DeviceId = $win04.DeviceId
-        DeviceName = $win04.Name
-        AccountName = $victor.Name
-        AccountUpn = $victor.Upn
-        AccountObjectId = $victor.ObjectId
-        AccountDisplayName = $victor.DisplayName
-        AccountDomain = $adDomain
-        AADTenantId = $tenantId
-        TenantId = $tenantId
-        ActionType = 'WorkshopBaseline'
-        Application = 'WorkshopBaseline'
-        ReportId = 9900
-        Type = $table
+    $fallbackTime = $StartTime.AddMinutes(-10)
+    $fallbackValues = if ($table -in @('AADSpnSignInEventsBeta', 'EntraIdSpnSignInEvents')) {
+        New-NormalTelemetryValues -Table $table -Time $fallbackTime -Index ([Convert]::ToInt32((New-StableHex "$table|fallback" 7), 16))
     }
+    else {
+        @{
+            Timestamp = Format-WorkshopTime $fallbackTime
+            TimeGenerated = Format-WorkshopTime $fallbackTime
+            DeviceId = $win04.DeviceId
+            DeviceName = $win04.Name
+            AccountName = $victor.Name
+            AccountUpn = $victor.Upn
+            AccountObjectId = $victor.ObjectId
+            AccountDisplayName = $victor.DisplayName
+            AccountDomain = $adDomain
+            AADTenantId = $tenantId
+            TenantId = $tenantId
+            ActionType = 'WorkshopBaseline'
+            Application = 'WorkshopBaseline'
+            ReportId = 9900
+            Type = $table
+        }
+    }
+    Add-Record -Table $table -Time $fallbackTime -Values $fallbackValues
 }
 
 foreach ($table in ($script:Schemas.Keys | Sort-Object)) {

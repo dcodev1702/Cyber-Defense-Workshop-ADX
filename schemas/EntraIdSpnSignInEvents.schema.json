@@ -7,7 +7,7 @@
   ],
   "sourceProduct": "Microsoft Defender XDR",
   "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-entraidspnsigninevents-table",
-  "schemaSource": "Microsoft Learn",
+  "schemaSource": "Microsoft Learn + real telemetry sample",
   "columns": [
     {
       "name": "Timestamp",
@@ -122,6 +122,60 @@
       "type": "string",
       "sourceType": "string",
       "description": "Unique identifier for the event"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Exported telemetry timestamp observed in real Entra service principal sign-in telemetry"
+    },
+    {
+      "name": "IsConfidentialClient",
+      "type": "bool",
+      "sourceType": "boolean",
+      "description": "Indicates whether the sign-in used a confidential client"
+    },
+    {
+      "name": "GatewayJA4",
+      "type": "string",
+      "sourceType": "string",
+      "description": "JA4-style gateway fingerprint observed in real exported telemetry"
+    },
+    {
+      "name": "SessionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Session identifier for service principal sign-ins where session context is present"
+    },
+    {
+      "name": "UserAgent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User agent supplied by the service principal or managed identity client"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Tenant identifier when present in exported telemetry"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Table type label from exported telemetry"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Source system when present in exported telemetry"
+    },
+    {
+      "name": "UniqueTokenId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Unique token identifier associated with the service principal sign-in"
     }
   ],
   "adx": {
