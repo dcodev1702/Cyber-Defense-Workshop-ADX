@@ -15,6 +15,9 @@ deterministic for repeatable reimports.
 .EXAMPLE
 .\scripts\New-SyntheticTelemetry.ps1 -OutputDirectory "$env:TEMP\CyberDefenseKqlWorkshop\CyberDefenseKqlWorkshop\generated" -SyntheticUserCount 6000 -SyntheticServiceAccountCount 4000
 
+.EXAMPLE
+.\scripts\New-SyntheticTelemetry.ps1 -OutputDirectory "$env:TEMP\CyberDefenseKqlWorkshop\CyberDefenseKqlWorkshop\generated" -TableName DeviceNetworkEvents
+
 .NOTES
 Name: New-SyntheticTelemetry.ps1
 Date: 2026-05-01
@@ -35,7 +38,8 @@ param(
     [int]$NormalLookbackDays = 7,
     [int]$RandomSeed = 1702,
     [int]$SyntheticUserCount = 6000,
-    [int]$SyntheticServiceAccountCount = 4000
+    [int]$SyntheticServiceAccountCount = 4000,
+    [string[]]$TableName
 )
 
 Set-StrictMode -Version Latest
@@ -299,6 +303,125 @@ function New-WorkshopRemoteEndpointCatalog {
     }
 }
 
+function Get-WorkshopIpAddressType {
+    param([AllowEmptyString()][string]$IPAddress = '')
+
+    if ([string]::IsNullOrWhiteSpace($IPAddress)) {
+        return ''
+    }
+
+    if ($IPAddress -like '127.*' -or $IPAddress -eq '::1') {
+        return 'Loopback'
+    }
+
+    if ($IPAddress -like '10.*' -or $IPAddress -like '192.168.*' -or $IPAddress -match '^172\.(1[6-9]|2[0-9]|3[0-1])\.') {
+        return 'Private'
+    }
+
+    return 'Public'
+}
+
+function Import-WorkshopDeviceNetworkEventProfileCatalog {
+    param([Parameter(Mandatory)][string]$Path)
+
+    if (-not (Test-Path $Path)) {
+        return @()
+    }
+
+    $rows = @(Import-Csv -Path $Path)
+    $defaultActionType = @($rows | ForEach-Object { ([string]$_.ActionType).Trim() } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -First 1)
+    $defaultProtocol = @($rows | ForEach-Object { ([string]$_.Protocol).Trim() } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -First 1)
+    $defaultLocalIPType = @($rows | ForEach-Object { ([string]$_.LocalIPType).Trim() } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -First 1)
+    $defaultProcessName = @($rows | ForEach-Object { ([string]$_.InitiatingProcessFileName).Trim() } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -First 1)
+
+    $seen = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    foreach ($row in $rows) {
+        $remoteIP = ([string]$row.RemoteIP).Trim()
+        $remoteUrl = ([string]$row.RemoteUrl).Trim()
+        [int]$remotePort = 0
+        if (-not [int]::TryParse(([string]$row.RemotePort), [ref]$remotePort)) {
+            $remotePort = 443
+        }
+
+        $actionType = ([string]$row.ActionType).Trim()
+        $protocol = ([string]$row.Protocol).Trim()
+        $localIPType = ([string]$row.LocalIPType).Trim()
+        $remoteIPType = ([string]$row.RemoteIPType).Trim()
+        $processName = ([string]$row.InitiatingProcessFileName).Trim()
+
+        if ([string]::IsNullOrWhiteSpace($actionType)) { $actionType = if ($defaultActionType.Count -gt 0) { $defaultActionType[0] } else { 'ConnectionSuccess' } }
+        if ([string]::IsNullOrWhiteSpace($protocol)) { $protocol = if ($defaultProtocol.Count -gt 0) { $defaultProtocol[0] } else { 'Tcp' } }
+        if ([string]::IsNullOrWhiteSpace($localIPType)) { $localIPType = if ($defaultLocalIPType.Count -gt 0) { $defaultLocalIPType[0] } else { 'Private' } }
+        if ([string]::IsNullOrWhiteSpace($remoteIPType)) { $remoteIPType = Get-WorkshopIpAddressType -IPAddress $remoteIP }
+        if ([string]::IsNullOrWhiteSpace($processName)) { $processName = if ($defaultProcessName.Count -gt 0) { $defaultProcessName[0] } else { 'svchost.exe' } }
+
+        $profile = [pscustomobject]@{
+            ActionType = $actionType
+            RemoteIP = $remoteIP
+            RemotePort = $remotePort
+            RemoteUrl = $remoteUrl
+            Protocol = $protocol
+            LocalIPType = $localIPType
+            RemoteIPType = $remoteIPType
+            InitiatingProcessFileName = $processName
+        }
+
+        if ([string]::IsNullOrWhiteSpace($profile.RemoteIP) -and [string]::IsNullOrWhiteSpace($profile.RemoteUrl)) {
+            continue
+        }
+
+        $key = @(
+            $profile.ActionType,
+            $profile.RemoteIP,
+            $profile.RemotePort,
+            $profile.RemoteUrl,
+            $profile.Protocol,
+            $profile.LocalIPType,
+            $profile.RemoteIPType,
+            $profile.InitiatingProcessFileName
+        ) -join '|'
+
+        if ($seen.Add($key)) {
+            $profile
+        }
+    }
+}
+
+function Resolve-WorkshopDeviceNetworkProcessProfile {
+    param(
+        [Parameter(Mandatory)][string]$FileName,
+        [Parameter(Mandatory)][string]$UserName
+    )
+
+    $template = @($windowsProcessTemplates | Where-Object { $_.File -ieq $FileName } | Select-Object -First 1)
+    if ($template.Count -gt 0) {
+        $command = if ($template[0].Command -like '*{0}*') { $template[0].Command -f $UserName } else { $template[0].Command }
+        return [pscustomobject]@{
+            File = $template[0].File
+            Path = Resolve-WorkshopTemplatePath -Template $template[0] -UserName $UserName
+            Parent = $template[0].Parent
+            Command = $command
+        }
+    }
+
+    $lowerName = $FileName.ToLowerInvariant()
+    $folder = switch -Regex ($lowerName) {
+        '^(lsass|svchost|ntoskrnl|dsregcmd|backgroundtaskhost|backgroundtransferhost|mousocoreworker|sihclient|shellexperiencehost|searchhost|startmenuexperiencehost)\.exe$' { 'C:\Windows\System32'; break }
+        '^(msedge|msedgewebview2|microsoftedgeupdate)\.exe$' { 'C:\Program Files (x86)\Microsoft\Edge\Application'; break }
+        '^(excel|outlook|winword|powerpnt|officec2rclient|officeclicktorun|officesetup|officesvcmgr|m365copilot|microsoft\.sharepoint)\.exe$' { 'C:\Program Files\Microsoft Office\root\Office16'; break }
+        '^(code|storageexplorer|claude)\.exe$' { 'C:\Users\{0}\AppData\Local\Programs\{1}' -f $UserName, ($FileName -replace '\.exe$', ''); break }
+        '^(mssense|senseidentity|msmpeng|mpcmdrun|mpdefendercoreservice)\.exe$' { 'C:\Program Files\Windows Defender Advanced Threat Protection'; break }
+        default { 'C:\Program Files\USAG Cyber\Applications' }
+    }
+
+    [pscustomobject]@{
+        File = $FileName
+        Path = '{0}\{1}' -f $folder, $FileName
+        Parent = if ($lowerName -in @('lsass.exe', 'svchost.exe', 'ntoskrnl.exe')) { 'services.exe' } else { 'explorer.exe' }
+        Command = $FileName
+    }
+}
+
 function Assert-WorkshopCatalogMinimum {
     param(
         [Parameter(Mandatory)][string]$Name,
@@ -394,6 +517,21 @@ foreach ($schemaFile in (Get-ChildItem -Path $SchemaDirectory -Filter '*.schema.
     $table = [string]$schema.tableName
     $script:Schemas[$table] = $schema
     $script:Records[$table] = [System.Collections.Generic.List[object]]::new()
+}
+$tablesToWrite = if ($TableName -and $TableName.Count -gt 0) {
+    $selectedTables = foreach ($requestedTable in ($TableName | Select-Object -Unique)) {
+        $matchedTable = @($script:Schemas.Keys | Where-Object { $_ -ieq $requestedTable } | Select-Object -First 1)
+        if ($matchedTable.Count -eq 0) {
+            throw "Unknown table requested for generation: $requestedTable"
+        }
+
+        $matchedTable[0]
+    }
+
+    @($selectedTables)
+}
+else {
+    @($script:Schemas.Keys)
 }
 
 $tenantId = '11111111-2222-3333-4444-555555555555'
@@ -769,6 +907,8 @@ $linuxRemoteEndpoints = @(
     [pscustomobject]@{ Url = 'admin-jump01.usag-cyber.local'; IP = '10.42.30.10'; Port = 22; Protocol = 'Tcp' }
 )
 $linuxRemoteEndpoints += @(New-WorkshopRemoteEndpointCatalog -Prefix 'linux-repo' -Domain 'workshop.example' -IpPrefix '192.0.2' -Ports @(443, 80, 22, 123, 53, 514, 631, 1521, 8080, 9092) -Protocols @('Tcp', 'Tcp', 'Tcp', 'Udp', 'Udp') -Count 200)
+$deviceNetworkEventsSamplePath = Join-Path $PSScriptRoot '..\sample\DeviceNetworkEvents-Real.csv'
+$deviceNetworkEventProfiles = @(Import-WorkshopDeviceNetworkEventProfileCatalog -Path $deviceNetworkEventsSamplePath)
 
 $linuxSoftwareInventoryPath = Join-Path $PSScriptRoot '..\sample\export-tvm-machine-software-inventory-linux.csv'
 $linuxSoftwareCatalog = @(
@@ -905,6 +1045,7 @@ Assert-WorkshopCatalogMinimum -Name 'Windows DLL templates' -Items $windowsDllTe
 Assert-WorkshopCatalogMinimum -Name 'Linux shared object templates' -Items $linuxSharedObjectTemplates -Minimum 107
 Assert-WorkshopCatalogMinimum -Name 'Windows remote endpoints' -Items $windowsRemoteEndpoints -Minimum 205
 Assert-WorkshopCatalogMinimum -Name 'Linux remote endpoints' -Items $linuxRemoteEndpoints -Minimum 206
+Assert-WorkshopCatalogMinimum -Name 'DeviceNetworkEvents real profiles' -Items $deviceNetworkEventProfiles -Minimum 2000
 Assert-WorkshopCatalogMinimum -Name 'Linux software catalog' -Items $linuxSoftwareCatalog -Minimum 408
 
 foreach ($device in $devices) {
@@ -1156,6 +1297,8 @@ function Add-NetworkEvent {
         LocalIP = $win04.IP
         LocalPort = 49800 + ($ReportId % 100)
         Protocol = 'Tcp'
+        LocalIPType = 'Private'
+        RemoteIPType = Get-WorkshopIpAddressType -IPAddress $RemoteIP
         InitiatingProcessFileName = $ProcessName
         InitiatingProcessCommandLine = $CommandLine
         InitiatingProcessAccountDomain = $adDomain
@@ -1174,8 +1317,13 @@ function New-NormalTelemetryValues {
         [Parameter(Mandatory)][int]$Index
     )
 
+    $deviceNetworkProfile = $null
+    if ($Table -eq 'DeviceNetworkEvents' -and $deviceNetworkEventProfiles.Count -gt 0) {
+        $deviceNetworkProfile = $deviceNetworkEventProfiles[$Index % $deviceNetworkEventProfiles.Count]
+    }
+
     $user = Get-WorkshopRandomItem $users
-    $devicePool = if ($Table -eq 'DeviceRegistryEvents' -or $Table -like 'Identity*') { $windowsDevices } else { $devices }
+    $devicePool = if ($Table -eq 'DeviceRegistryEvents' -or $Table -like 'Identity*' -or $null -ne $deviceNetworkProfile) { $windowsDevices } else { $devices }
     $device = Get-WorkshopRandomItem $devicePool
     $isUbuntuDevice = $device.OS -eq 'Ubuntu'
     $process = Get-WorkshopRandomItem $(if ($isUbuntuDevice) { $linuxProcessTemplates } else { $windowsProcessTemplates })
@@ -1272,12 +1420,37 @@ function New-NormalTelemetryValues {
             $values.ProcessCommandLine = $processCommand
         }
         'DeviceNetworkEvents' {
-            $values.ActionType = 'ConnectionSuccess'
-            $values.RemoteUrl = $remote.Url
-            $values.RemoteIP = $remote.IP
-            $values.RemotePort = $remote.Port
+            if ($null -ne $deviceNetworkProfile) {
+                $networkProcess = Resolve-WorkshopDeviceNetworkProcessProfile -FileName $deviceNetworkProfile.InitiatingProcessFileName -UserName $user.Name
+                $networkProcessHashes = New-WorkshopHashSet "$Table|$Index|$($networkProcess.File)|process"
+
+                $values.ActionType = $deviceNetworkProfile.ActionType
+                $values.RemoteUrl = $deviceNetworkProfile.RemoteUrl
+                $values.RemoteIP = $deviceNetworkProfile.RemoteIP
+                $values.RemotePort = $deviceNetworkProfile.RemotePort
+                $values.Protocol = $deviceNetworkProfile.Protocol
+                $values.LocalIPType = $deviceNetworkProfile.LocalIPType
+                $values.RemoteIPType = $deviceNetworkProfile.RemoteIPType
+                $values.LocalIP = if ($deviceNetworkProfile.LocalIPType -eq 'Loopback') { '127.0.0.1' } else { $device.IP }
+                $values.InitiatingProcessFileName = $networkProcess.File
+                $values.InitiatingProcessFolderPath = $networkProcess.Path
+                $values.InitiatingProcessCommandLine = $networkProcess.Command
+                $values.InitiatingProcessParentFileName = $networkProcess.Parent
+                $values.InitiatingProcessSHA1 = $networkProcessHashes.SHA1
+                $values.InitiatingProcessSHA256 = $networkProcessHashes.SHA256
+                $values.InitiatingProcessMD5 = $networkProcessHashes.MD5
+            }
+            else {
+                $values.ActionType = 'ConnectionSuccess'
+                $values.RemoteUrl = $remote.Url
+                $values.RemoteIP = $remote.IP
+                $values.RemotePort = $remote.Port
+                $values.Protocol = if ($remote.PSObject.Properties['Protocol']) { $remote.Protocol } else { 'Tcp' }
+                $values.LocalIPType = Get-WorkshopIpAddressType -IPAddress $values.LocalIP
+                $values.RemoteIPType = Get-WorkshopIpAddressType -IPAddress $values.RemoteIP
+            }
+
             $values.LocalPort = 49152 + ($Index % 12000)
-            $values.Protocol = if ($remote.PSObject.Properties['Protocol']) { $remote.Protocol } else { 'Tcp' }
         }
         'DeviceLogonEvents' {
             $values.ActionType = if (($Index % 17) -eq 0) { 'LogonFailed' } else { 'LogonSuccess' }
@@ -2360,6 +2533,8 @@ Add-Record -Table 'DeviceNetworkEvents' -Time $StartTime.AddMinutes(67) -Values 
     RemoteUrl = 'ipp-printer-discovery.example'
     RemotePort = 631
     Protocol = 'Udp'
+    LocalIPType = 'Private'
+    RemoteIPType = 'Public'
     InitiatingProcessFileName = 'cups-browsed'
     InitiatingProcessCommandLine = '/usr/sbin/cups-browsed'
     InitiatingProcessAccountDomain = 'root'
@@ -2519,6 +2694,8 @@ Add-Record -Table 'DeviceNetworkEvents' -Time $StartTime.AddMinutes(72) -Values 
     RemoteUrl = $linuxDb.Name
     RemotePort = 1521
     Protocol = 'Tcp'
+    LocalIPType = 'Private'
+    RemoteIPType = 'Private'
     InitiatingProcessFileName = 'ora_collect_linux_amd64'
     InitiatingProcessCommandLine = '/tmp/.cache/ora_collect_linux_amd64 --target 10.42.20.35:1521 --service ORCL --query-name finance-user-catalog'
     InitiatingProcessAccountDomain = $linux03.ShortName
@@ -2679,7 +2856,7 @@ foreach ($table in $script:Schemas.Keys) {
     Add-Record -Table $table -Time $fallbackTime -Values $fallbackValues
 }
 
-foreach ($table in ($script:Schemas.Keys | Sort-Object)) {
+foreach ($table in ($tablesToWrite | Sort-Object)) {
     Write-WorkshopTableData -Table $table
 }
 
