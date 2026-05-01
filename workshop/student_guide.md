@@ -1,6 +1,6 @@
 # Student Guide — Cyber Defense KQL Workshop
 
-Welcome. Over the next two hours you're going to investigate a credential-access intrusion against a notional company called **Wiesbaden Research**. You'll do it the way a real Defender XDR analyst would — by writing KQL queries against telemetry already loaded into Azure Data Explorer (ADX). No live attack, no production systems, just you, the data, and a story to uncover.
+Welcome. Over the next two hours you're going to investigate a credential-access intrusion against a notional organization called **USAG Cyber**. You'll do it the way a real Defender XDR analyst would — by writing KQL queries against telemetry already loaded into Azure Data Explorer (ADX). No live attack, no production systems, just you, the data, and a story to uncover.
 
 This guide walks alongside [`student_lab.kql`](student_lab.kql). Every query in this guide is in that file too — the `.kql` file is your scratchpad, and this guide is your story. Read a section, run the query, look at what comes back, then read the next section.
 
@@ -84,7 +84,7 @@ You'll see:
 
 - **2 domain controllers** in the `Domain Controllers` group, marked `AssetValue = High` — these are crown jewels.
 - **1 Entra Connect server** in `Identity Tier 0` — also crown jewels (it can sync passwords to the cloud).
-- **10 Windows 11 endpoints** and **5 Ubuntu hosts** in `Workstations`.
+- **10 Windows 11 endpoints** in `Workstations` and **5 Ubuntu hosts** in `Linux Servers`.
 
 > **Mentor moment.** `dcount` means "distinct count" — it counts unique values, not total rows. `make_set(DeviceName, 100)` collects up to 100 unique device names into an array, so you see *which* devices, not just *how many*. These two functions are the fastest way to summarize a column.
 
@@ -103,7 +103,7 @@ SigninLogs
 | order by TimeGenerated asc
 ```
 
-**What we expect to see:** one row, for `victor.alvarez@wiesbadenresearch.example`, signing in from IP `185.225.73.18`, with risk level `high`.
+**What we expect to see:** one row, for `victor.alvarez@usag-cyber.local`, signing in from IP `185.225.73.18`, with risk level `high`.
 
 **Why this query works:**
 
@@ -113,7 +113,7 @@ SigninLogs
 
 **Write this down somewhere:**
 
-- **User:** `victor.alvarez@wiesbadenresearch.example`
+- **User:** `victor.alvarez@usag-cyber.local`
 - **IP:** `185.225.73.18`
 - **Time:** the timestamp from your row
 
@@ -155,7 +155,7 @@ CloudAppEvents
 | order by Timestamp asc
 ```
 
-You should find **`OAuthAppConsentGranted`** for an app called **"Wiesbaden Research Sync Helper"**, with scopes `Mail.Read Files.Read.All offline_access`. That's the attacker installing a backdoor app that survives password resets — exactly the persistence pattern Midnight Blizzard used in the 2024 Microsoft and HPE breaches.
+You should find **`OAuthAppConsentGranted`** for an app called **"USAG Cyber Sync Helper"**, with scopes `Mail.Read Files.Read.All offline_access`. That's the attacker installing a backdoor app that survives password resets — exactly the persistence pattern Midnight Blizzard used in the 2024 Microsoft and HPE breaches.
 
 **And the Graph API calls that came after:**
 
@@ -166,7 +166,7 @@ let suspiciousIp =
     | top 1 by TimeGenerated asc
     | project IPAddress;
 GraphApiAuditEvents
-| where IPAddress in (suspiciousIp)
+| where IpAddress in (suspiciousIp)
 | project Timestamp, AccountObjectId, ApplicationId, RequestMethod, RequestUri, Scopes, ResponseStatusCode
 | order by Timestamp asc
 ```
@@ -184,14 +184,19 @@ You'll see the app pulling Victor's mailbox messages, his OneDrive root, and the
 The attacker has cloud access. Now they need a foothold. We know the compromised user — let's see what *their* endpoint did.
 
 ```kql
-let compromisedUser = "victor.alvarez@wiesbadenresearch.example";
+let compromisedUser = "victor.alvarez@usag-cyber.local";
+let firstRiskySignin =
+    toscalar(SigninLogs
+    | where UserPrincipalName =~ compromisedUser and IsRisky == true
+    | summarize min(TimeGenerated));
 DeviceProcessEvents
 | where AccountUpn =~ compromisedUser
+| where Timestamp between (firstRiskySignin .. firstRiskySignin + 2h)
 | project Timestamp, DeviceName, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields
 | order by Timestamp asc
 ```
 
-You'll see process activity on **`WIN11-04.corp.wiesbaden.example`** starting around the same time as the cloud activity — PowerShell with hidden window style and `-ExecutionPolicy Bypass`, dropping files into `C:\ProgramData\wrstage`.
+You'll see process activity on **`WIN11-04.usag-cyber.local`** starting around the same time as the cloud activity — PowerShell with hidden window style and `-ExecutionPolicy Bypass`, dropping files into `C:\ProgramData\wrstage`.
 
 **Why `=~` instead of `==`?** The double-equals is case-sensitive. The squiggle-equals is case-insensitive. UPNs in the wild can have mixed case (`Victor.Alvarez@...`), and you don't want to miss a match because of capitalization.
 
@@ -307,11 +312,12 @@ A cracked service account is only useful if the attacker can *use* it somewhere.
 ```kql
 DeviceLogonEvents
 | where AccountName startswith "svc_"
+| where DeviceName has "AADCONNECT01" or RemoteDeviceName has "WIN11-04" or LogonType =~ "RemoteInteractive"
 | project Timestamp, DeviceName, ActionType, LogonType, AccountDomain, AccountName, RemoteDeviceName, RemoteIP, Protocol, IsLocalAdmin
 | order by Timestamp asc
 ```
 
-You should see `svc_sql` performing a `RemoteInteractive` (WinRM) logon to `AADCONNECT01.corp.wiesbaden.example` from `WIN11-04` — about 80 minutes after the original sign-in. That's the lateral move, and it's a big deal: `AADCONNECT01` is the server that syncs on-prem AD passwords to Entra ID. From there, the attacker could potentially compromise the entire hybrid identity. **This is exactly the kind of seam — between on-prem and cloud — that Midnight Blizzard targets in real-world intrusions.**
+You should see `svc_sql` performing a `RemoteInteractive` (WinRM) logon to `AADCONNECT01.usag-cyber.local` from `WIN11-04` — about 80 minutes after the original sign-in. That's the lateral move, and it's a big deal: `AADCONNECT01` is the server that syncs on-prem AD passwords to Entra ID. From there, the attacker could potentially compromise the entire hybrid identity. **This is exactly the kind of seam — between on-prem and cloud — that Midnight Blizzard targets in real-world intrusions.**
 
 > **Mentor moment.** A service account that signs in *interactively* from a *workstation* is almost always wrong. Service accounts should run as services, not as people. `LogonType == "RemoteInteractive"` for an `svc_*` account is a high-fidelity detection signal.
 
@@ -319,7 +325,7 @@ You should see `svc_sql` performing a `RemoteInteractive` (WinRM) logon to `AADC
 
 ## Act 9 — Connect the alerts to the evidence
 
-Defender XDR raised five alerts during this incident. Each alert is a one-line summary in `AlertInfo`, with the gory details in `AlertEvidence`. To get the full picture, we **join** them.
+Defender XDR raised five core Windows/hybrid identity alerts during this incident. Each alert is a one-line summary in `AlertInfo`, with the gory details in `AlertEvidence`. To get the full picture, we **join** them.
 
 Joins are how you stitch two tables together using a shared column. Here's the picture:
 
@@ -329,6 +335,7 @@ The query:
 
 ```kql
 AlertInfo
+| where AlertId startswith "MIDNIGHT-BLIZZARD-"
 | join kind=inner AlertEvidence on AlertId
 | project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, ServiceSource=ServiceSource1, AttackTechniques=AttackTechniques1, EntityType, DeviceName, AccountUpn, FileName, ProcessCommandLine
 | order by Timestamp asc
@@ -360,6 +367,7 @@ This is a *long* query, but it's just the same pattern repeated four times. We'l
 let endpoint =
     DeviceProcessEvents
     | where DeviceName has "WIN11-04"
+    | where FolderPath has @"C:\ProgramData\wrstage" or ProcessCommandLine has_any ("kerberoast", "sam.save", "LoginData.db", "logonpasswords", "pwdump", "gsecdump", "lazagne")
     | project Timestamp, SourceTable="DeviceProcessEvents", Entity=DeviceName, Detail=strcat(FileName, " :: ", ProcessCommandLine);
 ```
 
@@ -373,6 +381,7 @@ Now add the identity stream:
 ```kql
 let identity =
     IdentityQueryEvents
+    | where Query has "servicePrincipalName" or AdditionalFields has "T1558.003"
     | project Timestamp, SourceTable="IdentityQueryEvents", Entity=AccountUpn, Detail=strcat(Application, " :: ", QueryTarget, " :: ", DestinationDeviceName);
 ```
 
@@ -381,6 +390,7 @@ Then cloud:
 ```kql
 let cloud =
     CloudAppEvents
+    | where IPAddress == "185.225.73.18" or ObjectName == "USAG Cyber Sync Helper"
     | project Timestamp, SourceTable="CloudAppEvents", Entity=AccountId, Detail=strcat(ActionType, " :: ", ObjectName);
 ```
 
@@ -389,6 +399,7 @@ Then alerts:
 ```kql
 let alerts =
     AlertInfo
+    | where AlertId startswith "MIDNIGHT-BLIZZARD-"
     | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
 ```
 
@@ -398,15 +409,19 @@ And finally `union` them all together and sort by time:
 let endpoint =
     DeviceProcessEvents
     | where DeviceName has "WIN11-04"
+    | where FolderPath has @"C:\ProgramData\wrstage" or ProcessCommandLine has_any ("kerberoast", "sam.save", "LoginData.db", "logonpasswords", "pwdump", "gsecdump", "lazagne")
     | project Timestamp, SourceTable="DeviceProcessEvents", Entity=DeviceName, Detail=strcat(FileName, " :: ", ProcessCommandLine);
 let identity =
     IdentityQueryEvents
+    | where Query has "servicePrincipalName" or AdditionalFields has "T1558.003"
     | project Timestamp, SourceTable="IdentityQueryEvents", Entity=AccountUpn, Detail=strcat(Application, " :: ", QueryTarget, " :: ", DestinationDeviceName);
 let cloud =
     CloudAppEvents
+    | where IPAddress == "185.225.73.18" or ObjectName == "USAG Cyber Sync Helper"
     | project Timestamp, SourceTable="CloudAppEvents", Entity=AccountId, Detail=strcat(ActionType, " :: ", ObjectName);
 let alerts =
     AlertInfo
+    | where AlertId startswith "MIDNIGHT-BLIZZARD-"
     | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
 union endpoint, identity, cloud, alerts
 | order by Timestamp asc

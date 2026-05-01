@@ -54,7 +54,8 @@ SigninLogs
 // Scenario tie-in: After the risky sign-in, the actor grants a suspicious app and uses Graph APIs.
 // KQL notes:
 // - let stores a reusable one-column result set.
-// - where IPAddress in (suspiciousIp) pivots from sign-in logs into CloudAppEvents and Graph logs.
+// - CloudAppEvents uses IPAddress; GraphApiAuditEvents uses the real-export IpAddress casing.
+// - Both filters pivot from the same suspicious sign-in IP.
 // - The same let pattern is repeated in 4b so each block can run independently.
 let suspiciousIp =
     SigninLogs
@@ -77,7 +78,7 @@ let suspiciousIp =
     | top 1 by TimeGenerated asc
     | project IPAddress;
 GraphApiAuditEvents
-| where IPAddress in (suspiciousIp)
+| where IpAddress in (suspiciousIp)
 | project Timestamp, AccountObjectId, ApplicationId, RequestMethod, RequestUri, Scopes, ResponseStatusCode
 | order by Timestamp asc
 
@@ -88,8 +89,13 @@ GraphApiAuditEvents
 // - =~ is case-insensitive equality, useful for UPNs that may vary by case.
 // - project shows process lineage fields without overwhelming the result grid.
 let compromisedUser = "victor.alvarez@usag-cyber.local";
+let firstRiskySignin =
+    toscalar(SigninLogs
+    | where UserPrincipalName =~ compromisedUser and IsRisky == true
+    | summarize min(TimeGenerated));
 DeviceProcessEvents
 | where AccountUpn =~ compromisedUser
+| where Timestamp between (firstRiskySignin .. firstRiskySignin + 2h)
 | project Timestamp, DeviceName, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields
 | order by Timestamp asc
 
@@ -157,6 +163,7 @@ IdentityLogonEvents
 // - startswith is a simple way to find the synthetic service-account naming pattern.
 DeviceLogonEvents
 | where AccountName startswith "svc_"
+| where DeviceName has "AADCONNECT01" or RemoteDeviceName has "WIN11-04" or LogonType =~ "RemoteInteractive"
 | project Timestamp, DeviceName, ActionType, LogonType, AccountDomain, AccountName, RemoteDeviceName, RemoteIP, Protocol, IsLocalAdmin
 | order by Timestamp asc
 
@@ -168,6 +175,7 @@ DeviceLogonEvents
 // - AlertId is the shared key.
 // - KQL suffixes duplicate column names, so Timestamp1/Title1/Severity1 come from the joined table shape.
 AlertInfo
+| where AlertId startswith "MIDNIGHT-BLIZZARD-"
 | join kind=inner AlertEvidence on AlertId
 | project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, ServiceSource=ServiceSource1, AttackTechniques=AttackTechniques1, EntityType, DeviceName, AccountUpn, FileName, ProcessCommandLine
 | order by Timestamp asc
@@ -323,6 +331,7 @@ AlertInfo
 let endpoint =
     DeviceProcessEvents
     | where DeviceName has "WIN11-04"
+    | where FolderPath has @"C:\ProgramData\wrstage" or ProcessCommandLine has_any ("kerberoast", "sam.save", "LoginData.db", "logonpasswords", "pwdump", "gsecdump", "lazagne")
     | project Timestamp, SourceTable="DeviceProcessEvents", Entity=DeviceName, Detail=strcat(FileName, " :: ", ProcessCommandLine);
 let linux =
     DeviceProcessEvents
@@ -330,12 +339,15 @@ let linux =
     | project Timestamp, SourceTable="DeviceProcessEvents", Entity=DeviceName, Detail=strcat(FileName, " :: ", ProcessCommandLine);
 let identity =
     IdentityQueryEvents
+    | where Query has "servicePrincipalName" or AdditionalFields has "T1558.003"
     | project Timestamp, SourceTable="IdentityQueryEvents", Entity=AccountUpn, Detail=strcat(Application, " :: ", QueryTarget, " :: ", DestinationDeviceName);
 let cloud =
     CloudAppEvents
+    | where IPAddress == "185.225.73.18" or ObjectName == "USAG Cyber Sync Helper"
     | project Timestamp, SourceTable="CloudAppEvents", Entity=AccountId, Detail=strcat(ActionType, " :: ", ObjectName);
 let alerts =
     AlertInfo
+    | where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "LINUX-"
     | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
 union endpoint, linux, identity, cloud, alerts
 | order by Timestamp asc
