@@ -1,4 +1,4 @@
-# Cyber Defense KQL Workshop for Azure Data Explorer (ADX)
+# 🚀 Cyber Defense KQL Workshop for Azure Data Explorer (ADX)
 
 ## Description
 
