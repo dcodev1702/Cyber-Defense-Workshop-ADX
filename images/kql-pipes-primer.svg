@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 480" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <marker id="pipeArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Outer frame -->
+  <rect x="20" y="20" width="1060" height="440" rx="14" fill="#0b1220" stroke="#1f2937" stroke-width="1.5"/>
+
+  <!-- Title -->
+  <text x="550" y="56" text-anchor="middle" fill="#f1f5f9" font-size="19" font-weight="700">KQL Pipes — How Data Flows Through a Query</text>
+  <text x="550" y="78" text-anchor="middle" fill="#94a3b8" font-size="12">Each pipe character hands rows from one operator to the next · the table shrinks and reshapes as it travels left to right</text>
+
+  <!-- ============ STAGE BOXES ============ -->
+  <!-- Stage 1: Table -->
+  <g>
+    <rect x="50" y="130" width="170" height="170" rx="10" fill="#0f172a" stroke="#94a3b8" stroke-width="2"/>
+    <text x="135" y="156" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="700">DeviceProcessEvents</text>
+    <text x="135" y="174" text-anchor="middle" fill="#94a3b8" font-size="10" font-style="italic">the raw table</text>
+    <!-- mini rows -->
+    <rect x="62" y="190" width="146" height="10" rx="2" fill="#1e293b"/>
+    <rect x="62" y="204" width="146" height="10" rx="2" fill="#1e293b"/>
+    <rect x="62" y="218" width="146" height="10" rx="2" fill="#1e293b"/>
+    <rect x="62" y="232" width="146" height="10" rx="2" fill="#1e293b"/>
+    <rect x="62" y="246" width="146" height="10" rx="2" fill="#1e293b"/>
+    <rect x="62" y="260" width="146" height="10" rx="2" fill="#1e293b"/>
+    <text x="135" y="287" text-anchor="middle" fill="#94a3b8" font-size="11">~10,000 rows</text>
+  </g>
+
+  <!-- Stage 2: where -->
+  <g>
+    <rect x="270" y="130" width="170" height="170" rx="10" fill="#1a1208" stroke="#f97316" stroke-width="2"/>
+    <text x="355" y="156" text-anchor="middle" fill="#fed7aa" font-size="13" font-weight="700">| where</text>
+    <text x="355" y="174" text-anchor="middle" fill="#fdba74" font-size="10" font-style="italic">filter rows</text>
+    <!-- fewer rows, narrower visual -->
+    <rect x="282" y="200" width="146" height="10" rx="2" fill="#3a1d05"/>
+    <rect x="282" y="214" width="146" height="10" rx="2" fill="#3a1d05"/>
+    <rect x="282" y="228" width="146" height="10" rx="2" fill="#3a1d05"/>
+    <text x="355" y="287" text-anchor="middle" fill="#fdba74" font-size="11">~120 rows</text>
+  </g>
+
+  <!-- Stage 3: project -->
+  <g>
+    <rect x="490" y="130" width="170" height="170" rx="10" fill="#0a1f12" stroke="#22c55e" stroke-width="2"/>
+    <text x="575" y="156" text-anchor="middle" fill="#bbf7d0" font-size="13" font-weight="700">| project</text>
+    <text x="575" y="174" text-anchor="middle" fill="#86efac" font-size="10" font-style="italic">pick columns</text>
+    <!-- narrower rows -->
+    <rect x="502" y="200" width="78" height="10" rx="2" fill="#0f3a1f"/>
+    <rect x="502" y="214" width="78" height="10" rx="2" fill="#0f3a1f"/>
+    <rect x="502" y="228" width="78" height="10" rx="2" fill="#0f3a1f"/>
+    <text x="575" y="287" text-anchor="middle" fill="#86efac" font-size="11">~120 rows · 4 columns</text>
+  </g>
+
+  <!-- Stage 4: summarize -->
+  <g>
+    <rect x="710" y="130" width="170" height="170" rx="10" fill="#150829" stroke="#a855f7" stroke-width="2"/>
+    <text x="795" y="156" text-anchor="middle" fill="#e9d5ff" font-size="13" font-weight="700">| summarize</text>
+    <text x="795" y="174" text-anchor="middle" fill="#d8b4fe" font-size="10" font-style="italic">group + count</text>
+    <!-- aggregated rows -->
+    <rect x="722" y="200" width="50" height="10" rx="2" fill="#2a1252"/>
+    <text x="780" y="208" fill="#d8b4fe" font-size="9" font-family="ui-monospace, monospace">15</text>
+    <rect x="722" y="214" width="50" height="10" rx="2" fill="#2a1252"/>
+    <text x="780" y="222" fill="#d8b4fe" font-size="9" font-family="ui-monospace, monospace">8</text>
+    <rect x="722" y="228" width="50" height="10" rx="2" fill="#2a1252"/>
+    <text x="780" y="236" fill="#d8b4fe" font-size="9" font-family="ui-monospace, monospace">3</text>
+    <text x="795" y="287" text-anchor="middle" fill="#d8b4fe" font-size="11">3 rows · 2 columns</text>
+  </g>
+
+  <!-- Stage 5: order by -->
+  <g>
+    <rect x="930" y="130" width="120" height="170" rx="10" fill="#1c0a0a" stroke="#ef4444" stroke-width="2"/>
+    <text x="990" y="156" text-anchor="middle" fill="#fecaca" font-size="13" font-weight="700">| order by</text>
+    <text x="990" y="174" text-anchor="middle" fill="#fca5a5" font-size="10" font-style="italic">sort</text>
+    <!-- sorted rows top to bottom -->
+    <rect x="940" y="195" width="100" height="14" rx="2" fill="#3a1212"/>
+    <text x="1030" y="206" text-anchor="end" fill="#fecaca" font-size="9" font-family="ui-monospace, monospace">15</text>
+    <rect x="940" y="215" width="70" height="14" rx="2" fill="#3a1212"/>
+    <text x="1030" y="226" text-anchor="end" fill="#fecaca" font-size="9" font-family="ui-monospace, monospace">8</text>
+    <rect x="940" y="235" width="40" height="14" rx="2" fill="#3a1212"/>
+    <text x="1030" y="246" text-anchor="end" fill="#fecaca" font-size="9" font-family="ui-monospace, monospace">3</text>
+    <text x="990" y="287" text-anchor="middle" fill="#fca5a5" font-size="11">ranked</text>
+  </g>
+
+  <!-- Pipe arrows between stages -->
+  <line x1="220" y1="215" x2="265" y2="215" stroke="#94a3b8" stroke-width="2" marker-end="url(#pipeArrow)"/>
+  <text x="242" y="208" text-anchor="middle" fill="#e9d5ff" font-size="14" font-weight="700" font-family="ui-monospace, monospace">|</text>
+
+  <line x1="440" y1="215" x2="485" y2="215" stroke="#94a3b8" stroke-width="2" marker-end="url(#pipeArrow)"/>
+  <text x="462" y="208" text-anchor="middle" fill="#e9d5ff" font-size="14" font-weight="700" font-family="ui-monospace, monospace">|</text>
+
+  <line x1="660" y1="215" x2="705" y2="215" stroke="#94a3b8" stroke-width="2" marker-end="url(#pipeArrow)"/>
+  <text x="682" y="208" text-anchor="middle" fill="#e9d5ff" font-size="14" font-weight="700" font-family="ui-monospace, monospace">|</text>
+
+  <line x1="880" y1="215" x2="925" y2="215" stroke="#94a3b8" stroke-width="2" marker-end="url(#pipeArrow)"/>
+  <text x="902" y="208" text-anchor="middle" fill="#e9d5ff" font-size="14" font-weight="700" font-family="ui-monospace, monospace">|</text>
+
+  <!-- Worked example (the actual KQL below) -->
+  <g>
+    <rect x="50" y="335" width="1000" height="100" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <text x="65" y="358" fill="#cbd5e1" font-size="12" font-weight="600">The query that produces the flow above:</text>
+    <text x="65" y="385" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">DeviceProcessEvents</text>
+    <text x="65" y="403" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">| <tspan fill="#fdba74">where</tspan> FileName == <tspan fill="#86efac">"powershell.exe"</tspan></text>
+    <text x="65" y="421" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">| <tspan fill="#86efac">project</tspan> Timestamp, DeviceName, AccountName, ProcessCommandLine</text>
+    <text x="540" y="385" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">| <tspan fill="#d8b4fe">summarize</tspan> Count = <tspan fill="#fdba74">count</tspan>() <tspan fill="#94a3b8">by</tspan> DeviceName</text>
+    <text x="540" y="403" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">| <tspan fill="#fca5a5">order by</tspan> Count <tspan fill="#94a3b8">desc</tspan></text>
+  </g>
+</svg>
