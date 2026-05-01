@@ -59,9 +59,9 @@ Close and reopen the terminal after installing PowerShell 7 or Azure CLI.
 - Azure CLI on Windows: <https://learn.microsoft.com/cli/azure/install-azure-cli-windows>
 - Microsoft Graph PowerShell SDK: <https://learn.microsoft.com/microsoftgraph/installation>
 
-## Scenario summary
+## Cyber Defense Scenario summary
 
-The scenario uses a **FIN7-inspired hybrid identity credential-access intrusion** against a notional organization named Wiesbaden Research. The intrusion begins with a risky Entra sign-in, suspicious OAuth consent, and Microsoft Graph activity, then pivots to a compromised Windows endpoint where the attacker performs credential-access activity. The attack path later touches domain controller telemetry and service-account activity against the Entra Connect server.
+The Cyber Defense scenario uses a **FIN7-inspired hybrid identity credential-access intrusion** against a notional organization named Wiesbaden Research. The intrusion begins with a risky Entra sign-in, suspicious OAuth consent, and Microsoft Graph activity, then pivots to a compromised Windows endpoint where the attacker performs credential-access activity. The attack path later touches domain controller telemetry and service-account activity against the Entra Connect server.
 
 The diagram below traces the kill chain across the cloud, endpoint, and identity tiers. Each credential-access node is annotated with its MITRE ATT&CK technique, and the dotted edges show where each phase deposits telemetry into Azure Data Explorer for student investigation.
 
