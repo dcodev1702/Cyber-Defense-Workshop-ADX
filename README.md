@@ -16,6 +16,49 @@ The purpose of this workshop is to help defenders learn how to:
 4. Map observed attack behavior to MITRE ATT&CK techniques.
 5. Understand which Microsoft telemetry tables illuminate specific credential-access behaviors.
 
+## Prerequisites
+
+To deploy and run the workshop, you need:
+
+- ☁️ An existing ADX cluster
+- 🔐 Azure permissions to create or manage an ADX database
+- 🧭 ADX database admin permissions for table creation and ingestion
+- 👥 Entra permissions for student user/group/TAP creation if using the identity helper script
+- 🖥️ PowerShell 7 with the Azure, Kusto, and Microsoft Graph modules installed
+- ⚙️ Azure CLI installed for fallback token acquisition and operational troubleshooting
+
+### 🖥️ Terminal (CLI) install commands
+
+Install PowerShell 7 silently / non-interactively from Windows Terminal, Command Prompt, or an existing PowerShell session:
+
+```powershell
+winget install --id Microsoft.PowerShell --source winget --silent --accept-package-agreements --accept-source-agreements
+```
+
+After PowerShell 7 installs, open a new **PowerShell 7** terminal and install the required modules:
+
+```powershell
+Install-Module -Name Az -Repository PSGallery -Scope CurrentUser -Force
+Install-Module -Name Az.Kusto -Repository PSGallery -Scope CurrentUser -Force
+Install-Module -Name Microsoft.Graph -Repository PSGallery -Scope CurrentUser -Force
+```
+
+Install Azure CLI silently / non-interactively:
+
+```powershell
+winget install --id Microsoft.AzureCLI --source winget --silent --accept-package-agreements --accept-source-agreements
+```
+
+Close and reopen the terminal after installing PowerShell 7 or Azure CLI.
+
+### 🔗 Official install references
+
+- PowerShell 7 on Windows: <https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows>
+- Azure PowerShell Az module: <https://learn.microsoft.com/powershell/azure/install-azure-powershell>
+- Az.Kusto module reference: <https://learn.microsoft.com/powershell/module/az.kusto/>
+- Azure CLI on Windows: <https://learn.microsoft.com/cli/azure/install-azure-cli-windows>
+- Microsoft Graph PowerShell SDK: <https://learn.microsoft.com/microsoftgraph/installation>
+
 ## Scenario summary
 
 The scenario uses a **FIN7-inspired hybrid identity credential-access intrusion** against a notional organization named Wiesbaden Research. The intrusion begins with a risky Entra sign-in, suspicious OAuth consent, and Microsoft Graph activity, then pivots to a compromised Windows endpoint where the attacker performs credential-access activity. The attack path later touches domain controller telemetry and service-account activity against the Entra Connect server.
@@ -135,49 +178,6 @@ The recommended two-hour flow is documented in [`docs\workshop_design.md`](docs/
 The package creates 48 tables from Microsoft Learn-derived schema JSON. The 21 tables below carry the bulk of the investigation work, grouped by the Microsoft platform that produces them:
 
 ![Key tables by Microsoft platform](images/key-tables.svg)
-
-## Prerequisites
-
-To deploy and run the workshop, you need:
-
-- ☁️ An existing ADX cluster
-- 🔐 Azure permissions to create or manage an ADX database
-- 🧭 ADX database admin permissions for table creation and ingestion
-- 👥 Entra permissions for student user/group/TAP creation if using the identity helper script
-- 🖥️ PowerShell 7 with the Azure, Kusto, and Microsoft Graph modules installed
-- ⚙️ Azure CLI installed for fallback token acquisition and operational troubleshooting
-
-### 🖥️ Terminal (CLI) install commands
-
-Install PowerShell 7 silently / non-interactively from Windows Terminal, Command Prompt, or an existing PowerShell session:
-
-```powershell
-winget install --id Microsoft.PowerShell --source winget --silent --accept-package-agreements --accept-source-agreements
-```
-
-After PowerShell 7 installs, open a new **PowerShell 7** terminal and install the required modules:
-
-```powershell
-Install-Module -Name Az -Repository PSGallery -Scope CurrentUser -Force
-Install-Module -Name Az.Kusto -Repository PSGallery -Scope CurrentUser -Force
-Install-Module -Name Microsoft.Graph -Repository PSGallery -Scope CurrentUser -Force
-```
-
-Install Azure CLI silently / non-interactively:
-
-```powershell
-winget install --id Microsoft.AzureCLI --source winget --silent --accept-package-agreements --accept-source-agreements
-```
-
-Close and reopen the terminal after installing PowerShell 7 or Azure CLI.
-
-### 🔗 Official install references
-
-- PowerShell 7 on Windows: <https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows>
-- Azure PowerShell Az module: <https://learn.microsoft.com/powershell/azure/install-azure-powershell>
-- Az.Kusto module reference: <https://learn.microsoft.com/powershell/module/az.kusto/>
-- Azure CLI on Windows: <https://learn.microsoft.com/cli/azure/install-azure-cli-windows>
-- Microsoft Graph PowerShell SDK: <https://learn.microsoft.com/microsoftgraph/installation>
 
 ## Security and operations notes
 
