@@ -31,6 +31,8 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+Import-Module (Join-Path $PSScriptRoot 'AdxWorkshop.Common.psm1') -Force
+
 if ($SkipDatabaseCreate -and $OverwriteDatabase) {
     throw '-OverwriteDatabase cannot be used with -SkipDatabaseCreate because database creation is skipped.'
 }
@@ -51,6 +53,8 @@ function Get-WorkshopNdjsonRowCount {
 $schemaDirectory = Join-Path $PSScriptRoot '..\schemas'
 $requestedDatabaseName = $DatabaseName
 $dataDirectoryWasProvided = -not [string]::IsNullOrWhiteSpace($DataDirectory)
+$clusterStateVerified = $false
+$effectiveSubscriptionId = $SubscriptionId
 
 if (-not $SkipDatabaseCreate) {
     if (-not (Get-Command Get-AzContext -ErrorAction SilentlyContinue)) {
@@ -75,6 +79,7 @@ if (-not $SkipDatabaseCreate) {
     }
 
     $resolvedSubscriptionId = (Get-AzContext).Subscription.Id
+    $effectiveSubscriptionId = $resolvedSubscriptionId
     $kustoCommonScope = @{
         ResourceGroupName = $ResourceGroupName
     }
@@ -82,7 +87,8 @@ if (-not $SkipDatabaseCreate) {
         $kustoCommonScope['SubscriptionId'] = $resolvedSubscriptionId
     }
 
-    $cluster = Get-AzKustoCluster @kustoCommonScope -Name $ClusterName
+    $cluster = Assert-WorkshopAdxClusterRunning -ResourceGroupName $ResourceGroupName -ClusterName $ClusterName -SubscriptionId $resolvedSubscriptionId -ClusterUri $ClusterUri
+    $clusterStateVerified = $true
     if ([string]::IsNullOrWhiteSpace($ClusterUri)) {
         $ClusterUri = $cluster.Uri
     }
@@ -144,6 +150,16 @@ if ([string]::IsNullOrWhiteSpace($ClusterUri)) {
 
     $cluster = Get-AzKustoCluster -ResourceGroupName $ResourceGroupName -Name $ClusterName
     $ClusterUri = $cluster.Uri
+}
+
+if (-not $clusterStateVerified) {
+    Assert-WorkshopAdxClusterRunning `
+        -ResourceGroupName $ResourceGroupName `
+        -ClusterName $ClusterName `
+        -SubscriptionName $SubscriptionName `
+        -SubscriptionId $effectiveSubscriptionId `
+        -ClusterUri $ClusterUri | Out-Null
+    $clusterStateVerified = $true
 }
 
 if ([string]::IsNullOrWhiteSpace($DataDirectory)) {
@@ -209,7 +225,18 @@ elseif ($TelemetryImport -eq 'Existing') {
 }
 
 if (-not $SkipIngest) {
-    & (Join-Path $PSScriptRoot 'Import-SyntheticTelemetry.ps1') -ClusterUri $ClusterUri -DatabaseName $DatabaseName -SchemaDirectory $schemaDirectory -DataDirectory $DataDirectory -ClearExistingData:$ForceRecreateTables
+    $importArguments = @{
+        ClusterUri = $ClusterUri
+        DatabaseName = $DatabaseName
+        SchemaDirectory = $schemaDirectory
+        DataDirectory = $DataDirectory
+        ClearExistingData = [bool]$ForceRecreateTables
+        ResourceGroupName = $ResourceGroupName
+        ClusterName = $ClusterName
+        SubscriptionName = $SubscriptionName
+        SubscriptionId = $effectiveSubscriptionId
+    }
+    & (Join-Path $PSScriptRoot 'Import-SyntheticTelemetry.ps1') @importArguments
 }
 
 Write-Host "Workshop setup complete."

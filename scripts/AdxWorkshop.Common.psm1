@@ -16,6 +16,22 @@ function ConvertTo-WorkshopPlainTextToken {
     return [string]$Token
 }
 
+function Get-WorkshopObjectPropertyValue {
+    param(
+        [Parameter(Mandatory)]$InputObject,
+        [Parameter(Mandatory)][string[]]$Name
+    )
+
+    foreach ($propertyName in $Name) {
+        $property = $InputObject.PSObject.Properties[$propertyName]
+        if ($property) {
+            return $property.Value
+        }
+    }
+
+    return $null
+}
+
 function Get-WorkshopAdxAccessToken {
     [CmdletBinding()]
     param()
@@ -38,6 +54,74 @@ function Get-WorkshopAdxAccessToken {
     }
 
     throw 'Could not obtain an Azure Data Explorer token. Run Connect-AzAccount or az login, then retry.'
+}
+
+function Assert-WorkshopAdxClusterRunning {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$ResourceGroupName,
+        [Parameter(Mandatory)][string]$ClusterName,
+        [string]$SubscriptionId,
+        [string]$SubscriptionName,
+        [string]$ClusterUri
+    )
+
+    $cluster = $null
+    if ((Get-Command Get-AzContext -ErrorAction SilentlyContinue) -and (Get-Command Get-AzKustoCluster -ErrorAction SilentlyContinue)) {
+        if (-not (Get-AzContext -ErrorAction SilentlyContinue)) {
+            Connect-AzAccount | Out-Null
+        }
+        if (-not [string]::IsNullOrWhiteSpace($SubscriptionId)) {
+            Set-AzContext -Subscription $SubscriptionId | Out-Null
+        }
+        elseif (-not [string]::IsNullOrWhiteSpace($SubscriptionName)) {
+            Set-AzContext -Subscription $SubscriptionName | Out-Null
+        }
+
+        $scope = @{
+            ResourceGroupName = $ResourceGroupName
+        }
+        $contextSubscriptionId = (Get-AzContext).Subscription.Id
+        if (-not [string]::IsNullOrWhiteSpace($contextSubscriptionId)) {
+            $scope['SubscriptionId'] = $contextSubscriptionId
+        }
+        $cluster = Get-AzKustoCluster @scope -Name $ClusterName
+    }
+    elseif (Get-Command az -ErrorAction SilentlyContinue) {
+        $azArgs = @('kusto', 'cluster', 'show', '--resource-group', $ResourceGroupName, '--name', $ClusterName, '--output', 'json')
+        if (-not [string]::IsNullOrWhiteSpace($SubscriptionId)) {
+            $azArgs += @('--subscription', $SubscriptionId)
+        }
+        elseif (-not [string]::IsNullOrWhiteSpace($SubscriptionName)) {
+            $azArgs += @('--subscription', $SubscriptionName)
+        }
+
+        $azOutput = & az @azArgs 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not read ADX cluster state with Azure CLI: $azOutput"
+        }
+        $cluster = $azOutput | ConvertFrom-Json
+    }
+    else {
+        throw 'Az.Accounts/Az.Kusto or Azure CLI is required to verify the ADX cluster state before import.'
+    }
+
+    if (-not $cluster) {
+        throw "ADX cluster '$ClusterName' was not found in resource group '$ResourceGroupName'."
+    }
+
+    $state = [string](Get-WorkshopObjectPropertyValue -InputObject $cluster -Name @('State', 'state'))
+    $provisioningState = [string](Get-WorkshopObjectPropertyValue -InputObject $cluster -Name @('ProvisioningState', 'provisioningState'))
+    $reportedUri = [string](Get-WorkshopObjectPropertyValue -InputObject $cluster -Name @('Uri', 'uri'))
+    if ($state -ne 'Running') {
+        throw "ADX cluster '$ClusterName' in resource group '$ResourceGroupName' is not running. Current state: '$state'; provisioning state: '$provisioningState'. Start it before import with Start-AzKustoCluster or the Azure portal, then retry."
+    }
+    if (-not [string]::IsNullOrWhiteSpace($ClusterUri) -and -not [string]::IsNullOrWhiteSpace($reportedUri) -and $ClusterUri.TrimEnd('/') -ne $reportedUri.TrimEnd('/')) {
+        Write-Warning "Configured ClusterUri '$ClusterUri' does not match Azure cluster URI '$reportedUri'."
+    }
+
+    Write-Host "ADX cluster check passed: $ClusterName is Running."
+    return $cluster
 }
 
 function ConvertTo-WorkshopKustoIdentifier {
@@ -114,5 +198,6 @@ Export-ModuleMember -Function @(
     'ConvertTo-WorkshopKustoStringLiteral',
     'ConvertFrom-WorkshopAdxResponseRows',
     'Get-WorkshopAdxAccessToken',
+    'Assert-WorkshopAdxClusterRunning',
     'Invoke-WorkshopAdxManagementCommand'
 )

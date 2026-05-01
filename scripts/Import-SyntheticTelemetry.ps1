@@ -2,6 +2,10 @@
 param(
     [Parameter(Mandatory)][string]$ClusterUri,
     [Parameter(Mandatory)][string]$DatabaseName,
+    [string]$SubscriptionName,
+    [string]$SubscriptionId,
+    [string]$ResourceGroupName = 'ADX',
+    [string]$ClusterName = 'dibsecadx',
     [string]$DataDirectory = (Join-Path $PSScriptRoot '..\data\generated'),
     [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),
     [string[]]$TableName,
@@ -17,6 +21,13 @@ Import-Module (Join-Path $PSScriptRoot 'AdxWorkshop.Common.psm1') -Force
 if (-not (Test-Path $DataDirectory)) {
     throw "Data directory not found: $DataDirectory"
 }
+
+Assert-WorkshopAdxClusterRunning `
+    -ResourceGroupName $ResourceGroupName `
+    -ClusterName $ClusterName `
+    -SubscriptionName $SubscriptionName `
+    -SubscriptionId $SubscriptionId `
+    -ClusterUri $ClusterUri | Out-Null
 
 $files = Get-ChildItem -Path $DataDirectory -Filter '*.json'
 if ($TableName) {
