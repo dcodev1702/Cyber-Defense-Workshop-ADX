@@ -1,0 +1,319 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1040" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <!-- Outer frame -->
+  <rect x="20" y="20" width="1160" height="1000" rx="14" fill="#0b1220" stroke="#1f2937" stroke-width="1.5"/>
+
+  <!-- Title -->
+  <text x="600" y="58" text-anchor="middle" fill="#f1f5f9" font-size="20" font-weight="700">KQL Operator Reference Card</text>
+  <text x="600" y="80" text-anchor="middle" fill="#94a3b8" font-size="12">Every operator you used today, grouped by what it does · chip color = the act in the guide where you'll find the example</text>
+
+  <!-- ========== LEFT COLUMN ========== -->
+
+  <!-- ===== FILTER family (amber) — 5 operators ===== -->
+  <g>
+    <rect x="50" y="110" width="555" height="305" rx="10" fill="#1a1208" stroke="#f59e0b" stroke-width="2"/>
+    <rect x="50" y="110" width="6" height="305" fill="#f59e0b"/>
+
+    <g transform="translate(75, 130)">
+      <path d="M 2 2 L 22 2 L 14 13 L 14 22 L 10 22 L 10 13 Z" fill="none" stroke="#fcd34d" stroke-width="2" stroke-linejoin="round"/>
+    </g>
+
+    <text x="105" y="146" fill="#fcd34d" font-size="14" font-weight="700">FILTER</text>
+    <text x="105" y="162" fill="#fbbf24" font-size="10" font-style="italic">narrow rows down</text>
+
+    <!-- where -->
+    <text x="75" y="195" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">where ... or ...</text>
+    <text x="280" y="195" fill="#cbd5e1" font-size="12">Filter on a condition</text>
+    <!-- chip Act 2 (orange) -->
+    <rect x="571" y="183" width="24" height="22" rx="11" fill="#f97316"/>
+    <text x="583" y="199" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">2</text>
+
+    <!-- in~ -->
+    <text x="75" y="227" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">in~ (...)</text>
+    <text x="280" y="227" fill="#cbd5e1" font-size="12">Match a list, case-insensitive</text>
+    <rect x="571" y="215" width="24" height="22" rx="11" fill="#f97316"/>
+    <text x="583" y="231" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">2</text>
+
+    <!-- has, has_any -->
+    <text x="75" y="259" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">has, has_any</text>
+    <text x="280" y="259" fill="#cbd5e1" font-size="12">Word match in a string</text>
+    <!-- chips Acts 5 (cyan), 6 (teal), 7 (red) -->
+    <rect x="517" y="247" width="24" height="22" rx="11" fill="#06b6d4"/>
+    <text x="529" y="263" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">5</text>
+    <rect x="544" y="247" width="24" height="22" rx="11" fill="#14b8a6"/>
+    <text x="556" y="263" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">6</text>
+    <rect x="571" y="247" width="24" height="22" rx="11" fill="#ef4444"/>
+    <text x="583" y="263" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="800" font-family="ui-monospace, monospace">7</text>
+
+    <!-- startswith -->
+    <text x="75" y="291" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">startswith</text>
+    <text x="280" y="291" fill="#cbd5e1" font-size="12">Prefix match on a string</text>
+    <!-- chip Act 8 (blue) -->
+    <rect x="571" y="279" width="24" height="22" rx="11" fill="#3b82f6"/>
+    <text x="583" y="295" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="800" font-family="ui-monospace, monospace">8</text>
+
+    <!-- =~ vs == -->
+    <text x="75" y="323" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">=~  vs  ==</text>
+    <text x="280" y="323" fill="#cbd5e1" font-size="12">Case-insensitive equality</text>
+    <!-- chip Act 4 (green) - where =~ is introduced -->
+    <rect x="571" y="311" width="24" height="22" rx="11" fill="#22c55e"/>
+    <text x="583" y="327" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">4</text>
+
+    <!-- Tip footer -->
+    <text x="75" y="370" fill="#fbbf24" font-size="10" font-style="italic">Tip: filter as early as possible in your pipeline.</text>
+    <text x="75" y="385" fill="#fbbf24" font-size="10" font-style="italic">Smaller row sets make every later operator faster.</text>
+  </g>
+
+  <!-- ===== SORT family (cyan) — 1 operator ===== -->
+  <g>
+    <rect x="50" y="430" width="555" height="115" rx="10" fill="#062a30" stroke="#06b6d4" stroke-width="2"/>
+    <rect x="50" y="430" width="6" height="115" fill="#06b6d4"/>
+
+    <g transform="translate(75, 450)">
+      <path d="M 4 3 L 4 21 M 1 18 L 4 21 L 7 18" fill="none" stroke="#67e8f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 14 21 L 14 3 M 11 6 L 14 3 L 17 6" fill="none" stroke="#67e8f9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <text x="105" y="466" fill="#67e8f9" font-size="14" font-weight="700">SORT</text>
+    <text x="105" y="482" fill="#22d3ee" font-size="10" font-style="italic">order results</text>
+
+    <text x="75" y="520" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">order by ... asc/desc</text>
+    <text x="280" y="520" fill="#cbd5e1" font-size="12">Sort the output</text>
+    <!-- "Every act" pill (slate) -->
+    <rect x="520" y="508" width="75" height="22" rx="11" fill="#94a3b8"/>
+    <text x="557" y="524" text-anchor="middle" fill="#0b1220" font-size="10" font-weight="700">Every act</text>
+  </g>
+
+  <!-- ===== COMBINE family (red) — 3 operators ===== -->
+  <g>
+    <rect x="50" y="560" width="555" height="225" rx="10" fill="#2a0808" stroke="#ef4444" stroke-width="2"/>
+    <rect x="50" y="560" width="6" height="225" fill="#ef4444"/>
+
+    <g transform="translate(75, 580)">
+      <path d="M 7 12 L 7 7 a 4 4 0 0 1 4 -4 L 13 3 a 4 4 0 0 1 4 4 L 17 12" fill="none" stroke="#fca5a5" stroke-width="2" stroke-linecap="round"/>
+      <path d="M 17 12 L 17 17 a 4 4 0 0 1 -4 4 L 11 21 a 4 4 0 0 1 -4 -4 L 7 12" fill="none" stroke="#fca5a5" stroke-width="2" stroke-linecap="round"/>
+    </g>
+
+    <text x="105" y="596" fill="#fca5a5" font-size="14" font-weight="700">COMBINE</text>
+    <text x="105" y="612" fill="#f87171" font-size="10" font-style="italic">merge multiple data sources</text>
+
+    <!-- union withsource -->
+    <text x="75" y="645" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">union withsource=...</text>
+    <text x="280" y="645" fill="#cbd5e1" font-size="12">Stack tables, tag the source</text>
+    <!-- chip Act 0 (slate) -->
+    <rect x="571" y="633" width="24" height="22" rx="11" fill="#94a3b8"/>
+    <text x="583" y="649" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">0</text>
+
+    <!-- union T1, T2 -->
+    <text x="75" y="677" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">union T1, T2, ...</text>
+    <text x="280" y="677" fill="#cbd5e1" font-size="12">Stack rows from queries</text>
+    <!-- chip Act 10 (pink) -->
+    <rect x="565" y="665" width="30" height="22" rx="11" fill="#ec4899"/>
+    <text x="580" y="681" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="800" font-family="ui-monospace, monospace">10</text>
+
+    <!-- join -->
+    <text x="75" y="709" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">join kind=inner ... on Col</text>
+    <text x="280" y="709" fill="#cbd5e1" font-size="12">Stitch tables on a shared key</text>
+    <!-- chip Act 9 (violet) -->
+    <rect x="571" y="697" width="24" height="22" rx="11" fill="#8b5cf6"/>
+    <text x="583" y="713" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="800" font-family="ui-monospace, monospace">9</text>
+
+    <!-- Tip footer -->
+    <text x="75" y="745" fill="#f87171" font-size="10" font-style="italic">Tip: union when shapes match. Join when you need</text>
+    <text x="75" y="940" fill="#f87171" font-size="10" font-style="italic">columns from both sides.</text>
+  </g>
+
+  <!-- ========== RIGHT COLUMN ========== -->
+
+  <!-- ===== SHAPE family (green) — 2 operators ===== -->
+  <g>
+    <rect x="625" y="110" width="525" height="155" rx="10" fill="#0a1f12" stroke="#22c55e" stroke-width="2"/>
+    <rect x="625" y="110" width="6" height="155" fill="#22c55e"/>
+
+    <g transform="translate(650, 130)">
+      <rect x="2" y="2" width="5" height="20" fill="none" stroke="#86efac" stroke-width="2"/>
+      <rect x="9" y="2" width="5" height="20" fill="none" stroke="#86efac" stroke-width="2"/>
+      <rect x="16" y="2" width="5" height="20" fill="none" stroke="#86efac" stroke-width="2"/>
+    </g>
+
+    <text x="680" y="146" fill="#86efac" font-size="14" font-weight="700">SHAPE</text>
+    <text x="680" y="162" fill="#4ade80" font-size="10" font-style="italic">pick or reshape what you keep</text>
+
+    <!-- project -->
+    <text x="650" y="200" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">project col1, col2, ...</text>
+    <text x="855" y="200" fill="#cbd5e1" font-size="12">Pick columns to keep</text>
+    <!-- "Every act" pill -->
+    <rect x="1050" y="188" width="75" height="22" rx="11" fill="#94a3b8"/>
+    <text x="1087" y="204" text-anchor="middle" fill="#0b1220" font-size="10" font-weight="700">Every act</text>
+
+    <!-- top N by -->
+    <text x="650" y="232" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">top N by ...</text>
+    <text x="855" y="232" fill="#cbd5e1" font-size="12">Keep first N rows after sorting</text>
+    <!-- chip Act 3 (yellow) -->
+    <rect x="1101" y="220" width="24" height="22" rx="11" fill="#eab308"/>
+    <text x="1113" y="236" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">3</text>
+  </g>
+
+  <!-- ===== AGGREGATE family (violet) — 2 operators ===== -->
+  <g>
+    <rect x="625" y="280" width="525" height="155" rx="10" fill="#1a0e2e" stroke="#8b5cf6" stroke-width="2"/>
+    <rect x="625" y="280" width="6" height="155" fill="#8b5cf6"/>
+
+    <g transform="translate(650, 300)">
+      <rect x="2" y="14" width="4" height="8" fill="#c4b5fd"/>
+      <rect x="9" y="8" width="4" height="14" fill="#c4b5fd"/>
+      <rect x="16" y="2" width="4" height="20" fill="#c4b5fd"/>
+    </g>
+
+    <text x="680" y="316" fill="#c4b5fd" font-size="14" font-weight="700">AGGREGATE</text>
+    <text x="680" y="332" fill="#a78bfa" font-size="10" font-style="italic">group and compute</text>
+
+    <!-- summarize -->
+    <text x="650" y="370" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">summarize ... by ...</text>
+    <text x="855" y="370" fill="#cbd5e1" font-size="12">Group and aggregate rows</text>
+    <!-- chips Acts 0 (slate), 1 (amber) -->
+    <rect x="1074" y="358" width="24" height="22" rx="11" fill="#94a3b8"/>
+    <text x="1086" y="374" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">0</text>
+    <rect x="1101" y="358" width="24" height="22" rx="11" fill="#f59e0b"/>
+    <text x="1113" y="374" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">1</text>
+
+    <!-- dcount, make_set -->
+    <text x="650" y="402" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">dcount, make_set</text>
+    <text x="855" y="402" fill="#cbd5e1" font-size="12">Count distinct · build a set</text>
+    <!-- chip Act 1 (amber) -->
+    <rect x="1101" y="390" width="24" height="22" rx="11" fill="#f59e0b"/>
+    <text x="1113" y="406" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">1</text>
+  </g>
+
+  <!-- ===== GLUE family (pink) — 3 operators ===== -->
+  <g>
+    <rect x="625" y="450" width="525" height="225" rx="10" fill="#2a0a1d" stroke="#ec4899" stroke-width="2"/>
+    <rect x="625" y="450" width="6" height="225" fill="#ec4899"/>
+
+    <g transform="translate(650, 470)">
+      <path d="M 7 2 L 2 2 L 2 22 L 7 22" fill="none" stroke="#f9a8d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M 15 2 L 20 2 L 20 22 L 15 22" fill="none" stroke="#f9a8d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <text x="680" y="486" fill="#f9a8d4" font-size="14" font-weight="700">GLUE</text>
+    <text x="680" y="502" fill="#f472b6" font-size="10" font-style="italic">composition and building blocks</text>
+
+    <!-- let -->
+    <text x="650" y="535" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">let name = ...;</text>
+    <text x="855" y="535" fill="#cbd5e1" font-size="12">Save a query for reuse</text>
+    <!-- chips Acts 3 (yellow), 10 (pink) -->
+    <rect x="1068" y="523" width="24" height="22" rx="11" fill="#eab308"/>
+    <text x="1080" y="539" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">3</text>
+    <rect x="1095" y="523" width="30" height="22" rx="11" fill="#ec4899"/>
+    <text x="1110" y="539" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="800" font-family="ui-monospace, monospace">10</text>
+
+    <!-- dynamic -->
+    <text x="650" y="567" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">dynamic([...])</text>
+    <text x="855" y="567" fill="#cbd5e1" font-size="12">Inline array literal</text>
+    <!-- chip Act 5 (cyan) -->
+    <rect x="1101" y="555" width="24" height="22" rx="11" fill="#06b6d4"/>
+    <text x="1113" y="571" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">5</text>
+
+    <!-- strcat -->
+    <text x="650" y="599" fill="#e2e8f0" font-size="13" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">strcat(a, b, c)</text>
+    <text x="855" y="599" fill="#cbd5e1" font-size="12">Concatenate strings</text>
+    <!-- chip Act 10 (pink) -->
+    <rect x="1095" y="587" width="30" height="22" rx="11" fill="#ec4899"/>
+    <text x="1110" y="603" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="800" font-family="ui-monospace, monospace">10</text>
+
+    <!-- Tip footer -->
+    <text x="650" y="635" fill="#f472b6" font-size="10" font-style="italic">Tip: let blocks aren't just for reuse — they make</text>
+    <text x="650" y="650" fill="#f472b6" font-size="10" font-style="italic">long queries readable by naming the parts.</text>
+  </g>
+
+  <!-- ========== ACT COLOR LEGEND (bottom strip) ========== -->
+  <g>
+    <rect x="50" y="800" width="1100" height="60" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <text x="600" y="822" text-anchor="middle" fill="#f1f5f9" font-size="12" font-weight="700">Chip color legend — each act has its own color (cool/neutral → warm cloud → cool endpoint → hot identity → cool alerts)</text>
+
+    <!-- Legend chips arrayed -->
+    <!-- Act 0 -->
+    <rect x="100" y="835" width="24" height="20" rx="10" fill="#94a3b8"/>
+    <text x="112" y="850" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">0</text>
+    <text x="129" y="850" fill="#cbd5e1" font-size="10">setup</text>
+    <!-- Act 1 -->
+    <rect x="190" y="835" width="24" height="20" rx="10" fill="#f59e0b"/>
+    <text x="202" y="850" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">1</text>
+    <text x="219" y="850" fill="#cbd5e1" font-size="10">terrain</text>
+    <!-- Act 2 -->
+    <rect x="280" y="835" width="24" height="20" rx="10" fill="#f97316"/>
+    <text x="292" y="850" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">2</text>
+    <text x="309" y="850" fill="#cbd5e1" font-size="10">sign-in</text>
+    <!-- Act 3 -->
+    <rect x="375" y="835" width="24" height="20" rx="10" fill="#eab308"/>
+    <text x="387" y="850" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">3</text>
+    <text x="404" y="850" fill="#cbd5e1" font-size="10">cloud pivot</text>
+    <!-- Act 4 -->
+    <rect x="480" y="835" width="24" height="20" rx="10" fill="#22c55e"/>
+    <text x="492" y="850" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">4</text>
+    <text x="509" y="850" fill="#cbd5e1" font-size="10">endpoint</text>
+    <!-- Act 5 -->
+    <rect x="580" y="835" width="24" height="20" rx="10" fill="#06b6d4"/>
+    <text x="592" y="850" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">5</text>
+    <text x="609" y="850" fill="#cbd5e1" font-size="10">cred access</text>
+    <!-- Act 6 -->
+    <rect x="685" y="835" width="24" height="20" rx="10" fill="#14b8a6"/>
+    <text x="697" y="850" text-anchor="middle" fill="#0b1220" font-size="11" font-weight="800" font-family="ui-monospace, monospace">6</text>
+    <text x="714" y="850" fill="#cbd5e1" font-size="10">artifacts</text>
+    <!-- Act 7 -->
+    <rect x="780" y="835" width="24" height="20" rx="10" fill="#ef4444"/>
+    <text x="792" y="850" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="800" font-family="ui-monospace, monospace">7</text>
+    <text x="809" y="850" fill="#cbd5e1" font-size="10">identity</text>
+    <!-- Act 8 -->
+    <rect x="870" y="835" width="24" height="20" rx="10" fill="#3b82f6"/>
+    <text x="882" y="850" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="800" font-family="ui-monospace, monospace">8</text>
+    <text x="899" y="850" fill="#cbd5e1" font-size="10">lateral</text>
+    <!-- Act 9 -->
+    <rect x="950" y="835" width="24" height="20" rx="10" fill="#8b5cf6"/>
+    <text x="962" y="850" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="800" font-family="ui-monospace, monospace">9</text>
+    <text x="979" y="850" fill="#cbd5e1" font-size="10">alerts</text>
+    <!-- Act 10 -->
+    <rect x="1030" y="835" width="30" height="20" rx="10" fill="#ec4899"/>
+    <text x="1045" y="850" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="800" font-family="ui-monospace, monospace">10</text>
+    <text x="1067" y="850" fill="#cbd5e1" font-size="10">timeline</text>
+  </g>
+
+  <!-- ========== TYPICAL QUERY FLOW (bottom strip) ========== -->
+  <g>
+    <rect x="50" y="875" width="1100" height="100" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <text x="600" y="900" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="700">A typical query reaches into multiple families</text>
+
+    <rect x="80" y="920" width="80" height="32" rx="6" fill="#0f172a" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="120" y="940" text-anchor="middle" fill="#cbd5e1" font-size="11" font-weight="700" font-family="ui-monospace, monospace">Table</text>
+
+    <text x="170" y="940" fill="#64748b" font-size="14">→</text>
+
+    <rect x="190" y="920" width="80" height="32" rx="6" fill="#1a1208" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="230" y="940" text-anchor="middle" fill="#fcd34d" font-size="11" font-weight="700" font-family="ui-monospace, monospace">where</text>
+
+    <text x="280" y="940" fill="#64748b" font-size="14">→</text>
+
+    <rect x="300" y="920" width="80" height="32" rx="6" fill="#0a1f12" stroke="#22c55e" stroke-width="1.5"/>
+    <text x="340" y="940" text-anchor="middle" fill="#86efac" font-size="11" font-weight="700" font-family="ui-monospace, monospace">project</text>
+
+    <text x="390" y="940" fill="#64748b" font-size="14">→</text>
+
+    <rect x="410" y="920" width="100" height="32" rx="6" fill="#1a0e2e" stroke="#8b5cf6" stroke-width="1.5"/>
+    <text x="460" y="940" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="700" font-family="ui-monospace, monospace">summarize</text>
+
+    <text x="520" y="940" fill="#64748b" font-size="14">→</text>
+
+    <rect x="540" y="920" width="80" height="32" rx="6" fill="#2a0808" stroke="#ef4444" stroke-width="1.5"/>
+    <text x="580" y="940" text-anchor="middle" fill="#fca5a5" font-size="11" font-weight="700" font-family="ui-monospace, monospace">join</text>
+
+    <text x="630" y="940" fill="#64748b" font-size="14">→</text>
+
+    <rect x="650" y="920" width="80" height="32" rx="6" fill="#062a30" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="690" y="940" text-anchor="middle" fill="#67e8f9" font-size="11" font-weight="700" font-family="ui-monospace, monospace">order by</text>
+
+    <text x="760" y="937" fill="#94a3b8" font-size="11" font-style="italic">Filter early.</text>
+    <text x="760" y="952" fill="#94a3b8" font-size="11" font-style="italic">Shape the columns. Aggregate. Join. Sort last.</text>
+  </g>
+
+  <!-- Footer caption -->
+  <text x="600" y="1000" text-anchor="middle" fill="#64748b" font-size="10" font-style="italic">Family panel color = what the operator does · chip color = which act in the guide demonstrates it</text>
+</svg>

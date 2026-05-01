@@ -218,20 +218,16 @@ DeviceProcessEvents
 | order by Timestamp asc
 ```
 
-Read down the result set. You'll see, in order:
+Read down the result set. You'll see ten distinct credential-access actions, each one targeting a different place where Windows or its applications store passwords. The picture below groups those actions into the **five credential sources** the attacker went after — same data your query returned, organized by *what's being stolen* rather than just *when*:
 
-| Approx. time | Tool / command | What it's doing | MITRE |
-| --- | --- | --- | --- |
-| T+15m | `powershell.exe` running `collect-reg-creds.ps1` | Harvesting credentials saved in registry | T1552.002 |
-| T+22m | `reg.exe save HKLM\SAM ...` | Dumping the SAM hive (local password hashes) | T1003.002 |
-| T+27m | `esentutl.exe /y "Chrome\Login Data" ...` | Copying Chrome's password database while it's locked | T1555.003 |
-| T+35m | `Rubeus.exe kerberoast` | Requesting Kerberos service tickets to crack offline | T1558.003 |
-| T+42m | `Invoke-Kerberoast` (PowerShell Empire) | Kerberoasting again, different tool | T1558.003 |
-| T+50m | `procdump64.exe -ma lsass.exe` | Dumping LSASS memory for credentials | T1003.001 |
-| T+56m | `PwDump7.exe`, `gsecdump.exe` | More password-dumping tools | T1003.001/002 |
-| T+65m | `LaZagne.exe all` | Generic password-store harvesting | T1555 |
-| T+70m | `rundll32.exe ... kiwi.dll ... logonpasswords` | Mimikatz hidden inside `rundll32` | T1003.001 |
-| T+73m | `mimikatz.exe "sekurlsa::logonpasswords"` | Mimikatz directly | T1003.001 |
+![Credential-access playbook on WIN11-04](../images/credential-access-playbook.svg)
+
+**A few things to notice as you read it:**
+
+- **The attacker tried multiple tools per family.** Two Kerberoasting tools (Rubeus + PowerShell Empire). Four LSASS / OS-credential-dumping tools (procdump, PwDump7+gsecdump, obfuscated mimikatz, plain mimikatz). That's not random — it's the attacker testing for which tools your EDR catches and which it misses. **Defenders should expect this.** A single detection rule covering one tool is not enough.
+- **Stages 1, 2, and 5 are after credentials *at rest*** — passwords sitting in the registry, in Chrome's database, in any vault LaZagne knows about. These steal credentials without ever touching memory.
+- **Stages 3 and 4 are after credentials *in transit or in memory*** — Kerberos tickets and LSASS process memory. These are the high-value targets because they often contain credentials for accounts the user hasn't even saved locally.
+- **The MITRE family is shown as a colored badge** matching each stage's color. Use these technique IDs when you write up your incident — they're the universal vocabulary for credential access.
 
 **Why `dynamic([...])`?** It builds an array literal you can pass to `in~`. Cleaner than chaining `or FileName == "x" or FileName == "y"`.
 
@@ -440,26 +436,11 @@ Take a minute and answer these for yourself before the instructor leads the disc
 
 ## KQL operators you used today
 
-A quick reference card for after the workshop:
+The 16 operators you touched today fall into **6 families** based on what they do. Internalizing the families is more useful than memorizing the individual operators — once you know "I need to filter," the rest is just remembering which word to type.
 
-| Operator | Used in | What it does |
-| --- | --- | --- |
-| `union withsource=...` | Act 0 | Stack rows from many tables, tag the source |
-| `summarize ... by ...` | Acts 0, 1 | Group rows and aggregate (count, dcount, make_set) |
-| `dcount`, `make_set` | Act 1 | Count distinct values; collect distinct values into an array |
-| `where ... or ...` | Act 2 | Filter on a condition |
-| `in~ (...)` | Act 2 | Match against a list, case-insensitive |
-| `project col1, col2, ...` | Every act | Pick which columns to keep |
-| `order by ... asc/desc` | Every act | Sort the output |
-| `let name = ...;` | Acts 3, 10 | Save a query (or a value) for reuse |
-| `top N by ...` | Act 3 | Keep the first N rows after sorting |
-| `=~` and `==` | Acts 2–10 | Case-insensitive vs. case-sensitive equality |
-| `has`, `has_any` | Acts 5–7 | Word match within a string column |
-| `dynamic([...])` | Act 5 | Inline array literal |
-| `startswith` | Act 8 | Prefix match on a string |
-| `join kind=inner ... on Col` | Act 9 | Stitch two tables on a shared column |
-| `union T1, T2, ...` | Act 10 | Stack the rows from multiple queries |
-| `strcat(a, b, c)` | Act 10 | Concatenate strings |
+![KQL Operator Reference Card](../images/kql-reference-card.svg)
+
+The bottom strip shows the typical order operators appear in a real query: `Table → where → project → summarize → join → order by`. That's not a rule — you can put operators in almost any order — but it's the order that runs fastest and reads cleanest. Filter early so the later steps work on smaller data. Sort last so you don't waste effort sorting rows you'll throw away.
 
 ---
 
