@@ -323,6 +323,7 @@ Close and reopen the terminal after installing PowerShell 7 or Azure CLI.
 ## Main entry points
 
 - Student lab: [`workshop\student_lab.kql`](workshop/student_lab.kql)
+- KQL joins guide: [`workshop\kql_joins.kql`](workshop/kql_joins.kql)
 - Instructor guide: [`docs\instructor_guide.md`](docs/instructor_guide.md)
 - Workshop design: [`docs\workshop_design.md`](docs/workshop_design.md)
 - Diagrams: [`docs\diagrams.md`](docs/diagrams.md)

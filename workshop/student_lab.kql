@@ -1,7 +1,19 @@
 // Cyber Defense KQL Workshop - Student Lab
 // Database: CyberDefenseKqlWorkshop
+//
+// How to use this file:
+// - Highlight and run one numbered section at a time in the ADX Web UI.
+// - Each section teaches one investigation pivot in the FIN7-inspired scenario.
+// - Comments explain why the query matters and how each KQL operator helps the hunt.
 
 // 1. Confirm that core table families are populated.
+// Why: Before hunting, validate that the lab database contains the major telemetry sources.
+// Scenario tie-in: The attack spans Entra sign-ins, Graph/OAuth activity, endpoint events,
+// identity telemetry, and Defender alerts. If a table is empty, later pivots will be incomplete.
+// KQL notes:
+// - union withsource=TableName stacks rows from several tables and records where each row came from.
+// - summarize count() gives a quick row inventory per table.
+// - order by makes the inventory easy to scan.
 union withsource=TableName
     DeviceInfo,
     IdentityInfo,
@@ -16,17 +28,34 @@ union withsource=TableName
 | order by TableName asc
 
 // 2. Understand the notional infrastructure.
+// Why: Good investigations start by identifying host roles and high-value assets.
+// Scenario tie-in: You should see Windows 11 endpoints, Ubuntu MDE servers, domain controllers,
+// and Entra Connect-related infrastructure. This helps distinguish Windows, Linux, and identity pivots.
+// KQL notes:
+// - dcount(DeviceId) counts unique devices without listing every row.
+// - make_set(DeviceName, 100) keeps a bounded sample of device names for orientation.
 DeviceInfo
 | summarize Hosts=dcount(DeviceId), Devices=make_set(DeviceName, 100) by OSPlatform, DeviceType, MachineGroup, AssetValue
 | order by AssetValue desc, Hosts desc
 
 // 3. Find risky Entra sign-ins.
+// Why: The cloud sign-in is the first observable event in this scenario.
+// Scenario tie-in: The compromised user Victor Alvarez signs in from a suspicious IP and completes MFA.
+// KQL notes:
+// - in~ and == style filters avoid expensive transformations such as tolower().
+// - project keeps only the columns needed to decide whether the sign-in is suspicious.
 SigninLogs
 | where IsRisky == true or RiskLevelDuringSignIn in~ ("high", "medium")
 | project TimeGenerated, UserPrincipalName, IPAddress, AppDisplayName, AuthenticationMethodsUsed, ConditionalAccessStatus, RiskLevelDuringSignIn, RiskState, UserAgent
 | order by TimeGenerated asc
 
-// 4. Correlate sign-in IP with OAuth consent and Graph access.
+// 4. Correlate the risky sign-in IP with OAuth consent and Graph access.
+// Why: Attackers often use the same IP or session context to grant OAuth consent and enumerate data.
+// Scenario tie-in: After the risky sign-in, the actor grants a suspicious app and uses Graph APIs.
+// KQL notes:
+// - let stores a reusable one-column result set.
+// - where IPAddress in (suspiciousIp) pivots from sign-in logs into CloudAppEvents and Graph logs.
+// - The same let pattern is repeated in 4b so each block can run independently.
 let suspiciousIp =
     SigninLogs
     | where IsRisky == true
@@ -37,12 +66,27 @@ CloudAppEvents
 | project Timestamp, AccountDisplayName, AccountId, ActionType, ObjectName, OAuthAppId, RawEventData
 | order by Timestamp asc
 
+// 4b. Use the same suspicious IP to find Microsoft Graph API activity.
+// Why: Graph logs show what the app or user tried to read after consent.
+// Scenario tie-in: Directory, user, and group enumeration helps the actor prepare later identity pivots.
+// KQL notes:
+// - Reusing the same let pattern keeps your pivot consistent across tables.
+let suspiciousIp =
+    SigninLogs
+    | where IsRisky == true
+    | top 1 by TimeGenerated asc
+    | project IPAddress;
 GraphApiAuditEvents
 | where IPAddress in (suspiciousIp)
 | project Timestamp, AccountObjectId, ApplicationId, RequestMethod, RequestUri, Scopes, ResponseStatusCode
 | order by Timestamp asc
 
 // 5. Pivot from compromised user to endpoint process activity.
+// Why: Cloud compromise becomes endpoint activity when the attacker lands on WIN11-04.
+// Scenario tie-in: Victor's account is tied to the first Windows process chain.
+// KQL notes:
+// - =~ is case-insensitive equality, useful for UPNs that may vary by case.
+// - project shows process lineage fields without overwhelming the result grid.
 let compromisedUser = "victor.alvarez@usag-cyber.local";
 DeviceProcessEvents
 | where AccountUpn =~ compromisedUser
@@ -50,48 +94,96 @@ DeviceProcessEvents
 | order by Timestamp asc
 
 // 6. Hunt the screenshot credential-access vectors.
+// Why: The workshop's main Windows path includes registry credential discovery, SAM hive dumping,
+// browser credential collection, Kerberoasting, LSASS dumping, and password-store harvesting tools.
+// Scenario tie-in: These tool names and command-line fragments are the clearest endpoint evidence.
+// KQL notes:
+// - dynamic([...]) stores a reusable list of exact process names.
+// - in~ performs case-insensitive exact matching for tool names.
+// - has_any searches tokenized command lines for suspicious fragments.
 let suspiciousTools = dynamic(["reg.exe", "esentutl.exe", "Rubeus.exe", "procdump64.exe", "PwDump7.exe", "gsecdump.exe", "lazagne.exe", "mimikatz.exe", "rundll32.exe"]);
 DeviceProcessEvents
 | where FileName in~ (suspiciousTools)
-   or ProcessCommandLine has_any ("kerberoast", "sam.save", "LoginData.db", "logonpasswords", "pwdump", "gsecdump", "lazagne")
+    or ProcessCommandLine has_any ("kerberoast", "sam.save", "LoginData.db", "logonpasswords", "pwdump", "gsecdump", "lazagne")
 | project Timestamp, DeviceName, AccountUpn, FileName, ProcessCommandLine
 | order by Timestamp asc
 
-// 7. Find registry and file artifacts produced by credential access.
+// 7. Find registry artifacts produced by credential access.
+// Why: Registry evidence shows attempts to discover stored credentials or persistence-adjacent keys.
+// Scenario tie-in: The attacker inspects saved VPN credentials and Windows credential-related locations.
+// KQL notes:
+// - has_any is useful for hunting across multiple suspicious key/value terms.
+// - project includes the initiating process so you can tie registry reads back to the process chain.
 DeviceRegistryEvents
 | where RegistryKey has_any ("VPN", "Run", "Winlogon") or RegistryValueName has_any ("SavedPassword", "DefaultPassword")
 | project Timestamp, DeviceName, RegistryKey, RegistryValueName, RegistryValueData, InitiatingProcessFileName, InitiatingProcessCommandLine
 | order by Timestamp asc
 
+// 7b. Find file artifacts staged by the Windows credential-access chain.
+// Why: File creation/copy events often preserve tool output even after processes exit.
+// Scenario tie-in: The scenario stages SAM, LSASS, browser, and password-store output under C:\ProgramData\wrstage.
+// KQL notes:
+// - has @"C:\..." performs a case-insensitive substring search while preserving backslashes.
 DeviceFileEvents
 | where FolderPath has @"C:\ProgramData\wrstage"
 | project Timestamp, DeviceName, ActionType, FileName, FolderPath, InitiatingProcessFileName, InitiatingProcessCommandLine
 | order by Timestamp asc
 
 // 8. Find Kerberoasting in identity telemetry.
+// Why: Kerberoasting often appears most clearly in identity query/logon telemetry, not only endpoint logs.
+// Scenario tie-in: Rubeus and PowerShell Kerberoast activity triggers LDAP SPN search and Kerberos activity.
+// KQL notes:
+// - IdentityQueryEvents shows directory query intent such as servicePrincipalName searches.
+// - AdditionalFields carries synthetic MITRE context for the lab.
 IdentityQueryEvents
 | where Query has "servicePrincipalName" or AdditionalFields has "T1558.003"
 | project Timestamp, AccountUpn, DeviceName, IPAddress, DestinationDeviceName, QueryType, Query, Application, AdditionalFields
 | order by Timestamp asc
 
+// 8b. Confirm Kerberos service-ticket activity related to Kerberoasting.
+// Why: Query telemetry shows enumeration; Kerberos logon telemetry shows authentication activity.
+// Scenario tie-in: This connects the SPN search to service account targeting.
+// KQL notes:
+// - Protocol =~ "Kerberos" keeps the filter case-insensitive.
 IdentityLogonEvents
 | where Protocol =~ "Kerberos" or AdditionalFields has "ServicePrincipalName"
 | project Timestamp, AccountUpn, DeviceName, IPAddress, DestinationDeviceName, DestinationPort, TargetAccountDisplayName, AdditionalFields
 | order by Timestamp asc
 
 // 9. Identify service-account use after credential access.
+// Why: After credentials are harvested, defenders should look for lateral movement or service-account misuse.
+// Scenario tie-in: The cracked svc_sql account is used against the Entra Connect server.
+// KQL notes:
+// - startswith is a simple way to find the synthetic service-account naming pattern.
 DeviceLogonEvents
 | where AccountName startswith "svc_"
 | project Timestamp, DeviceName, ActionType, LogonType, AccountDomain, AccountName, RemoteDeviceName, RemoteIP, Protocol, IsLocalAdmin
 | order by Timestamp asc
 
 // 10. Correlate alert metadata with evidence.
+// Why: AlertInfo tells you what was detected; AlertEvidence tells you which entity, process, user, or file supported it.
+// Scenario tie-in: This joins Defender-style alert titles to the exact device/user/process evidence students already hunted.
+// KQL notes:
+// - inner join returns only alerts that have matching evidence.
+// - AlertId is the shared key.
+// - KQL suffixes duplicate column names, so Timestamp1/Title1/Severity1 come from the joined table shape.
 AlertInfo
 | join kind=inner AlertEvidence on AlertId
 | project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, ServiceSource=ServiceSource1, AttackTechniques=AttackTechniques1, EntityType, DeviceName, AccountUpn, FileName, ProcessCommandLine
 | order by Timestamp asc
 
-// 11. Optional Linux MDE branch: compare Ubuntu SSH/sudo/auditd telemetry with Windows endpoint rows.
+// 11. Optional Linux MDE branch: reuse an Ubuntu device set.
+// Why: Linux telemetry should be grounded in MDE device tables, not MDI.
+// Scenario tie-in: UBUNTU-03 and UBUNTU-05 are MDE-onboarded Ubuntu hosts used in the additive Linux path.
+// KQL notes:
+// - Each Linux query below defines linuxDevices so it can be highlighted and run independently.
+// - project keeps only join keys to reduce join width before joining to event tables.
+
+// 11a. Review Linux SSH/PAM logon activity.
+// Why: SSH is the entry point into the Linux branch.
+// Scenario tie-in: The attacker attempts and then succeeds with SSH activity against UBUNTU-03.
+// KQL notes:
+// - Joining to linuxDevices prevents Windows logons from polluting the Linux branch.
 let linuxDevices =
     DeviceInfo
     | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
@@ -104,6 +196,15 @@ linuxDevices
 ) on DeviceId, DeviceName
 | order by Timestamp asc
 
+// 11b. Review Linux process execution: sshd, sudo, auditd, apt, and dpkg.
+// Why: Linux investigation depends on Unix process names and filesystem paths, not Windows EXEs/registry.
+// Scenario tie-in: Suspicious sudo chroot usage and shell execution are the Linux privilege-escalation clues.
+// KQL notes:
+// - FolderPath startswith "/" is a quick Linux path check.
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName;
 linuxDevices
 | join kind=inner (
     DeviceProcessEvents
@@ -112,6 +213,15 @@ linuxDevices
 ) on DeviceId, DeviceName
 | order by Timestamp asc
 
+// 11c. Confirm Linux shared-object image loads.
+// Why: Linux uses ELF shared objects (.so), not Windows DLLs.
+// Scenario tie-in: Shared-object evidence supports the Linux realism branch and validates that telemetry is Ubuntu grounded.
+// KQL notes:
+// - DeviceImageLoadEvents can contain both Windows DLLs and Linux .so loads; joining to linuxDevices scopes it correctly.
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName;
 linuxDevices
 | join kind=inner (
     DeviceImageLoadEvents
@@ -120,6 +230,15 @@ linuxDevices
 ) on DeviceId, DeviceName
 | order by Timestamp asc
 
+// 11d. Review Linux TVM vulnerability context.
+// Why: TVM rows explain why SSH, sudo, CUPS, glibc, and kernel/package risks matter.
+// Scenario tie-in: These CVEs provide plausible vulnerability context around the optional Linux branch.
+// KQL notes:
+// - in~ lets you search a known list of CVEs without case-sensitivity surprises.
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName;
 linuxDevices
 | join kind=inner (
     DeviceTvmSoftwareVulnerabilities
@@ -129,6 +248,15 @@ linuxDevices
 | order by CveId asc
 
 // 12. Optional Linux Oracle branch: find synthetic Python/Go tooling and Oracle TNS access.
+// Why: This branch teaches Linux post-exploitation and database collection without making it the main scenario.
+// Scenario tie-in: The actor stages oracle_privcheck.py, drops a synthetic Go binary, and connects to Oracle on UBUNTU-05.
+// KQL notes:
+// - has_any matches key tool names and Oracle service indicators.
+// - FileName in~ catches exact process names even if the command-line is sparse.
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName;
 linuxDevices
 | join kind=inner (
     DeviceProcessEvents
@@ -138,6 +266,16 @@ linuxDevices
 ) on DeviceId, DeviceName
 | order by Timestamp asc
 
+// 12a. Find Oracle TNS network access.
+// Why: Database collection often leaves network evidence even when local files are limited.
+// Scenario tie-in: UBUNTU-03 connects to UBUNTU-05 over TCP/1521, the Oracle listener port.
+// KQL notes:
+// - RemotePort == 1521 is a precise service-port filter.
+// - AdditionalFields has "Oracle TNS" catches semantic context added by the generator.
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName;
 linuxDevices
 | join kind=inner (
     DeviceNetworkEvents
@@ -146,6 +284,15 @@ linuxDevices
 ) on DeviceId, DeviceName
 | order by Timestamp asc
 
+// 12b. Find staged tooling and synthetic Oracle export files.
+// Why: Files show what was staged and what data was written after database access.
+// Scenario tie-in: The branch creates /tmp/.cache tooling and /tmp/.oracle/finance_user_catalog.csv output.
+// KQL notes:
+// - Linux paths should start with "/" and include realistic temporary/application directories.
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName;
 linuxDevices
 | join kind=inner (
     DeviceFileEvents
@@ -155,6 +302,11 @@ linuxDevices
 ) on DeviceId, DeviceName
 | order by Timestamp asc
 
+// 12c. Correlate the Linux Oracle alert to supporting evidence.
+// Why: leftouter keeps the alert row even if evidence is missing, which is useful for alert QA.
+// Scenario tie-in: LINUX-002 summarizes privilege escalation followed by Oracle data access.
+// KQL notes:
+// - leftouter keeps all rows from AlertInfo and appends matching AlertEvidence where available.
 AlertInfo
 | where AlertId == "LINUX-002" or Title has "Oracle"
 | join kind=leftouter AlertEvidence on AlertId
@@ -162,6 +314,12 @@ AlertInfo
 | order by Timestamp asc
 
 // 13. Build a concise incident timeline.
+// Why: A timeline is the final product of most incident investigations.
+// Scenario tie-in: This combines cloud, Windows endpoint, identity, Linux, and alert milestones into one ordered view.
+// KQL notes:
+// - let defines normalized subqueries with the same output columns: Timestamp, SourceTable, Entity, Detail.
+// - union stacks those normalized rows into one timeline.
+// - strcat builds readable detail strings for analysts and briefings.
 let endpoint =
     DeviceProcessEvents
     | where DeviceName has "WIN11-04"

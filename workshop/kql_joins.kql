@@ -1,0 +1,248 @@
+// Cyber Defense KQL Workshop - Join Guide
+// Database: CyberDefenseKqlWorkshop
+//
+// Purpose:
+// - Teach the join patterns students need for the workshop investigation.
+// - Show how each join kind changes the rows returned and why defenders choose one kind over another.
+// - Use concrete tables from this lab: AlertInfo, AlertEvidence, DeviceInfo, DeviceProcessEvents,
+//   DeviceNetworkEvents, SigninLogs, CloudAppEvents, and Linux telemetry.
+//
+// How to use:
+// - Highlight and run one section at a time.
+// - The first section is self-contained with datatable examples.
+// - Later sections use the workshop dataset and tie joins to the scenario.
+//
+// Notes from Microsoft Learn and community hunting practice:
+// - The left side is the "outer" table ($left); the right side is the "inner" table ($right).
+// - KQL's default join kind is innerunique, which deduplicates the left side before matching.
+// - Use kind=inner when you want every matching row combination.
+// - For performance, Microsoft recommends putting the smaller table on the left when practical.
+// - Filter early, project only the columns you need, and use let to name important entity sets.
+// - When filtering by one key column, in can be simpler and faster than a leftsemi join.
+// - Community hunting repositories such as Bert-JanP's emphasize readable hunts: start broad,
+//   pin entities with let, project narrow, summarize, then join to prove relationships.
+
+// 1. Self-contained join playground.
+// Run this first if you are new to joins. It creates two tiny tables in memory.
+let LeftTable = datatable(Key:string, LeftValue:string)
+[
+    "a", "left-only",
+    "b", "left-b1",
+    "b", "left-b2",
+    "c", "left-c"
+];
+let RightTable = datatable(Key:string, RightValue:string)
+[
+    "b", "right-b",
+    "c", "right-c1",
+    "c", "right-c2",
+    "d", "right-only"
+];
+LeftTable
+| join kind=inner RightTable on Key
+| order by Key asc, LeftValue asc, RightValue asc
+
+// 2. inner vs innerunique.
+// Why it matters: inner returns every matching row combination. innerunique deduplicates the left side first.
+// In hunting, use inner when repeated events matter, such as many process rows matching many file rows.
+let LeftTable = datatable(Key:string, LeftValue:string)
+[
+    "b", "left-b1",
+    "b", "left-b2"
+];
+let RightTable = datatable(Key:string, RightValue:string)
+[
+    "b", "right-b1",
+    "b", "right-b2"
+];
+LeftTable
+| join kind=inner RightTable on Key
+
+// 2b. Default join is innerunique; this may suppress duplicate left-side rows.
+let LeftTable = datatable(Key:string, LeftValue:string)
+[
+    "b", "left-b1",
+    "b", "left-b2"
+];
+let RightTable = datatable(Key:string, RightValue:string)
+[
+    "b", "right-b1",
+    "b", "right-b2"
+];
+LeftTable
+| join kind=innerunique RightTable on Key
+
+// 3. leftouter keeps everything from the left side.
+// Why it matters: Use leftouter when the left side is your checklist or alert list and missing evidence is also important.
+let LeftTable = datatable(Key:string, LeftValue:string)
+[
+    "a", "left-only",
+    "b", "left-b",
+    "c", "left-c"
+];
+let RightTable = datatable(Key:string, RightValue:string)
+[
+    "b", "right-b",
+    "c", "right-c"
+];
+LeftTable
+| join kind=leftouter RightTable on Key
+| order by Key asc
+
+// 4. leftsemi returns left rows that have a match, but does not append right-side columns.
+// Why it matters: Use it to filter a table to entities known to be suspicious.
+let SuspiciousDevices =
+    DeviceProcessEvents
+    | where ProcessCommandLine has_any ("mimikatz", "procdump", "kerberoast", "ora_collect_linux_amd64")
+    | summarize by DeviceId;
+DeviceInfo
+| join kind=leftsemi SuspiciousDevices on DeviceId
+| project DeviceName, OSPlatform, DeviceType, AssetValue
+| order by DeviceName asc
+
+// 5. in is often simpler than leftsemi for one-column filtering.
+// Why it matters: This is the same idea as section 4, but easier to read when there is only one key.
+let SuspiciousDeviceIds =
+    DeviceProcessEvents
+    | where ProcessCommandLine has_any ("mimikatz", "procdump", "kerberoast", "ora_collect_linux_amd64")
+    | summarize by DeviceId;
+DeviceInfo
+| where DeviceId in (SuspiciousDeviceIds)
+| project DeviceName, OSPlatform, DeviceType, AssetValue
+| order by DeviceName asc
+
+// 6. leftanti finds left rows with no match on the right.
+// Why it matters: Anti joins are useful for gap analysis, such as devices with no expected telemetry.
+// Scenario use: Find known devices that did not emit process events in the current dataset.
+let DevicesWithProcessTelemetry =
+    DeviceProcessEvents
+    | summarize by DeviceId;
+DeviceInfo
+| join kind=leftanti DevicesWithProcessTelemetry on DeviceId
+| project DeviceName, OSPlatform, DeviceType, AssetValue
+| order by DeviceName asc
+
+// 7. fullouter shows both sides, including unmatched rows.
+// Why it matters: Use fullouter when comparing two inventories or two detection sources and you care about both gaps.
+// Scenario use: Compare process-producing devices and network-producing devices.
+let ProcessDevices =
+    DeviceProcessEvents
+    | summarize ProcessEvents=count() by DeviceId, DeviceName;
+let NetworkDevices =
+    DeviceNetworkEvents
+    | summarize NetworkEvents=count() by DeviceId, DeviceName;
+ProcessDevices
+| join kind=fullouter NetworkDevices on DeviceId
+| project DeviceId, ProcessDeviceName=DeviceName, NetworkDeviceName=DeviceName1, ProcessEvents, NetworkEvents
+| order by DeviceId asc
+
+// 8. Join on columns with the same name.
+// Why it matters: AlertInfo and AlertEvidence both use AlertId, so the simple "on AlertId" syntax is enough.
+// Scenario use: Attach alert titles/severity to the exact evidence rows.
+AlertInfo
+| join kind=inner (
+    AlertEvidence
+    | project AlertId, EvidenceTimestamp=Timestamp, EntityType, DeviceName, AccountUpn, FileName, ProcessCommandLine
+) on AlertId
+| project AlertId, Title, Severity, AttackTechniques, EvidenceTimestamp, EntityType, DeviceName, AccountUpn, FileName, ProcessCommandLine
+| order by EvidenceTimestamp asc
+
+// 9. Join on columns with different names.
+// Why it matters: Many security tables use different names for the same entity.
+// Scenario use: Link risky sign-in UPNs to identity records.
+let RiskyUsers =
+    SigninLogs
+    | where IsRisky == true or RiskLevelDuringSignIn in~ ("high", "medium")
+    | project SigninTime=TimeGenerated, SigninUser=UserPrincipalName, IPAddress, RiskLevelDuringSignIn;
+RiskyUsers
+| join kind=inner (
+    IdentityInfo
+    | project AccountUpn, AccountDisplayName, AccountDomain, OnPremSid, CriticalityLevel, Tags
+) on $left.SigninUser == $right.AccountUpn
+| project SigninTime, SigninUser, IPAddress, RiskLevelDuringSignIn, AccountDisplayName, AccountDomain, OnPremSid, CriticalityLevel, Tags
+| order by SigninTime asc
+
+// 10. Time-window join.
+// Why it matters: A shared IP alone is not enough; timing helps prove related activity.
+// Scenario use: Find CloudAppEvents from the same IP within 30 minutes of a risky sign-in.
+let RiskySignins =
+    SigninLogs
+    | where IsRisky == true or RiskLevelDuringSignIn in~ ("high", "medium")
+    | project SigninTime=TimeGenerated, UserPrincipalName, IPAddress;
+RiskySignins
+| join kind=inner (
+    CloudAppEvents
+    | project CloudTime=Timestamp, IPAddress, AccountId, ActionType, ObjectName, OAuthAppId
+) on IPAddress
+| where CloudTime between (SigninTime .. SigninTime + 30m)
+| project SigninTime, CloudTime, UserPrincipalName, IPAddress, AccountId, ActionType, ObjectName, OAuthAppId
+| order by SigninTime asc, CloudTime asc
+
+// 11. Join a small dimension table to a large event table.
+// Why it matters: Defenders often build a small set of interesting entities, then join it to high-volume telemetry.
+// Scenario use: Scope Linux process hunting to Ubuntu devices from DeviceInfo.
+let LinuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName, OSPlatform, OSDistribution;
+LinuxDevices
+| join kind=inner (
+    DeviceProcessEvents
+    | where FolderPath startswith "/" or ProcessCommandLine has_any ("sshd", "sudo", "python3", "ora_collect_linux_amd64")
+    | project Timestamp, DeviceId, DeviceName, AccountName, FileName, FolderPath, ProcessCommandLine
+) on DeviceId, DeviceName
+| project Timestamp, DeviceName, OSPlatform, OSDistribution, AccountName, FileName, FolderPath, ProcessCommandLine
+| order by Timestamp asc
+
+// 12. Use materialize when reusing a filtered dataset multiple times.
+// Why it matters: materialize can calculate an expensive shared subquery once, then reuse it.
+// Keep the materialized set small by filtering and projecting before materialize.
+let InterestingProcesses =
+    materialize(
+        DeviceProcessEvents
+        | where ProcessCommandLine has_any ("kerberoast", "mimikatz", "procdump", "ora_collect_linux_amd64", "oracle_privcheck.py")
+        | project Timestamp, DeviceId, DeviceName, AccountUpn, AccountName, FileName, ProcessCommandLine
+    );
+InterestingProcesses
+| summarize ProcessHits=count(), FirstSeen=min(Timestamp), LastSeen=max(Timestamp) by DeviceId, DeviceName
+| join kind=leftouter (
+    DeviceInfo
+    | project DeviceId, OSPlatform, DeviceType, AssetValue
+) on DeviceId
+| project DeviceName, OSPlatform, DeviceType, AssetValue, ProcessHits, FirstSeen, LastSeen
+| order by LastSeen asc
+
+// 13. Join plus summarize for an investigation timeline.
+// Why it matters: A useful incident summary often starts with joins and ends with aggregation.
+// Scenario use: Count evidence rows by alert, technique, device, and user.
+AlertInfo
+| join kind=inner (
+    AlertEvidence
+    | project AlertId, EvidenceTimestamp=Timestamp, DeviceName, AccountUpn, FileName
+) on AlertId
+| summarize EvidenceRows=count(), FirstEvidence=min(EvidenceTimestamp), LastEvidence=max(EvidenceTimestamp), Devices=make_set(DeviceName, 20), Users=make_set(AccountUpn, 20), Files=make_set(FileName, 20) by AlertId, Title, Severity, AttackTechniques
+| order by FirstEvidence asc
+
+// 14. lookup as a simpler dimension-table enrichment.
+// Why it matters: lookup is handy when the right side is a small dimension table and you only need enrichment.
+// Scenario use: Add OS/asset context from DeviceInfo to suspicious process rows.
+DeviceProcessEvents
+| where ProcessCommandLine has_any ("kerberoast", "mimikatz", "procdump", "ora_collect_linux_amd64")
+| project Timestamp, DeviceId, DeviceName, AccountUpn, AccountName, FileName, ProcessCommandLine
+| lookup kind=leftouter (
+    DeviceInfo
+    | project DeviceId, OSPlatform, DeviceType, AssetValue
+) on DeviceId
+| project Timestamp, DeviceName, OSPlatform, DeviceType, AssetValue, AccountUpn, AccountName, FileName, ProcessCommandLine
+| order by Timestamp asc
+
+// 15. Join troubleshooting checklist.
+// If a join returns no rows:
+// - Confirm both sides have data: add "| count" to each side.
+// - Confirm key names and values: project the join columns from each side.
+// - Normalize time windows: if keys match but timing is wrong, add a between() filter.
+// - Avoid hidden type mismatches: tostring(), tolong(), or todatetime() can help, but filter first.
+// - Reduce columns before joining: project only keys and fields you need.
+// - Be explicit with $left and $right when column names differ.
+// - Use leftouter when you need to see unmatched left rows; use leftanti when you only want the gaps.
+// - Use project-rename or project after the join to clean duplicate columns such as DeviceName1.
