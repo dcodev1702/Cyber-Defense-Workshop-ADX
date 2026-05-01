@@ -22,6 +22,7 @@ flowchart LR
     subgraph Endpoints[MDE endpoints]
         Win[10 x Windows 11 25H2]
         Linux[5 x Ubuntu<br/>MDE only]
+        Oracle[UBUNTU-05<br/>Oracle DB<br/>10.42.20.35]
     end
 
     Entra --> ADX
@@ -38,6 +39,7 @@ sequenceDiagram
     participant Graph
     participant WIN11 as WIN11-04
     participant LINUX as UBUNTU-03
+    participant ORACLE as UBUNTU-05 Oracle
     participant DC as DC01/DC02
     participant AADC as AADCONNECT01
     participant ADX
@@ -52,6 +54,9 @@ sequenceDiagram
     WIN11->>ADX: DeviceProcessEvents / DeviceFileEvents / DeviceRegistryEvents
     Attacker->>LINUX: SSH and suspicious sudo activity
     LINUX->>ADX: DeviceLogonEvents / DeviceProcessEvents / DeviceEvents / DeviceImageLoadEvents
+    Attacker->>LINUX: Stage Python helper and Go collection binary
+    LINUX->>ORACLE: Oracle TNS access over TCP/1521
+    ORACLE->>ADX: Oracle process and synthetic export file telemetry
     Attacker->>DC: SPN enumeration and Kerberos requests
     DC->>ADX: IdentityQueryEvents / IdentityLogonEvents
     Attacker->>AADC: Service-account remote logon
@@ -68,6 +73,7 @@ flowchart TD
     D --> E[Credential access process chain]
     E --> F[File and registry artifacts]
     E --> L[Ubuntu SSH, sudo, auditd, .so telemetry]
+    L --> O[Oracle TNS and synthetic data export]
     E --> G[Kerberoasting from identity telemetry]
     G --> H[Service account use on Entra Connect]
     E --> I[AlertInfo + AlertEvidence correlation]

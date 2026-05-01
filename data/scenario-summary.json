@@ -1,10 +1,10 @@
 {
   "scenarioName": "FIN7-inspired hybrid identity credential access",
-  "startTime": "2026-05-01T03:58:14.2364198Z",
+  "startTime": "2026-05-01T04:13:30.3824185Z",
   "telemetryWindow": {
-    "endTime": "2026-05-01T05:28:14.2364198Z",
+    "endTime": "2026-05-01T05:43:30.3824185Z",
     "lookbackDays": 7,
-    "earliestNormalTime": "2026-04-24T05:28:14.2364198Z"
+    "earliestNormalTime": "2026-04-24T05:43:30.3824185Z"
   },
   "tenantDomain": "usag-cyber.local",
   "adDomain": "USAG-CYBER",
@@ -106,6 +106,18 @@
       "Technique": "T1059.004",
       "Offset": 68,
       "Command": "auditd process execution evidence for sudo and bash"
+    },
+    {
+      "Title": "Synthetic Python privilege-check helper on Ubuntu server",
+      "Technique": "T1059.006",
+      "Offset": 70,
+      "Command": "python3 /tmp/.cache/oracle_privcheck.py --check sudo-cve-2025-32463 --target oracle"
+    },
+    {
+      "Title": "Synthetic Go binary accesses Oracle database over TNS",
+      "Technique": "T1005",
+      "Offset": 72,
+      "Command": "/tmp/.cache/ora_collect_linux_amd64 --target 10.42.20.35:1521 --service ORCL --query-name finance-user-catalog"
     }
   ]
 }

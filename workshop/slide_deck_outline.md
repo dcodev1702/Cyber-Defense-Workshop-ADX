@@ -18,6 +18,7 @@ Speaker note: Frame this as a detection and investigation exercise using synthet
 - 2 DCs with MDI
 - 10 Windows 11 25H2 endpoints with MDE
 - 5 Ubuntu endpoints with MDE only
+- UBUNTU-05 hosts a notional Oracle database for an optional Linux branch
 - Entra Connect server
 - Hybrid Entra ID
 
@@ -27,7 +28,7 @@ FIN7-inspired intrusion emulation focused on credential access and hybrid identi
 
 ## Slide 5 - Scenario timeline
 
-Compromised sign-in -> OAuth consent -> Graph enumeration -> endpoint staging -> credential access -> Kerberoasting -> service-account use -> alert correlation.
+Compromised sign-in -> OAuth consent -> Graph enumeration -> endpoint staging -> credential access -> Kerberoasting -> service-account use -> optional Ubuntu SSH/sudo/Oracle branch -> alert correlation.
 
 ## Slide 6 - Table families
 
@@ -35,7 +36,7 @@ MDE Device* for Windows and Ubuntu, MDI Identity* for Windows identity infrastru
 
 ## Slide 7 - MITRE coverage
 
-T1552.002, T1003.002, T1555.003, T1558.003, T1003.001, T1555, T1021.004, T1548.003, T1059.004.
+T1552.002, T1003.002, T1555.003, T1558.003, T1003.001, T1555, T1021.004, T1548.003, T1059.004, T1059.006, T1005.
 
 ## Slide 8 - KQL investigation pattern
 
@@ -48,7 +49,8 @@ Start broad, project narrow, summarize, join, build timeline.
 3. Hunt process/file/registry evidence
 4. Confirm Kerberoasting in identity telemetry
 5. Compare Ubuntu SSH/sudo/auditd telemetry with Windows endpoint rows
-6. Join alerts and evidence
+6. Trace optional Python/Go Oracle data-access branch
+7. Join alerts and evidence
 
 ## Slide 10 - Debrief
 

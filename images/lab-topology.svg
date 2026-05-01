@@ -44,7 +44,7 @@
     <rect x="276" y="345" width="180" height="70" rx="10" fill="#0f3a1f" stroke="#22c55e" stroke-width="2"/>
     <text x="366" y="370" text-anchor="middle" fill="#bbf7d0" font-size="13" font-weight="700">5 × Ubuntu Linux</text>
     <text x="366" y="388" text-anchor="middle" fill="#86efac" font-size="11">MDE onboarded</text>
-    <text x="366" y="403" text-anchor="middle" fill="#86efac" font-size="11">22.04 LTS</text>
+    <text x="366" y="403" text-anchor="middle" fill="#86efac" font-size="11">22.04/24.04 LTS · UBUNTU-05 Oracle</text>
 
     <!-- Caption inside endpoint enclave -->
     <text x="265" y="450" text-anchor="middle" fill="#64748b" font-size="11" font-style="italic">DeviceProcessEvents · DeviceFileEvents · DeviceRegistryEvents · DeviceNetworkEvents</text>

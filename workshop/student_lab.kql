@@ -128,14 +128,47 @@ linuxDevices
 ) on DeviceId, DeviceName
 | order by CveId asc
 
-// 12. Build a concise incident timeline.
+// 12. Optional Linux Oracle branch: find synthetic Python/Go tooling and Oracle TNS access.
+linuxDevices
+| join kind=inner (
+    DeviceProcessEvents
+    | where ProcessCommandLine has_any ("oracle_privcheck.py", "ora_collect_linux_amd64", "1521", "ORCL")
+        or FileName in~ ("python3", "ora_collect_linux_amd64", "oracle")
+    | project Timestamp, DeviceId, DeviceName, AccountName, FileName, FolderPath, ProcessCommandLine, AdditionalFields
+) on DeviceId, DeviceName
+| order by Timestamp asc
+
+linuxDevices
+| join kind=inner (
+    DeviceNetworkEvents
+    | where RemotePort == 1521 or RemoteUrl has "UBUNTU-05" or AdditionalFields has "Oracle TNS"
+    | project Timestamp, DeviceId, DeviceName, LocalIP, RemoteIP, RemoteUrl, RemotePort, Protocol, InitiatingProcessFileName, InitiatingProcessCommandLine, AdditionalFields
+) on DeviceId, DeviceName
+| order by Timestamp asc
+
+linuxDevices
+| join kind=inner (
+    DeviceFileEvents
+    | where FolderPath has_any ("/tmp/.cache", "/tmp/.oracle", "/u01/app/oracle", "/opt/oracle")
+        or FileName has_any ("oracle_privcheck.py", "ora_collect_linux_amd64", "finance_user_catalog.csv")
+    | project Timestamp, DeviceId, DeviceName, ActionType, FileName, FolderPath, InitiatingProcessFileName, InitiatingProcessCommandLine, AdditionalFields
+) on DeviceId, DeviceName
+| order by Timestamp asc
+
+AlertInfo
+| where AlertId == "LINUX-002" or Title has "Oracle"
+| join kind=leftouter AlertEvidence on AlertId
+| project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, AttackTechniques=AttackTechniques1, DeviceName, AccountName, FileName, FolderPath, ProcessCommandLine, AdditionalFields
+| order by Timestamp asc
+
+// 13. Build a concise incident timeline.
 let endpoint =
     DeviceProcessEvents
     | where DeviceName has "WIN11-04"
     | project Timestamp, SourceTable="DeviceProcessEvents", Entity=DeviceName, Detail=strcat(FileName, " :: ", ProcessCommandLine);
 let linux =
     DeviceProcessEvents
-    | where DeviceName has "UBUNTU-03" and ProcessCommandLine has_any ("sudo", "auditd", "sshd")
+    | where DeviceName has_any ("UBUNTU-03", "UBUNTU-05") and ProcessCommandLine has_any ("sudo", "auditd", "sshd", "oracle_privcheck.py", "ora_collect_linux_amd64", "ORCL")
     | project Timestamp, SourceTable="DeviceProcessEvents", Entity=DeviceName, Detail=strcat(FileName, " :: ", ProcessCommandLine);
 let identity =
     IdentityQueryEvents

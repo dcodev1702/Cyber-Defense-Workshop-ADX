@@ -7,6 +7,9 @@ param(
     [string]$ClusterUri = 'https://dibsecadx.eastus2.kusto.windows.net',
     [string]$DataIngestionUri = 'https://ingest-dibsecadx.eastus2.kusto.windows.net',
     [string]$DatabaseName = 'CyberDefenseKqlWorkshop',
+    [string]$DataDirectory,
+    [ValidateSet('New', 'Existing')]
+    [string]$TelemetryImport = 'New',
     [TimeSpan]$SoftDeletePeriod = ([TimeSpan]::FromDays(365)),
     [TimeSpan]$HotCachePeriod = ([TimeSpan]::FromDays(365)),
     [switch]$SkipDatabaseCreate,
@@ -33,8 +36,8 @@ if ($SkipDatabaseCreate -and $OverwriteDatabase) {
 }
 
 $schemaDirectory = Join-Path $PSScriptRoot '..\schemas'
-$dataDirectory = Join-Path $PSScriptRoot '..\data\generated'
 $requestedDatabaseName = $DatabaseName
+$dataDirectoryWasProvided = -not [string]::IsNullOrWhiteSpace($DataDirectory)
 
 if (-not $SkipDatabaseCreate) {
     if (-not (Get-Command Get-AzContext -ErrorAction SilentlyContinue)) {
@@ -130,12 +133,34 @@ if ([string]::IsNullOrWhiteSpace($ClusterUri)) {
     $ClusterUri = $cluster.Uri
 }
 
+if ([string]::IsNullOrWhiteSpace($DataDirectory)) {
+    $safeDatabaseName = $DatabaseName -replace '[^A-Za-z0-9_.-]', '_'
+    $DataDirectory = Join-Path ([System.IO.Path]::GetTempPath()) "CyberDefenseKqlWorkshop\$safeDatabaseName\generated"
+}
+elseif (-not [System.IO.Path]::IsPathRooted($DataDirectory)) {
+    $DataDirectory = Join-Path (Get-Location).Path $DataDirectory
+}
+$summaryPath = Join-Path (Split-Path -Path $DataDirectory -Parent) 'scenario-summary.json'
+
+if ($TelemetryImport -eq 'Existing') {
+    if (-not $dataDirectoryWasProvided) {
+        throw "-TelemetryImport Existing requires -DataDirectory so the script knows which generated telemetry files to import."
+    }
+    if (-not (Test-Path $DataDirectory)) {
+        throw "Generated telemetry directory not found: $DataDirectory"
+    }
+    if (-not (Get-ChildItem -Path $DataDirectory -Filter '*.json' -File -ErrorAction SilentlyContinue)) {
+        throw "Generated telemetry directory does not contain JSON telemetry files: $DataDirectory"
+    }
+}
+
 & (Join-Path $PSScriptRoot 'Initialize-AdxTables.ps1') -ClusterUri $ClusterUri -DatabaseName $DatabaseName -SchemaDirectory $schemaDirectory -ForceRecreate:$ForceRecreateTables
 
-if (-not $SkipGenerateData) {
+if (($TelemetryImport -eq 'New') -and (-not $SkipGenerateData)) {
     & (Join-Path $PSScriptRoot 'New-SyntheticTelemetry.ps1') `
         -SchemaDirectory $schemaDirectory `
-        -OutputDirectory $dataDirectory `
+        -OutputDirectory $DataDirectory `
+        -SummaryPath $summaryPath `
         -TelemetryEndTime $TelemetryEndTime `
         -NormalRowsPerTable $NormalRowsPerTable `
         -NormalMinRowsPerTable $NormalMinRowsPerTable `
@@ -145,9 +170,12 @@ if (-not $SkipGenerateData) {
         -SyntheticUserCount $SyntheticUserCount `
         -SyntheticServiceAccountCount $SyntheticServiceAccountCount
 }
+elseif ($TelemetryImport -eq 'Existing') {
+    Write-Host "Using existing generated telemetry from $DataDirectory"
+}
 
 if (-not $SkipIngest) {
-    & (Join-Path $PSScriptRoot 'Import-SyntheticTelemetry.ps1') -ClusterUri $ClusterUri -DatabaseName $DatabaseName -SchemaDirectory $schemaDirectory -DataDirectory $dataDirectory -ClearExistingData:$ForceRecreateTables
+    & (Join-Path $PSScriptRoot 'Import-SyntheticTelemetry.ps1') -ClusterUri $ClusterUri -DatabaseName $DatabaseName -SchemaDirectory $schemaDirectory -DataDirectory $DataDirectory -ClearExistingData:$ForceRecreateTables
 }
 
 Write-Host "Workshop setup complete."
@@ -155,4 +183,7 @@ Write-Host "Requested database name: $requestedDatabaseName"
 Write-Host "Deployed database name:  $DatabaseName"
 Write-Host "Cluster URI:             $ClusterUri"
 Write-Host "Data ingestion URI:      $DataIngestionUri"
+Write-Host "Telemetry import mode:   $TelemetryImport"
+Write-Host "Generated data cache:    $DataDirectory"
+Write-Host "Scenario summary cache:  $summaryPath"
 Write-Host "ADX Web UI:              https://dataexplorer.azure.com/clusters/$($ClusterUri.TrimEnd('/').Split('/')[2])/databases/$DatabaseName"

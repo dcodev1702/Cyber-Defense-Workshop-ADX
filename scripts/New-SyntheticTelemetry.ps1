@@ -301,6 +301,7 @@ $domainControllers = @($devices | Where-Object Type -eq 'DomainController')
 $windowsDevices = @($devices | Where-Object OS -ne 'Ubuntu')
 $linuxDevices = @($devices | Where-Object OS -eq 'Ubuntu')
 $linux03 = $linuxDevices | Where-Object ShortName -eq 'UBUNTU-03'
+$linuxDb = $linuxDevices | Where-Object ShortName -eq 'UBUNTU-05'
 
 $windowsProcessTemplates = @(
     [pscustomobject]@{ File = 'svchost.exe'; Path = 'C:\Windows\System32\svchost.exe'; Parent = 'services.exe'; Command = 'C:\Windows\System32\svchost.exe -k netsvcs -p' },
@@ -409,7 +410,7 @@ foreach ($device in $devices) {
         AssetValue = $device.AssetValue
         ConnectivityType = 'Corporate'
         ReportId = 1000 + $deviceIndex
-        AdditionalFields = if ($device.OS -eq 'Ubuntu') { '{"Workshop":"CyberDefenseKQL","Sensor":"MDE","Distribution":"Ubuntu 24.04 LTS","KernelVersion":"6.8.0-58-generic"}' } else { '{"Workshop":"CyberDefenseKQL","Sensor":"MDE"}' }
+        AdditionalFields = if ($device.ShortName -eq 'UBUNTU-05') { '{"Workshop":"CyberDefenseKQL","Sensor":"MDE","Distribution":"Ubuntu 24.04 LTS","KernelVersion":"6.8.0-58-generic","Role":"OracleDatabase","OracleSid":"ORCL"}' } elseif ($device.OS -eq 'Ubuntu') { '{"Workshop":"CyberDefenseKQL","Sensor":"MDE","Distribution":"Ubuntu 24.04 LTS","KernelVersion":"6.8.0-58-generic"}' } else { '{"Workshop":"CyberDefenseKQL","Sensor":"MDE"}' }
     }
 
     Add-Record -Table 'DeviceNetworkInfo' -Time $StartTime.AddMinutes(-29) -Values @{
@@ -1458,6 +1459,189 @@ Add-Record -Table 'AlertEvidence' -Time $linuxAlertTime -Values @{
     AdditionalFields = '{"OSProfile":"Ubuntu","SourceLogs":["/var/log/auth.log","/var/log/audit/audit.log"],"CveContext":"CVE-2025-32463"}'
     Severity = 'High'
 }
+$oracleBranchTime = $StartTime.AddMinutes(69)
+Add-Record -Table 'DeviceFileEvents' -Time $oracleBranchTime -Values @{
+    Timestamp = Format-WorkshopTime $oracleBranchTime
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    ActionType = 'FileCreated'
+    FileName = 'oracle_privcheck.py'
+    FolderPath = '/tmp/.cache/oracle_privcheck.py'
+    FileSize = 4096
+    InitiatingProcessAccountDomain = $linux03.ShortName
+    InitiatingProcessAccountName = $linuxAdminUser
+    InitiatingProcessAccountSid = $alice.Sid
+    InitiatingProcessAccountUpn = $alice.Upn
+    InitiatingProcessFileName = 'scp'
+    InitiatingProcessCommandLine = 'scp oracle_privcheck.py UBUNTU-03:/tmp/.cache/oracle_privcheck.py'
+    InitiatingProcessCreationTime = Format-WorkshopTime $oracleBranchTime.AddSeconds(-30)
+    ReportId = 860069
+    AdditionalFields = '{"Scenario":"Synthetic Python helper staged for Linux privilege check","CveContext":"CVE-2025-32463"}'
+}
+Add-Record -Table 'DeviceProcessEvents' -Time $StartTime.AddMinutes(70) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(70)
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    ActionType = 'ProcessCreated'
+    FileName = 'python3'
+    FolderPath = '/usr/bin/python3'
+    ProcessId = 18670
+    ProcessCommandLine = 'python3 /tmp/.cache/oracle_privcheck.py --check sudo-cve-2025-32463 --target oracle'
+    ProcessCreationTime = Format-WorkshopTime $StartTime.AddMinutes(70)
+    ProcessIntegrityLevel = 'Unknown'
+    ProcessTokenElevation = 'None'
+    AccountDomain = $linux03.ShortName
+    AccountName = $linuxAdminUser
+    AccountSid = $alice.Sid
+    AccountUpn = $alice.Upn
+    InitiatingProcessAccountDomain = $linux03.ShortName
+    InitiatingProcessAccountName = $linuxAdminUser
+    InitiatingProcessAccountSid = $alice.Sid
+    InitiatingProcessAccountUpn = $alice.Upn
+    InitiatingProcessFileName = 'bash'
+    InitiatingProcessFolderPath = '/usr/bin/bash'
+    InitiatingProcessCommandLine = '-bash'
+    InitiatingProcessParentFileName = 'sshd'
+    ReportId = 860070
+    AdditionalFields = '{"Technique":"T1059.006","CveContext":"CVE-2025-32463","Scenario":"Synthetic Python privilege-escalation helper"}'
+}
+Add-Record -Table 'DeviceFileEvents' -Time $StartTime.AddMinutes(71) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(71)
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    ActionType = 'FileCreated'
+    FileName = 'ora_collect_linux_amd64'
+    FolderPath = '/tmp/.cache/ora_collect_linux_amd64'
+    FileSize = 1867776
+    InitiatingProcessAccountDomain = $linux03.ShortName
+    InitiatingProcessAccountName = $linuxAdminUser
+    InitiatingProcessAccountSid = $alice.Sid
+    InitiatingProcessAccountUpn = $alice.Upn
+    InitiatingProcessFileName = 'python3'
+    InitiatingProcessCommandLine = 'python3 /tmp/.cache/oracle_privcheck.py --check sudo-cve-2025-32463 --target oracle'
+    InitiatingProcessCreationTime = Format-WorkshopTime $StartTime.AddMinutes(70)
+    ReportId = 860071
+    AdditionalFields = '{"Scenario":"Synthetic Go Oracle collection binary staged","Language":"Go"}'
+}
+Add-Record -Table 'DeviceProcessEvents' -Time $StartTime.AddMinutes(72) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(72)
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    ActionType = 'ProcessCreated'
+    FileName = 'ora_collect_linux_amd64'
+    FolderPath = '/tmp/.cache/ora_collect_linux_amd64'
+    ProcessId = 18672
+    ProcessCommandLine = '/tmp/.cache/ora_collect_linux_amd64 --target 10.42.20.35:1521 --service ORCL --query-name finance-user-catalog'
+    ProcessCreationTime = Format-WorkshopTime $StartTime.AddMinutes(72)
+    ProcessIntegrityLevel = 'Unknown'
+    ProcessTokenElevation = 'None'
+    AccountDomain = $linux03.ShortName
+    AccountName = 'root'
+    AccountSid = '0'
+    AccountUpn = ''
+    InitiatingProcessAccountDomain = $linux03.ShortName
+    InitiatingProcessAccountName = $linuxAdminUser
+    InitiatingProcessAccountSid = $alice.Sid
+    InitiatingProcessAccountUpn = $alice.Upn
+    InitiatingProcessFileName = 'sudo'
+    InitiatingProcessFolderPath = '/usr/bin/sudo'
+    InitiatingProcessCommandLine = 'sudo -R /tmp/.cache/nss /bin/bash -p'
+    InitiatingProcessParentFileName = 'python3'
+    ReportId = 860072
+    AdditionalFields = '{"Technique":"T1005","Language":"Go","OriginalUser":"aliceweber","Scenario":"Oracle sensitive data collection over TNS"}'
+}
+Add-Record -Table 'DeviceNetworkEvents' -Time $StartTime.AddMinutes(72) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(72)
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    ActionType = 'ConnectionSuccess'
+    LocalIP = $linux03.IP
+    LocalPort = 50152
+    RemoteIP = $linuxDb.IP
+    RemoteUrl = $linuxDb.Name
+    RemotePort = 1521
+    Protocol = 'Tcp'
+    InitiatingProcessFileName = 'ora_collect_linux_amd64'
+    InitiatingProcessCommandLine = '/tmp/.cache/ora_collect_linux_amd64 --target 10.42.20.35:1521 --service ORCL --query-name finance-user-catalog'
+    InitiatingProcessAccountDomain = $linux03.ShortName
+    InitiatingProcessAccountName = 'root'
+    ReportId = 8600721
+    AdditionalFields = '{"Protocol":"Oracle TNS","Scenario":"Oracle database access from compromised Linux host"}'
+}
+Add-Record -Table 'DeviceProcessEvents' -Time $StartTime.AddMinutes(73) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(73)
+    DeviceId = $linuxDb.DeviceId
+    DeviceName = $linuxDb.Name
+    ActionType = 'ProcessCreated'
+    FileName = 'oracle'
+    FolderPath = '/opt/oracle/product/19c/dbhome_1/bin/oracle'
+    ProcessId = 19173
+    ProcessCommandLine = 'oracleORCL (LOCAL=NO)'
+    ProcessCreationTime = Format-WorkshopTime $StartTime.AddMinutes(73)
+    ProcessIntegrityLevel = 'Unknown'
+    ProcessTokenElevation = 'None'
+    AccountDomain = $linuxDb.ShortName
+    AccountName = 'oracle'
+    InitiatingProcessAccountDomain = $linuxDb.ShortName
+    InitiatingProcessAccountName = 'oracle'
+    InitiatingProcessFileName = 'tnslsnr'
+    InitiatingProcessFolderPath = '/opt/oracle/product/19c/dbhome_1/bin/tnslsnr'
+    InitiatingProcessCommandLine = 'tnslsnr LISTENER -inherit'
+    InitiatingProcessParentFileName = 'systemd'
+    ReportId = 860073
+    AdditionalFields = '{"Scenario":"Oracle foreground process spawned for remote TNS session","OracleSid":"ORCL"}'
+}
+Add-Record -Table 'DeviceFileEvents' -Time $StartTime.AddMinutes(74) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(74)
+    DeviceId = $linuxDb.DeviceId
+    DeviceName = $linuxDb.Name
+    ActionType = 'FileCreated'
+    FileName = 'finance_user_catalog.csv'
+    FolderPath = '/tmp/.oracle/finance_user_catalog.csv'
+    FileSize = 245760
+    InitiatingProcessAccountDomain = $linuxDb.ShortName
+    InitiatingProcessAccountName = 'oracle'
+    InitiatingProcessFileName = 'oracle'
+    InitiatingProcessCommandLine = 'oracleORCL (LOCAL=NO)'
+    InitiatingProcessCreationTime = Format-WorkshopTime $StartTime.AddMinutes(73)
+    ReportId = 860074
+    AdditionalFields = '{"Technique":"T1005","Scenario":"Synthetic Oracle sensitive data export","SourcePath":"/u01/app/oracle/oradata/ORCL"}'
+}
+Add-Record -Table 'AlertInfo' -Time $StartTime.AddMinutes(74) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(74)
+    AlertId = 'LINUX-002'
+    Title = 'Linux privilege escalation followed by Oracle data access'
+    Category = 'Collection'
+    Severity = 'High'
+    ServiceSource = 'Microsoft Defender for Endpoint'
+    DetectionSource = 'MDE sensor'
+    AttackTechniques = 'T1548.003,T1059.006,T1005'
+}
+Add-Record -Table 'AlertEvidence' -Time $StartTime.AddMinutes(74) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(74)
+    AlertId = 'LINUX-002'
+    Title = 'Linux privilege escalation followed by Oracle data access'
+    Categories = '["Collection","PrivilegeEscalation"]'
+    AttackTechniques = 'T1548.003,T1059.006,T1005'
+    ServiceSource = 'Microsoft Defender for Endpoint'
+    DetectionSource = 'MDE sensor'
+    EntityType = 'Process'
+    EvidenceRole = 'Impacted'
+    EvidenceDirection = 'Source'
+    FileName = 'ora_collect_linux_amd64'
+    FolderPath = '/tmp/.cache/ora_collect_linux_amd64'
+    AccountName = 'root'
+    AccountDomain = $linux03.ShortName
+    AccountSid = '0'
+    AccountObjectId = ''
+    AccountUpn = ''
+    DeviceId = $linux03.DeviceId
+    DeviceName = $linux03.Name
+    LocalIP = $linux03.IP
+    ProcessCommandLine = '/tmp/.cache/ora_collect_linux_amd64 --target 10.42.20.35:1521 --service ORCL --query-name finance-user-catalog'
+    AdditionalFields = '{"OSProfile":"Ubuntu","Language":"Go","OriginalUser":"aliceweber","Database":"Oracle ORCL","SensitiveData":"Synthetic finance user catalog"}'
+    Severity = 'High'
+}
 $linuxScenarioVulnerabilities = @(
     [pscustomobject]@{ Minute = 62; SoftwareName = 'openssh-server'; SoftwareVendor = 'OpenBSD'; SoftwareVersion = '1:9.6p1-3ubuntu13.5'; CveId = 'CVE-2024-6387'; Severity = 'High'; Update = 'Install patched openssh-server package' },
     [pscustomobject]@{ Minute = 66; SoftwareName = 'sudo'; SoftwareVendor = 'Sudo Project'; SoftwareVersion = '1.9.15p5-3ubuntu5.24.04.1'; CveId = 'CVE-2025-32463'; Severity = 'High'; Update = 'Install patched sudo package' },
@@ -1561,6 +1745,8 @@ $summary = [ordered]@{
         [ordered]@{ Title = 'Suspicious SSH attempts against Ubuntu server'; Technique = 'T1021.004'; Offset = 61; Command = 'sshd authentication activity in /var/log/auth.log' }
         [ordered]@{ Title = 'Suspicious sudo chroot usage on Ubuntu server'; Technique = 'T1548.003'; Offset = 65; Command = 'sudo -R /tmp/.cache/nss /bin/bash -p' }
         [ordered]@{ Title = 'Unix shell and auditd evidence on Ubuntu server'; Technique = 'T1059.004'; Offset = 68; Command = 'auditd process execution evidence for sudo and bash' }
+        [ordered]@{ Title = 'Synthetic Python privilege-check helper on Ubuntu server'; Technique = 'T1059.006'; Offset = 70; Command = 'python3 /tmp/.cache/oracle_privcheck.py --check sudo-cve-2025-32463 --target oracle' }
+        [ordered]@{ Title = 'Synthetic Go binary accesses Oracle database over TNS'; Technique = 'T1005'; Offset = 72; Command = '/tmp/.cache/ora_collect_linux_amd64 --target 10.42.20.35:1521 --service ORCL --query-name finance-user-catalog' }
     )
 }
 

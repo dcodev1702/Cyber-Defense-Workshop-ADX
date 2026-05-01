@@ -150,6 +150,8 @@ else {
         SharedObject = 0
         SshOrSudo = 0
         Vulnerability = 0
+        PythonOrGo = 0
+        OracleAccess = 0
     }
     $linuxCves = @(
         'CVE-2024-6387',
@@ -206,6 +208,12 @@ else {
                 if ($value -match '\b(sshd|ssh|sudo|auditd|apt|dpkg|bash)\b') {
                     $linuxEvidence.SshOrSudo++
                 }
+                if ($value -match '\b(python3|\.py|ora_collect_linux_amd64)\b') {
+                    $linuxEvidence.PythonOrGo++
+                }
+                if ($value -match '(oracle|ORCL|1521|/u01/app/oracle|/opt/oracle)' ) {
+                    $linuxEvidence.OracleAccess++
+                }
             }
 
             if ($table -eq 'DeviceLogonEvents') {
@@ -238,6 +246,12 @@ else {
         }
         if ($linuxEvidence.Vulnerability -eq 0) {
             Add-TestError 'Linux validation expected at least one Linux TVM CVE row.'
+        }
+        if ($linuxEvidence.PythonOrGo -eq 0) {
+            Add-TestError 'Linux validation expected Python or Go-style Linux tooling evidence.'
+        }
+        if ($linuxEvidence.OracleAccess -eq 0) {
+            Add-TestError 'Linux validation expected Oracle database access evidence.'
         }
     }
 }

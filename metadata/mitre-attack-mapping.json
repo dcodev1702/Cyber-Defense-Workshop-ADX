@@ -113,6 +113,22 @@
       "techniqueId": "T1059.004",
       "techniqueName": "Command and Scripting Interpreter: Unix Shell",
       "primaryTables": ["DeviceProcessEvents", "DeviceEvents", "DeviceFileEvents"]
+    },
+    {
+      "scenarioMinute": 70,
+      "attackVector": "Synthetic Python privilege-check helper on Ubuntu server",
+      "tactic": "Execution",
+      "techniqueId": "T1059.006",
+      "techniqueName": "Command and Scripting Interpreter: Python",
+      "primaryTables": ["DeviceProcessEvents", "DeviceFileEvents", "AlertInfo", "AlertEvidence"]
+    },
+    {
+      "scenarioMinute": 72,
+      "attackVector": "Synthetic Go binary accesses Oracle database over TNS",
+      "tactic": "Collection",
+      "techniqueId": "T1005",
+      "techniqueName": "Data from Local System",
+      "primaryTables": ["DeviceProcessEvents", "DeviceNetworkEvents", "DeviceFileEvents", "AlertInfo", "AlertEvidence"]
     }
   ]
 }

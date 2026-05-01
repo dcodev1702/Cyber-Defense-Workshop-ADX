@@ -13,7 +13,7 @@
 
 Start with the sign-in. Students should find a high-risk interactive sign-in for `victor.alvarez@usag-cyber.local` from `185.225.73.18`, followed by OAuth consent and Graph enumeration. The endpoint pivot is `WIN11-04.usag-cyber.local`. The credential-access chain begins with PowerShell staging and progresses through registry credential discovery, SAM hive save, browser database copy, Kerberoasting, LSASS dump, password-store harvesting, and Mimikatz-style credential dumping. The identity pivot is the service account `svc_sql`, which is later used against `AADCONNECT01`.
 
-Use the Ubuntu branch as an optional comparison pivot after the Windows path is understood. Students should see that `UBUNTU-03.usag-cyber.local` emits MDE device telemetry, not MDI telemetry: SSH/PAM logons in `DeviceLogonEvents`, `sudo` and shell execution in `DeviceProcessEvents`, audit artifacts in `DeviceEvents` and `DeviceFileEvents`, Linux `.so` image loads in `DeviceImageLoadEvents`, CUPS/IPP network context in `DeviceNetworkEvents`, and Linux package/CVE context in TVM tables.
+Use the Ubuntu branch as an optional comparison pivot after the Windows path is understood. Students should see that `UBUNTU-03.usag-cyber.local` emits MDE device telemetry, not MDI telemetry: SSH/PAM logons in `DeviceLogonEvents`, `sudo` and shell execution in `DeviceProcessEvents`, audit artifacts in `DeviceEvents` and `DeviceFileEvents`, Linux `.so` image loads in `DeviceImageLoadEvents`, CUPS/IPP network context in `DeviceNetworkEvents`, and Linux package/CVE context in TVM tables. The additive Oracle branch stages a synthetic Python helper and Go binary on `UBUNTU-03`, connects to Oracle TNS on `UBUNTU-05:1521`, and creates a synthetic sensitive export under `/tmp/.oracle`.
 
 ## Expected key findings
 
@@ -30,6 +30,7 @@ Use the Ubuntu branch as an optional comparison pivot after the Windows path is 
 | Password-store harvesting | Process events show PwDump7, gsecdump, LaZagne, and Mimikatz-style tools |
 | Lateral movement | `DeviceLogonEvents` and `IdentityLogonEvents` show `svc_sql` remote logon to `AADCONNECT01` |
 | Linux SSH/sudo branch | `DeviceLogonEvents`, `DeviceProcessEvents`, `DeviceEvents`, `DeviceImageLoadEvents`, `DeviceNetworkEvents`, and TVM tables show Ubuntu SSH, sudo, auditd, CUPS/IPP, `.so`, and package/CVE context |
+| Linux Oracle branch | `DeviceProcessEvents`, `DeviceNetworkEvents`, `DeviceFileEvents`, `AlertInfo`, and `AlertEvidence` show Python/Go tooling, Oracle TNS access on TCP/1521, and a synthetic sensitive export |
 
 ## Facilitation tips
 
@@ -46,3 +47,4 @@ Use the Ubuntu branch as an optional comparison pivot after the Windows path is 
 4. What prevention or hardening would have reduced the blast radius?
 5. What detections would you operationalize after this hunt?
 6. How does Linux MDE telemetry differ from Windows endpoint and MDI identity telemetry?
+7. Which Linux evidence distinguishes ordinary SSH administration from privilege escalation and Oracle data collection?

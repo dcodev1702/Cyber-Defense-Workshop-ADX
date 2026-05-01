@@ -32,9 +32,9 @@ Notional infrastructure:
 - 1 x Entra Connect server with MDI/MDE-relevant identity telemetry
 - Hybrid Active Directory and Microsoft Entra ID environment (6K users / 4K service accounts)
 
-Linux servers are modeled as **MDE-onboarded Ubuntu hosts only**. They do not emit MDI sensor telemetry; MDI remains scoped to supported Windows Server domain controllers and identity-role servers.
+Linux servers are modeled as **MDE-onboarded Ubuntu hosts only**. They do not emit MDI sensor telemetry; MDI remains scoped to supported Windows Server domain controllers and identity-role servers. The optional Linux branch includes SSH/sudo privilege-escalation context, synthetic Python and Go tooling, and Oracle TNS access to a notional Oracle database on `UBUNTU-05`.
 
-The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including `T1552.002`, `T1003.002`, `T1555.003`, `T1558.003`, `T1003.001`, and `T1555`.
+The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including `T1552.002`, `T1003.002`, `T1555.003`, `T1558.003`, `T1003.001`, and `T1555`. Additive Linux techniques include `T1021.004`, `T1548.003`, `T1059.004`, `T1059.006`, and `T1005`.
 
 ## Artifact index
 
@@ -98,7 +98,35 @@ $securitySubscription = Get-AzSubscription -SubscriptionName 'Security'
   -OverwriteDatabase
 ```
 
-After the database exists, the deploy script creates or updates table schemas and ingestion mappings, validates that all expected tables exist, generates synthetic telemetry, and ingests the scenario data.
+After the database exists, the deploy script creates or updates table schemas and ingestion mappings, validates that all expected tables exist, generates synthetic telemetry, and ingests the scenario data. Generated telemetry is written outside the repo by default to `%TEMP%\CyberDefenseKqlWorkshop\<database>\generated`, and the script prints that cache path at the end of the run.
+
+Use `-TelemetryImport New` to regenerate all synthetic telemetry before ingestion. Use `-TelemetryImport Existing -DataDirectory <path>` to skip generation and reimport previously generated JSON files:
+
+```powershell
+$securitySubscription = Get-AzSubscription -SubscriptionName 'Security'
+
+.\scripts\Initialize-Workshop.ps1 `
+  -SubscriptionId $securitySubscription.Id `
+  -ResourceGroupName 'ADX' `
+  -ClusterName 'dibsecadx' `
+  -DatabaseName 'CyberDefenseKqlWorkshop' `
+  -TelemetryImport Existing `
+  -DataDirectory "$env:TEMP\CyberDefenseKqlWorkshop\CyberDefenseKqlWorkshop\generated" `
+  -ForceRecreateTables
+```
+
+You can also reimport directly into an existing database if the tables already exist:
+
+```powershell
+.\scripts\Import-SyntheticTelemetry.ps1 `
+  -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' `
+  -DatabaseName 'CyberDefenseKqlWorkshop' `
+  -SchemaDirectory .\schemas `
+  -DataDirectory "$env:TEMP\CyberDefenseKqlWorkshop\CyberDefenseKqlWorkshop\generated" `
+  -ClearExistingData
+```
+
+Delete the cache after the workshop with `Remove-Item -Recurse -Force "$env:TEMP\CyberDefenseKqlWorkshop\CyberDefenseKqlWorkshop"` when you no longer need fast reimports.
 
 By default, deployment generates **5,000-10,000 final records per table** across a seven-day lookback ending at the time the script runs, including the malicious FIN7-inspired storyline so suspicious records blend into normal telemetry. Tune volume with:
 
