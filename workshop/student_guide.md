@@ -20,20 +20,9 @@ If you've used Linux shell pipes (`grep | awk | sort`), KQL will feel familiar. 
 - A **pipe** (`|`) hands all the rows from one step to the next.
 - An **operator** does something to those rows: filter them (`where`), pick columns (`project`), count them (`summarize`), sort them (`order by`).
 
-The five operators you'll use the most:
+The five operators you'll use the most — plus the two bits of syntax that show up everywhere:
 
-| Operator | What it does | Example |
-| --- | --- | --- |
-| `where` | Keep only the rows that match a condition | `| where FileName == "powershell.exe"` |
-| `project` | Keep only the columns you want to see | `| project Timestamp, DeviceName, FileName` |
-| `summarize` | Group rows together and aggregate them (count, sum, etc.) | `| summarize Count = count() by DeviceName` |
-| `order by` | Sort the rows | `| order by Timestamp asc` |
-| `join` | Stitch two tables together on a shared column | `| join AlertEvidence on AlertId` |
-
-Two more bits of syntax to know:
-
-- `==` means "exactly equals" (case-sensitive). Use `=~` for case-insensitive.
-- `has` means "contains the word" (e.g., `ProcessCommandLine has "kerberoast"`).
+![KQL primer — the 5 operators and 2 syntax bits you'll use most](../images/kql-primer.svg)
 
 That's the entire foundation. Everything else is detail.
 

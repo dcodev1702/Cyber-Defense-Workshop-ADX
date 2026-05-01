@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 660" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <!-- Outer frame -->
+  <rect x="20" y="20" width="1060" height="620" rx="14" fill="#0b1220" stroke="#1f2937" stroke-width="1.5"/>
+
+  <!-- Title -->
+  <text x="550" y="58" text-anchor="middle" fill="#f1f5f9" font-size="19" font-weight="700">KQL — The 5 Operators You'll Use the Most</text>
+  <text x="550" y="80" text-anchor="middle" fill="#94a3b8" font-size="12">Memorize these and you'll read 90% of the queries in this workshop · examples below come straight from the lab</text>
+
+  <!-- ============ MAIN OPERATOR CARD ============ -->
+  <g>
+    <rect x="50" y="110" width="1000" height="385" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+
+    <!-- Column hint headers -->
+    <text x="80" y="138" fill="#64748b" font-size="10" font-weight="700" letter-spacing="2">OPERATOR</text>
+    <text x="240" y="138" fill="#64748b" font-size="10" font-weight="700" letter-spacing="2">WHAT IT DOES &amp; EXAMPLE</text>
+
+    <!-- Row 1: where -->
+    <line x1="50" y1="155" x2="1050" y2="155" stroke="#1e293b" stroke-width="1"/>
+    <rect x="50" y="155" width="3" height="65" fill="#475569"/>
+    <text x="80" y="190" fill="#f1f5f9" font-size="16" font-weight="700" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">where</text>
+    <text x="240" y="180" fill="#cbd5e1" font-size="13">Keep only the rows that match a condition</text>
+    <text x="240" y="205" fill="#94a3b8" font-size="12" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace"><tspan fill="#64748b">▸</tspan> DeviceProcessEvents | where FileName == "powershell.exe"</text>
+
+    <!-- Row 2: project -->
+    <line x1="50" y1="220" x2="1050" y2="220" stroke="#1e293b" stroke-width="1"/>
+    <rect x="50" y="220" width="3" height="65" fill="#475569"/>
+    <text x="80" y="255" fill="#f1f5f9" font-size="16" font-weight="700" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">project</text>
+    <text x="240" y="245" fill="#cbd5e1" font-size="13">Keep only the columns you want to see</text>
+    <text x="240" y="270" fill="#94a3b8" font-size="12" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace"><tspan fill="#64748b">▸</tspan> ... | project Timestamp, DeviceName, FileName, ProcessCommandLine</text>
+
+    <!-- Row 3: summarize -->
+    <line x1="50" y1="285" x2="1050" y2="285" stroke="#1e293b" stroke-width="1"/>
+    <rect x="50" y="285" width="3" height="65" fill="#475569"/>
+    <text x="80" y="320" fill="#f1f5f9" font-size="16" font-weight="700" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">summarize</text>
+    <text x="240" y="310" fill="#cbd5e1" font-size="13">Group rows together and aggregate them (count, sum, etc.)</text>
+    <text x="240" y="335" fill="#94a3b8" font-size="12" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace"><tspan fill="#64748b">▸</tspan> ... | summarize Count = count() by DeviceName</text>
+
+    <!-- Row 4: order by -->
+    <line x1="50" y1="350" x2="1050" y2="350" stroke="#1e293b" stroke-width="1"/>
+    <rect x="50" y="350" width="3" height="65" fill="#475569"/>
+    <text x="80" y="385" fill="#f1f5f9" font-size="16" font-weight="700" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">order by</text>
+    <text x="240" y="375" fill="#cbd5e1" font-size="13">Sort the rows</text>
+    <text x="240" y="400" fill="#94a3b8" font-size="12" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace"><tspan fill="#64748b">▸</tspan> ... | order by Timestamp desc</text>
+
+    <!-- Row 5: join -->
+    <line x1="50" y1="415" x2="1050" y2="415" stroke="#1e293b" stroke-width="1"/>
+    <rect x="50" y="415" width="3" height="65" fill="#475569"/>
+    <text x="80" y="450" fill="#f1f5f9" font-size="16" font-weight="700" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">join</text>
+    <text x="240" y="440" fill="#cbd5e1" font-size="13">Stitch two tables together on a shared column</text>
+    <text x="240" y="465" fill="#94a3b8" font-size="12" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace"><tspan fill="#64748b">▸</tspan> AlertInfo | join kind=inner AlertEvidence on AlertId</text>
+  </g>
+
+  <!-- ============ "TWO MORE BITS" SECTION ============ -->
+  <text x="50" y="525" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="2">— TWO MORE BITS OF SYNTAX TO KNOW</text>
+
+  <!-- Syntax card 1: == vs =~ -->
+  <g>
+    <rect x="50" y="540" width="490" height="90" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <rect x="50" y="540" width="3" height="90" fill="#475569"/>
+
+    <text x="75" y="568" fill="#f1f5f9" font-size="15" font-weight="700" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">==  vs  =~</text>
+    <text x="75" y="592" fill="#cbd5e1" font-size="12"><tspan font-family="ui-monospace, monospace" font-weight="700">==</tspan> means "exactly equals" (case-sensitive).</text>
+    <text x="75" y="610" fill="#cbd5e1" font-size="12">Use <tspan font-family="ui-monospace, monospace" font-weight="700">=~</tspan> for case-insensitive equality.</text>
+  </g>
+
+  <!-- Syntax card 2: has -->
+  <g>
+    <rect x="560" y="540" width="490" height="90" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <rect x="560" y="540" width="3" height="90" fill="#475569"/>
+
+    <text x="585" y="568" fill="#f1f5f9" font-size="15" font-weight="700" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">has</text>
+    <text x="585" y="592" fill="#cbd5e1" font-size="12">Means "contains the word" (whole-word match).</text>
+    <text x="585" y="610" fill="#94a3b8" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace"><tspan fill="#64748b">▸</tspan> ProcessCommandLine has "kerberoast"</text>
+  </g>
+</svg>
