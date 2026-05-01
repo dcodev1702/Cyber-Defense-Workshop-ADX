@@ -136,10 +136,6 @@ The package creates 48 tables from Microsoft Learn-derived schema JSON. The 21 t
 
 ![Key tables by Microsoft platform](images/key-tables.svg)
 
-## Schema note
-
-`DeviceAlertEvents` is not created because Microsoft Learn documents `AlertInfo` and `AlertEvidence` as its Microsoft Defender XDR replacement. `DeviceInternetFacing` and `DeviceScriptEvents` did not expose stable public schema pages during generation, so the workshop represents related telemetry through `DeviceInfo`, `DeviceNetworkEvents`, and the alert tables.
-
 ## Prerequisites
 
 To deploy and run the workshop, you need:
