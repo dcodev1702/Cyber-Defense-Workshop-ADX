@@ -1,4 +1,4 @@
-# Student Guide — Cyber Defense KQL Workshop
+# 🚀 Student Guide — Cyber Defense KQL Workshop
 
 Welcome. Over the next two hours you're going to investigate a credential-access intrusion against a notional company called **Wiesbaden Research**. You'll do it the way a real Defender XDR analyst would — by writing KQL queries against telemetry already loaded into Azure Data Explorer (ADX). No live attack, no production systems, just you, the data, and a story to uncover.
 
@@ -38,7 +38,7 @@ Your job is to find every step. Let's go.
 
 ---
 
-## Act 0 — Are we connected?
+## 🔌 Act 0 — Are we connected?
 
 Before anything else, confirm you can see the data. Open the ADX Web UI, make sure the database `CyberDefenseKqlWorkshop` is selected in the left panel, and run this:
 
@@ -63,7 +63,7 @@ You should get nine rows back, one per table, each with a row count. If a table 
 
 ---
 
-## Act 1 — Know your terrain
+## 🧭 Act 1 — Know your terrain
 
 Before chasing the attacker, let's understand the lab. Where do hosts live? What's high value?
 
@@ -85,7 +85,7 @@ You'll see:
 
 ---
 
-## Act 2 — Find the suspicious sign-in
+## 🔎 Act 2 — Find the suspicious sign-in
 
 The intrusion starts in the cloud. An identity provider sees the attacker first, before any endpoint does. So that's where we start.
 
@@ -116,7 +116,7 @@ You'll use all three about ten more times today.
 
 ---
 
-## Act 3 — Follow the IP, not just the user
+## 🌐 Act 3 — Follow the IP, not just the user
 
 The same IP that did the suspicious sign-in might have done other things in the same minute. Let's check OAuth consent and Graph API activity.
 
@@ -172,7 +172,7 @@ You'll see the app pulling Victor's mailbox messages, his OneDrive root, and the
 
 ---
 
-## Act 4 — Land on the endpoint
+## 💻 Act 4 — Land on the endpoint
 
 The attacker has cloud access. Now they need a foothold. We know the compromised user — let's see what *their* endpoint did.
 
@@ -192,7 +192,7 @@ You'll see process activity on **`WIN11-04.corp.wiesbaden.example`** starting ar
 
 ---
 
-## Act 5 — The credential-access playbook
+## 🔐 Act 5 — The credential-access playbook
 
 This is the meat of the intrusion. The attacker ran nearly a dozen credential-access tools, each mapped to a MITRE ATT&CK technique. We don't need to know the names of all of them — we just need to spot the patterns.
 
@@ -226,7 +226,7 @@ Read down the result set. You'll see ten distinct credential-access actions, eac
 
 ---
 
-## Act 6 — Find the artifacts they left behind
+## 🧾 Act 6 — Find the artifacts they left behind
 
 Processes are ephemeral. The files and registry values they create stick around. Two queries — one for registry, one for filesystem.
 
@@ -263,7 +263,7 @@ You'll see the smoking guns dropped into `C:\ProgramData\wrstage`:
 
 ---
 
-## Act 7 — Confirm Kerberoasting from the identity side
+## 🎟 Act 7 — Confirm Kerberoasting from the identity side
 
 The endpoint told us `Rubeus` ran. But did the domain controller actually issue Kerberos tickets? That's where MDI telemetry comes in.
 
@@ -293,7 +293,7 @@ Look for the row where `victor.alvarez` requests a service ticket targeting `SQL
 
 ---
 
-## Act 8 — The lateral move
+## 🚪 Act 8 — The lateral move
 
 A cracked service account is only useful if the attacker can *use* it somewhere. Let's see if `svc_sql` showed up where it shouldn't.
 
@@ -310,7 +310,7 @@ You should see `svc_sql` performing a `RemoteInteractive` (WinRM) logon to `AADC
 
 ---
 
-## Act 9 — Connect the alerts to the evidence
+## 🚨 Act 9 — Connect the alerts to the evidence
 
 Defender XDR raised five alerts during this incident. Each alert is a one-line summary in `AlertInfo`, with the gory details in `AlertEvidence`. To get the full picture, we **join** them.
 
@@ -341,7 +341,7 @@ You'll get one row per piece of evidence per alert — about 5 rows total — an
 
 ---
 
-## Act 10 — Build the timeline
+## 🕒 Act 10 — Build the timeline
 
 Final exercise. We've collected evidence from four different telemetry sources — endpoint processes, identity queries, cloud OAuth events, and alerts. Let's stitch them into one chronological story.
 
