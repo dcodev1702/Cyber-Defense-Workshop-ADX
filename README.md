@@ -100,7 +100,7 @@ $securitySubscription = Get-AzSubscription -SubscriptionName 'Security'
 
 After the database exists, the deploy script creates or updates table schemas and ingestion mappings, validates that all expected tables exist, generates synthetic telemetry, and ingests the scenario data. Generated telemetry is written outside the repo by default to `%TEMP%\CyberDefenseKqlWorkshop\<database>\generated`, and the script prints that cache path at the end of the run.
 
-Use `-TelemetryImport New` to regenerate all synthetic telemetry before ingestion. Use `-TelemetryImport Existing -DataDirectory <path>` to skip generation and reimport previously generated JSON files:
+Use `-TelemetryImport New` to regenerate all synthetic telemetry before ingestion, including the synthetic identity corpus. Use `-TelemetryImport Existing -DataDirectory <path>` to skip generation and reimport previously generated JSON files:
 
 ```powershell
 $securitySubscription = Get-AzSubscription -SubscriptionName 'Security'
@@ -114,6 +114,8 @@ $securitySubscription = Get-AzSubscription -SubscriptionName 'Security'
   -DataDirectory "$env:TEMP\CyberDefenseKqlWorkshop\CyberDefenseKqlWorkshop\generated" `
   -ForceRecreateTables
 ```
+
+Existing mode reuses the cached `IdentityInfo.json` and `IdentityAccountInfo.json` files, so the 6,000 synthetic users and 4,000 synthetic service accounts do **not** need to be regenerated for a reimport. The driver validates that every expected table JSON file exists in the cache and prints the identity row counts before ingestion.
 
 You can also reimport directly into an existing database if the tables already exist:
 

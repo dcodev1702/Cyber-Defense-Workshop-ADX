@@ -35,6 +35,19 @@ if ($SkipDatabaseCreate -and $OverwriteDatabase) {
     throw '-OverwriteDatabase cannot be used with -SkipDatabaseCreate because database creation is skipped.'
 }
 
+function Get-WorkshopNdjsonRowCount {
+    param([Parameter(Mandatory)][string]$Path)
+
+    $count = 0
+    foreach ($line in [System.IO.File]::ReadLines((Resolve-Path -Path $Path).Path)) {
+        if (-not [string]::IsNullOrWhiteSpace($line)) {
+            $count++
+        }
+    }
+
+    return $count
+}
+
 $schemaDirectory = Join-Path $PSScriptRoot '..\schemas'
 $requestedDatabaseName = $DatabaseName
 $dataDirectoryWasProvided = -not [string]::IsNullOrWhiteSpace($DataDirectory)
@@ -152,6 +165,27 @@ if ($TelemetryImport -eq 'Existing') {
     if (-not (Get-ChildItem -Path $DataDirectory -Filter '*.json' -File -ErrorAction SilentlyContinue)) {
         throw "Generated telemetry directory does not contain JSON telemetry files: $DataDirectory"
     }
+
+    $missingTelemetryFiles = New-Object System.Collections.Generic.List[string]
+    foreach ($schemaFile in (Get-ChildItem -Path $schemaDirectory -Filter '*.schema.json')) {
+        $tableName = $schemaFile.Name -replace '\.schema\.json$', ''
+        $telemetryFilePath = Join-Path $DataDirectory "$tableName.json"
+        if (-not (Test-Path $telemetryFilePath)) {
+            $missingTelemetryFiles.Add("$tableName.json") | Out-Null
+        }
+    }
+    if ($missingTelemetryFiles.Count -gt 0) {
+        throw "Generated telemetry directory is missing required table files: $($missingTelemetryFiles -join ', ')"
+    }
+
+    $identityInfoPath = Join-Path $DataDirectory 'IdentityInfo.json'
+    $identityAccountInfoPath = Join-Path $DataDirectory 'IdentityAccountInfo.json'
+    $identityInfoRows = Get-WorkshopNdjsonRowCount -Path $identityInfoPath
+    $identityAccountInfoRows = Get-WorkshopNdjsonRowCount -Path $identityAccountInfoPath
+    if ($identityInfoRows -eq 0 -or $identityAccountInfoRows -eq 0) {
+        throw "Existing telemetry cache must include non-empty IdentityInfo.json and IdentityAccountInfo.json files."
+    }
+    Write-Host "Existing identity cache: IdentityInfo=$identityInfoRows row(s); IdentityAccountInfo=$identityAccountInfoRows row(s)."
 }
 
 & (Join-Path $PSScriptRoot 'Initialize-AdxTables.ps1') -ClusterUri $ClusterUri -DatabaseName $DatabaseName -SchemaDirectory $schemaDirectory -ForceRecreate:$ForceRecreateTables
