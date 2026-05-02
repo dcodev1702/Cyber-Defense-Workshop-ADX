@@ -124,9 +124,6 @@ DeviceProcessEvents
 | where AccountUpn =~ compromisedUser
 | where Timestamp between (firstRiskySignin .. firstRiskySignin + 12h)
 | where DeviceName has "WIN11-04"
-| where FolderPath has @"C:\ProgramData\wrstage"
-   or ProcessCommandLine has_any ("wrstage", "collect-reg-creds", "ExecutionPolicy Bypass", "kerberoast", "sam.save", "LoginData", "lsass", "mimikatz", "PwDump7", "gsecdump", "LaZagne")
-   or AdditionalFields has_any ("T1552.002", "T1003.001", "T1003.002", "T1555", "T1555.003", "T1558.003")
 | project Timestamp, DeviceName, AccountUpn, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields
 | order by Timestamp asc
 

@@ -328,6 +328,20 @@ GraphApiAuditEvents
 | order by Timestamp asc
 '@
 
+$compromisedUserEndpointActivityQuery = @'
+let compromisedUser = "victor.alvarez@usag-cyber.local";
+let firstRiskySignin =
+    toscalar(SigninLogs
+    | where UserPrincipalName =~ compromisedUser and IsRisky == true
+    | summarize min(TimeGenerated));
+DeviceProcessEvents
+| where AccountUpn =~ compromisedUser
+| where Timestamp between (firstRiskySignin .. firstRiskySignin + 12h)
+| where DeviceName has "WIN11-04"
+| project Timestamp, DeviceName, AccountUpn, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields
+| order by Timestamp asc
+'@
+
 $loginOutcomesQuery = @'
 let Logons = union isfuzzy=true
 (SigninLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Timestamp=TimeGenerated, Source='Interactive Entra', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
@@ -478,6 +492,7 @@ $tiles.Add((New-Tile -Title 'Privileged / high-risk identities' -Query $privileg
 $tiles.Add((New-Tile -Title 'Entra ID - Application Consent' -Query $entraApplicationConsentQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 18 -Width 12 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Risky OAuth Consent' -Query $riskyOAuthConsentQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 25 -Width 6 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Risky User - Graph API Calls' -Query $riskyUserGraphApiCallsQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'table' -X 6 -Y 25 -Width 6 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Compromised User - Endpoint Activity' -Query $compromisedUserEndpointActivityQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 32 -Width 12 -Height 8 -VisualOptions (New-TableOptions) -UsedParamVariables @())) | Out-Null
 
 $tiles.Add((New-Tile -Title 'Top network destinations' -Query $topNetworkDestinationsQuery -PageId $networkPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 0 -Width 7 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Network connections by process' -Query $networkByProcessQuery -PageId $networkPageId -DataSourceId $dataSourceId -VisualType 'bar' -X 7 -Y 0 -Width 5 -Height 7 -VisualOptions (New-ChartOptions -YAxisLabel 'Connections'))) | Out-Null

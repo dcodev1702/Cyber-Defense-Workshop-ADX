@@ -726,6 +726,25 @@
       ]
     },
     {
+      "id": "15fc4c9e-c06b-8165-7001-863477f295fd",
+      "title": "Compromised User - Endpoint Activity",
+      "query": "let compromisedUser = \"victor.alvarez@usag-cyber.local\";\r\nlet firstRiskySignin =\r\n    toscalar(SigninLogs\r\n    | where UserPrincipalName =~ compromisedUser and IsRisky == true\r\n    | summarize min(TimeGenerated));\r\nDeviceProcessEvents\r\n| where AccountUpn =~ compromisedUser\r\n| where Timestamp between (firstRiskySignin .. firstRiskySignin + 12h)\r\n| where DeviceName has \"WIN11-04\"\r\n| project Timestamp, DeviceName, AccountUpn, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields\r\n| order by Timestamp asc",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "6579b92c-2ec1-06bb-fd6d-6def689c4fa4",
+      "layout": {
+        "x": 0,
+        "y": 32,
+        "width": 12,
+        "height": 8
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": []
+    },
+    {
       "id": "adbe1c26-1b20-eb69-c0f0-4088603cf2e4",
       "title": "Top network destinations",
       "query": "DeviceNetworkEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl)\r\n| summarize Connections=count(), Devices=dcount(DeviceId), Ports=make_set(RemotePort, 8), Processes=make_set(InitiatingProcessFileName, 8) by Destination, RemoteIP, RemoteIPType, Protocol\r\n| top 25 by Connections desc",

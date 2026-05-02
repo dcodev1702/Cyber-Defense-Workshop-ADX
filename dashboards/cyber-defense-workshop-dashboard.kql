@@ -256,6 +256,20 @@ GraphApiAuditEvents
 | order by Timestamp asc
 
 // -----------------------------------------------------------------------------
+// Tile: Compromised User - Endpoint Activity
+let compromisedUser = "victor.alvarez@usag-cyber.local";
+let firstRiskySignin =
+    toscalar(SigninLogs
+    | where UserPrincipalName =~ compromisedUser and IsRisky == true
+    | summarize min(TimeGenerated));
+DeviceProcessEvents
+| where AccountUpn =~ compromisedUser
+| where Timestamp between (firstRiskySignin .. firstRiskySignin + 12h)
+| where DeviceName has "WIN11-04"
+| project Timestamp, DeviceName, AccountUpn, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields
+| order by Timestamp asc
+
+// -----------------------------------------------------------------------------
 // Tile: Top network destinations
 DeviceNetworkEvents
 | where TimeGenerated between (StartTime .. EndTime)
