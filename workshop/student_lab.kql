@@ -113,6 +113,7 @@ AADServicePrincipalSignInLogs
 // Scenario tie-in: Victor's account is tied to the first Windows process chain.
 // KQL notes:
 // - =~ is case-insensitive equality, useful for UPNs that may vary by case.
+// - The wider post-sign-in window handles imported synthetic tables with per-source offsets.
 // - project shows process lineage fields without overwhelming the result grid.
 let compromisedUser = "victor.alvarez@usag-cyber.local";
 let firstRiskySignin =
@@ -121,8 +122,12 @@ let firstRiskySignin =
     | summarize min(TimeGenerated));
 DeviceProcessEvents
 | where AccountUpn =~ compromisedUser
-| where Timestamp between (firstRiskySignin .. firstRiskySignin + 2h)
-| project Timestamp, DeviceName, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields
+| where Timestamp between (firstRiskySignin .. firstRiskySignin + 12h)
+| where DeviceName has "WIN11-04"
+| where FolderPath has @"C:\ProgramData\wrstage"
+   or ProcessCommandLine has_any ("wrstage", "collect-reg-creds", "ExecutionPolicy Bypass", "kerberoast", "sam.save", "LoginData", "lsass", "mimikatz", "PwDump7", "gsecdump", "LaZagne")
+   or AdditionalFields has_any ("T1552.002", "T1003.001", "T1003.002", "T1555", "T1555.003", "T1558.003")
+| project Timestamp, DeviceName, AccountUpn, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields
 | order by Timestamp asc
 
 // 6. Hunt the screenshot credential-access vectors.

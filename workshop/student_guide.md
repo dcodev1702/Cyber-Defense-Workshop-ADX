@@ -221,14 +221,20 @@ let firstRiskySignin =
     | summarize min(TimeGenerated));
 DeviceProcessEvents
 | where AccountUpn =~ compromisedUser
-| where Timestamp between (firstRiskySignin .. firstRiskySignin + 2h)
-| project Timestamp, DeviceName, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields
+| where Timestamp between (firstRiskySignin .. firstRiskySignin + 12h)
+| where DeviceName has "WIN11-04"
+| where FolderPath has @"C:\ProgramData\wrstage"
+   or ProcessCommandLine has_any ("wrstage", "collect-reg-creds", "ExecutionPolicy Bypass", "kerberoast", "sam.save", "LoginData", "lsass", "mimikatz", "PwDump7", "gsecdump", "LaZagne")
+   or AdditionalFields has_any ("T1552.002", "T1003.001", "T1003.002", "T1555", "T1555.003", "T1558.003")
+| project Timestamp, DeviceName, AccountUpn, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields
 | order by Timestamp asc
 ```
 
-You'll see process activity on **`WIN11-04.usag-cyber.local`** starting around the same time as the cloud activity — PowerShell with hidden window style and `-ExecutionPolicy Bypass`, dropping files into `C:\ProgramData\wrstage`.
+You'll see Victor-owned process activity on **`WIN11-04.usag-cyber.local`** after the cloud activity — PowerShell with hidden window style and `-ExecutionPolicy Bypass`, dropping files into `C:\ProgramData\wrstage`.
 
 **Why `=~` instead of `==`?** The double-equals is case-sensitive. The squiggle-equals is case-insensitive. UPNs in the wild can have mixed case (`Victor.Alvarez@...`), and you don't want to miss a match because of capitalization.
+
+**Why a wider window?** The synthetic tables are imported as independent Defender-style sources, so the exact cloud-to-endpoint offset can vary between generated/imported datasets. The device, account, path, command-line, and ATT&CK filters keep this query focused on the intended foothold instead of baseline workstation noise.
 
 > **Mentor moment.** `WIN11-04` is now your patient zero. Combine that with Victor's UPN and the IP from Act 2, and you've got the three keys to unlock the rest of the investigation.
 
