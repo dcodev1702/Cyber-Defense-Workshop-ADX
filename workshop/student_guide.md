@@ -222,16 +222,15 @@ let firstRiskySignin =
 DeviceProcessEvents
 | where AccountUpn =~ compromisedUser
 | where Timestamp between (firstRiskySignin .. firstRiskySignin + 12h)
-| where DeviceName has "WIN11-04"
 | project Timestamp, DeviceName, AccountUpn, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields
 | order by Timestamp asc
 ```
 
-You'll see Victor-owned process activity on **`WIN11-04.usag-cyber.local`** after the cloud activity — PowerShell with hidden window style and `-ExecutionPolicy Bypass`, dropping files into `C:\ProgramData\wrstage`.
+You'll see Victor-owned process activity after the cloud activity. The key rows identify **`WIN11-04.usag-cyber.local`** and show PowerShell with hidden window style and `-ExecutionPolicy Bypass`, dropping files into `C:\ProgramData\wrstage`.
 
 **Why `=~` instead of `==`?** The double-equals is case-sensitive. The squiggle-equals is case-insensitive. UPNs in the wild can have mixed case (`Victor.Alvarez@...`), and you don't want to miss a match because of capitalization.
 
-**Why a wider window?** The synthetic tables are imported as independent Defender-style sources, so the exact cloud-to-endpoint offset can vary between generated/imported datasets. Keep the compromised user and `WIN11-04` filters, then use the command line and `AdditionalFields` values to separate baseline workstation activity from the credential-access chain.
+**Why a wider window?** The synthetic tables are imported as independent Defender-style sources, so the exact cloud-to-endpoint offset can vary between generated/imported datasets. Keep the compromised user filter, then use `DeviceName`, the command line, and `AdditionalFields` values to identify the patient-zero endpoint and separate baseline workstation activity from the credential-access chain.
 
 > **Mentor moment.** `WIN11-04` is now your patient zero. Combine that with Victor's UPN and the IP from Act 2, and you've got the three keys to unlock the rest of the investigation.
 

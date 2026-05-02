@@ -123,7 +123,6 @@ let firstRiskySignin =
 DeviceProcessEvents
 | where AccountUpn =~ compromisedUser
 | where Timestamp between (firstRiskySignin .. firstRiskySignin + 12h)
-| where DeviceName has "WIN11-04"
 | project Timestamp, DeviceName, AccountUpn, FileName, ProcessCommandLine, InitiatingProcessFileName, AdditionalFields
 | order by Timestamp asc
 
