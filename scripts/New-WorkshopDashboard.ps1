@@ -343,6 +343,14 @@ AlertInfo
 | order by Alerts desc
 '@
 
+$topAlertsQuery = @'
+AlertInfo
+| where Timestamp between (['_startTime'] .. ['_endTime'])
+| top 100 by Timestamp desc
+| serialize ['#']=row_number()
+| project ['#'], Timestamp, AlertId, ['Alert name']=Title, Severity, Category, ServiceSource, DetectionSource, AttackTechniques
+'@
+
 $topNetworkDestinationsQuery = @'
 DeviceNetworkEvents
 | where TimeGenerated between (['_startTime'] .. ['_endTime'])
@@ -442,7 +450,8 @@ $tiles.Add((New-Tile -Title 'Security incidents' -Query $securityIncidentsCardQu
 $tiles.Add((New-Tile -Title 'Alerts by severity and category' -Query $alertSeverityQuery -PageId $timelinePageId -DataSourceId $dataSourceId -VisualType 'column' -X 3 -Y 0 -Width 4 -Height 5 -VisualOptions (New-ChartOptions -YAxisLabel 'Alerts'))) | Out-Null
 $tiles.Add((New-Tile -Title 'MITRE ATT&CK alert techniques' -Query $mitreAlertQuery -PageId $timelinePageId -DataSourceId $dataSourceId -VisualType 'table' -X 7 -Y 0 -Width 5 -Height 5 -VisualOptions (New-TableOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Top 20 security incidents by name and number' -Query $topSecurityIncidentsQuery -PageId $timelinePageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 5 -Width 12 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
-$tiles.Add((New-Tile -Title 'Scenario signal timeline' -Query $scenarioTimelineQuery -PageId $timelinePageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 12 -Width 12 -Height 8 -VisualOptions (New-TableOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Top 100 alerts' -Query $topAlertsQuery -PageId $timelinePageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 12 -Width 12 -Height 10 -VisualOptions (New-TableOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Scenario signal timeline' -Query $scenarioTimelineQuery -PageId $timelinePageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 22 -Width 12 -Height 8 -VisualOptions (New-TableOptions))) | Out-Null
 
 $tiles.Add((New-Tile -Title 'Devices by OS family / category / type' -Query $deviceOsCategoryQuery -PageId $inventoryPageId -DataSourceId $dataSourceId -VisualType 'bar' -X 0 -Y 0 -Width 6 -Height 6 -VisualOptions (New-ChartOptions -YAxisLabel 'Devices'))) | Out-Null
 $tiles.Add((New-Tile -Title 'Machine group posture' -Query $machineGroupPostureQuery -PageId $inventoryPageId -DataSourceId $dataSourceId -VisualType 'column' -X 6 -Y 0 -Width 6 -Height 6 -VisualOptions (New-ChartOptions -YAxisLabel 'Devices'))) | Out-Null

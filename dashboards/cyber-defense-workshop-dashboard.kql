@@ -307,6 +307,14 @@ SecurityIncident
 | top 20 by TimeGenerated desc
 
 // -----------------------------------------------------------------------------
+// Tile: Top 100 alerts
+AlertInfo
+| where Timestamp between (StartTime .. EndTime)
+| top 100 by Timestamp desc
+| serialize ['#']=row_number()
+| project ['#'], Timestamp, AlertId, ['Alert name']=Title, Severity, Category, ServiceSource, DetectionSource, AttackTechniques
+
+// -----------------------------------------------------------------------------
 // Tile: Scenario signal timeline
 let AlertSignals = AlertInfo | where Timestamp between (StartTime .. EndTime) | project Timestamp, Signal='Alert', Entity=Title, Detail=strcat(Severity, ' | ', AttackTechniques);
 let NetworkSignals = DeviceNetworkEvents | where TimeGenerated between (StartTime .. EndTime) | where RemoteIPType == 'Public' | extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl) | project Timestamp=TimeGenerated, Signal='Public network connection', Entity=DeviceName, Detail=strcat(InitiatingProcessFileName, ' -> ', Destination, ':', tostring(RemotePort));
