@@ -276,6 +276,13 @@ AADManagedIdentitySignInLogs
 | top 20 by SignIns desc
 
 // -----------------------------------------------------------------------------
+// Tile: Security incidents
+SecurityIncident
+| where TimeGenerated between (StartTime .. EndTime)
+| summarize ['Security incidents']=count()
+| render card
+
+// -----------------------------------------------------------------------------
 // Tile: Alerts by severity and category
 AlertInfo
 | where Timestamp between (StartTime .. EndTime)

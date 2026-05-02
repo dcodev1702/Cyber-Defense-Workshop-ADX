@@ -846,6 +846,32 @@
       ]
     },
     {
+      "id": "354ce2f8-8e5d-8515-a313-fc1ef958d8c0",
+      "title": "Security incidents",
+      "query": "SecurityIncident\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| summarize ['Security incidents']=count()\r\n| render card",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "card",
+      "pageId": "4d099421-a700-18b4-1cfb-7978f03935ca",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 3,
+        "height": 3
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "multiStat__textSize": "large",
+        "multiStat__displayOrientation": "horizontal",
+        "multiStat__valueColumn": {
+          "type": "infer"
+        }
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
       "id": "c4c99a01-c7fa-9e61-451a-0e02458a14d4",
       "title": "Alerts by severity and category",
       "query": "AlertInfo\r\n| where Timestamp between (['_startTime'] .. ['_endTime'])\r\n| summarize Alerts=count() by Severity, Category\r\n| order by Alerts desc\r\n| render columnchart with (title='Alerts by severity and category')",
@@ -853,9 +879,9 @@
       "visualType": "column",
       "pageId": "4d099421-a700-18b4-1cfb-7978f03935ca",
       "layout": {
-        "x": 0,
+        "x": 3,
         "y": 0,
-        "width": 6,
+        "width": 4,
         "height": 5
       },
       "visualOptions": {
@@ -902,9 +928,9 @@
       "visualType": "table",
       "pageId": "4d099421-a700-18b4-1cfb-7978f03935ca",
       "layout": {
-        "x": 6,
+        "x": 7,
         "y": 0,
-        "width": 6,
+        "width": 5,
         "height": 5
       },
       "visualOptions": {
