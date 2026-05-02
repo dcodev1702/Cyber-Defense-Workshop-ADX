@@ -37,6 +37,28 @@ function Add-TestError {
     $script:errors.Add($Message) | Out-Null
 }
 
+function Test-GeneratedFileContainsText {
+    param(
+        [Parameter(Mandatory)][string]$DataDirectory,
+        [Parameter(Mandatory)][string]$FileName,
+        [Parameter(Mandatory)][string[]]$Needles,
+        [Parameter(Mandatory)][string]$Description
+    )
+
+    $filePath = Join-Path $DataDirectory $FileName
+    if (-not (Test-Path $filePath)) {
+        Add-TestError "Scenario validation expected $FileName for $Description."
+        return
+    }
+
+    $content = [System.IO.File]::ReadAllText($filePath)
+    foreach ($needle in $Needles) {
+        if (-not $content.Contains($needle)) {
+            Add-TestError "Scenario validation missing '$needle' in $FileName for $Description."
+        }
+    }
+}
+
 $scriptFiles = Get-ChildItem -Path (Join-Path $Root 'scripts') -Include '*.ps1', '*.psm1' -Recurse
 foreach ($scriptFile in $scriptFiles) {
     $tokens = $null
@@ -276,6 +298,73 @@ else {
         if ($linuxEvidence.OracleAccess -eq 0) {
             Add-TestError 'Linux validation expected Oracle database access evidence.'
         }
+    }
+
+    $scenarioChecks = @(
+        @{
+            FileName = 'SigninLogs.json'
+            Needles = @('victor.alvarez@usag-cyber.local', '185.225.73.18', '"IsRisky":true')
+            Description = 'risky Victor Alvarez Entra sign-in'
+        },
+        @{
+            FileName = 'CloudAppEvents.json'
+            Needles = @('OAuthAppConsentGranted', 'USAG Cyber Sync Helper', 'ServicePrincipalCredentialAdded', 'MIDNIGHT BLIZZARD')
+            Description = 'OAuth consent and service-principal credential abuse'
+        },
+        @{
+            FileName = 'AuditLogs.json'
+            Needles = @('Consent to application', 'Add service principal credentials', 'USAG Cyber Sync Helper', 'T1098.001')
+            Description = 'audit evidence for OAuth consent and service-principal persistence'
+        },
+        @{
+            FileName = 'AADServicePrincipalSignInLogs.json'
+            Needles = @('USAG Cyber Sync Helper', 'Microsoft Graph', 'client secret')
+            Description = 'malicious OAuth service-principal sign-in'
+        },
+        @{
+            FileName = 'GraphApiAuditEvents.json'
+            Needles = @('addPassword', 'Mail.Read', 'Files.Read.All', 'Directory.ReadWrite.All', 'victor.alvarez@usag-cyber.local')
+            Description = 'Graph API mailbox, file, directory, and service-principal operations'
+        },
+        @{
+            FileName = 'MicrosoftGraphActivityLogs.json'
+            Needles = @('addPassword', 'messages', 'drive/root/children', 'GraphPowerShell')
+            Description = 'Microsoft Graph activity log collection path'
+        },
+        @{
+            FileName = 'DeviceProcessEvents.json'
+            Needles = @('reg.exe', 'esentutl.exe', 'Rubeus.exe', 'procdump64.exe', 'PwDump7.exe', 'gsecdump.exe', 'LaZagne.exe', 'mimikatz.exe', 'rundll32.exe')
+            Description = 'required credential-access tool coverage'
+        },
+        @{
+            FileName = 'DeviceRegistryEvents.json'
+            Needles = @('HKEY_CURRENT_USER\\Software\\USAGCyber\\VPN', 'SavedPassword')
+            Description = 'registry credential exposure'
+        },
+        @{
+            FileName = 'IdentityLogonEvents.json'
+            Needles = @('RC4_HMAC', 'MSSQLSvc/sql01.usag-cyber.local:1433', 'RemoteInteractive', 'WinRM')
+            Description = 'Kerberoasting and service-account lateral movement'
+        },
+        @{
+            FileName = 'DeviceLogonEvents.json'
+            Needles = @('svc_sql', 'AADCONNECT01.usag-cyber.local', 'RemoteInteractive')
+            Description = 'service-account logon to Entra Connect'
+        },
+        @{
+            FileName = 'AlertInfo.json'
+            Needles = @('MIDNIGHT-BLIZZARD-000', 'Suspicious OAuth service principal persistence', 'T1528,T1098.001,T1550.001')
+            Description = 'OAuth service-principal alert'
+        },
+        @{
+            FileName = 'AlertEvidence.json'
+            Needles = @('MIDNIGHT-BLIZZARD-000', 'USAG Cyber Sync Helper', 'OAuthApplicationId')
+            Description = 'OAuth service-principal alert evidence'
+        }
+    )
+
+    foreach ($scenarioCheck in $scenarioChecks) {
+        Test-GeneratedFileContainsText -DataDirectory $DataDirectory -FileName $scenarioCheck['FileName'] -Needles $scenarioCheck['Needles'] -Description $scenarioCheck['Description']
     }
 }
 

@@ -11,16 +11,26 @@
 
 ## Instructor storyline
 
-Start with the sign-in. Students should find a high-risk interactive sign-in for `victor.alvarez@usag-cyber.local` from `185.225.73.18`, followed by OAuth consent and Graph enumeration. The endpoint pivot is `WIN11-04.usag-cyber.local`. The credential-access chain begins with PowerShell staging and progresses through registry credential discovery, SAM hive save, browser database copy, Kerberoasting, LSASS dump, password-store harvesting, and Mimikatz-style credential dumping. The identity pivot is the service account `svc_sql`, which is later used against `AADCONNECT01`.
+Start with the sign-in. Students should find a high-risk interactive sign-in for `victor.alvarez@usag-cyber.local` from `185.225.73.18`, followed by OAuth consent, service-principal credential creation, app-only Microsoft Graph access, and Graph enumeration/collection. The endpoint pivot is `WIN11-04.usag-cyber.local`. The credential-access chain begins with PowerShell staging and progresses through registry credential discovery, SAM hive save, browser database copy, Kerberoasting, LSASS dump, password-store harvesting, and Mimikatz-style credential dumping. Keep the tool names visible because they cover the required screenshot vectors, but frame them as follow-on credential expansion after the Midnight Blizzard-style identity/OAuth foothold. The identity pivot is the service account `svc_sql`, which is later used against `AADCONNECT01`.
 
 Use the Ubuntu branch as an optional comparison pivot after the Windows path is understood. Students should see that `UBUNTU-03.usag-cyber.local` emits MDE device telemetry, not MDI telemetry: SSH/PAM logons in `DeviceLogonEvents`, `sudo` and shell execution in `DeviceProcessEvents`, audit artifacts in `DeviceEvents` and `DeviceFileEvents`, Linux `.so` image loads in `DeviceImageLoadEvents`, CUPS/IPP network context in `DeviceNetworkEvents`, and Linux package/CVE context in TVM tables. The additive Oracle branch stages a synthetic Python helper and Go binary on `UBUNTU-03`, connects to Oracle TNS on `UBUNTU-05:1521`, and creates a synthetic sensitive export under `/tmp/.oracle`.
+
+## Pacing and scope control
+
+| Track | Use in class | Time guidance |
+| --- | --- | --- |
+| Must-find cloud identity path | Acts 2-4d: risky sign-in, OAuth consent, service-principal credential addition, Graph access | Do not skip. This is the strongest Midnight Blizzard alignment. |
+| Must-find Windows credential path | Acts 5-10: endpoint process/file/registry, Kerberoasting, `svc_sql` to `AADCONNECT01`, alert join, timeline | Keep tool names visible, but emphasize technique families and follow-on credential expansion. |
+| Optional Linux telemetry comparison | Act 11 | Use if the class is moving quickly or if Linux MDE telemetry is a learning goal. |
+| Optional Linux/Oracle collection | Act 12 | Treat as a bonus branch; do not let it displace the cloud identity investigation. |
 
 ## Expected key findings
 
 | Finding | Evidence |
 | --- | --- |
 | Suspicious sign-in | `SigninLogs` and `EntraIdSignInEvents` show high-risk sign-in for Victor Alvarez |
-| OAuth/Graph activity | `CloudAppEvents`, `AuditLogs`, `GraphApiAuditEvents`, and `MicrosoftGraphActivityLogs` show app consent and Graph reads |
+| OAuth/Graph activity | `CloudAppEvents`, `AuditLogs`, `GraphApiAuditEvents`, and `MicrosoftGraphActivityLogs` show app consent, service-principal credential creation, app-only Graph sign-in, mailbox reads, file reads, and directory enumeration |
+| Service-principal persistence | `AuditLogs`, `CloudAppEvents`, `AADServicePrincipalSignInLogs`, `GraphApiAuditEvents`, `AlertInfo`, and `AlertEvidence` show `USAG Cyber Sync Helper` receiving a credential and using Microsoft Graph |
 | Endpoint staging | `DeviceNetworkEvents` shows `WIN11-04` connecting to `cdn.update-check.example` |
 | Registry credentials | `DeviceRegistryEvents` shows saved VPN credential value access |
 | SAM hive dumping | `DeviceProcessEvents` and `DeviceFileEvents` show `reg.exe save HKLM\SAM` and output files |

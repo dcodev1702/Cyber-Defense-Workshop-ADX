@@ -61,12 +61,12 @@ IdentityAccountInfo
 | render card
 
 // -----------------------------------------------------------------------------
-// Tile: Risky Graph ops
+// Tile: OAuth/Graph suspicious activity
 GraphApiAuditEvents
 | where TimeGenerated between (StartTime .. EndTime)
 | extend StatusCode=toint(ResponseStatusCode)
 | where StatusCode >= 400 or RequestMethod in~ ('POST', 'PATCH', 'DELETE')
-| summarize ['Risky Graph ops']=count()
+| summarize ['OAuth/Graph suspicious activity']=count()
 | render card
 
 // -----------------------------------------------------------------------------

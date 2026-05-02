@@ -855,6 +855,11 @@ $corpFqdn = 'usag-cyber.local'
 $externalIp = '185.225.73.18'
 $c2Host = 'cdn.update-check.example'
 $c2Ip = '203.0.113.77'
+$browserUserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+$graphClientUserAgent = 'GraphPowerShell/2.17.0 PowerShell/7.4.2 Windows/10.0.22631'
+$maliciousOAuthAppId = New-StableGuid 'malicious-oauth'
+$maliciousOAuthSpId = New-StableGuid 'malicious-oauth-sp'
+$maliciousOAuthKeyId = New-StableGuid 'malicious-oauth-secret-key'
 
 # Assemble tool strings at runtime so the generator itself is not signature-like.
 $toolRu = 'Ru' + 'beus'
@@ -2587,7 +2592,7 @@ $signinCommon = @{
     City = 'Frankfurt am Main'
     Latitude = '50.1109'
     Longitude = '8.6821'
-    UserAgent = 'Mozilla/5.0 MIDNIGHT-BLIZZARD-workshop'
+    UserAgent = $browserUserAgent
     ClientAppUsed = 'Browser'
     ConditionalAccessStatus = 'success'
     DeviceTrustType = 'Unmanaged'
@@ -2631,7 +2636,7 @@ Add-Record -Table 'SigninLogs' -Time $signinTime -Values @{
     RiskEventTypes = 'unfamiliarFeatures,anonymousIPAddress'
     Status = @{ errorCode = 0; failureReason = 'Other'; additionalDetails = 'MFA completed by SMS' }
     Type = 'SigninLogs'
-    UserAgent = 'Mozilla/5.0 MIDNIGHT-BLIZZARD-workshop'
+    UserAgent = $browserUserAgent
     UserDisplayName = $victor.DisplayName
     UserId = $victor.ObjectId
     UserPrincipalName = $victor.Upn
@@ -2668,15 +2673,15 @@ Add-Record -Table 'CloudAppEvents' -Time $StartTime.AddMinutes(5) -Values @{
     IPAddress = $externalIp
     CountryCode = 'DE'
     City = 'Frankfurt am Main'
-    UserAgent = 'Mozilla/5.0 MIDNIGHT-BLIZZARD-workshop'
+    UserAgent = $browserUserAgent
     ActivityType = 'Consent to application'
     ObjectName = 'USAG Cyber Sync Helper'
     ObjectType = 'OAuthApplication'
     ReportId = 5901
     AccountType = 'Regular'
-    OAuthAppId = New-StableGuid 'malicious-oauth'
+    OAuthAppId = $maliciousOAuthAppId
     RawEventData = @{ ConsentType = 'User'; Scopes = 'Mail.Read Files.Read.All offline_access' }
-    AdditionalFields = '{"Technique":"T1528","Scenario":"Suspicious OAuth consent"}'
+    AdditionalFields = '{"Technique":"T1528","Scenario":"Suspicious OAuth consent","ThreatActor":"MIDNIGHT BLIZZARD"}'
 }
 Add-Record -Table 'AuditLogs' -Time $StartTime.AddMinutes(5) -Values @{
     TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(5)
@@ -2693,8 +2698,94 @@ Add-Record -Table 'AuditLogs' -Time $StartTime.AddMinutes(5) -Values @{
     OperationName = 'Consent to application'
     Result = 'success'
     ResultType = 'Success'
-    TargetResources = @(@{ displayName = 'USAG Cyber Sync Helper'; type = 'ServicePrincipal'; id = New-StableGuid 'malicious-oauth' })
+    TargetResources = @(@{ displayName = 'USAG Cyber Sync Helper'; type = 'ServicePrincipal'; id = $maliciousOAuthSpId })
     Type = 'AuditLogs'
+}
+
+Add-Record -Table 'AuditLogs' -Time $StartTime.AddMinutes(6) -Values @{
+    TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(6)
+    ActivityDateTime = Format-WorkshopTime $StartTime.AddMinutes(6)
+    AADOperationType = 'Add'
+    AADTenantId = $tenantId
+    ActivityDisplayName = 'Add service principal credentials'
+    AdditionalDetails = @(
+        @{ key = 'Technique'; value = 'T1098.001' },
+        @{ key = 'Scenario'; value = 'Service principal credential added after OAuth consent' },
+        @{ key = 'ThreatActor'; value = 'MIDNIGHT BLIZZARD' }
+    )
+    Category = 'ApplicationManagement'
+    CorrelationId = New-StableGuid 'sp-credential-add'
+    Id = New-StableGuid 'audit-sp-credential'
+    Identity = $victor.Upn
+    InitiatedBy = @{ user = @{ userPrincipalName = $victor.Upn; id = $victor.ObjectId; ipAddress = $externalIp } }
+    LoggedByService = 'Core Directory'
+    OperationName = 'Add service principal credentials'
+    Result = 'success'
+    ResultType = 'Success'
+    TargetResources = @(@{
+        displayName = 'USAG Cyber Sync Helper'
+        type = 'ServicePrincipal'
+        id = $maliciousOAuthSpId
+        modifiedProperties = @(
+            @{ displayName = 'KeyDescription'; newValue = $maliciousOAuthKeyId; oldValue = '' },
+            @{ displayName = 'AppId'; newValue = $maliciousOAuthAppId; oldValue = '' }
+        )
+    })
+    Type = 'AuditLogs'
+}
+
+Add-Record -Table 'CloudAppEvents' -Time $StartTime.AddMinutes(6) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(6)
+    ActionType = 'ServicePrincipalCredentialAdded'
+    Application = 'Microsoft 365'
+    AccountObjectId = $victor.ObjectId
+    AccountId = $victor.Upn
+    AccountDisplayName = $victor.DisplayName
+    IsAdminOperation = $true
+    DeviceType = 'Windows'
+    OSPlatform = 'Windows'
+    IPAddress = $externalIp
+    CountryCode = 'DE'
+    City = 'Frankfurt am Main'
+    UserAgent = $browserUserAgent
+    ActivityType = 'Add service principal credentials'
+    ObjectName = 'USAG Cyber Sync Helper'
+    ObjectType = 'ServicePrincipal'
+    ObjectId = $maliciousOAuthSpId
+    ReportId = 5902
+    AccountType = 'Regular'
+    OAuthAppId = $maliciousOAuthAppId
+    RawEventData = @{ CredentialKeyId = $maliciousOAuthKeyId; Technique = 'T1098.001'; Persistence = 'Application credential' }
+    AdditionalFields = '{"Technique":"T1098.001","Scenario":"OAuth service principal credential added","ThreatActor":"MIDNIGHT BLIZZARD"}'
+}
+
+Add-Record -Table 'AADServicePrincipalSignInLogs' -Time $StartTime.AddMinutes(6) -Values @{
+    TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(6)
+    CreatedDateTime = Format-WorkshopTime $StartTime.AddMinutes(6)
+    AADTenantId = $tenantId
+    AppId = $maliciousOAuthAppId
+    AppOwnerTenantId = $tenantId
+    ClientCredentialType = 'client secret'
+    ConditionalAccessStatus = 'notApplied'
+    CorrelationId = New-StableGuid 'sp-signin-correlation'
+    Id = New-StableGuid 'sp-signin-log'
+    Identity = 'USAG Cyber Sync Helper'
+    IPAddress = $externalIp
+    Location = 'DE'
+    OperationName = 'Sign-in activity'
+    ResourceDisplayName = 'Microsoft Graph'
+    ResourceIdentity = '00000003-0000-0000-c000-000000000000'
+    ResourceServicePrincipalId = '00000003-0000-0000-c000-000000000000'
+    ResultDescription = 'Success'
+    ResultType = '0'
+    ServicePrincipalCredentialKeyId = $maliciousOAuthKeyId
+    ServicePrincipalId = $maliciousOAuthSpId
+    ServicePrincipalName = 'USAG Cyber Sync Helper'
+    SessionId = New-StableGuid 'sp-signin-session'
+    TenantId = $tenantId
+    Type = 'AADServicePrincipalSignInLogs'
+    UniqueTokenIdentifier = New-StableGuid 'sp-graph-token'
+    UserAgent = $graphClientUserAgent
 }
 
 foreach ($offset in 7, 8, 9) {
@@ -2704,7 +2795,7 @@ foreach ($offset in 7, 8, 9) {
         Timestamp = Format-WorkshopTime $StartTime.AddMinutes($offset)
         IdentityProvider = 'AAD'
         ApiVersion = 'v1.0'
-        ApplicationId = New-StableGuid 'malicious-oauth'
+        ApplicationId = $maliciousOAuthAppId
         IpAddress = $externalIp
         ClientRequestId = New-StableGuid "client-graph-$offset"
         EntityType = 'user'
@@ -2720,7 +2811,7 @@ foreach ($offset in 7, 8, 9) {
         Scopes = 'Mail.Read Files.Read.All offline_access'
         UniqueTokenIdentifier = New-StableGuid "graph-token-$offset"
         TargetWorkload = if ($offset -eq 8) { 'Microsoft.FileServices' } elseif ($offset -eq 7) { 'Microsoft.People' } else { 'Microsoft.DirectoryServices' }
-        ServicePrincipalId = New-StableGuid 'malicious-oauth-sp'
+        ServicePrincipalId = $maliciousOAuthSpId
         ResponseSize = 40896
         TenantId = ''
         Type = 'GraphApiAuditEvents'
@@ -2730,20 +2821,73 @@ foreach ($offset in 7, 8, 9) {
         TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes($offset)
         TenantId = $tenantId
         UserId = $victor.ObjectId
-        AppId = New-StableGuid 'malicious-oauth'
+        AppId = $maliciousOAuthAppId
         IPAddress = $externalIp
         RequestMethod = 'GET'
         RequestUri = $requestUri.Replace('https://graph.microsoft.com', '')
         ResponseStatusCode = 200
-        UserAgent = 'Mozilla/5.0 MIDNIGHT-BLIZZARD-workshop'
-        ServicePrincipalId = New-StableGuid 'malicious-oauth-sp'
+        UserAgent = $graphClientUserAgent
+        ServicePrincipalId = $maliciousOAuthSpId
         SignInActivityId = New-StableGuid 'signin-log'
         UniqueTokenId = New-StableGuid 'graph-token'
         Type = 'MicrosoftGraphActivityLogs'
     }
 }
 
+$graphAbuseRequests = @(
+    [pscustomobject]@{ Offset = 10; Method = 'POST'; Uri = "https://graph.microsoft.com/v1.0/servicePrincipals/$maliciousOAuthSpId/addPassword"; Scopes = 'Application.ReadWrite.All Directory.ReadWrite.All'; Status = '201'; Workload = 'Microsoft.DirectoryServices'; ResponseSize = 2048 },
+    [pscustomobject]@{ Offset = 11; Method = 'GET'; Uri = "https://graph.microsoft.com/v1.0/users/$($victor.Upn)/messages?`$search=`"password OR secret OR token`""; Scopes = 'Mail.Read'; Status = '200'; Workload = 'Microsoft.People'; ResponseSize = 65536 },
+    [pscustomobject]@{ Offset = 12; Method = 'GET'; Uri = 'https://graph.microsoft.com/v1.0/sites/root/drive/root/children'; Scopes = 'Files.Read.All Sites.Read.All'; Status = '200'; Workload = 'Microsoft.FileServices'; ResponseSize = 98304 }
+)
+foreach ($request in $graphAbuseRequests) {
+    Add-Record -Table 'GraphApiAuditEvents' -Time $StartTime.AddMinutes($request.Offset) -Values @{
+        TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes($request.Offset)
+        Timestamp = Format-WorkshopTime $StartTime.AddMinutes($request.Offset)
+        IdentityProvider = 'AAD'
+        ApiVersion = 'v1.0'
+        ApplicationId = $maliciousOAuthAppId
+        IpAddress = $externalIp
+        ClientRequestId = New-StableGuid "client-graph-abuse-$($request.Offset)"
+        EntityType = 'servicePrincipal'
+        ReportId = New-StableGuid "graph-abuse-report-$($request.Offset)"
+        RequestUri = $request.Uri
+        AccountObjectId = $victor.ObjectId
+        OperationId = New-StableGuid "graph-abuse-op-$($request.Offset)"
+        Location = 'Germany West Central'
+        RequestDuration = '312'
+        RequestId = New-StableGuid "graph-abuse-request-$($request.Offset)"
+        RequestMethod = $request.Method
+        ResponseStatusCode = $request.Status
+        Scopes = $request.Scopes
+        UniqueTokenIdentifier = New-StableGuid "graph-abuse-token-$($request.Offset)"
+        TargetWorkload = $request.Workload
+        ServicePrincipalId = $maliciousOAuthSpId
+        ResponseSize = $request.ResponseSize
+        TenantId = ''
+        Type = 'GraphApiAuditEvents'
+        SourceSystem = ''
+    }
+    Add-Record -Table 'MicrosoftGraphActivityLogs' -Time $StartTime.AddMinutes($request.Offset) -Values @{
+        TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes($request.Offset)
+        TenantId = $tenantId
+        UserId = $victor.ObjectId
+        AppId = $maliciousOAuthAppId
+        IPAddress = $externalIp
+        RequestMethod = $request.Method
+        RequestUri = $request.Uri.Replace('https://graph.microsoft.com', '')
+        ResponseStatusCode = [int]$request.Status
+        ResponseSizeBytes = [int]$request.ResponseSize
+        Scopes = $request.Scopes
+        UserAgent = $graphClientUserAgent
+        ServicePrincipalId = $maliciousOAuthSpId
+        SignInActivityId = New-StableGuid 'sp-signin-log'
+        UniqueTokenId = New-StableGuid "graph-abuse-token-$($request.Offset)"
+        Type = 'MicrosoftGraphActivityLogs'
+    }
+}
+
 $alerts = @(
+    [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-000'; Offset = 6; Title = 'Suspicious OAuth service principal persistence'; Category = 'Persistence'; Severity = 'High'; Source = 'Microsoft Defender XDR'; Technique = 'T1528,T1098.001,T1550.001'; Entity = 'OAuthApplication'; File = ''; Command = 'USAG Cyber Sync Helper service principal credential added and used for Microsoft Graph' },
     [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-001'; Offset = 15; Title = 'Suspicious PowerShell credential discovery'; Category = 'CredentialAccess'; Severity = 'Medium'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1552.002'; Entity = 'Process'; File = 'powershell.exe'; Command = 'collect-reg-creds.ps1' },
     [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-002'; Offset = 35; Title = 'Suspected Kerberoasting activity'; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Identity'; Technique = 'T1558.003'; Entity = 'User'; File = "$toolRu.exe"; Command = "$toolRu.exe kerberoast" },
     [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-003'; Offset = 50; Title = "Credential dumping from $targetLs"; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1003.001'; Entity = 'File'; File = "$targetLsLower.dmp"; Command = "$toolProc.exe -ma $targetLsLower.exe" },
@@ -2774,7 +2918,7 @@ foreach ($alert in $alerts) {
         EvidenceRole = 'Impacted'
         EvidenceDirection = 'Source'
         FileName = $alert.File
-        FolderPath = "$stage\$($alert.File)"
+        FolderPath = if ($alert.File) { "$stage\$($alert.File)" } else { '' }
         AccountName = $victor.Name
         AccountDomain = $adDomain
         AccountSid = $victor.Sid
@@ -2783,6 +2927,8 @@ foreach ($alert in $alerts) {
         DeviceId = $win04.DeviceId
         DeviceName = $win04.Name
         LocalIP = $win04.IP
+        Application = if ($alert.Entity -eq 'OAuthApplication') { 'USAG Cyber Sync Helper' } else { '' }
+        OAuthApplicationId = if ($alert.Entity -eq 'OAuthApplication') { $maliciousOAuthAppId } else { '' }
         ProcessCommandLine = $alert.Command
         AdditionalFields = "{`"ThreatActor`":`"MIDNIGHT BLIZZARD`",`"Technique`":`"$($alert.Technique)`"}"
         Severity = $alert.Severity
@@ -3265,6 +3411,12 @@ $summary = [ordered]@{
     }
     compromisedUser = $victor.Upn
     initialDevice = $win04.Name
+    identityAttackVectors = @(
+        [ordered]@{ Title = 'Risky interactive Entra sign-in from unfamiliar infrastructure'; Technique = 'T1078.004,T1110.003,T1090.002'; Offset = 0; Command = 'SigninLogs high-risk interactive sign-in with MFA from 185.225.73.18' }
+        [ordered]@{ Title = 'Suspicious OAuth consent grants mailbox and file scopes'; Technique = 'T1528,T1098.003,T1550.001'; Offset = 5; Command = 'CloudAppEvents OAuthAppConsentGranted for USAG Cyber Sync Helper with Mail.Read Files.Read.All offline_access' }
+        [ordered]@{ Title = 'Service principal credential added for OAuth persistence'; Technique = 'T1098.001,T1550.001'; Offset = 6; Command = 'AuditLogs Add service principal credentials and AADServicePrincipalSignInLogs client-secret sign-in to Microsoft Graph' }
+        [ordered]@{ Title = 'Graph API mailbox, file, and directory collection'; Technique = 'T1087.004,T1114.002,T1530'; Offset = 7; Command = 'GraphApiAuditEvents and MicrosoftGraphActivityLogs read messages, OneDrive, users, and SharePoint content' }
+    )
     attackVectors = $attackSteps | Select-Object Title, Technique, Offset, Command
     linuxAttackVectors = @(
         [ordered]@{ Title = 'Suspicious SSH attempts against Ubuntu server'; Technique = 'T1021.004'; Offset = 61; Command = 'sshd authentication activity in /var/log/auth.log' }

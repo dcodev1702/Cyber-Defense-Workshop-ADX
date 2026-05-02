@@ -160,9 +160,9 @@
       ]
     },
     {
-      "id": "5d8980fb-7d34-dd63-2d15-514cd24d4907",
-      "title": "Risky Graph ops",
-      "query": "GraphApiAuditEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| extend StatusCode=toint(ResponseStatusCode)\r\n| where StatusCode >= 400 or RequestMethod in~ ('POST', 'PATCH', 'DELETE')\r\n| summarize ['Risky Graph ops']=count()\r\n| render card",
+      "id": "89346d1f-5a8f-561f-a64c-de708eff6a06",
+      "title": "OAuth/Graph suspicious activity",
+      "query": "GraphApiAuditEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| extend StatusCode=toint(ResponseStatusCode)\r\n| where StatusCode >= 400 or RequestMethod in~ ('POST', 'PATCH', 'DELETE')\r\n| summarize ['OAuth/Graph suspicious activity']=count()\r\n| render card",
       "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
       "visualType": "card",
       "pageId": "f8570950-424d-540c-20a8-4040aeb19ab8",

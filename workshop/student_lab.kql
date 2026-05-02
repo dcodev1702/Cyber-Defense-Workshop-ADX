@@ -82,6 +82,31 @@ GraphApiAuditEvents
 | project Timestamp, AccountObjectId, ApplicationId, RequestMethod, RequestUri, Scopes, ResponseStatusCode
 | order by Timestamp asc
 
+// 4c. Prove OAuth app persistence through service-principal credential abuse.
+// Why: Midnight Blizzard-style identity intrusions often persist through app/service-principal credentials.
+// Scenario tie-in: The actor adds a credential to "USAG Cyber Sync Helper" and uses it to access Microsoft Graph.
+// KQL notes:
+// - AuditLogs shows the app/service-principal object change.
+// - AADServicePrincipalSignInLogs shows the app identity authenticating with a client credential.
+AuditLogs
+| where ActivityDisplayName has_any ("Consent to application", "service principal credentials")
+   or OperationName has_any ("Consent to application", "service principal credentials")
+| project TimeGenerated, ActivityDisplayName, OperationName, Identity, InitiatedBy, TargetResources, AdditionalDetails, Result
+| order by TimeGenerated asc
+
+// 4d. Find the service-principal sign-in used for Graph access.
+// Why: Application sign-ins can survive user password resets and are key OAuth persistence evidence.
+let suspiciousIp =
+    SigninLogs
+    | where IsRisky == true
+    | top 1 by TimeGenerated asc
+    | project IPAddress;
+AADServicePrincipalSignInLogs
+| where ServicePrincipalName has "USAG Cyber Sync Helper"
+   or AppId in (GraphApiAuditEvents | where IpAddress in (suspiciousIp) | summarize by ApplicationId)
+| project TimeGenerated, ServicePrincipalName, ServicePrincipalId, AppId, ResourceDisplayName, ClientCredentialType, IPAddress, ResultType, UserAgent
+| order by TimeGenerated asc
+
 // 5. Pivot from compromised user to endpoint process activity.
 // Why: Cloud compromise becomes endpoint activity when the attacker lands on WIN11-04.
 // Scenario tie-in: Victor's account is tied to the first Windows process chain.
@@ -345,9 +370,13 @@ let cloud =
     CloudAppEvents
     | where IPAddress == "185.225.73.18" or ObjectName == "USAG Cyber Sync Helper"
     | project Timestamp, SourceTable="CloudAppEvents", Entity=AccountId, Detail=strcat(ActionType, " :: ", ObjectName);
+let servicePrincipal =
+    AADServicePrincipalSignInLogs
+    | where ServicePrincipalName has "USAG Cyber Sync Helper"
+    | project Timestamp=TimeGenerated, SourceTable="AADServicePrincipalSignInLogs", Entity=ServicePrincipalName, Detail=strcat(ClientCredentialType, " :: ", ResourceDisplayName, " :: ", IPAddress);
 let alerts =
     AlertInfo
     | where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "LINUX-"
     | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
-union endpoint, linux, identity, cloud, alerts
+union endpoint, linux, identity, cloud, servicePrincipal, alerts
 | order by Timestamp asc

@@ -212,12 +212,12 @@ IdentityAccountInfo
 | render card
 '@
 
-$riskyGraphOpsCardQuery = @'
+$oauthGraphSuspiciousActivityCardQuery = @'
 GraphApiAuditEvents
 | where TimeGenerated between (['_startTime'] .. ['_endTime'])
 | extend StatusCode=toint(ResponseStatusCode)
 | where StatusCode >= 400 or RequestMethod in~ ('POST', 'PATCH', 'DELETE')
-| summarize ['Risky Graph ops']=count()
+| summarize ['OAuth/Graph suspicious activity']=count()
 | render card
 '@
 
@@ -398,7 +398,7 @@ $tiles.Add((New-Tile -Title 'Failed logins' -Query $failedLoginsCardQuery -PageI
 $tiles.Add((New-Tile -Title 'Successful logins' -Query $successfulLoginsCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 9 -Y 0 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Users' -Query $usersCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 0 -Y 3 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Service accounts' -Query $serviceAccountsCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 3 -Y 3 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
-$tiles.Add((New-Tile -Title 'Risky Graph ops' -Query $riskyGraphOpsCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 6 -Y 3 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'OAuth/Graph suspicious activity' -Query $oauthGraphSuspiciousActivityCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 6 -Y 3 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Public egress' -Query $publicEgressCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 9 -Y 3 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Alerts by severity and category' -Query $alertSeverityQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'column' -X 0 -Y 6 -Width 6 -Height 5 -VisualOptions (New-ChartOptions -YAxisLabel 'Alerts'))) | Out-Null
 $tiles.Add((New-Tile -Title 'Login outcomes over time' -Query $loginOutcomesQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'line' -X 6 -Y 6 -Width 6 -Height 5 -VisualOptions (New-ChartOptions -YAxisLabel 'Logons'))) | Out-Null

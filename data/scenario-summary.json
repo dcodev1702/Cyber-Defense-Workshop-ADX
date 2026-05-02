@@ -20,6 +20,32 @@
   },
   "compromisedUser": "victor.alvarez@usag-cyber.local",
   "initialDevice": "WIN11-04.usag-cyber.local",
+  "identityAttackVectors": [
+    {
+      "Title": "Risky interactive Entra sign-in from unfamiliar infrastructure",
+      "Technique": "T1078.004,T1110.003,T1090.002",
+      "Offset": 0,
+      "Command": "SigninLogs high-risk interactive sign-in with MFA from 185.225.73.18"
+    },
+    {
+      "Title": "Suspicious OAuth consent grants mailbox and file scopes",
+      "Technique": "T1528,T1098.003,T1550.001",
+      "Offset": 5,
+      "Command": "CloudAppEvents OAuthAppConsentGranted for USAG Cyber Sync Helper with Mail.Read Files.Read.All offline_access"
+    },
+    {
+      "Title": "Service principal credential added for OAuth persistence",
+      "Technique": "T1098.001,T1550.001",
+      "Offset": 6,
+      "Command": "AuditLogs Add service principal credentials and AADServicePrincipalSignInLogs client-secret sign-in to Microsoft Graph"
+    },
+    {
+      "Title": "Graph API mailbox, file, and directory collection",
+      "Technique": "T1087.004,T1114.002,T1530",
+      "Offset": 7,
+      "Command": "GraphApiAuditEvents and MicrosoftGraphActivityLogs read messages, OneDrive, users, and SharePoint content"
+    }
+  ],
   "attackVectors": [
     {
       "Title": "Credentials in Registry Script",

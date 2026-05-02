@@ -171,7 +171,36 @@ GraphApiAuditEvents
 | order by Timestamp asc
 ```
 
-You'll see the app pulling Victor's mailbox messages, his OneDrive root, and the tenant user list. Reconnaissance.
+You'll see the app pulling Victor's mailbox messages, his OneDrive root, the tenant user list, and service-principal/application paths. This is the identity-first portion of the scenario: OAuth consent gives the actor an application identity they can use for Graph activity even after the user changes their password.
+
+**Now prove the service-principal persistence step:**
+
+```kql
+AuditLogs
+| where ActivityDisplayName has_any ("Consent to application", "service principal credentials")
+   or OperationName has_any ("Consent to application", "service principal credentials")
+| project TimeGenerated, ActivityDisplayName, OperationName, Identity, InitiatedBy, TargetResources, AdditionalDetails, Result
+| order by TimeGenerated asc
+```
+
+You should see the same suspicious app, **"USAG Cyber Sync Helper"**, receive consent and then get a new service-principal credential. In MITRE terms, this connects OAuth/token abuse (`T1528`, `T1550.001`) to additional cloud credentials (`T1098.001`) and additional cloud roles/permissions (`T1098.003`).
+
+**Finally, find the application sign-in:**
+
+```kql
+let suspiciousIp =
+    SigninLogs
+    | where IsRisky == true
+    | top 1 by TimeGenerated asc
+    | project IPAddress;
+AADServicePrincipalSignInLogs
+| where ServicePrincipalName has "USAG Cyber Sync Helper"
+   or AppId in (GraphApiAuditEvents | where IpAddress in (suspiciousIp) | summarize by ApplicationId)
+| project TimeGenerated, ServicePrincipalName, ServicePrincipalId, AppId, ResourceDisplayName, ClientCredentialType, IPAddress, ResultType, UserAgent
+| order by TimeGenerated asc
+```
+
+This row is the attacker using the app itself, not just Victor's browser session. That distinction matters: Midnight Blizzard-style intrusions often become durable because the attacker can operate through application/service-principal credentials rather than only a human password.
 
 > **Mentor moment.** Notice how we used `let` to pivot. You filtered the entire `CloudAppEvents` table down to just rows from the same IP as the risky sign-in — without ever hardcoding the IP. This is the cleanest way to chain investigations.
 
@@ -251,7 +280,7 @@ DeviceRegistryEvents
 | order by Timestamp asc
 ```
 
-You should find a `SavedPassword` value under `HKEY_CURRENT_USER\Software\WiesbadenResearch\VPN` — exactly the kind of "credentials in registry" anti-pattern T1552.002 targets.
+You should find a `SavedPassword` value under `HKEY_CURRENT_USER\Software\USAGCyber\VPN` — exactly the kind of "credentials in registry" anti-pattern T1552.002 targets.
 
 **Filesystem:**
 
@@ -325,7 +354,7 @@ You should see `svc_sql` performing a `RemoteInteractive` (WinRM) logon to `AADC
 
 ## Act 9 — Connect the alerts to the evidence
 
-Defender XDR raised five core Windows/hybrid identity alerts during this incident. Each alert is a one-line summary in `AlertInfo`, with the gory details in `AlertEvidence`. To get the full picture, we **join** them.
+Defender XDR raised six core cloud/Windows/hybrid identity alerts during this incident. Each alert is a one-line summary in `AlertInfo`, with the gory details in `AlertEvidence`. To get the full picture, we **join** them.
 
 Joins are how you stitch two tables together using a shared column. Here's the picture:
 
@@ -347,7 +376,7 @@ A few things going on here:
 - **`Timestamp=Timestamp1`** — when both tables have a column called `Timestamp`, the join names them `Timestamp` and `Timestamp1` to disambiguate. We're saying "give me the one from the right side and call it `Timestamp`."
 - The result is a wide row that has the alert headline (from `AlertInfo`) *and* the artifact details (from `AlertEvidence`) together.
 
-You'll get one row per piece of evidence per alert — about 5 rows total — and each row tells you both *what triggered* and *what fired it*.
+You'll get one row per piece of evidence per alert — about 6 rows total — and each row tells you both *what triggered* and *what fired it*.
 
 > **Mentor moment.** This is the most important pattern in Defender XDR hunting. `AlertInfo` is "what." `AlertEvidence` is "why we think so." You almost never want one without the other.
 
@@ -394,6 +423,15 @@ let cloud =
     | project Timestamp, SourceTable="CloudAppEvents", Entity=AccountId, Detail=strcat(ActionType, " :: ", ObjectName);
 ```
 
+Then service-principal sign-ins:
+
+```kql
+let servicePrincipal =
+    AADServicePrincipalSignInLogs
+    | where ServicePrincipalName has "USAG Cyber Sync Helper"
+    | project Timestamp=TimeGenerated, SourceTable="AADServicePrincipalSignInLogs", Entity=ServicePrincipalName, Detail=strcat(ClientCredentialType, " :: ", ResourceDisplayName, " :: ", IPAddress);
+```
+
 Then alerts:
 
 ```kql
@@ -419,17 +457,140 @@ let cloud =
     CloudAppEvents
     | where IPAddress == "185.225.73.18" or ObjectName == "USAG Cyber Sync Helper"
     | project Timestamp, SourceTable="CloudAppEvents", Entity=AccountId, Detail=strcat(ActionType, " :: ", ObjectName);
+let servicePrincipal =
+    AADServicePrincipalSignInLogs
+    | where ServicePrincipalName has "USAG Cyber Sync Helper"
+    | project Timestamp=TimeGenerated, SourceTable="AADServicePrincipalSignInLogs", Entity=ServicePrincipalName, Detail=strcat(ClientCredentialType, " :: ", ResourceDisplayName, " :: ", IPAddress);
 let alerts =
     AlertInfo
     | where AlertId startswith "MIDNIGHT-BLIZZARD-"
     | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
-union endpoint, identity, cloud, alerts
+union endpoint, identity, cloud, servicePrincipal, alerts
 | order by Timestamp asc
 ```
 
 Run it. You'll get a single sorted timeline with rows from all four sources interleaved by time. Read it top to bottom — that's the entire incident.
 
 > **Mentor moment.** **Each `project` produces the same column shape** (`Timestamp`, `SourceTable`, `Entity`, `Detail`). That's the trick to making `union` work cleanly across different telemetry sources — normalize the shape first, then stack.
+
+---
+
+## Act 11 — Bonus: compare Linux MDE telemetry
+
+The main Midnight Blizzard investigation is complete. If you have time, use the Ubuntu branch as a telemetry comparison exercise. The goal is not to turn the scenario into a Linux-first intrusion; the goal is to see how MDE represents Linux hosts differently from Windows endpoints and MDI identity sensors.
+
+**Start by scoping Ubuntu devices:**
+
+```kql
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName, OSPlatform, OSDistribution, MachineGroup;
+linuxDevices
+| order by DeviceName asc
+```
+
+**Find SSH/PAM logons:**
+
+```kql
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName;
+linuxDevices
+| join kind=inner (
+    DeviceLogonEvents
+    | where Protocol in~ ("Ssh", "PAM") or LogonType in~ ("Ssh", "Sudo")
+    | project Timestamp, DeviceId, DeviceName, ActionType, LogonType, Protocol, AccountName, RemoteIP, AdditionalFields
+) on DeviceId, DeviceName
+| order by Timestamp asc
+```
+
+**Then pivot into Linux process, file, and shared-object evidence:**
+
+```kql
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName;
+linuxDevices
+| join kind=inner (
+    DeviceProcessEvents
+    | where FolderPath startswith "/" or ProcessCommandLine has_any ("sshd", "sudo", "auditd", "apt", "dpkg")
+    | project Timestamp, DeviceId, DeviceName, AccountName, FileName, FolderPath, ProcessCommandLine, AdditionalFields
+) on DeviceId, DeviceName
+| order by Timestamp asc
+```
+
+You should see `sshd`, `sudo`, shell, and auditd-style events using Unix paths such as `/usr/bin`, `/var/log`, and `/tmp`. You should **not** see registry keys or Windows DLL paths on Ubuntu rows.
+
+> **Mentor moment.** MDI explains domain-controller identity behavior. MDE on Linux explains host behavior: SSH, sudo, auditd, package inventory, Linux paths, and `.so` shared objects. Keep the sensor boundary clear in your write-up.
+
+---
+
+## Act 12 — Bonus: Oracle collection on Linux
+
+The optional Oracle branch shows how Linux endpoint telemetry can reveal data-access behavior. It is intentionally bonus content: useful for broad cyber-defense training, but separate from the core Midnight Blizzard cloud/identity path.
+
+**Find the staged Python and Go tooling:**
+
+```kql
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName;
+linuxDevices
+| join kind=inner (
+    DeviceProcessEvents
+    | where ProcessCommandLine has_any ("oracle_privcheck.py", "ora_collect_linux_amd64", "1521", "ORCL")
+        or FileName in~ ("python3", "ora_collect_linux_amd64", "oracle")
+    | project Timestamp, DeviceId, DeviceName, AccountName, FileName, FolderPath, ProcessCommandLine, AdditionalFields
+) on DeviceId, DeviceName
+| order by Timestamp asc
+```
+
+**Confirm Oracle TNS network access and output files:**
+
+```kql
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName;
+linuxDevices
+| join kind=inner (
+    DeviceNetworkEvents
+    | where RemotePort == 1521 or RemoteUrl has "UBUNTU-05" or AdditionalFields has "Oracle TNS"
+    | project Timestamp, DeviceId, DeviceName, LocalIP, RemoteIP, RemoteUrl, RemotePort, Protocol, InitiatingProcessFileName, InitiatingProcessCommandLine, AdditionalFields
+) on DeviceId, DeviceName
+| order by Timestamp asc
+```
+
+```kql
+let linuxDevices =
+    DeviceInfo
+    | where OSPlatform =~ "Ubuntu" or OSDistribution =~ "Ubuntu"
+    | project DeviceId, DeviceName;
+linuxDevices
+| join kind=inner (
+    DeviceFileEvents
+    | where FolderPath has_any ("/tmp/.cache", "/tmp/.oracle", "/u01/app/oracle", "/opt/oracle")
+        or FileName has_any ("oracle_privcheck.py", "ora_collect_linux_amd64", "finance_user_catalog.csv")
+    | project Timestamp, DeviceId, DeviceName, ActionType, FileName, FolderPath, InitiatingProcessFileName, InitiatingProcessCommandLine, AdditionalFields
+) on DeviceId, DeviceName
+| order by Timestamp asc
+```
+
+**Correlate the Linux/Oracle alert:**
+
+```kql
+AlertInfo
+| where AlertId == "LINUX-002" or Title has "Oracle"
+| join kind=leftouter AlertEvidence on AlertId
+| project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, AttackTechniques=AttackTechniques1, DeviceName, AccountName, FileName, FolderPath, ProcessCommandLine, AdditionalFields
+| order by Timestamp asc
+```
+
+If you run this act in class, use it to ask: "How would this look different if we only had identity telemetry? What did MDE on Linux give us that sign-in logs could not?"
 
 ---
 

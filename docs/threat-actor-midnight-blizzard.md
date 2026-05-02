@@ -86,10 +86,11 @@ This is the section that maps directly to the queries in `student_guide.md`. Eac
 
 | Technique | What MB does | Where you'll see it in this workshop |
 | --- | --- | --- |
-| T1098.003 (Additional Cloud Roles) | Grant elevated roles like `full_access_as_app` to attacker-controlled OAuth apps | OAuth consent in Act 3 |
+| T1098.003 (Additional Cloud Roles) | Grant elevated roles like `full_access_as_app` to attacker-controlled OAuth apps | OAuth consent for `USAG Cyber Sync Helper` in Act 3 |
+| T1098.001 (Additional Cloud Credentials) | Add credentials to an application or service principal so access can continue independently of the user password | `AuditLogs`, `CloudAppEvents`, and `AADServicePrincipalSignInLogs` rows showing service-principal credential creation and app sign-in in Acts 3-4 |
 | T1136.003 (Create Cloud Account) | Create new user accounts to grant consent to malicious apps | Not directly modeled in this scenario |
-| T1550.001 (Application Access Token) | Use of OAuth tokens for persistent access that survives password resets | Implied — the consent in Act 3 establishes this persistence |
-| T1528 (Steal Application Access Token) | Steal access tokens from authenticated sessions | Implied by the OAuth abuse |
+| T1550.001 (Application Access Token) | Use OAuth tokens and app credentials for persistent access that survives password resets | App-only Graph activity from `USAG Cyber Sync Helper` in Acts 3-4 |
+| T1528 (Steal Application Access Token) | Steal or abuse access tokens from authenticated sessions and OAuth applications | OAuth consent, service-principal sign-in, and Graph API activity in Acts 3-4 |
 
 ### Credential access (the meat of this workshop)
 
@@ -110,7 +111,7 @@ The workshop's Act 5 covers a credential-access playbook with multiple tools per
 | --- | --- | --- |
 | T1021.006 (WinRM) | Remote PowerShell / WinRM lateral movement using cracked or stolen credentials | Act 8: `svc_sql` RemoteInteractive logon to `AADCONNECT01` |
 | T1087.002 (Domain Account Discovery) | LDAP queries to map the directory | Act 7: `IdentityQueryEvents` SPN searches |
-| T1087.004 (Cloud Account Discovery) | Microsoft Graph enumeration of users, groups, and applications | Act 3: `GraphApiAuditEvents` calls |
+| T1087.004 (Cloud Account Discovery) | Microsoft Graph enumeration of users, groups, service principals, and applications | Act 3: `GraphApiAuditEvents` and `MicrosoftGraphActivityLogs` calls |
 
 ### Defense evasion
 
@@ -124,14 +125,14 @@ The workshop's Act 5 covers a credential-access playbook with multiple tools per
 
 | Technique | What MB does | Workshop step |
 | --- | --- | --- |
-| T1114.002 (Remote Email Collection) | Mailbox access via Graph API or Exchange Web Services | Implied by OAuth scopes (`Mail.Read`) granted in Act 3 |
-| T1530 (Data from Cloud Storage) | Pulling files from OneDrive / SharePoint via Graph | Implied by `Files.Read.All` scope in Act 3 |
+| T1114.002 (Remote Email Collection) | Mailbox access via Graph API or Exchange Web Services | Graph mailbox reads for `victor.alvarez` in Act 3 |
+| T1530 (Data from Cloud Storage) | Pulling files from OneDrive / SharePoint via Graph | Graph OneDrive/SharePoint file enumeration in Act 3 |
 
 ---
 
 ## Why MB matches this scenario better than commodity actors
 
-If you've worked SOC for a while, you might wonder why the workshop scenario doesn't model a financially-motivated actor (like MIDNIGHT BLIZZARD) where the goal is ransomware or POS card data. The answer: MB's tradecraft is far more representative of what a defender in a hybrid Microsoft environment is actually likely to face today. Specifically:
+If you've worked SOC for a while, you might wonder why the workshop scenario doesn't model a financially motivated actor where the goal is ransomware or POS card data. The answer: MB's state-backed identity-first tradecraft is far more representative of what a defender in a hybrid Microsoft environment must be ready to investigate today. Specifically:
 
 1. **Identity-first.** The compromise starts in the cloud (a risky sign-in, an OAuth consent), not on the endpoint. That mirrors how MB works, and how most modern intrusions begin.
 2. **Persistent OAuth abuse.** Granting consent to a malicious "Sync Helper" app (Act 3) is a near-direct lift from the Microsoft and HPE breaches.
@@ -148,6 +149,7 @@ Map these directly to the queries you write in the student guide:
 
 - **Risky sign-in correlation with same-IP cloud activity within 1 hour.** (Workshop: Act 3 `let suspiciousIp = ...` pattern.)
 - **OAuth app consent for high-impact scopes** (`Mail.Read`, `Mail.ReadWrite`, `Files.Read.All`, `Directory.ReadWrite.All`, `full_access_as_app`). (Workshop: `CloudAppEvents` filter for `OAuthAppConsentGranted`.)
+- **Service-principal credential additions after suspicious consent**, especially followed by app-only sign-ins to Microsoft Graph. (Workshop: `AuditLogs`, `CloudAppEvents`, and `AADServicePrincipalSignInLogs` for `USAG Cyber Sync Helper`.)
 - **New OAuth app creation followed by self-consent** within a short window.
 - **Service-account interactive logon to a Tier-0 system from a workstation.** (Workshop: Act 8 — `svc_*` accounts with `RemoteInteractive` logon type.)
 - **Legacy auth or password-spray indicators on tenant-wide sign-in logs**, especially against accounts without MFA.
