@@ -35,7 +35,7 @@ Do not put these IDs on the student slides. The generated `AlertId` values are i
 
 Use [`workshop\instructor_alert_answer_key.kql`](../workshop/instructor_alert_answer_key.kql) as the corresponding instructor-only query pack. It contains the static AlertId answer key plus the cloud, endpoint, identity, incident, TVM, Linux/Oracle, and full-timeline pivots needed to tell the scenario story.
 
-![SOC alert timeline correlation for the ADX workshop](../images/SOC_Alert_Timeline_Correlation_ADX_Modern_v2.svg)
+![SOC alert timeline correlation for the ADX workshop](../images/SOC_Alert_Timeline_Correlation_ADX_Modern_v3.svg)
 
 ## Facilitation tips
 
