@@ -17,9 +17,21 @@
     },
     {
       "name": "CvssScore",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Severity score assigned to the security vulnerability under the Common Vulnerability Scoring System (CVSS)"
+    },
+    {
+      "name": "CvssVector",
       "type": "string",
       "sourceType": "string",
-      "description": "Severity score assigned to the security vulnerability under the Common Vulnerability Scoring System (CVSS)"
+      "description": "Compressed textual representation of the CVSS vector used to derive the score"
+    },
+    {
+      "name": "CveSupportability",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Supportability state for the vulnerability, such as Supported or NotSupported"
     },
     {
       "name": "IsExploitAvailable",
@@ -56,6 +68,30 @@
       "type": "dynamic",
       "sourceType": "dynamic",
       "description": "List of all software products affected by the vulnerability"
+    },
+    {
+      "name": "EpssScore",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Exploit Prediction Scoring System probability score for the vulnerability"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identifier of the tenant that owns the record. This field can be empty in Microsoft Defender XDR exports."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Table name emitted by the Microsoft Defender XDR export"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Source system name from the export. This field can be empty in Microsoft Defender XDR exports."
     }
   ],
   "adx": {

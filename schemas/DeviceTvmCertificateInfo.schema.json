@@ -59,20 +59,20 @@
     },
     {
       "name": "KeySize",
-      "type": "string",
-      "sourceType": "string",
+      "type": "int",
+      "sourceType": "int",
       "description": "Size of the key used in the signature algorithm"
     },
     {
       "name": "ExpirationDate",
-      "type": "string",
-      "sourceType": "string",
+      "type": "datetime",
+      "sourceType": "datetime",
       "description": "The date and time beyond which the certificate is no longer valid"
     },
     {
       "name": "IssueDate",
-      "type": "string",
-      "sourceType": "string",
+      "type": "datetime",
+      "sourceType": "datetime",
       "description": "The earliest date and time when the certificate became valid"
     },
     {
@@ -83,15 +83,39 @@
     },
     {
       "name": "KeyUsage",
-      "type": "string",
-      "sourceType": "string",
+      "type": "dynamic",
+      "sourceType": "dynamic",
       "description": "The valid cryptographic uses of the certificate's public key"
     },
     {
       "name": "ExtendedKeyUsage",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Other valid uses for the certificate"
+    },
+    {
+      "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Other valid uses for the certificate"
+      "description": "Identifier of the tenant that owns the device record. This field can be empty in Microsoft Defender XDR exports."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Table name emitted by the Microsoft Defender XDR export"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Source system name from the export. This field can be empty in Microsoft Defender XDR exports."
+    },
+    {
+      "name": "MachineGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Defender for Endpoint machine group for the device. This field can be empty in Microsoft Defender XDR exports."
     }
   ],
   "adx": {

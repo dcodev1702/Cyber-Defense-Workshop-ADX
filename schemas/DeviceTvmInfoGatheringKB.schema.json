@@ -38,6 +38,24 @@
       "type": "string",
       "sourceType": "string",
       "description": "The data structure of the information gathered"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identifier of the tenant that owns the record. This field can be empty in Microsoft Defender XDR exports."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Table name emitted by the Microsoft Defender XDR export"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Source system name from the export. This field can be empty in Microsoft Defender XDR exports."
     }
   ],
   "adx": {

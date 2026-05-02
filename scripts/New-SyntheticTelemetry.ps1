@@ -2386,12 +2386,12 @@ function New-NormalTelemetryValues {
             $values.OSPlatform = if ($isUbuntuDevice) { 'Ubuntu' } else { $device.OS }
             $values.OSVersion = if ($isUbuntuDevice) { '24.04 LTS' } elseif ($device.OS -eq 'Windows11') { '25H2' } else { 'Server 2025' }
             $values.OSArchitecture = 'x64'
+            $values.TenantId = ''
+            $values.Type = $Table
+            $values.SourceSystem = ''
+            $values.MachineGroup = ''
             if ($Table -eq 'DeviceTvmInfoGathering') {
                 $values.LastSeenTime = Format-WorkshopTime $Time.AddMinutes(-(($Index % 120) + 1))
-                $values.TenantId = ''
-                $values.Type = 'DeviceTvmInfoGathering'
-                $values.SourceSystem = ''
-                $values.MachineGroup = ''
                 $values.AdditionalFields = New-WorkshopTvmInfoGatheringFields -Device $device -Time $Time -Index $Index
                 break
             }
@@ -2404,19 +2404,175 @@ function New-NormalTelemetryValues {
                 $values.PackageName = $software.Package
                 $values.VulnerabilitySeverityLevel = if ($software.Risk -ge 80) { 'High' } elseif ($software.Risk -ge 60) { 'Medium' } else { 'Low' }
                 $values.RecommendedSecurityUpdate = if ($software.CveId) { "Update Ubuntu package $($software.Package)" } else { 'No security update required' }
-                $values.CveTags = if ($software.CveId) { @('Linux', 'Ubuntu') } else { @('Inventory') }
+                if ($software.CveId) {
+                    $values.CveTags = @('Linux', 'Ubuntu')
+                }
+                else {
+                    $values.CveTags = @('Inventory')
+                }
                 $values.AdditionalFields = @{ OSProfile = 'Ubuntu'; Package = $software.Package; CveId = $software.CveId }
             }
             else {
-                $values.SoftwareName = Get-WorkshopRandomItem @('Microsoft Edge', 'Microsoft Teams', 'OpenSSL', 'Microsoft Defender for Endpoint')
-                $values.SoftwareVendor = Get-WorkshopRandomItem @('Microsoft', 'Canonical', 'OpenSSL Software Foundation')
-                $values.SoftwareVersion = Get-WorkshopRandomItem @('125.0.2535.67', '1.1.1w', '24215.1007.3082.1590', '4.18.24040.4')
-                $values.CveId = Get-WorkshopRandomItem @('CVE-2024-21338', 'CVE-2024-30078', 'CVE-2023-48795')
+                $softwareProfile = Get-WorkshopRandomItem @(
+                    [pscustomobject]@{ Vendor = 'microsoft'; Name = 'edge'; Version = '125.0.2535.67'; CveId = 'CVE-2024-30078' },
+                    [pscustomobject]@{ Vendor = 'microsoft'; Name = 'teams'; Version = '24215.1007.3082.1590'; CveId = 'CVE-2024-21338' },
+                    [pscustomobject]@{ Vendor = 'adobe'; Name = 'acrobat_dc'; Version = '2026.1.21411.0'; CveId = 'CVE-2024-34112' },
+                    [pscustomobject]@{ Vendor = '7-zip'; Name = '7-zip'; Version = '26.00.0.0'; CveId = 'CVE-2025-0411' },
+                    [pscustomobject]@{ Vendor = 'openssl'; Name = 'openssl'; Version = '3.0.13'; CveId = 'CVE-2024-5535' },
+                    [pscustomobject]@{ Vendor = 'microsoft'; Name = 'microsoft_defender_for_endpoint'; Version = '4.18.26030.3011'; CveId = 'CVE-2024-30088' }
+                )
+                $values.SoftwareName = $softwareProfile.Name
+                $values.SoftwareVendor = $softwareProfile.Vendor
+                $values.SoftwareVersion = $softwareProfile.Version
+                $values.CveId = $softwareProfile.CveId
             }
-            $values.ConfigurationId = New-StableGuid "$Table|config|$Index"
+            if ([string]::IsNullOrWhiteSpace([string]$values.CveId)) {
+                $values.CveId = 'CVE-2026-{0:D5}' -f (10000 + ($Index % 80000))
+            }
+            $softwareKey = ('{0}:{1}:{2}' -f $values.SoftwareVendor, $values.SoftwareName, $values.SoftwareVersion).ToLowerInvariant() -replace '[^a-z0-9:._-]', '_'
+            $values.RecommendedSecurityUpdateId = if ($values.CveId) { if ($isUbuntuDevice) { 'USN-{0}-1' -f (8000 + ($Index % 300)) } else { 'KB{0}' -f (5000000 + ($Index % 900000)) } } else { '' }
+            $values.CveMitigationStatus = ''
+            $values.AadDeviceId = if (-not $isUbuntuDevice -and ($Index % 4) -ne 0) { New-StableGuid "aad-device|$($device.DeviceId)" } else { '' }
+            $values.EndOfSupportStatus = if (($Index % 50) -eq 0) { 'EOS Version' } elseif (($Index % 37) -eq 0) { 'Upcoming EOS Version' } else { '' }
+            $values.EndOfSupportDate = Format-WorkshopTime $Time.AddYears(2).AddDays($Index % 365)
+            $values.ProductCodeCpe = $softwareKey
+            if ($isUbuntuDevice) {
+                $values.RegistryPaths = @()
+                $values.DiskPaths = @("/usr/bin/$($values.SoftwareName)", "/usr/share/doc/$($values.SoftwareName)")
+            }
+            else {
+                $values.RegistryPaths = @("HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$($values.SoftwareName)")
+                $values.DiskPaths = @("C:\Program Files\$($values.SoftwareName)\$($values.SoftwareName).exe")
+            }
+            $values.LastSeenTime = $timeText
+            $values.CvssScore = [math]::Round(4.0 + (($Index % 59) / 10.0), 1)
+            $values.VulnerabilitySeverityLevel = if ($values.CvssScore -ge 9.0) { 'Critical' } elseif ($values.CvssScore -ge 7.0) { 'High' } elseif ($values.CvssScore -ge 4.0) { 'Medium' } else { 'Low' }
+            $values.CvssVector = if ($values.CvssScore -ge 8.0) { 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H' } else { 'CVSS:3.1/AV:L/AC:L/PR:L/UI:R/S:U/C:L/I:L/A:L' }
+            $values.CveSupportability = if (($Index % 9) -eq 0) { 'NotSupported' } else { 'Supported' }
+            $values.IsExploitAvailable = ($Index % 6) -eq 0
+            $values.LastModifiedTime = Format-WorkshopTime $Time.AddDays(-($Index % 30))
+            $values.PublishedDate = Format-WorkshopTime $Time.AddDays(-30 - ($Index % 700))
+            $values.VulnerabilityDescription = "Synthetic vulnerability record for $($values.CveId) affecting $($values.SoftwareName)."
+            $values.AffectedSoftware = [object[]]@($softwareKey)
+            $values.EpssScore = [math]::Round((($Index % 1000) / 1000.0), 5)
+            $values.IgId = 'igid-{0}' -f (($Index % 90) + 1)
+            $infoField = Get-WorkshopRandomItem @('TlsClient10', 'TlsClient11', 'TlsClient12', 'AvPlatformVersion', 'AvSignatureVersion', 'AvScanResults', 'AsrConfigurationStates', 'EBPFStatus', 'Log4j_CVE_2021_44228')
+            $values.FieldName = $infoField
+            $values.Description = "Information gathered for $infoField by Defender Vulnerability Management."
+            $values.Categories = if ($infoField -like 'Tls*') { [object[]]@('network protocol', 'communication', 'tls') } elseif ($infoField -eq 'EBPFStatus') { [object[]]@('linux', 'sensor', 'ebpf') } else { [object[]]@('endpoint security', 'defender') }
+            $values.DataStructure = if ($infoField -eq 'AsrConfigurationStates' -or $infoField -eq 'AvScanResults') { 'JSON object' } else { 'String or null' }
+            $componentProfiles = @(
+                [pscustomobject]@{ Type = 'Hardware'; Manufacturer = 'microsoft'; Name = 'virtual_machine'; Family = 'Virtual Machine'; Version = 'Hyper-V UEFI Release v4.1' },
+                [pscustomobject]@{ Type = 'Bios'; Manufacturer = 'microsoft'; Name = 'virtual_machine_firmware'; Family = 'Virtual Machine'; Version = '4.1.0.0' },
+                [pscustomobject]@{ Type = 'Processor'; Manufacturer = 'amd'; Name = 'amd_epyc'; Family = 'AMD(R) Processors'; Version = '19.0.0' },
+                [pscustomobject]@{ Type = 'Tpm'; Manufacturer = 'microsoft'; Name = 'trusted_platform_module'; Family = 'TPM'; Version = '2.0' }
+            )
+            $component = Get-WorkshopRandomItem $componentProfiles
+            $values.ComponentType = $component.Type
+            $values.Manufacturer = $component.Manufacturer
+            $values.ComponentName = $component.Name
+            $values.ComponentFamily = $component.Family
+            $values.ComponentVersion = $component.Version
+            $values.AdditionalFields = @{
+                BaseBoardManufacturer = if ($component.Type -eq 'Hardware') { 'Microsoft Corporation' } else { $null }
+                BaseBoardProduct = if ($component.Type -eq 'Hardware') { 'Virtual Machine' } else { $null }
+                BIOSReleaseDate = if ($component.Type -eq 'Bios') { Format-WorkshopTime $Time.AddDays(-120) } else { $null }
+                BIOSLastDetected = Format-WorkshopTime $Time.AddMinutes(-($Index % 180))
+                DeviceFamily = if ($device.Type -eq 'Workstation') { 'Endpoint' } else { 'Server' }
+                SystemFamily = $component.Family
+            }
+            $values.Thumbprint = (New-StableHex "certificate|$($device.DeviceId)|$Index" 40).ToUpperInvariant()
+            $values.Path = "Microsoft.PowerShell.Security\Certificate::LocalMachine\Root\$($values.Thumbprint)"
+            $values.SerialNumber = (New-StableHex "certificate-serial|$Index" 32).ToUpperInvariant()
+            $values.IssuedTo = @{ CommonName = $device.Name; Organization = 'USAG Cyber'; CountryName = 'US' }
+            $values.IssuedBy = @{ CommonName = 'USAG Cyber Root CA'; Organization = 'USAG Cyber'; CountryName = 'US' }
+            $values.FriendlyName = if ($isUbuntuDevice) { 'USAG Cyber Linux Device Certificate' } else { 'USAG Cyber Device Certificate' }
+            $values.SignatureAlgorithm = if (($Index % 3) -eq 0) { 'sha384ECDSA' } else { 'sha256RSA' }
+            $values.KeySize = if ($values.SignatureAlgorithm -like '*ECDSA') { 0 } else { 4096 }
+            $values.ExpirationDate = Format-WorkshopTime $Time.AddYears(2).AddDays($Index % 120)
+            $values.IssueDate = Format-WorkshopTime $Time.AddYears(-1).AddDays(-($Index % 120))
+            $values.SubjectType = if (($Index % 13) -eq 0) { 'CA' } else { 'End Entity' }
+            $values.KeyUsage = if ($values.SubjectType -eq 'CA') { [object[]]@('Certificate Signing', 'CRL Signing', 'Digital Signature') } else { [object[]]@('Digital Signature', 'Key Encipherment') }
+            if ($isUbuntuDevice) {
+                $values.ExtendedKeyUsage = @('Server Authentication')
+            }
+            else {
+                $values.ExtendedKeyUsage = @('Client Authentication', 'Server Authentication')
+            }
+            $configurationProfiles = @(
+                [pscustomobject]@{ Id = 'scid-20000'; Category = 'Security controls'; Subcategory = 'Onboard Devices'; Impact = 9.0; Context = @() },
+                [pscustomobject]@{ Id = 'scid-10002'; Category = 'Network'; Subcategory = 'TLS'; Impact = 5.0; Context = @(@('Enabled')) },
+                [pscustomobject]@{ Id = 'scid-91'; Category = 'OS'; Subcategory = 'Attack Surface Reduction'; Impact = 7.0; Context = @(@('Block')) },
+                [pscustomobject]@{ Id = 'scid-2010'; Category = 'Application'; Subcategory = 'Microsoft Office'; Impact = 4.0; Context = @(@('Off')) }
+            )
+            $configuration = Get-WorkshopRandomItem $configurationProfiles
+            $values.TimeGenerated = $timeText
+            $values.ConfigurationId = $configuration.Id
+            $values.ConfigurationCategory = $configuration.Category
+            $values.ConfigurationSubcategory = $configuration.Subcategory
+            $values.ConfigurationImpact = $configuration.Impact
+            $values.IsApplicable = $true
+            $values.IsExpectedUserImpact = ($Index % 41) -eq 0
+            $values.Context = [object[]]@($configuration.Context)
             $values.IsCompliant = ($Index % 7) -ne 0
             $values.ComplianceStatus = if ($values.IsCompliant) { 'Compliant' } else { 'NonCompliant' }
             $values.RiskScore = if ($isUbuntuDevice -and $software) { $software.Risk } else { Get-WorkshopRandomInt -Minimum 1 -Maximum 60 }
+        }
+        'SecurityIncident' {
+            $firstActivity = $Time.AddMinutes(-45 - ($Index % 90))
+            $lastActivity = $Time.AddMinutes(-($Index % 30))
+            $isClosed = ($Index % 6) -eq 0
+            $incidentName = New-StableGuid "security-incident|$Index"
+            $alertId = New-StableGuid "security-alert|$Index"
+            $ruleId = New-StableGuid "analytics-rule|$($Index % 20)"
+            $providerIncidentId = [string](200 + ($Index % 10000))
+            $severity = Get-WorkshopRandomItem @('Low', 'Medium', 'High')
+            $status = if ($isClosed) { 'Closed' } elseif (($Index % 5) -eq 0) { 'Active' } else { 'New' }
+            $title = if (($Index % 9) -eq 0) { 'Multi-stage incident involving identity and endpoint activity' } elseif (($Index % 4) -eq 0) { 'Authentication Attempt from New Country involving one user' } else { 'Suspicious activity involving Microsoft Defender XDR alert correlation' }
+            $values.TimeGenerated = $timeText
+            $values.TenantId = $tenantId
+            $values.IncidentName = $incidentName
+            $values.Title = $title
+            $values.Description = ''
+            $values.Severity = $severity
+            $values.Status = $status
+            $values.Classification = if ($isClosed) { Get-WorkshopRandomItem @('Undetermined', 'BenignPositive', 'TruePositive') } else { '' }
+            $values.ClassificationComment = ''
+            $values.ClassificationReason = if ($isClosed -and ($Index % 3) -eq 0) { 'SuspiciousButExpected' } else { '' }
+            $values.Owner = if (($Index % 4) -eq 0) {
+                @{ objectId = New-StableGuid "owner|$Index"; email = 'soc.analyst@usag-cyber.local'; assignedTo = 'SOC Analyst'; userPrincipalName = 'soc.analyst@usag-cyber.local' }
+            }
+            else {
+                @{ objectId = $null; email = $null; assignedTo = $null; userPrincipalName = $null }
+            }
+            $values.ProviderName = 'Microsoft XDR'
+            $values.ProviderIncidentId = $providerIncidentId
+            $values.FirstActivityTime = Format-WorkshopTime $firstActivity
+            $values.LastActivityTime = Format-WorkshopTime $lastActivity
+            $values.FirstModifiedTime = Format-WorkshopTime $Time.AddMinutes(-40)
+            $values.LastModifiedTime = $timeText
+            $values.CreatedTime = Format-WorkshopTime $Time.AddMinutes(-35)
+            $values.ClosedTime = if ($isClosed) { Format-WorkshopTime $Time.AddMinutes(-5) } else { Format-WorkshopTime $Time }
+            $values.IncidentNumber = 100 + ($Index % 9000)
+            $values.RelatedAnalyticRuleIds = [object[]]@($ruleId)
+            $values.AlertIds = [object[]]@($alertId)
+            $values.BookmarkIds = [object[]]@()
+            $values.Comments = if (($Index % 7) -eq 0) { [object[]]@(@{ message = 'activity comment'; createdTimeUtc = $timeText; lastModifiedTimeUtc = $timeText; author = @{ name = 'soc.analyst@usag-cyber.local' } }) } else { [object[]]@() }
+            $values.Tasks = [object[]]@()
+            $values.Labels = if (($Index % 5) -eq 0) { [object[]]@(@{ labelName = 'Redirected'; labelType = 'AutoAssigned' }) } else { [object[]]@() }
+            $values.IncidentUrl = "https://portal.azure.com/#asset/Microsoft_Azure_Security_Insights/Incident/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sentinel/providers/Microsoft.OperationalInsights/workspaces/usag-cyber/providers/Microsoft.SecurityInsights/Incidents/$incidentName"
+            $values.AdditionalData = @{
+                alertsCount = 1 + ($Index % 3)
+                bookmarksCount = 0
+                commentsCount = @($values.Comments).Count
+                alertProductNames = [object[]]@('Azure Sentinel')
+                tactics = if ($title -like '*Authentication*') { [object[]]@('InitialAccess') } else { [object[]]@('Persistence', 'CredentialAccess', 'LateralMovement') }
+                techniques = if ($title -like '*Authentication*') { [object[]]@('T1078') } else { [object[]]@('T1098', 'T1003', 'T1021') }
+                providerIncidentUrl = "https://security.microsoft.com/incident2/$providerIncidentId/overview?tid=$tenantId"
+            }
+            $values.ModifiedBy = if ($isClosed) { 'SOC analyst' } else { 'Microsoft Defender XDR - alert correlation' }
+            $values.SourceSystem = 'Azure'
+            $values.Type = 'SecurityIncident'
         }
         default {
             $values.ActionType = 'WorkshopNormalBaseline'
@@ -3478,7 +3634,21 @@ foreach ($table in $script:Schemas.Keys) {
         continue
     }
     $fallbackTime = $StartTime.AddMinutes(-10)
-    $fallbackValues = if ($table -in @('AADManagedIdentitySignInLogs', 'AADSpnSignInEventsBeta', 'EntraIdSpnSignInEvents', 'DeviceTvmInfoGathering')) {
+    $fallbackValues = if ($table -in @(
+            'AADManagedIdentitySignInLogs',
+            'AADSpnSignInEventsBeta',
+            'EntraIdSpnSignInEvents',
+            'DeviceTvmCertificateInfo',
+            'DeviceTvmHardwareFirmware',
+            'DeviceTvmInfoGathering',
+            'DeviceTvmInfoGatheringKB',
+            'DeviceTvmSecureConfigurationAssessment',
+            'DeviceTvmSoftwareEvidenceBeta',
+            'DeviceTvmSoftwareInventory',
+            'DeviceTvmSoftwareVulnerabilities',
+            'DeviceTvmSoftwareVulnerabilitiesKB',
+            'SecurityIncident'
+        )) {
         New-NormalTelemetryValues -Table $table -Time $fallbackTime -Index ([Convert]::ToInt32((New-StableHex "$table|fallback" 7), 16))
     }
     else {

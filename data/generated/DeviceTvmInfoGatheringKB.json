@@ -1,1 +1,1 @@
-{"IgId":"","FieldName":"","Description":"","Categories":{},"DataStructure":""}
+{"IgId":"igid-13","FieldName":"AvPlatformVersion","Description":"Information gathered for AvPlatformVersion by Defender Vulnerability Management.","Categories":["endpoint security","defender"],"DataStructure":"String or null","TenantId":"","Type":"DeviceTvmInfoGatheringKB","SourceSystem":""}

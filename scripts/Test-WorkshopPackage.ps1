@@ -116,6 +116,45 @@ foreach ($schemaFile in $schemaFiles) {
     }
 }
 
+$realExportSchemaChecks = @(
+    @{ Table = 'DeviceTvmCertificateInfo'; Csv = 'sample\DeviceTvmCertificateInfo-Real.csv' },
+    @{ Table = 'DeviceTvmHardwareFirmware'; Csv = 'sample\DeviceTvmHardwareFirmware-Real.csv' },
+    @{ Table = 'DeviceTvmInfoGathering'; Csv = 'sample\DeviceTVMInfoGrathering-Real.csv' },
+    @{ Table = 'DeviceTvmInfoGatheringKB'; Csv = 'sample\DeviceTvmInfoGatheringKB-Real.csv' },
+    @{ Table = 'DeviceTvmSecureConfigurationAssessment'; Csv = 'sample\DeviceTvmSecureConfigurationAssessment-Real.csv' },
+    @{ Table = 'DeviceTvmSoftwareEvidenceBeta'; Csv = 'sample\DeviceTvmSoftwareEvidenceBeta-Real.csv' },
+    @{ Table = 'DeviceTvmSoftwareInventory'; Csv = 'sample\DeviceTvmSoftwareInventory-Real.csv' },
+    @{ Table = 'DeviceTvmSoftwareVulnerabilities'; Csv = 'sample\DeviceTvmSoftwareVulnerabilities-Real.csv' },
+    @{ Table = 'DeviceTvmSoftwareVulnerabilitiesKB'; Csv = 'sample\DeviceTvmSoftwareVulnerabilitiesKB-Real.csv' },
+    @{ Table = 'SecurityIncident'; Csv = 'sample\SecurityIncident-Real.csv' }
+)
+foreach ($check in $realExportSchemaChecks) {
+    $table = [string]$check.Table
+    $csvPath = Join-Path $Root ([string]$check.Csv)
+    $schemaPath = Join-Path $Root "schemas\$table.schema.json"
+    if (-not (Test-Path $csvPath)) {
+        Add-TestError "Missing real export sample for $table`: $csvPath"
+        continue
+    }
+    if (-not (Test-Path $schemaPath)) {
+        Add-TestError "Missing schema for real export table $table`: $schemaPath"
+        continue
+    }
+
+    $csvFirstRow = Import-Csv -Path $csvPath | Select-Object -First 1
+    if (-not $csvFirstRow) {
+        Add-TestError "Real export sample for $table has no rows: $csvPath"
+        continue
+    }
+
+    $csvColumns = @($csvFirstRow.PSObject.Properties.Name)
+    $schema = Get-Content -Path $schemaPath -Raw | ConvertFrom-Json
+    $schemaColumns = @($schema.columns.name)
+    if (($csvColumns -join '|') -ne ($schemaColumns -join '|')) {
+        Add-TestError "Schema columns for $table do not match real export header order. CSV=[$($csvColumns -join ', ')] Schema=[$($schemaColumns -join ', ')]"
+    }
+}
+
 if ([string]::IsNullOrWhiteSpace($DataDirectory)) {
     $DataDirectory = Join-Path $Root 'data\generated'
 }
@@ -345,6 +384,16 @@ else {
             FileName = 'DeviceTvmInfoGathering.json'
             Needles = @('DeviceTvmInfoGathering', 'TenantId', 'SourceSystem', 'MachineGroup', 'AvPlatformVersion', 'AvSignatureVersion', 'AvScanResults', 'AsrConfigurationStates', 'EBPFStatus')
             Description = 'Defender Vulnerability Management info gathering telemetry shape'
+        },
+        @{
+            FileName = 'DeviceTvmSoftwareVulnerabilitiesKB.json'
+            Needles = @('DeviceTvmSoftwareVulnerabilitiesKB', 'CvssVector', 'CveSupportability', 'EpssScore', 'AffectedSoftware')
+            Description = 'Defender Vulnerability Management vulnerability knowledge base shape'
+        },
+        @{
+            FileName = 'SecurityIncident.json'
+            Needles = @('SecurityIncident', 'Microsoft XDR', 'ProviderIncidentId', 'RelatedAnalyticRuleIds', 'AdditionalData')
+            Description = 'Microsoft Sentinel SecurityIncident telemetry shape'
         },
         @{
             FileName = 'IdentityLogonEvents.json'

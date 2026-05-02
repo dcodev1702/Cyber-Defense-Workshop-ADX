@@ -86,6 +86,42 @@
       "type": "dynamic",
       "sourceType": "dynamic",
       "description": "Array of tags relevant to the CVE; example: ZeroDay, NoSecurityUpdate"
+    },
+    {
+      "name": "CveMitigationStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Mitigation status for the CVE on the device. This field can be empty in Microsoft Defender XDR exports."
+    },
+    {
+      "name": "AadDeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Microsoft Entra device identifier when available"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Identifier of the tenant that owns the device record. This field can be empty in Microsoft Defender XDR exports."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Table name emitted by the Microsoft Defender XDR export"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Source system name from the export. This field can be empty in Microsoft Defender XDR exports."
+    },
+    {
+      "name": "MachineGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Defender for Endpoint machine group for the device. This field can be empty in Microsoft Defender XDR exports."
     }
   ],
   "adx": {

@@ -1,0 +1,202 @@
+{
+  "tableName": "SecurityIncident",
+  "categories": [
+    "MicrosoftSentinel",
+    "Incident",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Microsoft Sentinel",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/securityincident",
+  "schemaSource": "Microsoft Learn and real export",
+  "columns": [
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Timestamp when the incident record was ingested or modified"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Log Analytics workspace or tenant identifier"
+    },
+    {
+      "name": "IncidentName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Resource name or internal GUID for the incident"
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Incident title"
+    },
+    {
+      "name": "Description",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Incident description"
+    },
+    {
+      "name": "Severity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Incident severity"
+    },
+    {
+      "name": "Status",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Incident status"
+    },
+    {
+      "name": "Classification",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Incident closing classification"
+    },
+    {
+      "name": "ClassificationComment",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Incident closing classification comment"
+    },
+    {
+      "name": "ClassificationReason",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Reason for the incident classification"
+    },
+    {
+      "name": "Owner",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "User or team assigned to the incident"
+    },
+    {
+      "name": "ProviderName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Provider that generated the incident"
+    },
+    {
+      "name": "ProviderIncidentId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Incident identifier assigned by the provider"
+    },
+    {
+      "name": "FirstActivityTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Timestamp of the first activity in the incident"
+    },
+    {
+      "name": "LastActivityTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Timestamp of the last activity in the incident"
+    },
+    {
+      "name": "FirstModifiedTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Timestamp when the incident was first modified"
+    },
+    {
+      "name": "LastModifiedTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Timestamp when the incident was last modified"
+    },
+    {
+      "name": "CreatedTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Timestamp when the incident was created"
+    },
+    {
+      "name": "ClosedTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Timestamp when the incident was closed"
+    },
+    {
+      "name": "IncidentNumber",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Sequential incident number"
+    },
+    {
+      "name": "RelatedAnalyticRuleIds",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Analytic rule identifiers associated with the incident"
+    },
+    {
+      "name": "AlertIds",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Alert identifiers associated with the incident"
+    },
+    {
+      "name": "BookmarkIds",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Bookmark identifiers associated with the incident"
+    },
+    {
+      "name": "Comments",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Incident comments"
+    },
+    {
+      "name": "Tasks",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Incident tasks"
+    },
+    {
+      "name": "Labels",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Incident labels"
+    },
+    {
+      "name": "IncidentUrl",
+      "type": "string",
+      "sourceType": "string",
+      "description": "URL to open the incident in the portal"
+    },
+    {
+      "name": "AdditionalData",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Additional incident metadata, counts, tactics, techniques, and provider URLs"
+    },
+    {
+      "name": "ModifiedBy",
+      "type": "string",
+      "sourceType": "string",
+      "description": "User or system that modified the incident"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Source system for the incident record"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Table name emitted by the export"
+    }
+  ],
+  "adx": {
+    "mappingName": "SecurityIncident_JsonMapping"
+  }
+}

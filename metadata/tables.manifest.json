@@ -24,6 +24,12 @@
     "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-alertinfo-table"
   },
   {
+    "name": "SecurityIncident",
+    "categories": ["MicrosoftSentinel", "Incident", "AzureMonitor"],
+    "sourceProduct": "Microsoft Sentinel",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/securityincident"
+  },
+  {
     "name": "AuditLogs",
     "categories": ["EntraId", "Audit", "AzureMonitor"],
     "sourceProduct": "Microsoft Entra ID",
