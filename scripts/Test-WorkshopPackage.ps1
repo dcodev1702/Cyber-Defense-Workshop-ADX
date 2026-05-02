@@ -342,6 +342,11 @@ else {
             Description = 'registry credential exposure'
         },
         @{
+            FileName = 'DeviceTvmInfoGathering.json'
+            Needles = @('DeviceTvmInfoGathering', 'TenantId', 'SourceSystem', 'MachineGroup', 'AvPlatformVersion', 'AvSignatureVersion', 'AvScanResults', 'AsrConfigurationStates', 'EBPFStatus')
+            Description = 'Defender Vulnerability Management info gathering telemetry shape'
+        },
+        @{
             FileName = 'IdentityLogonEvents.json'
             Needles = @('RC4_HMAC', 'MSSQLSvc/sql01.usag-cyber.local:1433', 'RemoteInteractive', 'WinRM')
             Description = 'Kerberoasting and service-account lateral movement'

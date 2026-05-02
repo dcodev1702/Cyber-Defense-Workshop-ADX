@@ -772,6 +772,115 @@ function New-WorkshopNormalTime {
     return $script:TelemetryEndTime.AddMinutes(-$minutesBack).AddSeconds($seconds)
 }
 
+function New-WorkshopTvmInfoGatheringFields {
+    param(
+        [Parameter(Mandatory)]$Device,
+        [Parameter(Mandatory)][datetime]$Time,
+        [Parameter(Mandatory)][int]$Index
+    )
+
+    $isWindowsDevice = [string]$Device.OS -like 'Windows*'
+    $isLinuxDevice = [string]$Device.OS -eq 'Ubuntu'
+    $signatureTime = Format-WorkshopTime $Time.AddHours(-($Index % 24)).AddMinutes(-17)
+    $engineTime = Format-WorkshopTime $Time.AddHours(-(($Index % 18) + 1)).AddMinutes(-9)
+    $platformTime = Format-WorkshopTime $Time.AddDays(-(($Index % 21) + 1)).AddMinutes(-33)
+    $refreshTime = Format-WorkshopTime $Time.AddMinutes(-(($Index % 90) + 5))
+
+    $asrStates = if ($isWindowsDevice) {
+        [ordered]@{
+            ExecutableEmailContent = if (($Index % 9) -eq 0) { 'Audit' } else { 'Off' }
+            OfficeChildProcess = if (($Index % 11) -eq 0) { 'Block' } else { 'Off' }
+            ExecutableOfficeContent = 'Off'
+            OfficeProcessInjection = if (($Index % 13) -eq 0) { 'Audit' } else { 'Off' }
+            ScriptExecutableDownload = 'Off'
+            ObfuscatedScript = if (($Index % 7) -eq 0) { 'Audit' } else { 'Off' }
+            OfficeMacroWin32ApiCalls = 'Off'
+            UntrustedExecutable = 'Off'
+            Ransomware = if (($Index % 17) -eq 0) { 'Block' } else { 'Off' }
+            LsassCredentialTheft = if (($Index % 5) -eq 0) { 'Block' } else { 'Off' }
+            PsexecWmiChildProcess = 'Off'
+            UntrustedUsbProcess = 'Off'
+            OfficeCommAppChildProcess = 'Off'
+            AdobeReaderChildProcess = 'Off'
+            PersistenceThroughWmi = 'Off'
+            VulnerableSignedDriver = if (($Index % 19) -eq 0) { 'Audit' } else { 'Off' }
+            BlockWebshellCreation = $null
+            BlockCopiedOrImpersonatedSystemTools = 'Off'
+            BlockSafeModeReboot = 'Off'
+        }
+    }
+    else {
+        $null
+    }
+
+    $scanResults = if ($isWindowsDevice) {
+        [ordered]@{
+            Quick = [ordered]@{
+                ScanStatus = 'Completed'
+                ErrorCode = $null
+                Timestamp = Format-WorkshopTime $Time.AddHours(-(($Index % 36) + 2))
+            }
+            Full = $null
+            Custom = $null
+        }
+    }
+    else {
+        $null
+    }
+
+    [ordered]@{
+        AvPlatformVersion = if ($isWindowsDevice) { '4.18.26030.3011' } elseif ($isLinuxDevice) { '101.25042.0000' } else { $null }
+        AvModeDataRefreshTime = if ($isWindowsDevice -or $isLinuxDevice) { $refreshTime } else { $null }
+        Log4j_CVE_2021_44228 = $null
+        LocalCveScannerExecuted = if ($isWindowsDevice -or $isLinuxDevice) { 'CVE-2021-44228' } else { $null }
+        Log4jLocalScanVulnerable = $null
+        AvEngineUpdateTime = if ($isWindowsDevice -or $isLinuxDevice) { $engineTime } else { $null }
+        AvSignatureUpdateTime = if ($isWindowsDevice -or $isLinuxDevice) { $signatureTime } else { $null }
+        AvPlatformUpdateTime = if ($isWindowsDevice -or $isLinuxDevice) { $platformTime } else { $null }
+        AvIsSignatureUptoDate = if ($isWindowsDevice -or $isLinuxDevice) { $true } else { $null }
+        AvIsEngineUptodate = if ($isWindowsDevice -or $isLinuxDevice) { $true } else { $null }
+        AvIsPlatformUptodate = if ($isWindowsDevice -or $isLinuxDevice) { $true } else { $null }
+        WdavorHeartbeatEventType = if ($isWindowsDevice) { 'WdavEvent' } elseif ($isLinuxDevice) { 'MdatpHealth' } else { $null }
+        AvSignaturePublishTime = if ($isWindowsDevice -or $isLinuxDevice) { $signatureTime } else { $null }
+        AvPlatformPublishTime = if ($isWindowsDevice -or $isLinuxDevice) { $platformTime } else { $null }
+        AvEnginePublishTime = if ($isWindowsDevice -or $isLinuxDevice) { $engineTime } else { $null }
+        AvSignatureRing = if ($isWindowsDevice -or $isLinuxDevice) { '5' } else { $null }
+        AvPlatformRing = if ($isWindowsDevice -or $isLinuxDevice) { '5' } else { $null }
+        AvEngineRing = if ($isWindowsDevice -or $isLinuxDevice) { '5' } else { $null }
+        Spring4Shell_CVE_2022_22965 = $null
+        Bootiful_Mind_status = if ($isWindowsDevice -or $isLinuxDevice) { 'NotFound' } else { $null }
+        AvSignatureDataRefreshTime = if ($isWindowsDevice -or $isLinuxDevice) { $refreshTime } else { $null }
+        EBPFStatus = if ($isLinuxDevice) { 'Enabled' } else { $null }
+        AvMode = if ($isWindowsDevice -or $isLinuxDevice) { '0' } else { $null }
+        AvEngineVersion = if ($isWindowsDevice) { '1.1.26030.3008' } elseif ($isLinuxDevice) { '1.1.25040.2' } else { $null }
+        AvSignatureVersion = if ($isWindowsDevice -or $isLinuxDevice) { '1.449.{0}.0' -f (300 + ($Index % 200)) } else { $null }
+        AvScanResults = $scanResults
+        CloudProtectionState = if ($isWindowsDevice) { '2' } elseif ($isLinuxDevice) { 'Enabled' } else { $null }
+        SslClient20 = $null
+        SslClient30 = $null
+        SslServer20 = $null
+        SslServer30 = $null
+        TlsClient10 = if ($isWindowsDevice) { 'Disabled' } else { $null }
+        TlsClient11 = if ($isWindowsDevice) { 'Disabled' } else { $null }
+        TlsClient12 = if ($isWindowsDevice) { 'Enabled' } else { $null }
+        TlsServer10 = if ($isWindowsDevice) { 'Disabled' } else { $null }
+        TlsServer11 = if ($isWindowsDevice) { 'Disabled' } else { $null }
+        TlsServer12 = if ($isWindowsDevice) { 'Enabled' } else { $null }
+        SchUseStrongCrypto35 = if ($isWindowsDevice) { '1' } else { $null }
+        SchUseStrongCrypto35Wow6432 = if ($isWindowsDevice) { '1' } else { $null }
+        SchUseStrongCrypto40 = if ($isWindowsDevice) { '1' } else { $null }
+        SchUseStrongCrypto40Wow6432 = if ($isWindowsDevice) { '1' } else { $null }
+        SystemDefaultTlsVersions35 = if ($isWindowsDevice) { '1' } else { $null }
+        SystemDefaultTlsVersions35Wow6432 = if ($isWindowsDevice) { '1' } else { $null }
+        SystemDefaultTlsVersions40 = if ($isWindowsDevice) { '1' } else { $null }
+        SystemDefaultTlsVersions40Wow6432 = if ($isWindowsDevice) { '1' } else { $null }
+        Log4JEnvironmentVariableMitigation = if ($isWindowsDevice -or $isLinuxDevice) { 'false' } else { $null }
+        IsWindowsLtscVersionRunning = if ($isWindowsDevice) { if ($Device.OS -like '*Server*') { 'true' } else { 'false' } } else { $null }
+        CVE_2022_30190_Mitigated = if ($isWindowsDevice) { 'false' } else { $null }
+        AsrConfigurationStates = $asrStates
+    }
+}
+
 function New-WorkshopRecordObject {
     param(
         [Parameter(Mandatory)][string]$Table,
@@ -2277,6 +2386,15 @@ function New-NormalTelemetryValues {
             $values.OSPlatform = if ($isUbuntuDevice) { 'Ubuntu' } else { $device.OS }
             $values.OSVersion = if ($isUbuntuDevice) { '24.04 LTS' } elseif ($device.OS -eq 'Windows11') { '25H2' } else { 'Server 2025' }
             $values.OSArchitecture = 'x64'
+            if ($Table -eq 'DeviceTvmInfoGathering') {
+                $values.LastSeenTime = Format-WorkshopTime $Time.AddMinutes(-(($Index % 120) + 1))
+                $values.TenantId = ''
+                $values.Type = 'DeviceTvmInfoGathering'
+                $values.SourceSystem = ''
+                $values.MachineGroup = ''
+                $values.AdditionalFields = New-WorkshopTvmInfoGatheringFields -Device $device -Time $Time -Index $Index
+                break
+            }
             if ($isUbuntuDevice) {
                 $software = Get-WorkshopRandomItem $linuxSoftwareCatalog
                 $values.SoftwareName = $software.Name
@@ -3360,7 +3478,7 @@ foreach ($table in $script:Schemas.Keys) {
         continue
     }
     $fallbackTime = $StartTime.AddMinutes(-10)
-    $fallbackValues = if ($table -in @('AADManagedIdentitySignInLogs', 'AADSpnSignInEventsBeta', 'EntraIdSpnSignInEvents')) {
+    $fallbackValues = if ($table -in @('AADManagedIdentitySignInLogs', 'AADSpnSignInEventsBeta', 'EntraIdSpnSignInEvents', 'DeviceTvmInfoGathering')) {
         New-NormalTelemetryValues -Table $table -Time $fallbackTime -Index ([Convert]::ToInt32((New-StableHex "$table|fallback" 7), 16))
     }
     else {
