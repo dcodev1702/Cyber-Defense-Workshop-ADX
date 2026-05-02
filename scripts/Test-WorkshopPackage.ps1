@@ -449,7 +449,7 @@ else {
         },
         @{
             FileName = 'SecurityIncident.json'
-            Needles = @('SecurityIncident', 'Microsoft XDR', 'ProviderIncidentId', 'RelatedAnalyticRuleIds', 'AdditionalData', 'Multi-stage incident involving identity and endpoint activity', 'XDR-CORR-000', 'DeviceTvmSoftwareEvidenceBeta')
+            Needles = @('SecurityIncident', 'Microsoft XDR', 'ProviderIncidentId', 'RelatedAnalyticRuleIds', 'AdditionalData', 'Multi-stage incident involving identity and endpoint activity', '9b507934-0bc3-d4ff-32d2-1b2a64796429', 'DeviceTvmSoftwareEvidenceBeta')
             Description = 'Microsoft Sentinel SecurityIncident telemetry shape and scenario correlation'
         },
         @{
@@ -464,12 +464,12 @@ else {
         },
         @{
             FileName = 'AlertInfo.json'
-            Needles = @('MIDNIGHT-BLIZZARD-000', 'Suspicious OAuth service principal persistence', 'T1528,T1098.001,T1550.001', 'XDR-CORR-000', 'OAuth application credential added and used for Graph access')
+            Needles = @('09fb0e10-de44-00fd-6478-518affd9a260', 'Suspicious OAuth service principal persistence', 'T1528,T1098.001,T1550.001', '9b507934-0bc3-d4ff-32d2-1b2a64796429', 'OAuth application credential added and used for Graph access')
             Description = 'OAuth service-principal alert and generic incident-correlation alert'
         },
         @{
             FileName = 'AlertEvidence.json'
-            Needles = @('MIDNIGHT-BLIZZARD-000', 'USAG Cyber Sync Helper', 'OAuthApplicationId', 'XDR-CORR-002', 'AADCONNECT01.usag-cyber.local')
+            Needles = @('09fb0e10-de44-00fd-6478-518affd9a260', 'USAG Cyber Sync Helper', 'OAuthApplicationId', '3d3bc433-e857-dc28-fec2-0131500cbf87', 'AADCONNECT01.usag-cyber.local')
             Description = 'OAuth service-principal and hybrid identity alert evidence'
         }
     )
@@ -479,6 +479,9 @@ else {
     }
 
     Test-GeneratedFileDoesNotContainText -DataDirectory $DataDirectory -FileName 'SecurityIncident.json' -Needles @('MIDNIGHT-BLIZZARD', 'MIDNIGHT BLIZZARD') -Description 'generic SOC-style incident naming'
+    Test-GeneratedFileDoesNotContainText -DataDirectory $DataDirectory -FileName 'SecurityIncident.json' -Needles @('XDR-CORR-', 'LINUX-001', 'LINUX-002', 'BASE-') -Description 'opaque SecurityIncident alert IDs'
+    Test-GeneratedFileDoesNotContainText -DataDirectory $DataDirectory -FileName 'AlertInfo.json' -Needles @('MIDNIGHT-BLIZZARD-', 'XDR-CORR-', 'LINUX-001', 'LINUX-002', 'BASE-') -Description 'opaque AlertInfo alert IDs'
+    Test-GeneratedFileDoesNotContainText -DataDirectory $DataDirectory -FileName 'AlertEvidence.json' -Needles @('MIDNIGHT-BLIZZARD-', 'XDR-CORR-', 'LINUX-001', 'LINUX-002', 'BASE-') -Description 'opaque AlertEvidence alert IDs'
 }
 
 if ($errors.Count -gt 0) {

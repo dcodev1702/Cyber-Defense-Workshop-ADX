@@ -45,6 +45,24 @@ Use the Ubuntu branch as an optional comparison pivot after the Windows path is 
 | Linux SSH/sudo branch | `DeviceLogonEvents`, `DeviceProcessEvents`, `DeviceEvents`, `DeviceImageLoadEvents`, `DeviceNetworkEvents`, and TVM tables show Ubuntu SSH, sudo, auditd, CUPS/IPP, `.so`, and package/CVE context |
 | Linux Oracle branch | `DeviceProcessEvents`, `DeviceNetworkEvents`, `DeviceFileEvents`, `AlertInfo`, and `AlertEvidence` show Python/Go tooling, Oracle TNS access on TCP/1521, and a synthetic sensitive export |
 
+## Instructor-only alert answer key
+
+Do not put these IDs on the student slides. The generated `AlertId` values are intentionally opaque so students learn to hunt by behavior, title, timestamp, entity, MITRE technique, `SecurityIncident.AlertIds`, and `AlertEvidence`, not by actor-branded IDs.
+
+| Scenario signal | AlertId | Offset | Alert title | MITRE ATT&CK |
+| --- | --- | --- | --- | --- |
+| OAuth service-principal persistence | `09fb0e10-de44-00fd-6478-518affd9a260` | +6 min | Suspicious OAuth service principal persistence | T1528, T1098.001, T1550.001 |
+| PowerShell credential discovery | `621e484e-f436-6fbb-0a0c-7af49802e455` | +15 min | Suspicious PowerShell credential discovery | T1552.002 |
+| Kerberoasting | `1d5d47bd-113b-c938-6499-e01752a4d4db` | +35 min | Suspected Kerberoasting activity | T1558.003 |
+| LSASS dump | `97185c44-fd9b-0dc3-ae32-ef6315b35a26` | +50 min | Credential dumping from LSASS | T1003.001 |
+| Password-store harvesting | `df57168c-010c-a303-3edb-d05782c407a9` | +65 min | Password store harvesting tool observed | T1555 |
+| Credential dumping tool | `710e468b-1a6f-1455-61d3-7bc4181de115` | +73 min | Mimikatz credential dumping | T1003.001 |
+| OAuth and Graph correlation | `9b507934-0bc3-d4ff-32d2-1b2a64796429` | +6 min | OAuth application credential added and used for Graph access | T1528, T1098.001, T1550.001 |
+| Endpoint credential material correlation | `196bc75c-9d49-eb62-a9fe-79941b6507e0` | +50 min | Credential material collection on one endpoint | T1003.001, T1552.002, T1555, T1558.003 |
+| Hybrid identity lateral movement correlation | `3d3bc433-e857-dc28-fec2-0131500cbf87` | +82 min | Service account interactive sign-in to identity synchronization server | T1078.002, T1021.006 |
+| Linux sudo privilege escalation | `16f35dea-f474-2198-8d0c-3467e6da3f26` | +68 min | Suspicious sudo chroot usage on Linux server | T1548.003, T1059.004 |
+| Linux Oracle collection | `b28ccabf-2b63-fc49-2ef3-31864d151643` | +74 min | Linux privilege escalation followed by Oracle data access | T1548.003, T1059.006, T1005 |
+
 ## Facilitation tips
 
 - Keep students in pairs if login troubleshooting takes more than a few minutes.

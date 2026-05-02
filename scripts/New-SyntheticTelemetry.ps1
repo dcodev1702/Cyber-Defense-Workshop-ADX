@@ -1164,6 +1164,19 @@ $graphClientUserAgent = 'GraphPowerShell/2.17.0 PowerShell/7.4.2 Windows/10.0.22
 $maliciousOAuthAppId = New-StableGuid 'malicious-oauth'
 $maliciousOAuthSpId = New-StableGuid 'malicious-oauth-sp'
 $maliciousOAuthKeyId = New-StableGuid 'malicious-oauth-secret-key'
+$scenarioAlertIds = @{
+    OAuthPersistence = New-StableGuid 'scenario-alert|oauth-service-principal-persistence'
+    PowerShellCredentialDiscovery = New-StableGuid 'scenario-alert|powershell-credential-discovery'
+    Kerberoasting = New-StableGuid 'scenario-alert|kerberoasting'
+    LsassDump = New-StableGuid 'scenario-alert|lsass-dump'
+    PasswordStoreHarvesting = New-StableGuid 'scenario-alert|password-store-harvesting'
+    CredentialDumpingTool = New-StableGuid 'scenario-alert|credential-dumping-tool'
+    CorrelationOAuthGraph = New-StableGuid 'scenario-correlation-alert|oauth-graph'
+    CorrelationCredentialCollection = New-StableGuid 'scenario-correlation-alert|credential-collection'
+    CorrelationHybridIdentity = New-StableGuid 'scenario-correlation-alert|hybrid-identity'
+    LinuxSudoChroot = New-StableGuid 'scenario-alert|linux-sudo-chroot'
+    LinuxOracleCollection = New-StableGuid 'scenario-alert|linux-oracle-collection'
+}
 
 # Assemble tool strings at runtime so the generator itself is not signature-like.
 $toolRu = 'Ru' + 'beus'
@@ -2413,7 +2426,7 @@ function New-NormalTelemetryValues {
             $values.RequestDuration = Get-WorkshopRandomInt -Minimum 20 -Maximum 1200
         }
         { $_ -in @('AlertInfo', 'AlertEvidence') } {
-            $alertId = "BASE-$('{0:D6}' -f $Index)"
+            $alertId = New-StableGuid "baseline-alert|$Index"
             $values.AlertId = $alertId
             $values.Title = Get-WorkshopRandomItem @('Informational Defender sensor event', 'Suspicious but remediated sign-in', 'Low severity malware blocked', 'Cloud app policy match')
             $values.Category = Get-WorkshopRandomItem @('InitialAccess', 'Execution', 'DefenseEvasion', 'Discovery')
@@ -3356,12 +3369,12 @@ foreach ($request in $graphAbuseRequests) {
 }
 
 $alerts = @(
-    [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-000'; Offset = 6; Title = 'Suspicious OAuth service principal persistence'; Category = 'Persistence'; Severity = 'High'; Source = 'Microsoft Defender XDR'; Technique = 'T1528,T1098.001,T1550.001'; Entity = 'OAuthApplication'; File = ''; Command = 'USAG Cyber Sync Helper service principal credential added and used for Microsoft Graph' },
-    [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-001'; Offset = 15; Title = 'Suspicious PowerShell credential discovery'; Category = 'CredentialAccess'; Severity = 'Medium'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1552.002'; Entity = 'Process'; File = 'powershell.exe'; Command = 'collect-reg-creds.ps1' },
-    [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-002'; Offset = 35; Title = 'Suspected Kerberoasting activity'; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Identity'; Technique = 'T1558.003'; Entity = 'User'; File = "$toolRu.exe"; Command = "$toolRu.exe kerberoast" },
-    [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-003'; Offset = 50; Title = "Credential dumping from $targetLs"; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1003.001'; Entity = 'File'; File = "$targetLsLower.dmp"; Command = "$toolProc.exe -ma $targetLsLower.exe" },
-    [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-004'; Offset = 65; Title = 'Password store harvesting tool observed'; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1555'; Entity = 'Process'; File = "$toolLa.exe"; Command = "$toolLa.exe all" },
-    [pscustomobject]@{ Id = 'MIDNIGHT-BLIZZARD-005'; Offset = 73; Title = "$toolMi credential dumping"; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1003.001'; Entity = 'Process'; File = "$($toolMi.ToLower()).exe"; Command = $secretVerb }
+    [pscustomobject]@{ Id = $scenarioAlertIds.OAuthPersistence; Offset = 6; Title = 'Suspicious OAuth service principal persistence'; Category = 'Persistence'; Severity = 'High'; Source = 'Microsoft Defender XDR'; Technique = 'T1528,T1098.001,T1550.001'; Entity = 'OAuthApplication'; File = ''; Command = 'USAG Cyber Sync Helper service principal credential added and used for Microsoft Graph' },
+    [pscustomobject]@{ Id = $scenarioAlertIds.PowerShellCredentialDiscovery; Offset = 15; Title = 'Suspicious PowerShell credential discovery'; Category = 'CredentialAccess'; Severity = 'Medium'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1552.002'; Entity = 'Process'; File = 'powershell.exe'; Command = 'collect-reg-creds.ps1' },
+    [pscustomobject]@{ Id = $scenarioAlertIds.Kerberoasting; Offset = 35; Title = 'Suspected Kerberoasting activity'; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Identity'; Technique = 'T1558.003'; Entity = 'User'; File = "$toolRu.exe"; Command = "$toolRu.exe kerberoast" },
+    [pscustomobject]@{ Id = $scenarioAlertIds.LsassDump; Offset = 50; Title = "Credential dumping from $targetLs"; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1003.001'; Entity = 'File'; File = "$targetLsLower.dmp"; Command = "$toolProc.exe -ma $targetLsLower.exe" },
+    [pscustomobject]@{ Id = $scenarioAlertIds.PasswordStoreHarvesting; Offset = 65; Title = 'Password store harvesting tool observed'; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1555'; Entity = 'Process'; File = "$toolLa.exe"; Command = "$toolLa.exe all" },
+    [pscustomobject]@{ Id = $scenarioAlertIds.CredentialDumpingTool; Offset = 73; Title = "$toolMi credential dumping"; Category = 'CredentialAccess'; Severity = 'High'; Source = 'Microsoft Defender for Endpoint'; Technique = 'T1003.001'; Entity = 'Process'; File = "$($toolMi.ToLower()).exe"; Command = $secretVerb }
 )
 foreach ($alert in $alerts) {
     $time = $StartTime.AddMinutes($alert.Offset)
@@ -3406,7 +3419,7 @@ foreach ($alert in $alerts) {
 
 $scenarioCorrelationAlerts = @(
     [pscustomobject]@{
-        AlertId = 'XDR-CORR-000'
+        AlertId = $scenarioAlertIds.CorrelationOAuthGraph
         Offset = 6
         Title = 'OAuth application credential added and used for Graph access'
         Category = 'Persistence'
@@ -3425,7 +3438,7 @@ $scenarioCorrelationAlerts = @(
         AdditionalFields = '{"Scenario":"OAuth persistence and Graph access","ServicePrincipal":"USAG Cyber Sync Helper","EvidenceTables":["CloudAppEvents","AuditLogs","AADServicePrincipalSignInLogs","GraphApiAuditEvents","MicrosoftGraphActivityLogs"]}'
     },
     [pscustomobject]@{
-        AlertId = 'XDR-CORR-001'
+        AlertId = $scenarioAlertIds.CorrelationCredentialCollection
         Offset = 50
         Title = 'Credential material collection on one endpoint'
         Category = 'CredentialAccess'
@@ -3444,7 +3457,7 @@ $scenarioCorrelationAlerts = @(
         AdditionalFields = '{"Scenario":"Endpoint credential material collection","EvidencePath":"C:\\ProgramData\\wrstage","SupportingTables":["DeviceProcessEvents","DeviceFileEvents","DeviceRegistryEvents","DeviceTvmSoftwareEvidenceBeta","DeviceTvmSecureConfigurationAssessment"]}'
     },
     [pscustomobject]@{
-        AlertId = 'XDR-CORR-002'
+        AlertId = $scenarioAlertIds.CorrelationHybridIdentity
         Offset = 82
         Title = 'Service account interactive sign-in to identity synchronization server'
         Category = 'LateralMovement'
@@ -3637,7 +3650,7 @@ Add-Record -Table 'DeviceEvents' -Time $StartTime.AddMinutes(68) -Values @{
 }
 Add-Record -Table 'AlertInfo' -Time $linuxAlertTime -Values @{
     Timestamp = Format-WorkshopTime $linuxAlertTime
-    AlertId = 'LINUX-001'
+    AlertId = $scenarioAlertIds.LinuxSudoChroot
     Title = 'Suspicious sudo chroot usage on Linux server'
     Category = 'PrivilegeEscalation'
     Severity = 'High'
@@ -3647,7 +3660,7 @@ Add-Record -Table 'AlertInfo' -Time $linuxAlertTime -Values @{
 }
 Add-Record -Table 'AlertEvidence' -Time $linuxAlertTime -Values @{
     Timestamp = Format-WorkshopTime $linuxAlertTime
-    AlertId = 'LINUX-001'
+    AlertId = $scenarioAlertIds.LinuxSudoChroot
     Title = 'Suspicious sudo chroot usage on Linux server'
     Categories = '["PrivilegeEscalation"]'
     AttackTechniques = 'T1548.003,T1059.004'
@@ -3827,7 +3840,7 @@ Add-Record -Table 'DeviceFileEvents' -Time $StartTime.AddMinutes(74) -Values @{
 }
 Add-Record -Table 'AlertInfo' -Time $StartTime.AddMinutes(74) -Values @{
     Timestamp = Format-WorkshopTime $StartTime.AddMinutes(74)
-    AlertId = 'LINUX-002'
+    AlertId = $scenarioAlertIds.LinuxOracleCollection
     Title = 'Linux privilege escalation followed by Oracle data access'
     Category = 'Collection'
     Severity = 'High'
@@ -3837,7 +3850,7 @@ Add-Record -Table 'AlertInfo' -Time $StartTime.AddMinutes(74) -Values @{
 }
 Add-Record -Table 'AlertEvidence' -Time $StartTime.AddMinutes(74) -Values @{
     Timestamp = Format-WorkshopTime $StartTime.AddMinutes(74)
-    AlertId = 'LINUX-002'
+    AlertId = $scenarioAlertIds.LinuxOracleCollection
     Title = 'Linux privilege escalation followed by Oracle data access'
     Categories = '["Collection","PrivilegeEscalation"]'
     AttackTechniques = 'T1548.003,T1059.006,T1005'
@@ -4105,7 +4118,17 @@ Add-WorkshopScenarioSecurityIncident `
     -Description 'Correlates risky user sign-in, OAuth application consent, service-principal credential creation, Graph access, endpoint credential material collection, Kerberoasting, and service-account use against the identity synchronization server.' `
     -Severity 'High' `
     -Status 'Active' `
-    -AlertIds @('XDR-CORR-000', 'XDR-CORR-001', 'XDR-CORR-002') `
+    -AlertIds @(
+        $scenarioAlertIds.OAuthPersistence,
+        $scenarioAlertIds.PowerShellCredentialDiscovery,
+        $scenarioAlertIds.Kerberoasting,
+        $scenarioAlertIds.LsassDump,
+        $scenarioAlertIds.PasswordStoreHarvesting,
+        $scenarioAlertIds.CredentialDumpingTool,
+        $scenarioAlertIds.CorrelationOAuthGraph,
+        $scenarioAlertIds.CorrelationCredentialCollection,
+        $scenarioAlertIds.CorrelationHybridIdentity
+    ) `
     -Tactics @('InitialAccess', 'Persistence', 'CredentialAccess', 'LateralMovement') `
     -Techniques @('T1078', 'T1528', 'T1098.001', 'T1550.001', 'T1003.001', 'T1558.003', 'T1021.006') `
     -Entities @{ user = $victor.Upn; primaryDevice = $win04.Name; servicePrincipal = 'USAG Cyber Sync Helper'; serviceAccount = $svcSql.Upn; targetDevice = $aadc.Name; sourceIp = $externalIp } `
@@ -4121,7 +4144,7 @@ Add-WorkshopScenarioSecurityIncident `
     -Description 'Risky interactive sign-in from an unfamiliar location is followed by user-consented application access and Microsoft Graph activity.' `
     -Severity 'Medium' `
     -Status 'New' `
-    -AlertIds @('XDR-CORR-000', 'XDR-CORR-001') `
+    -AlertIds @($scenarioAlertIds.OAuthPersistence, $scenarioAlertIds.CorrelationOAuthGraph) `
     -Tactics @('InitialAccess', 'Persistence') `
     -Techniques @('T1078', 'T1528', 'T1098.001') `
     -Entities @{ user = $victor.Upn; sourceIp = $externalIp; application = 'USAG Cyber Sync Helper'; appId = $maliciousOAuthAppId } `
@@ -4137,7 +4160,15 @@ Add-WorkshopScenarioSecurityIncident `
     -Description 'Defender XDR alert evidence correlates endpoint credential collection artifacts with service-account misuse and exposed software/configuration context.' `
     -Severity 'High' `
     -Status 'Active' `
-    -AlertIds @('XDR-CORR-001', 'XDR-CORR-002') `
+    -AlertIds @(
+        $scenarioAlertIds.PowerShellCredentialDiscovery,
+        $scenarioAlertIds.Kerberoasting,
+        $scenarioAlertIds.LsassDump,
+        $scenarioAlertIds.PasswordStoreHarvesting,
+        $scenarioAlertIds.CredentialDumpingTool,
+        $scenarioAlertIds.CorrelationCredentialCollection,
+        $scenarioAlertIds.CorrelationHybridIdentity
+    ) `
     -Tactics @('CredentialAccess', 'LateralMovement') `
     -Techniques @('T1003.001', 'T1552.002', 'T1555', 'T1558.003', 'T1021.006') `
     -Entities @{ user = $victor.Upn; primaryDevice = $win04.Name; serviceAccount = $svcSql.Upn; targetDevice = $aadc.Name; evidencePath = $stage } `
@@ -4153,7 +4184,7 @@ Add-WorkshopScenarioSecurityIncident `
     -Description 'Optional Linux branch incident correlating SSH/PAM activity, sudo privilege escalation, staged Python and Go tooling, Oracle TNS access, and vulnerable Ubuntu package context.' `
     -Severity 'High' `
     -Status 'New' `
-    -AlertIds @('LINUX-001', 'LINUX-002') `
+    -AlertIds @($scenarioAlertIds.LinuxSudoChroot, $scenarioAlertIds.LinuxOracleCollection) `
     -Tactics @('PrivilegeEscalation', 'Execution', 'Collection') `
     -Techniques @('T1548.003', 'T1059.006', 'T1005') `
     -Entities @{ user = $alice.Upn; sourceDevice = $linux03.Name; targetDevice = $linuxDb.Name; database = 'Oracle ORCL'; sourceIp = '10.42.30.10' } `

@@ -364,8 +364,13 @@ Joins are how you stitch two tables together using a shared column. Here's the p
 The query:
 
 ```kql
+let scenarioAlertIds =
+    SecurityIncident
+    | where Labels has "WorkshopScenario"
+    | mv-expand AlertIds
+    | project AlertId=tostring(AlertIds);
 AlertInfo
-| where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "XDR-CORR-"
+| where AlertId in (scenarioAlertIds)
 | join kind=inner AlertEvidence on AlertId
 | project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, ServiceSource=ServiceSource1, AttackTechniques=AttackTechniques1, EntityType, DeviceName, AccountUpn, FileName, ProcessCommandLine
 | order by Timestamp asc
@@ -373,11 +378,12 @@ AlertInfo
 
 A few things going on here:
 
+- **`scenarioAlertIds`** — pulls the relevant alert IDs from the SOC incident queue instead of relying on obvious scenario-specific ID prefixes.
 - **`join kind=inner ... on AlertId`** — keep only rows where the same `AlertId` exists in both tables. (`kind=inner` is the most common; it means "intersection.")
 - **`Timestamp=Timestamp1`** — when both tables have a column called `Timestamp`, the join names them `Timestamp` and `Timestamp1` to disambiguate. We're saying "give me the one from the right side and call it `Timestamp`."
 - The result is a wide row that has the alert headline (from `AlertInfo`) *and* the artifact details (from `AlertEvidence`) together.
 
-You'll get one row per piece of evidence per alert, and each row tells you both *what triggered* and *what fired it*. The `XDR-CORR-*` alerts are generic correlation alerts used by the `SecurityIncident` records; they are not threat-actor names.
+You'll get one row per piece of evidence per alert, and each row tells you both *what triggered* and *what fired it*. Notice that the alert IDs are intentionally opaque. In a real SOC you normally do not get actor-labeled alert IDs; you find the right telemetry by pivoting from incident context, alert titles, entities, timestamps, and MITRE techniques.
 
 > **Mentor moment.** This is the most important pattern in Defender XDR hunting. `AlertInfo` is "what." `AlertEvidence` is "why we think so." You almost never want one without the other.
 
@@ -465,9 +471,14 @@ let servicePrincipal =
 Then alerts:
 
 ```kql
+let scenarioAlertIds =
+    SecurityIncident
+    | where Labels has "WorkshopScenario"
+    | mv-expand AlertIds
+    | project AlertId=tostring(AlertIds);
 let alerts =
     AlertInfo
-    | where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "XDR-CORR-"
+    | where AlertId in (scenarioAlertIds)
     | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
 ```
 
@@ -500,9 +511,14 @@ let servicePrincipal =
     AADServicePrincipalSignInLogs
     | where ServicePrincipalName has "USAG Cyber Sync Helper"
     | project Timestamp=TimeGenerated, SourceTable="AADServicePrincipalSignInLogs", Entity=ServicePrincipalName, Detail=strcat(ClientCredentialType, " :: ", ResourceDisplayName, " :: ", IPAddress);
+let scenarioAlertIds =
+    SecurityIncident
+    | where Labels has "WorkshopScenario"
+    | mv-expand AlertIds
+    | project AlertId=tostring(AlertIds);
 let alerts =
     AlertInfo
-    | where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "XDR-CORR-"
+    | where AlertId in (scenarioAlertIds)
     | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
 let incidents =
     SecurityIncident
@@ -627,7 +643,7 @@ linuxDevices
 
 ```kql
 AlertInfo
-| where AlertId == "LINUX-002" or Title has "Oracle"
+| where Title has "Oracle" or (Category =~ "Collection" and AttackTechniques has "T1005")
 | join kind=leftouter AlertEvidence on AlertId
 | project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, AttackTechniques=AttackTechniques1, DeviceName, AccountName, FileName, FolderPath, ProcessCommandLine, AdditionalFields
 | order by Timestamp asc

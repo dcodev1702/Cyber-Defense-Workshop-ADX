@@ -197,11 +197,17 @@ DeviceLogonEvents
 // Why: SecurityIncident is the SOC queue; AlertInfo tells you what was detected; AlertEvidence tells you which entity, process, user, or file supported it.
 // Scenario tie-in: The incident titles are generic SOC-style names, while their alert and evidence pivots support the identity, endpoint, hybrid, and Linux branches.
 // KQL notes:
+// - scenarioAlertIds pulls opaque AlertIds from the SOC incident queue instead of relying on obvious ID prefixes.
 // - inner join returns only alerts that have matching evidence.
 // - AlertId is the shared key.
 // - KQL suffixes duplicate column names, so Timestamp1/Title1/Severity1 come from the joined table shape.
+let scenarioAlertIds =
+    SecurityIncident
+    | where Labels has "WorkshopScenario"
+    | mv-expand AlertIds
+    | project AlertId=tostring(AlertIds);
 AlertInfo
-| where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "XDR-CORR-"
+| where AlertId in (scenarioAlertIds)
 | join kind=inner AlertEvidence on AlertId
 | project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, ServiceSource=ServiceSource1, AttackTechniques=AttackTechniques1, EntityType, DeviceName, AccountUpn, FileName, ProcessCommandLine
 | order by Timestamp asc
@@ -352,11 +358,11 @@ linuxDevices
 
 // 12c. Correlate the Linux Oracle alert to supporting evidence.
 // Why: leftouter keeps the alert row even if evidence is missing, which is useful for alert QA.
-// Scenario tie-in: LINUX-002 summarizes privilege escalation followed by Oracle data access.
+// Scenario tie-in: the Oracle collection alert summarizes privilege escalation followed by database access.
 // KQL notes:
 // - leftouter keeps all rows from AlertInfo and appends matching AlertEvidence where available.
 AlertInfo
-| where AlertId == "LINUX-002" or Title has "Oracle"
+| where Title has "Oracle" or (Category =~ "Collection" and AttackTechniques has "T1005")
 | join kind=leftouter AlertEvidence on AlertId
 | project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, AttackTechniques=AttackTechniques1, DeviceName, AccountName, FileName, FolderPath, ProcessCommandLine, AdditionalFields
 | order by Timestamp asc
@@ -389,9 +395,14 @@ let servicePrincipal =
     AADServicePrincipalSignInLogs
     | where ServicePrincipalName has "USAG Cyber Sync Helper"
     | project Timestamp=TimeGenerated, SourceTable="AADServicePrincipalSignInLogs", Entity=ServicePrincipalName, Detail=strcat(ClientCredentialType, " :: ", ResourceDisplayName, " :: ", IPAddress);
+let scenarioAlertIds =
+    SecurityIncident
+    | where Labels has "WorkshopScenario"
+    | mv-expand AlertIds
+    | project AlertId=tostring(AlertIds);
 let alerts =
     AlertInfo
-    | where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "XDR-CORR-" or AlertId startswith "LINUX-"
+    | where AlertId in (scenarioAlertIds)
     | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
 let incidents =
     SecurityIncident
