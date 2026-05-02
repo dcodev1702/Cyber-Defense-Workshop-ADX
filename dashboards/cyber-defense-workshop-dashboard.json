@@ -660,6 +660,28 @@
       ]
     },
     {
+      "id": "af76f4eb-83aa-3d23-8985-9ca3673c4851",
+      "title": "Entra ID - Application Consent",
+      "query": "AuditLogs\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| where ActivityDisplayName has_any (\"Consent to application\", \"service principal credentials\")\r\n   or OperationName has_any (\"Consent to application\", \"service principal credentials\")\r\n| project TimeGenerated, ActivityDisplayName, OperationName, Identity, InitiatedBy, TargetResources, AdditionalDetails, Result\r\n| order by TimeGenerated asc",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "6579b92c-2ec1-06bb-fd6d-6def689c4fa4",
+      "layout": {
+        "x": 0,
+        "y": 18,
+        "width": 12,
+        "height": 7
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
       "id": "adbe1c26-1b20-eb69-c0f0-4088603cf2e4",
       "title": "Top network destinations",
       "query": "DeviceNetworkEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl)\r\n| summarize Connections=count(), Devices=dcount(DeviceId), Ports=make_set(RemotePort, 8), Processes=make_set(InitiatingProcessFileName, 8) by Destination, RemoteIP, RemoteIPType, Protocol\r\n| top 25 by Connections desc",

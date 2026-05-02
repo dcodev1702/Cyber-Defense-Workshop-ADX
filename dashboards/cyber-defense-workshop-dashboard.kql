@@ -219,6 +219,15 @@ IdentityAccountInfo
 | take 25
 
 // -----------------------------------------------------------------------------
+// Tile: Entra ID - Application Consent
+AuditLogs
+| where TimeGenerated between (StartTime .. EndTime)
+| where ActivityDisplayName has_any ("Consent to application", "service principal credentials")
+   or OperationName has_any ("Consent to application", "service principal credentials")
+| project TimeGenerated, ActivityDisplayName, OperationName, Identity, InitiatedBy, TargetResources, AdditionalDetails, Result
+| order by TimeGenerated asc
+
+// -----------------------------------------------------------------------------
 // Tile: Top network destinations
 DeviceNetworkEvents
 | where TimeGenerated between (StartTime .. EndTime)

@@ -291,6 +291,15 @@ IdentityAccountInfo
 | take 25
 '@
 
+$entraApplicationConsentQuery = @'
+AuditLogs
+| where TimeGenerated between (['_startTime'] .. ['_endTime'])
+| where ActivityDisplayName has_any ("Consent to application", "service principal credentials")
+   or OperationName has_any ("Consent to application", "service principal credentials")
+| project TimeGenerated, ActivityDisplayName, OperationName, Identity, InitiatedBy, TargetResources, AdditionalDetails, Result
+| order by TimeGenerated asc
+'@
+
 $loginOutcomesQuery = @'
 let Logons = union isfuzzy=true
 (SigninLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Timestamp=TimeGenerated, Source='Interactive Entra', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
@@ -438,6 +447,7 @@ $tiles.Add((New-Tile -Title 'Login outcomes over time' -Query $loginOutcomesQuer
 $tiles.Add((New-Tile -Title 'Failed logins by source' -Query $failedLoginSourcesQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'bar' -X 0 -Y 6 -Width 6 -Height 5 -VisualOptions (New-ChartOptions -YAxisLabel 'Failed logins'))) | Out-Null
 $tiles.Add((New-Tile -Title 'Top failed principals' -Query $topFailedPrincipalsQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'table' -X 6 -Y 6 -Width 6 -Height 5 -VisualOptions (New-TableOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Privileged / high-risk identities' -Query $privilegedIdentitiesQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 11 -Width 12 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Entra ID - Application Consent' -Query $entraApplicationConsentQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 18 -Width 12 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
 
 $tiles.Add((New-Tile -Title 'Top network destinations' -Query $topNetworkDestinationsQuery -PageId $networkPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 0 -Width 7 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Network connections by process' -Query $networkByProcessQuery -PageId $networkPageId -DataSourceId $dataSourceId -VisualType 'bar' -X 7 -Y 0 -Width 5 -Height 7 -VisualOptions (New-ChartOptions -YAxisLabel 'Connections'))) | Out-Null
