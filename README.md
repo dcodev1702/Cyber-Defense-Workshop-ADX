@@ -65,7 +65,7 @@ The Cyber Defense scenario models a **Midnight Blizzard-inspired hybrid identity
 
 The diagram below traces the kill chain across the cloud, endpoint, and identity tiers. Each phase deposits telemetry into Azure Data Explorer for student investigation.
 
-![Cyber Defense KQL Workshop lab topology](images/lab-topology.svg)
+![Cyber Defense KQL Workshop lab topology](images/adx-lab-topology.png)
 
 For background on the threat actor that inspired this scenario — naming, attribution, recent activity, and the TTPs that map directly to the workshop's KQL queries — see [`docs/threat-actor-midnight-blizzard.md`](docs/threat-actor-midnight-blizzard.md).
 
