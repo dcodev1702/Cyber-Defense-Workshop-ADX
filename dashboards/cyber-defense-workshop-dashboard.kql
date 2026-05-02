@@ -1,0 +1,197 @@
+// Cyber Defense Workshop ADX Operations Dashboard query pack
+// Use these queries to manually pin tiles if the JSON import path is not available.
+// Adjust StartTime and EndTime if you want a different dashboard window.
+let StartTime = ago(14d);
+let EndTime = now();
+
+// -----------------------------------------------------------------------------
+// Tile: Executive cyber range metrics
+let DeviceStats = DeviceInfo
+| where TimeGenerated between (StartTime .. EndTime)
+| summarize arg_max(TimeGenerated, *) by DeviceId
+| summarize TotalDevices=count(), Onboarded=countif(OnboardingStatus == 'Onboarded'), Endpoints=countif(DeviceCategory == 'Endpoint'), Servers=countif(DeviceType == 'Server'), IoT=countif(DeviceCategory == 'IoT');
+let IdentityStats = IdentityAccountInfo
+| where TimeGenerated between (StartTime .. EndTime)
+| summarize arg_max(TimeGenerated, *) by AccountId
+| summarize Users=countif(Type =~ 'User'), ServiceAccounts=countif(Type =~ 'ServiceAccount'), EnabledAccounts=countif(AccountStatus =~ 'Enabled');
+let Logons = union isfuzzy=true
+(SigninLogs | where TimeGenerated between (StartTime .. EndTime) | project Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
+(AADNonInteractiveUserSignInLogs | where TimeGenerated between (StartTime .. EndTime) | project Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
+(AADServicePrincipalSignInLogs | where TimeGenerated between (StartTime .. EndTime) | project Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
+(AADManagedIdentitySignInLogs | where TimeGenerated between (StartTime .. EndTime) | project Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
+(DeviceLogonEvents | where Timestamp between (StartTime .. EndTime) | project Result=iff(ActionType has 'Failed', 'Failure', 'Success')),
+(IdentityLogonEvents | where Timestamp between (StartTime .. EndTime) | project Result=iff(ActionType has 'Failed', 'Failure', 'Success'));
+let LogonStats = Logons | summarize SuccessfulLogins=countif(Result == 'Success'), FailedLogins=countif(Result == 'Failure');
+let AlertStats = AlertInfo | where Timestamp between (StartTime .. EndTime) | summarize Alerts=count(), HighAlerts=countif(Severity =~ 'High');
+DeviceStats
+| extend JoinKey=1
+| join kind=inner (IdentityStats | extend JoinKey=1) on JoinKey
+| join kind=inner (LogonStats | extend JoinKey=1) on JoinKey
+| join kind=inner (AlertStats | extend JoinKey=1) on JoinKey
+| project ['Total devices']=TotalDevices, ['Onboarded devices']=Onboarded, Endpoints, Servers, ['IoT devices']=IoT, Users, ['Service accounts']=ServiceAccounts, ['Enabled accounts']=EnabledAccounts, ['Successful logins']=SuccessfulLogins, ['Failed logins']=FailedLogins, Alerts, ['High alerts']=HighAlerts
+| render card
+
+// -----------------------------------------------------------------------------
+// Tile: Devices by OS family / category / type
+DeviceInfo
+| where TimeGenerated between (StartTime .. EndTime)
+| summarize arg_max(TimeGenerated, *) by DeviceId
+| summarize Devices=count() by OSFamily=case(OSPlatform has 'Windows', 'Windows', OSPlatform =~ 'Linux' or OSDistribution =~ 'Ubuntu', 'Linux', OSPlatform =~ 'Android', 'Android/IoT', 'Other'), DeviceCategory, DeviceType
+| order by Devices desc
+| render barchart with (title='Devices by OS family, category, and type')
+
+// -----------------------------------------------------------------------------
+// Tile: Machine group posture
+DeviceInfo
+| where TimeGenerated between (StartTime .. EndTime)
+| summarize arg_max(TimeGenerated, *) by DeviceId
+| summarize Devices=count(), Onboarded=countif(OnboardingStatus == 'Onboarded'), Unsupported=countif(OnboardingStatus == 'Unsupported'), HealthySensors=countif(SensorHealthState == 'Active') by MachineGroup
+| order by Devices desc
+| render columnchart with (title='Device posture by machine group')
+
+// -----------------------------------------------------------------------------
+// Tile: Device inventory drilldown
+DeviceInfo
+| where TimeGenerated between (StartTime .. EndTime)
+| summarize arg_max(TimeGenerated, *) by DeviceId
+| project DeviceName, OSPlatform, OSDistribution, OSBuild, DeviceCategory, DeviceType, MachineGroup, OnboardingStatus, SensorHealthState, ExposureLevel, PublicIP
+| order by MachineGroup asc, DeviceName asc
+| take 100
+
+// -----------------------------------------------------------------------------
+// Tile: Users and service accounts
+IdentityAccountInfo
+| where TimeGenerated between (StartTime .. EndTime)
+| summarize arg_max(TimeGenerated, *) by AccountId
+| summarize Accounts=count(), Enabled=countif(AccountStatus =~ 'Enabled'), Disabled=countif(AccountStatus =~ 'Disabled'), PrimaryAccounts=countif(IsPrimary) by Type, SourceProvider
+| order by Accounts desc
+| render columnchart with (title='Users and service accounts by provider')
+
+// -----------------------------------------------------------------------------
+// Tile: Login outcomes over time
+let Logons = union isfuzzy=true
+(SigninLogs | where TimeGenerated between (StartTime .. EndTime) | project Timestamp=TimeGenerated, Source='Interactive Entra', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
+(AADNonInteractiveUserSignInLogs | where TimeGenerated between (StartTime .. EndTime) | project Timestamp=TimeGenerated, Source='Non-interactive Entra', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
+(AADServicePrincipalSignInLogs | where TimeGenerated between (StartTime .. EndTime) | project Timestamp=TimeGenerated, Source='Service principal', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
+(AADManagedIdentitySignInLogs | where TimeGenerated between (StartTime .. EndTime) | project Timestamp=TimeGenerated, Source='Managed identity', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
+(DeviceLogonEvents | where Timestamp between (StartTime .. EndTime) | project Timestamp, Source='Endpoint logon', Result=iff(ActionType has 'Failed', 'Failure', 'Success')),
+(IdentityLogonEvents | where Timestamp between (StartTime .. EndTime) | project Timestamp, Source='Identity logon', Result=iff(ActionType has 'Failed', 'Failure', 'Success'));
+Logons
+| summarize Logons=count() by bin(Timestamp, 6h), Result
+| order by Timestamp asc
+| render timechart with (title='Successful and failed logons over time')
+
+// -----------------------------------------------------------------------------
+// Tile: Failed logins by source
+let Failed = union isfuzzy=true
+(SigninLogs | where TimeGenerated between (StartTime .. EndTime) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated, Source='Interactive Entra', Principal=UserPrincipalName, Application=AppDisplayName, IPAddress, Failure=ResultDescription),
+(AADNonInteractiveUserSignInLogs | where TimeGenerated between (StartTime .. EndTime) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated, Source='Non-interactive Entra', Principal=UserPrincipalName, Application=AppDisplayName, IPAddress, Failure=ResultDescription),
+(DeviceLogonEvents | where Timestamp between (StartTime .. EndTime) | where ActionType has 'Failed' | project Timestamp, Source='Endpoint logon', Principal=strcat(AccountDomain, '\\', AccountName), Application=LogonType, IPAddress=RemoteIP, Failure=FailureReason),
+(IdentityLogonEvents | where Timestamp between (StartTime .. EndTime) | where ActionType has 'Failed' | project Timestamp, Source='Identity logon', Principal=coalesce(AccountUpn, strcat(AccountDomain, '\\', AccountName)), Application=LogonType, IPAddress, Failure=FailureReason);
+Failed
+| summarize FailedLogins=count(), Principals=dcount(Principal), Applications=dcount(Application) by Source
+| order by FailedLogins desc
+| render barchart with (title='Failed logins by source')
+
+// -----------------------------------------------------------------------------
+// Tile: Top failed principals
+let Failed = union isfuzzy=true
+(SigninLogs | where TimeGenerated between (StartTime .. EndTime) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Principal=UserPrincipalName, IPAddress, Failure=ResultDescription),
+(AADNonInteractiveUserSignInLogs | where TimeGenerated between (StartTime .. EndTime) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Principal=UserPrincipalName, IPAddress, Failure=ResultDescription),
+(DeviceLogonEvents | where Timestamp between (StartTime .. EndTime) | where ActionType has 'Failed' | project Principal=strcat(AccountDomain, '\\', AccountName), IPAddress=RemoteIP, Failure=FailureReason),
+(IdentityLogonEvents | where Timestamp between (StartTime .. EndTime) | where ActionType has 'Failed' | project Principal=coalesce(AccountUpn, strcat(AccountDomain, '\\', AccountName)), IPAddress, Failure=FailureReason);
+Failed
+| summarize FailedLogins=count(), SourceIPs=dcount(IPAddress), Failures=make_set(Failure, 5) by Principal
+| top 20 by FailedLogins desc
+
+// -----------------------------------------------------------------------------
+// Tile: Privileged / high-risk identities
+IdentityAccountInfo
+| where TimeGenerated between (StartTime .. EndTime)
+| extend RoleCount = coalesce(array_length(AssignedRoles), 0), GroupCount = coalesce(array_length(GroupMembership), 0)
+| where RoleCount > 0 or CriticalityLevel >= 8 or DefenderRiskLevel >= 5
+| project DisplayName, AccountUpn, Type, AccountStatus, SourceProvider, RoleCount, GroupCount, AssignedRoles, GroupMembership, CriticalityLevel, DefenderRiskLevel
+| order by RoleCount desc, CriticalityLevel desc, DefenderRiskLevel desc
+| take 25
+
+// -----------------------------------------------------------------------------
+// Tile: Top network destinations
+DeviceNetworkEvents
+| where TimeGenerated between (StartTime .. EndTime)
+| extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl)
+| summarize Connections=count(), Devices=dcount(DeviceId), Ports=make_set(RemotePort, 8), Processes=make_set(InitiatingProcessFileName, 8) by Destination, RemoteIP, RemoteIPType, Protocol
+| top 25 by Connections desc
+
+// -----------------------------------------------------------------------------
+// Tile: Network connections by process
+DeviceNetworkEvents
+| where TimeGenerated between (StartTime .. EndTime)
+| summarize Connections=count(), Destinations=dcount(iff(isempty(RemoteUrl), RemoteIP, RemoteUrl)), PublicConnections=countif(RemoteIPType == 'Public') by InitiatingProcessFileName, Protocol
+| top 20 by Connections desc
+| render barchart with (title='Network connections by process')
+
+// -----------------------------------------------------------------------------
+// Tile: Public egress destinations
+DeviceNetworkEvents
+| where TimeGenerated between (StartTime .. EndTime)
+| where RemoteIPType == 'Public'
+| extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl)
+| summarize Connections=count(), Devices=dcount(DeviceId), Processes=make_set(InitiatingProcessFileName, 8) by Destination, RemoteIP, RemotePort, Protocol
+| top 25 by Connections desc
+
+// -----------------------------------------------------------------------------
+// Tile: Graph API requests by API / application / AppId
+let AppLookup = union isfuzzy=true
+(SigninLogs | project ApplicationId=tostring(ApplicationId), ApplicationName=AppDisplayName),
+(EntraIdSpnSignInEvents | project ApplicationId=tostring(ApplicationId), ApplicationName=Application),
+(AADManagedIdentitySignInLogs | project ApplicationId=tostring(AppId), ApplicationName=ServicePrincipalName)
+| where isnotempty(ApplicationId) and isnotempty(ApplicationName)
+| summarize ApplicationName=any(ApplicationName) by ApplicationId;
+GraphApiAuditEvents
+| where TimeGenerated between (StartTime .. EndTime)
+| extend Api=strcat(RequestMethod, ' ', tostring(split(RequestUri, '?')[0])), AppId=tostring(ApplicationId), StatusCode=toint(ResponseStatusCode)
+| lookup kind=leftouter AppLookup on ApplicationId
+| extend ApplicationName=coalesce(ApplicationName, 'Unknown / synthetic Graph client')
+| summarize Requests=count(), Failures=countif(StatusCode >= 400), Principals=dcount(AccountObjectId), ClientIPs=dcount(IpAddress) by Api, ApplicationName, AppId, TargetWorkload
+| top 25 by Requests desc
+
+// -----------------------------------------------------------------------------
+// Tile: Graph API status by method
+GraphApiAuditEvents
+| where TimeGenerated between (StartTime .. EndTime)
+| extend StatusClass=strcat(substring(ResponseStatusCode, 0, 1), 'xx')
+| summarize Requests=count() by RequestMethod, StatusClass
+| order by Requests desc
+| render columnchart with (title='Graph API status by method')
+
+// -----------------------------------------------------------------------------
+// Tile: Managed identity sign-ins
+AADManagedIdentitySignInLogs
+| where TimeGenerated between (StartTime .. EndTime)
+| summarize SignIns=count(), Failures=countif(not(ResultType =~ 'Success' or tostring(ResultType) == '0')), Resources=make_set(ResourceDisplayName, 8), SourceIPs=make_set(IPAddress, 8) by ServicePrincipalName, ServicePrincipalId
+| top 20 by SignIns desc
+
+// -----------------------------------------------------------------------------
+// Tile: Alerts by severity and category
+AlertInfo
+| where Timestamp between (StartTime .. EndTime)
+| summarize Alerts=count() by Severity, Category
+| order by Alerts desc
+| render columnchart with (title='Alerts by severity and category')
+
+// -----------------------------------------------------------------------------
+// Tile: MITRE ATT&CK alert techniques
+AlertInfo
+| where Timestamp between (StartTime .. EndTime)
+| summarize Alerts=count(), Titles=make_set(Title, 5) by AttackTechniques, Severity
+| order by Alerts desc
+
+// -----------------------------------------------------------------------------
+// Tile: Scenario signal timeline
+let AlertSignals = AlertInfo | where Timestamp between (StartTime .. EndTime) | project Timestamp, Signal='Alert', Entity=Title, Detail=strcat(Severity, ' | ', AttackTechniques);
+let NetworkSignals = DeviceNetworkEvents | where TimeGenerated between (StartTime .. EndTime) | where RemoteIPType == 'Public' | extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl) | project Timestamp=TimeGenerated, Signal='Public network connection', Entity=DeviceName, Detail=strcat(InitiatingProcessFileName, ' -> ', Destination, ':', tostring(RemotePort));
+let GraphSignals = GraphApiAuditEvents | where TimeGenerated between (StartTime .. EndTime) | where toint(ResponseStatusCode) >= 400 or RequestMethod in ('POST','PATCH','DELETE') | project Timestamp=TimeGenerated, Signal='Graph API activity', Entity=ApplicationId, Detail=strcat(RequestMethod, ' ', RequestUri, ' -> ', ResponseStatusCode);
+union AlertSignals, NetworkSignals, GraphSignals
+| top 50 by Timestamp desc
+
+

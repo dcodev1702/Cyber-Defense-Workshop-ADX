@@ -1,0 +1,675 @@
+{
+  "id": "2e6517ca-ac55-5768-a708-22b0b13496d1",
+  "eTag": "",
+  "title": "Cyber Defense Workshop - ADX Operations Dashboard",
+  "tiles": [
+    {
+      "id": "ae0bf20d-abe6-6cd5-a18e-60fcbb1a9721",
+      "title": "Executive cyber range metrics",
+      "query": "let DeviceStats = DeviceInfo\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| summarize arg_max(TimeGenerated, *) by DeviceId\r\n| summarize TotalDevices=count(), Onboarded=countif(OnboardingStatus == 'Onboarded'), Endpoints=countif(DeviceCategory == 'Endpoint'), Servers=countif(DeviceType == 'Server'), IoT=countif(DeviceCategory == 'IoT');\r\nlet IdentityStats = IdentityAccountInfo\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| summarize arg_max(TimeGenerated, *) by AccountId\r\n| summarize Users=countif(Type =~ 'User'), ServiceAccounts=countif(Type =~ 'ServiceAccount'), EnabledAccounts=countif(AccountStatus =~ 'Enabled');\r\nlet Logons = union isfuzzy=true\r\n(SigninLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),\r\n(AADNonInteractiveUserSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),\r\n(AADServicePrincipalSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),\r\n(AADManagedIdentitySignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),\r\n(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | project Result=iff(ActionType has 'Failed', 'Failure', 'Success')),\r\n(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | project Result=iff(ActionType has 'Failed', 'Failure', 'Success'));\r\nlet LogonStats = Logons | summarize SuccessfulLogins=countif(Result == 'Success'), FailedLogins=countif(Result == 'Failure');\r\nlet AlertStats = AlertInfo | where Timestamp between (['_startTime'] .. ['_endTime']) | summarize Alerts=count(), HighAlerts=countif(Severity =~ 'High');\r\nDeviceStats\r\n| extend JoinKey=1\r\n| join kind=inner (IdentityStats | extend JoinKey=1) on JoinKey\r\n| join kind=inner (LogonStats | extend JoinKey=1) on JoinKey\r\n| join kind=inner (AlertStats | extend JoinKey=1) on JoinKey\r\n| project ['Total devices']=TotalDevices, ['Onboarded devices']=Onboarded, Endpoints, Servers, ['IoT devices']=IoT, Users, ['Service accounts']=ServiceAccounts, ['Enabled accounts']=EnabledAccounts, ['Successful logins']=SuccessfulLogins, ['Failed logins']=FailedLogins, Alerts, ['High alerts']=HighAlerts\r\n| render card",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "card",
+      "pageId": "f8570950-424d-540c-20a8-4040aeb19ab8",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 12,
+        "height": 4
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "multiStat__textSize": "large",
+        "multiStat__displayOrientation": "horizontal",
+        "multiStat__valueColumn": {
+          "type": "infer"
+        }
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "79f6c7e7-7681-62b8-7d7d-f5eefa79c07c",
+      "title": "Devices by OS family / category / type",
+      "query": "DeviceInfo\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| summarize arg_max(TimeGenerated, *) by DeviceId\r\n| summarize Devices=count() by OSFamily=case(OSPlatform has 'Windows', 'Windows', OSPlatform =~ 'Linux' or OSDistribution =~ 'Ubuntu', 'Linux', OSPlatform =~ 'Android', 'Android/IoT', 'Other'), DeviceCategory, DeviceType\r\n| order by Devices desc\r\n| render barchart with (title='Devices by OS family, category, and type')",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "bar",
+      "pageId": "f8570950-424d-540c-20a8-4040aeb19ab8",
+      "layout": {
+        "x": 0,
+        "y": 4,
+        "width": 6,
+        "height": 6
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "hideLegend": false,
+        "xColumn": {
+          "type": "infer"
+        },
+        "yColumns": {
+          "type": "infer"
+        },
+        "seriesColumns": {
+          "type": "infer"
+        },
+        "xColumnTitle": "",
+        "yColumnTitle": "",
+        "xAxisScale": "linear",
+        "yAxisScale": "linear",
+        "crossFilter": null,
+        "crossFilterDisabled": false,
+        "multipleYAxes": {
+          "base": {
+            "id": "-1",
+            "columns": [],
+            "label": "Devices",
+            "yAxisMinimumValue": null,
+            "yAxisMaximumValue": null,
+            "yAxisScale": "linear",
+            "horizontalLines": []
+          },
+          "additional": []
+        }
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "5ecf297a-42be-892e-c647-de697874a388",
+      "title": "Machine group posture",
+      "query": "DeviceInfo\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| summarize arg_max(TimeGenerated, *) by DeviceId\r\n| summarize Devices=count(), Onboarded=countif(OnboardingStatus == 'Onboarded'), Unsupported=countif(OnboardingStatus == 'Unsupported'), HealthySensors=countif(SensorHealthState == 'Active') by MachineGroup\r\n| order by Devices desc\r\n| render columnchart with (title='Device posture by machine group')",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "column",
+      "pageId": "f8570950-424d-540c-20a8-4040aeb19ab8",
+      "layout": {
+        "x": 6,
+        "y": 4,
+        "width": 6,
+        "height": 6
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "hideLegend": false,
+        "xColumn": {
+          "type": "infer"
+        },
+        "yColumns": {
+          "type": "infer"
+        },
+        "seriesColumns": {
+          "type": "infer"
+        },
+        "xColumnTitle": "",
+        "yColumnTitle": "",
+        "xAxisScale": "linear",
+        "yAxisScale": "linear",
+        "crossFilter": null,
+        "crossFilterDisabled": false,
+        "multipleYAxes": {
+          "base": {
+            "id": "-1",
+            "columns": [],
+            "label": "Devices",
+            "yAxisMinimumValue": null,
+            "yAxisMaximumValue": null,
+            "yAxisScale": "linear",
+            "horizontalLines": []
+          },
+          "additional": []
+        }
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "fcee46f3-8436-40ef-f4b1-9c522492279c",
+      "title": "Device inventory drilldown",
+      "query": "DeviceInfo\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| summarize arg_max(TimeGenerated, *) by DeviceId\r\n| project DeviceName, OSPlatform, OSDistribution, OSBuild, DeviceCategory, DeviceType, MachineGroup, OnboardingStatus, SensorHealthState, ExposureLevel, PublicIP\r\n| order by MachineGroup asc, DeviceName asc\r\n| take 100",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "f8570950-424d-540c-20a8-4040aeb19ab8",
+      "layout": {
+        "x": 0,
+        "y": 10,
+        "width": 12,
+        "height": 8
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "cc2255f9-80ea-285d-6b89-3a694a939fb1",
+      "title": "Users and service accounts",
+      "query": "IdentityAccountInfo\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| summarize arg_max(TimeGenerated, *) by AccountId\r\n| summarize Accounts=count(), Enabled=countif(AccountStatus =~ 'Enabled'), Disabled=countif(AccountStatus =~ 'Disabled'), PrimaryAccounts=countif(IsPrimary) by Type, SourceProvider\r\n| order by Accounts desc\r\n| render columnchart with (title='Users and service accounts by provider')",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "column",
+      "pageId": "6579b92c-2ec1-06bb-fd6d-6def689c4fa4",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 6,
+        "height": 6
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "hideLegend": false,
+        "xColumn": {
+          "type": "infer"
+        },
+        "yColumns": {
+          "type": "infer"
+        },
+        "seriesColumns": {
+          "type": "infer"
+        },
+        "xColumnTitle": "",
+        "yColumnTitle": "",
+        "xAxisScale": "linear",
+        "yAxisScale": "linear",
+        "crossFilter": null,
+        "crossFilterDisabled": false,
+        "multipleYAxes": {
+          "base": {
+            "id": "-1",
+            "columns": [],
+            "label": "Accounts",
+            "yAxisMinimumValue": null,
+            "yAxisMaximumValue": null,
+            "yAxisScale": "linear",
+            "horizontalLines": []
+          },
+          "additional": []
+        }
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "34c341c8-b9af-a717-75d6-8e867b22c556",
+      "title": "Login outcomes over time",
+      "query": "let Logons = union isfuzzy=true\r\n(SigninLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Timestamp=TimeGenerated, Source='Interactive Entra', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),\r\n(AADNonInteractiveUserSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Timestamp=TimeGenerated, Source='Non-interactive Entra', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),\r\n(AADServicePrincipalSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Timestamp=TimeGenerated, Source='Service principal', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),\r\n(AADManagedIdentitySignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Timestamp=TimeGenerated, Source='Managed identity', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),\r\n(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | project Timestamp, Source='Endpoint logon', Result=iff(ActionType has 'Failed', 'Failure', 'Success')),\r\n(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | project Timestamp, Source='Identity logon', Result=iff(ActionType has 'Failed', 'Failure', 'Success'));\r\nLogons\r\n| summarize Logons=count() by bin(Timestamp, 6h), Result\r\n| order by Timestamp asc\r\n| render timechart with (title='Successful and failed logons over time')",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "line",
+      "pageId": "6579b92c-2ec1-06bb-fd6d-6def689c4fa4",
+      "layout": {
+        "x": 6,
+        "y": 0,
+        "width": 6,
+        "height": 6
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "hideLegend": false,
+        "xColumn": {
+          "type": "infer"
+        },
+        "yColumns": {
+          "type": "infer"
+        },
+        "seriesColumns": {
+          "type": "infer"
+        },
+        "xColumnTitle": "",
+        "yColumnTitle": "",
+        "xAxisScale": "linear",
+        "yAxisScale": "linear",
+        "crossFilter": null,
+        "crossFilterDisabled": false,
+        "multipleYAxes": {
+          "base": {
+            "id": "-1",
+            "columns": [],
+            "label": "Logons",
+            "yAxisMinimumValue": null,
+            "yAxisMaximumValue": null,
+            "yAxisScale": "linear",
+            "horizontalLines": []
+          },
+          "additional": []
+        }
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "cd721829-733b-f1d9-d77e-bc1ec4423f28",
+      "title": "Failed logins by source",
+      "query": "let Failed = union isfuzzy=true\r\n(SigninLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated, Source='Interactive Entra', Principal=UserPrincipalName, Application=AppDisplayName, IPAddress, Failure=ResultDescription),\r\n(AADNonInteractiveUserSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated, Source='Non-interactive Entra', Principal=UserPrincipalName, Application=AppDisplayName, IPAddress, Failure=ResultDescription),\r\n(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType has 'Failed' | project Timestamp, Source='Endpoint logon', Principal=strcat(AccountDomain, '\\\\', AccountName), Application=LogonType, IPAddress=RemoteIP, Failure=FailureReason),\r\n(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType has 'Failed' | project Timestamp, Source='Identity logon', Principal=coalesce(AccountUpn, strcat(AccountDomain, '\\\\', AccountName)), Application=LogonType, IPAddress, Failure=FailureReason);\r\nFailed\r\n| summarize FailedLogins=count(), Principals=dcount(Principal), Applications=dcount(Application) by Source\r\n| order by FailedLogins desc\r\n| render barchart with (title='Failed logins by source')",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "bar",
+      "pageId": "6579b92c-2ec1-06bb-fd6d-6def689c4fa4",
+      "layout": {
+        "x": 0,
+        "y": 6,
+        "width": 6,
+        "height": 5
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "hideLegend": false,
+        "xColumn": {
+          "type": "infer"
+        },
+        "yColumns": {
+          "type": "infer"
+        },
+        "seriesColumns": {
+          "type": "infer"
+        },
+        "xColumnTitle": "",
+        "yColumnTitle": "",
+        "xAxisScale": "linear",
+        "yAxisScale": "linear",
+        "crossFilter": null,
+        "crossFilterDisabled": false,
+        "multipleYAxes": {
+          "base": {
+            "id": "-1",
+            "columns": [],
+            "label": "Failed logins",
+            "yAxisMinimumValue": null,
+            "yAxisMaximumValue": null,
+            "yAxisScale": "linear",
+            "horizontalLines": []
+          },
+          "additional": []
+        }
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "21ca24e0-f24b-c613-3bb4-66ff63a73960",
+      "title": "Top failed principals",
+      "query": "let Failed = union isfuzzy=true\r\n(SigninLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Principal=UserPrincipalName, IPAddress, Failure=ResultDescription),\r\n(AADNonInteractiveUserSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Principal=UserPrincipalName, IPAddress, Failure=ResultDescription),\r\n(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType has 'Failed' | project Principal=strcat(AccountDomain, '\\\\', AccountName), IPAddress=RemoteIP, Failure=FailureReason),\r\n(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType has 'Failed' | project Principal=coalesce(AccountUpn, strcat(AccountDomain, '\\\\', AccountName)), IPAddress, Failure=FailureReason);\r\nFailed\r\n| summarize FailedLogins=count(), SourceIPs=dcount(IPAddress), Failures=make_set(Failure, 5) by Principal\r\n| top 20 by FailedLogins desc",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "6579b92c-2ec1-06bb-fd6d-6def689c4fa4",
+      "layout": {
+        "x": 6,
+        "y": 6,
+        "width": 6,
+        "height": 5
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "1d4aa37d-da48-2006-c4c2-ea2ec960a30a",
+      "title": "Privileged / high-risk identities",
+      "query": "IdentityAccountInfo\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| extend RoleCount = coalesce(array_length(AssignedRoles), 0), GroupCount = coalesce(array_length(GroupMembership), 0)\r\n| where RoleCount > 0 or CriticalityLevel >= 8 or DefenderRiskLevel >= 5\r\n| project DisplayName, AccountUpn, Type, AccountStatus, SourceProvider, RoleCount, GroupCount, AssignedRoles, GroupMembership, CriticalityLevel, DefenderRiskLevel\r\n| order by RoleCount desc, CriticalityLevel desc, DefenderRiskLevel desc\r\n| take 25",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "6579b92c-2ec1-06bb-fd6d-6def689c4fa4",
+      "layout": {
+        "x": 0,
+        "y": 11,
+        "width": 12,
+        "height": 7
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "7330451b-9cb0-907e-a916-c55ce94f2044",
+      "title": "Top network destinations",
+      "query": "DeviceNetworkEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl)\r\n| summarize Connections=count(), Devices=dcount(DeviceId), Ports=make_set(RemotePort, 8), Processes=make_set(InitiatingProcessFileName, 8) by Destination, RemoteIP, RemoteIPType, Protocol\r\n| top 25 by Connections desc",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "653d15d7-57df-1573-9e56-ff05f44f9c51",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 7,
+        "height": 7
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "3b4d3001-e847-80f0-6ab6-6fffd96d3158",
+      "title": "Network connections by process",
+      "query": "DeviceNetworkEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| summarize Connections=count(), Destinations=dcount(iff(isempty(RemoteUrl), RemoteIP, RemoteUrl)), PublicConnections=countif(RemoteIPType == 'Public') by InitiatingProcessFileName, Protocol\r\n| top 20 by Connections desc\r\n| render barchart with (title='Network connections by process')",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "bar",
+      "pageId": "653d15d7-57df-1573-9e56-ff05f44f9c51",
+      "layout": {
+        "x": 7,
+        "y": 0,
+        "width": 5,
+        "height": 7
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "hideLegend": false,
+        "xColumn": {
+          "type": "infer"
+        },
+        "yColumns": {
+          "type": "infer"
+        },
+        "seriesColumns": {
+          "type": "infer"
+        },
+        "xColumnTitle": "",
+        "yColumnTitle": "",
+        "xAxisScale": "linear",
+        "yAxisScale": "linear",
+        "crossFilter": null,
+        "crossFilterDisabled": false,
+        "multipleYAxes": {
+          "base": {
+            "id": "-1",
+            "columns": [],
+            "label": "Connections",
+            "yAxisMinimumValue": null,
+            "yAxisMaximumValue": null,
+            "yAxisScale": "linear",
+            "horizontalLines": []
+          },
+          "additional": []
+        }
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "3c8e4599-1c97-6d60-9df2-915f8cfedec5",
+      "title": "Public egress destinations",
+      "query": "DeviceNetworkEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| where RemoteIPType == 'Public'\r\n| extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl)\r\n| summarize Connections=count(), Devices=dcount(DeviceId), Processes=make_set(InitiatingProcessFileName, 8) by Destination, RemoteIP, RemotePort, Protocol\r\n| top 25 by Connections desc",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "653d15d7-57df-1573-9e56-ff05f44f9c51",
+      "layout": {
+        "x": 0,
+        "y": 7,
+        "width": 6,
+        "height": 7
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "7414e172-10cb-5d18-447b-d4f55cfeb1a9",
+      "title": "Graph API requests by API / application / AppId",
+      "query": "let AppLookup = union isfuzzy=true\r\n(SigninLogs | project ApplicationId=tostring(ApplicationId), ApplicationName=AppDisplayName),\r\n(EntraIdSpnSignInEvents | project ApplicationId=tostring(ApplicationId), ApplicationName=Application),\r\n(AADManagedIdentitySignInLogs | project ApplicationId=tostring(AppId), ApplicationName=ServicePrincipalName)\r\n| where isnotempty(ApplicationId) and isnotempty(ApplicationName)\r\n| summarize ApplicationName=any(ApplicationName) by ApplicationId;\r\nGraphApiAuditEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| extend Api=strcat(RequestMethod, ' ', tostring(split(RequestUri, '?')[0])), AppId=tostring(ApplicationId), StatusCode=toint(ResponseStatusCode)\r\n| lookup kind=leftouter AppLookup on ApplicationId\r\n| extend ApplicationName=coalesce(ApplicationName, 'Unknown / synthetic Graph client')\r\n| summarize Requests=count(), Failures=countif(StatusCode >= 400), Principals=dcount(AccountObjectId), ClientIPs=dcount(IpAddress) by Api, ApplicationName, AppId, TargetWorkload\r\n| top 25 by Requests desc",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "653d15d7-57df-1573-9e56-ff05f44f9c51",
+      "layout": {
+        "x": 6,
+        "y": 7,
+        "width": 6,
+        "height": 7
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "8a166047-b4e3-b93c-6a05-17613b4f4bf1",
+      "title": "Graph API status by method",
+      "query": "GraphApiAuditEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| extend StatusClass=strcat(substring(ResponseStatusCode, 0, 1), 'xx')\r\n| summarize Requests=count() by RequestMethod, StatusClass\r\n| order by Requests desc\r\n| render columnchart with (title='Graph API status by method')",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "column",
+      "pageId": "653d15d7-57df-1573-9e56-ff05f44f9c51",
+      "layout": {
+        "x": 0,
+        "y": 14,
+        "width": 6,
+        "height": 5
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "hideLegend": false,
+        "xColumn": {
+          "type": "infer"
+        },
+        "yColumns": {
+          "type": "infer"
+        },
+        "seriesColumns": {
+          "type": "infer"
+        },
+        "xColumnTitle": "",
+        "yColumnTitle": "",
+        "xAxisScale": "linear",
+        "yAxisScale": "linear",
+        "crossFilter": null,
+        "crossFilterDisabled": false,
+        "multipleYAxes": {
+          "base": {
+            "id": "-1",
+            "columns": [],
+            "label": "Requests",
+            "yAxisMinimumValue": null,
+            "yAxisMaximumValue": null,
+            "yAxisScale": "linear",
+            "horizontalLines": []
+          },
+          "additional": []
+        }
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "a695c4ad-fd61-5476-c2b8-a6429ea75090",
+      "title": "Managed identity sign-ins",
+      "query": "AADManagedIdentitySignInLogs\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| summarize SignIns=count(), Failures=countif(not(ResultType =~ 'Success' or tostring(ResultType) == '0')), Resources=make_set(ResourceDisplayName, 8), SourceIPs=make_set(IPAddress, 8) by ServicePrincipalName, ServicePrincipalId\r\n| top 20 by SignIns desc",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "653d15d7-57df-1573-9e56-ff05f44f9c51",
+      "layout": {
+        "x": 6,
+        "y": 14,
+        "width": 6,
+        "height": 5
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "4433b255-a3dc-72c4-efbc-c01add3f0d7a",
+      "title": "Alerts by severity and category",
+      "query": "AlertInfo\r\n| where Timestamp between (['_startTime'] .. ['_endTime'])\r\n| summarize Alerts=count() by Severity, Category\r\n| order by Alerts desc\r\n| render columnchart with (title='Alerts by severity and category')",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "column",
+      "pageId": "4d099421-a700-18b4-1cfb-7978f03935ca",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 6,
+        "height": 5
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "hideLegend": false,
+        "xColumn": {
+          "type": "infer"
+        },
+        "yColumns": {
+          "type": "infer"
+        },
+        "seriesColumns": {
+          "type": "infer"
+        },
+        "xColumnTitle": "",
+        "yColumnTitle": "",
+        "xAxisScale": "linear",
+        "yAxisScale": "linear",
+        "crossFilter": null,
+        "crossFilterDisabled": false,
+        "multipleYAxes": {
+          "base": {
+            "id": "-1",
+            "columns": [],
+            "label": "Alerts",
+            "yAxisMinimumValue": null,
+            "yAxisMaximumValue": null,
+            "yAxisScale": "linear",
+            "horizontalLines": []
+          },
+          "additional": []
+        }
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "32ca6361-e85a-e64e-d3c2-b74f90fc6864",
+      "title": "MITRE ATT&CK alert techniques",
+      "query": "AlertInfo\r\n| where Timestamp between (['_startTime'] .. ['_endTime'])\r\n| summarize Alerts=count(), Titles=make_set(Title, 5) by AttackTechniques, Severity\r\n| order by Alerts desc",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "4d099421-a700-18b4-1cfb-7978f03935ca",
+      "layout": {
+        "x": 6,
+        "y": 0,
+        "width": 6,
+        "height": 5
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "1d263b98-2b68-36e3-c66c-b36c2141ba8d",
+      "title": "Scenario signal timeline",
+      "query": "let AlertSignals = AlertInfo | where Timestamp between (['_startTime'] .. ['_endTime']) | project Timestamp, Signal='Alert', Entity=Title, Detail=strcat(Severity, ' | ', AttackTechniques);\r\nlet NetworkSignals = DeviceNetworkEvents | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where RemoteIPType == 'Public' | extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl) | project Timestamp=TimeGenerated, Signal='Public network connection', Entity=DeviceName, Detail=strcat(InitiatingProcessFileName, ' -> ', Destination, ':', tostring(RemotePort));\r\nlet GraphSignals = GraphApiAuditEvents | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where toint(ResponseStatusCode) >= 400 or RequestMethod in ('POST','PATCH','DELETE') | project Timestamp=TimeGenerated, Signal='Graph API activity', Entity=ApplicationId, Detail=strcat(RequestMethod, ' ', RequestUri, ' -> ', ResponseStatusCode);\r\nunion AlertSignals, NetworkSignals, GraphSignals\r\n| top 50 by Timestamp desc",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "4d099421-a700-18b4-1cfb-7978f03935ca",
+      "layout": {
+        "x": 0,
+        "y": 5,
+        "width": 12,
+        "height": 8
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    }
+  ],
+  "dataSources": [
+    {
+      "id": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "name": "Cyber Defense Workshop ADX",
+      "clusterUri": "https://dibsecadx.eastus2.kusto.windows.net",
+      "database": "cyber-defend-q0xxzc",
+      "kind": "manual-kusto",
+      "scopeId": "kusto"
+    }
+  ],
+  "$schema": "https://dataexplorer.azure.com/static/d/schema/20/dashboard.json",
+  "autoRefresh": {
+    "enabled": true,
+    "defaultInterval": "15m",
+    "minInterval": "5m"
+  },
+  "parameters": [
+    {
+      "kind": "duration",
+      "id": "a7a9b411-c7a4-40b4-2127-056c5869fb1d",
+      "displayName": "Time range",
+      "beginVariableName": "_startTime",
+      "endVariableName": "_endTime",
+      "defaultValue": {
+        "kind": "dynamic",
+        "count": 14,
+        "unit": "days"
+      },
+      "showOnPages": {
+        "kind": "all"
+      }
+    }
+  ],
+  "pages": [
+    {
+      "name": "Overview",
+      "id": "f8570950-424d-540c-20a8-4040aeb19ab8"
+    },
+    {
+      "name": "Identity and Sign-ins",
+      "id": "6579b92c-2ec1-06bb-fd6d-6def689c4fa4"
+    },
+    {
+      "name": "Network and Graph",
+      "id": "653d15d7-57df-1573-9e56-ff05f44f9c51"
+    },
+    {
+      "name": "Alerts and Scenario Timeline",
+      "id": "4d099421-a700-18b4-1cfb-7978f03935ca"
+    }
+  ],
+  "schema_version": "20"
+}

@@ -163,7 +163,25 @@ https://dataexplorer.azure.com/clusters/<cluster>.<region>.kusto.windows.net/dat
 
 Students should sign in with their workshop username/password and complete MFA using TAP or SMS.
 
-### 5. Validate the package
+### 5. Import the ADX operations dashboard
+
+The repository includes an Azure Data Explorer dashboard template with four pages for workshop overview, identity/sign-ins, network/Graph activity, and alert timeline review:
+
+```powershell
+.\scripts\New-WorkshopDashboard.ps1 `
+  -ClusterUri 'https://<cluster>.<region>.kusto.windows.net' `
+  -DatabaseName 'CyberDefenseKqlWorkshop'
+```
+
+In the ADX Web UI, go to **Dashboards** > **New dashboard** > **Import dashboard from file**, and select:
+
+```text
+dashboards\cyber-defense-workshop-dashboard.json
+```
+
+If dashboard import is unavailable, use `dashboards\cyber-defense-workshop-dashboard.kql` to run and pin the same KQL tiles manually.
+
+### 6. Validate the package
 
 ```powershell
 .\scripts\Test-WorkshopPackage.ps1
