@@ -17,13 +17,7 @@ Use the Ubuntu branch as an optional comparison pivot after the Windows path is 
 
 ## Pacing and scope control
 
-| Track | Use in class | Time guidance |
-| --- | --- | --- |
-| Must-find cloud identity path | Acts 2-4d: risky sign-in, OAuth consent, service-principal credential addition, Graph access | Do not skip. This is the strongest Midnight Blizzard alignment. |
-| Must-find Windows credential path | Acts 5-10: endpoint process/file/registry, Kerberoasting, `svc_sql` to `AADCONNECT01`, alert join, timeline | Keep tool names visible, but emphasize technique families and follow-on credential expansion. |
-| SOC incident correlation | Act 9 and final timeline: `SecurityIncident` to `AlertInfo`/`AlertEvidence`, plus TVM evidence tables in `AdditionalData` | Make clear that incident names are not actor-branded; the value is the grouping and pivots. |
-| Optional Linux telemetry comparison | Act 11 | Use if the class is moving quickly or if Linux MDE telemetry is a learning goal. |
-| Optional Linux/Oracle collection | Act 12 | Treat as a bonus branch; do not let it displace the cloud identity investigation. |
+![Pacing and scope control for the ADX workshop](../images/Pacing_Scope_Control_ADX_Modern_v2.svg)
 
 ## Expected key findings
 
