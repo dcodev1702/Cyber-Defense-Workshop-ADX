@@ -213,6 +213,11 @@ let EndTime=datetime(2026-05-01T12:00:00Z);
 let SearchStart=StartTime - 14d;
 let SearchEnd=EndTime + 14d;
 let TargetDevice='WIN11-04.usag-cyber.local';
+let compromisedUser = 'victor.alvarez@usag-cyber.local';
+let firstRiskySignin =
+    toscalar(SigninLogs
+    | where UserPrincipalName =~ compromisedUser and IsRisky == true
+    | summarize min(TimeGenerated));
 let processes =
     DeviceProcessEvents
     | where Timestamp between (SearchStart .. SearchEnd)
@@ -228,9 +233,9 @@ let files =
     | project Timestamp, SourceTable='DeviceFileEvents', DeviceName, Account=tostring(InitiatingProcessAccountUpn), Evidence=FileName, Detail=strcat(ActionType, ' ', FolderPath, ' by ', InitiatingProcessFileName, ' :: ', InitiatingProcessCommandLine), InstructorNote='File events show staged outputs and copied credential stores.';
 let registry =
     DeviceRegistryEvents
-    | where Timestamp between (SearchStart .. SearchEnd)
-    | where DeviceName =~ TargetDevice
+    | where Timestamp between (firstRiskySignin .. firstRiskySignin + 24h)
     | where RegistryKey has_any ('VPN', 'Run', 'Winlogon') or RegistryValueName has_any ('SavedPassword', 'DefaultPassword')
+    | where DeviceName contains 'WIN11-04'
     | project Timestamp, SourceTable='DeviceRegistryEvents', DeviceName, Account='', Evidence=strcat(RegistryKey, '\\', RegistryValueName), Detail=strcat('Value=', RegistryValueData, '; Process=', InitiatingProcessFileName, ' :: ', InitiatingProcessCommandLine), InstructorNote='Registry activity supports stored credential discovery.';
 union processes, files, registry
 | order by Timestamp asc, SourceTable asc

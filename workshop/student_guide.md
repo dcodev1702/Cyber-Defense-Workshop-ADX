@@ -277,8 +277,15 @@ Processes are ephemeral. The files and registry values they create stick around.
 **Registry:**
 
 ```kql
+let compromisedUser = "victor.alvarez@usag-cyber.local";
+let firstRiskySignin =
+    toscalar(SigninLogs
+    | where UserPrincipalName =~ compromisedUser and IsRisky == true
+    | summarize min(TimeGenerated));
 DeviceRegistryEvents
+| where Timestamp between (firstRiskySignin .. firstRiskySignin + 24h)
 | where RegistryKey has_any ("VPN", "Run", "Winlogon") or RegistryValueName has_any ("SavedPassword", "DefaultPassword")
+| where DeviceName contains 'WIN11-04'
 | project Timestamp, DeviceName, RegistryKey, RegistryValueName, RegistryValueData, InitiatingProcessFileName, InitiatingProcessCommandLine
 | order by Timestamp asc
 ```

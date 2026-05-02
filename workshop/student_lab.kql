@@ -147,8 +147,15 @@ DeviceProcessEvents
 // KQL notes:
 // - has_any is useful for hunting across multiple suspicious key/value terms.
 // - project includes the initiating process so you can tie registry reads back to the process chain.
+let compromisedUser = "victor.alvarez@usag-cyber.local";
+let firstRiskySignin =
+    toscalar(SigninLogs
+    | where UserPrincipalName =~ compromisedUser and IsRisky == true
+    | summarize min(TimeGenerated));
 DeviceRegistryEvents
+| where Timestamp between (firstRiskySignin .. firstRiskySignin + 24h)
 | where RegistryKey has_any ("VPN", "Run", "Winlogon") or RegistryValueName has_any ("SavedPassword", "DefaultPassword")
+| where DeviceName contains 'WIN11-04'
 | project Timestamp, DeviceName, RegistryKey, RegistryValueName, RegistryValueData, InitiatingProcessFileName, InitiatingProcessCommandLine
 | order by Timestamp asc
 
