@@ -4,9 +4,9 @@ Creates the importable Azure Data Explorer dashboard for the cyber defense works
 
 .DESCRIPTION
 Builds a schema-version 20 ADX dashboard JSON file and a companion KQL query pack.
-The dashboard uses Microsoft Defender XDR-style workshop tables to summarize device
-inventory, identities, sign-ins, alerts, network activity, Graph API activity, and
-scenario investigation signals.
+The dashboard uses Microsoft Defender XDR-style workshop tables to surface SOC-style
+threat protection, identity defense, sign-in, alert, network, Graph API, device
+posture, and scenario investigation signals.
 
 .EXAMPLE
 .\scripts\New-WorkshopDashboard.ps1 `
@@ -125,7 +125,7 @@ function New-Tile {
     )
 
     [ordered]@{
-        id = New-WorkshopGuid "tile|$Title"
+        id = New-WorkshopGuid "tile|$PageId|$Title"
         title = $Title
         query = $Query.Trim()
         dataSourceId = $DataSourceId
@@ -152,33 +152,80 @@ $overviewPageId = New-WorkshopGuid 'cyber-defense-workshop-dashboard|overview'
 $identityPageId = New-WorkshopGuid 'cyber-defense-workshop-dashboard|identity'
 $networkPageId = New-WorkshopGuid 'cyber-defense-workshop-dashboard|network'
 $timelinePageId = New-WorkshopGuid 'cyber-defense-workshop-dashboard|timeline'
+$inventoryPageId = New-WorkshopGuid 'cyber-defense-workshop-dashboard|inventory'
 
 $tiles = [System.Collections.Generic.List[object]]::new()
 
-$executiveMetricsQuery = @'
-let DeviceStats = DeviceInfo
-| where TimeGenerated between (['_startTime'] .. ['_endTime'])
-| summarize arg_max(TimeGenerated, *) by DeviceId
-| summarize TotalDevices=count(), Onboarded=countif(OnboardingStatus == 'Onboarded'), Endpoints=countif(DeviceCategory == 'Endpoint'), Servers=countif(DeviceType == 'Server'), IoT=countif(DeviceCategory == 'IoT');
-let IdentityStats = IdentityAccountInfo
+$totalAlertsCardQuery = @'
+AlertInfo
+| where Timestamp between (['_startTime'] .. ['_endTime'])
+| summarize ['Total alerts']=count()
+| render card
+'@
+
+$highAlertsCardQuery = @'
+AlertInfo
+| where Timestamp between (['_startTime'] .. ['_endTime'])
+| summarize ['High alerts']=countif(Severity in~ ('High', 'Critical'))
+| render card
+'@
+
+$failedLoginsCardQuery = @'
+let FailedLogons = union isfuzzy=true
+(SigninLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated),
+(AADNonInteractiveUserSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated),
+(AADServicePrincipalSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated),
+(AADManagedIdentitySignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated),
+(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType has 'Failed' | project Timestamp),
+(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType has 'Failed' | project Timestamp);
+FailedLogons
+| summarize ['Failed logins']=count()
+| render card
+'@
+
+$successfulLoginsCardQuery = @'
+let SuccessfulLogons = union isfuzzy=true
+(SigninLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where tostring(ResultType) == '0' or ResultType =~ 'Success' | project Timestamp=TimeGenerated),
+(AADNonInteractiveUserSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where tostring(ResultType) == '0' or ResultType =~ 'Success' | project Timestamp=TimeGenerated),
+(AADServicePrincipalSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where tostring(ResultType) == '0' or ResultType =~ 'Success' | project Timestamp=TimeGenerated),
+(AADManagedIdentitySignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where tostring(ResultType) == '0' or ResultType =~ 'Success' | project Timestamp=TimeGenerated),
+(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType !has 'Failed' | project Timestamp),
+(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType !has 'Failed' | project Timestamp);
+SuccessfulLogons
+| summarize ['Successful logins']=count()
+| render card
+'@
+
+$usersCardQuery = @'
+IdentityAccountInfo
 | where TimeGenerated between (['_startTime'] .. ['_endTime'])
 | summarize arg_max(TimeGenerated, *) by AccountId
-| summarize Users=countif(Type =~ 'User'), ServiceAccounts=countif(Type =~ 'ServiceAccount'), EnabledAccounts=countif(AccountStatus =~ 'Enabled');
-let Logons = union isfuzzy=true
-(SigninLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
-(AADNonInteractiveUserSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
-(AADServicePrincipalSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
-(AADManagedIdentitySignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
-(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | project Result=iff(ActionType has 'Failed', 'Failure', 'Success')),
-(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | project Result=iff(ActionType has 'Failed', 'Failure', 'Success'));
-let LogonStats = Logons | summarize SuccessfulLogins=countif(Result == 'Success'), FailedLogins=countif(Result == 'Failure');
-let AlertStats = AlertInfo | where Timestamp between (['_startTime'] .. ['_endTime']) | summarize Alerts=count(), HighAlerts=countif(Severity =~ 'High');
-DeviceStats
-| extend JoinKey=1
-| join kind=inner (IdentityStats | extend JoinKey=1) on JoinKey
-| join kind=inner (LogonStats | extend JoinKey=1) on JoinKey
-| join kind=inner (AlertStats | extend JoinKey=1) on JoinKey
-| project ['Total devices']=TotalDevices, ['Onboarded devices']=Onboarded, Endpoints, Servers, ['IoT devices']=IoT, Users, ['Service accounts']=ServiceAccounts, ['Enabled accounts']=EnabledAccounts, ['Successful logins']=SuccessfulLogins, ['Failed logins']=FailedLogins, Alerts, ['High alerts']=HighAlerts
+| summarize Users=countif(Type =~ 'User')
+| render card
+'@
+
+$serviceAccountsCardQuery = @'
+IdentityAccountInfo
+| where TimeGenerated between (['_startTime'] .. ['_endTime'])
+| summarize arg_max(TimeGenerated, *) by AccountId
+| summarize ['Service accounts']=countif(Type =~ 'ServiceAccount')
+| render card
+'@
+
+$riskyGraphOpsCardQuery = @'
+GraphApiAuditEvents
+| where TimeGenerated between (['_startTime'] .. ['_endTime'])
+| extend StatusCode=toint(ResponseStatusCode)
+| where StatusCode >= 400 or RequestMethod in~ ('POST', 'PATCH', 'DELETE')
+| summarize ['Risky Graph ops']=count()
+| render card
+'@
+
+$publicEgressCardQuery = @'
+DeviceNetworkEvents
+| where TimeGenerated between (['_startTime'] .. ['_endTime'])
+| where RemoteIPType == 'Public'
+| summarize ['Public egress']=count()
 | render card
 '@
 
@@ -345,10 +392,22 @@ union AlertSignals, NetworkSignals, GraphSignals
 | top 50 by Timestamp desc
 '@
 
-$tiles.Add((New-Tile -Title 'Executive cyber range metrics' -Query $executiveMetricsQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 0 -Y 0 -Width 12 -Height 4 -VisualOptions (New-CardOptions))) | Out-Null
-$tiles.Add((New-Tile -Title 'Devices by OS family / category / type' -Query $deviceOsCategoryQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'bar' -X 0 -Y 4 -Width 6 -Height 6 -VisualOptions (New-ChartOptions -YAxisLabel 'Devices'))) | Out-Null
-$tiles.Add((New-Tile -Title 'Machine group posture' -Query $machineGroupPostureQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'column' -X 6 -Y 4 -Width 6 -Height 6 -VisualOptions (New-ChartOptions -YAxisLabel 'Devices'))) | Out-Null
-$tiles.Add((New-Tile -Title 'Device inventory drilldown' -Query $deviceInventoryQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 10 -Width 12 -Height 8 -VisualOptions (New-TableOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Total alerts' -Query $totalAlertsCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 0 -Y 0 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'High alerts' -Query $highAlertsCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 3 -Y 0 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Failed logins' -Query $failedLoginsCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 6 -Y 0 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Successful logins' -Query $successfulLoginsCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 9 -Y 0 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Users' -Query $usersCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 0 -Y 3 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Service accounts' -Query $serviceAccountsCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 3 -Y 3 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Risky Graph ops' -Query $riskyGraphOpsCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 6 -Y 3 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Public egress' -Query $publicEgressCardQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'card' -X 9 -Y 3 -Width 3 -Height 3 -VisualOptions (New-CardOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Alerts by severity and category' -Query $alertSeverityQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'column' -X 0 -Y 6 -Width 6 -Height 5 -VisualOptions (New-ChartOptions -YAxisLabel 'Alerts'))) | Out-Null
+$tiles.Add((New-Tile -Title 'Login outcomes over time' -Query $loginOutcomesQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'line' -X 6 -Y 6 -Width 6 -Height 5 -VisualOptions (New-ChartOptions -YAxisLabel 'Logons'))) | Out-Null
+$tiles.Add((New-Tile -Title 'Failed logins by source' -Query $failedLoginSourcesQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'bar' -X 0 -Y 11 -Width 4 -Height 5 -VisualOptions (New-ChartOptions -YAxisLabel 'Failed logins'))) | Out-Null
+$tiles.Add((New-Tile -Title 'Top failed principals' -Query $topFailedPrincipalsQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'table' -X 4 -Y 11 -Width 4 -Height 5 -VisualOptions (New-TableOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'MITRE ATT&CK alert techniques' -Query $mitreAlertQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'table' -X 8 -Y 11 -Width 4 -Height 5 -VisualOptions (New-TableOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Public egress destinations' -Query $publicEgressQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 16 -Width 6 -Height 6 -VisualOptions (New-TableOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Graph API requests by API / application / AppId' -Query $graphApiRequestsQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'table' -X 6 -Y 16 -Width 6 -Height 6 -VisualOptions (New-TableOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Scenario signal timeline' -Query $scenarioTimelineQuery -PageId $overviewPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 22 -Width 12 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
 
 $tiles.Add((New-Tile -Title 'Users and service accounts' -Query $identitySummaryQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'column' -X 0 -Y 0 -Width 6 -Height 6 -VisualOptions (New-ChartOptions -YAxisLabel 'Accounts'))) | Out-Null
 $tiles.Add((New-Tile -Title 'Login outcomes over time' -Query $loginOutcomesQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'line' -X 6 -Y 0 -Width 6 -Height 6 -VisualOptions (New-ChartOptions -YAxisLabel 'Logons'))) | Out-Null
@@ -367,10 +426,14 @@ $tiles.Add((New-Tile -Title 'Alerts by severity and category' -Query $alertSever
 $tiles.Add((New-Tile -Title 'MITRE ATT&CK alert techniques' -Query $mitreAlertQuery -PageId $timelinePageId -DataSourceId $dataSourceId -VisualType 'table' -X 6 -Y 0 -Width 6 -Height 5 -VisualOptions (New-TableOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Scenario signal timeline' -Query $scenarioTimelineQuery -PageId $timelinePageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 5 -Width 12 -Height 8 -VisualOptions (New-TableOptions))) | Out-Null
 
+$tiles.Add((New-Tile -Title 'Devices by OS family / category / type' -Query $deviceOsCategoryQuery -PageId $inventoryPageId -DataSourceId $dataSourceId -VisualType 'bar' -X 0 -Y 0 -Width 6 -Height 6 -VisualOptions (New-ChartOptions -YAxisLabel 'Devices'))) | Out-Null
+$tiles.Add((New-Tile -Title 'Machine group posture' -Query $machineGroupPostureQuery -PageId $inventoryPageId -DataSourceId $dataSourceId -VisualType 'column' -X 6 -Y 0 -Width 6 -Height 6 -VisualOptions (New-ChartOptions -YAxisLabel 'Devices'))) | Out-Null
+$tiles.Add((New-Tile -Title 'Device inventory drilldown' -Query $deviceInventoryQuery -PageId $inventoryPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 6 -Width 12 -Height 8 -VisualOptions (New-TableOptions))) | Out-Null
+
 $dashboard = [ordered]@{
     id = New-WorkshopGuid 'cyber-defense-workshop-dashboard'
     eTag = ''
-    title = 'Cyber Defense Workshop - ADX Operations Dashboard'
+    title = 'Cyber Defense Workshop - SOC Threat Protection Dashboard'
     tiles = @($tiles)
     dataSources = @(
         [ordered]@{
@@ -406,10 +469,11 @@ $dashboard = [ordered]@{
         }
     )
     pages = @(
-        [ordered]@{ name = 'Overview'; id = $overviewPageId },
+        [ordered]@{ name = 'SOC Overview'; id = $overviewPageId },
         [ordered]@{ name = 'Identity and Sign-ins'; id = $identityPageId },
         [ordered]@{ name = 'Network and Graph'; id = $networkPageId },
-        [ordered]@{ name = 'Alerts and Scenario Timeline'; id = $timelinePageId }
+        [ordered]@{ name = 'Alerts and Scenario Timeline'; id = $timelinePageId },
+        [ordered]@{ name = 'Inventory and Posture'; id = $inventoryPageId }
     )
     schema_version = '20'
 }
