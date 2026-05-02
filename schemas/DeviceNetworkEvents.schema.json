@@ -6,13 +6,19 @@
   ],
   "sourceProduct": "Microsoft Defender for Endpoint",
   "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicenetworkevents-table",
-  "schemaSource": "Microsoft Learn",
+  "schemaSource": "Microsoft Learn + real telemetry sample",
   "columns": [
     {
       "name": "Timestamp",
       "type": "datetime",
       "sourceType": "datetime",
       "description": "Date and time when the event was recorded"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time the event was recorded by the MDE agent on the endpoint"
     },
     {
       "name": "DeviceId",
@@ -283,6 +289,30 @@
       "type": "string",
       "sourceType": "string",
       "description": "Unique identifier of the initiating process; this is equal to the Process Start Key in Windows devices"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The Log Analytics workspace ID"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The name of the table"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of agent the event was collected by"
+    },
+    {
+      "name": "MachineGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Machine group of the machine, used by role-based access control to determine access to the machine"
     }
   ],
   "adx": {

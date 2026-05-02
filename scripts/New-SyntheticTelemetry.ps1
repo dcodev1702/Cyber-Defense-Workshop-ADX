@@ -1247,6 +1247,7 @@ foreach ($user in $users) {
 
     Add-Record -Table 'IdentityAccountInfo' -Time $identityTime -Values @{
         Timestamp = Format-WorkshopTime $identityTime
+        TimeGenerated = Format-WorkshopTime $identityTime
         ReportId = "IDACCT-$($user.Rid)"
         SourceProviderAccountId = $sourceProviderAccountId
         AccountId = $accountId
@@ -1279,7 +1280,7 @@ foreach ($user in $users) {
         SourceProviderInstanceId = $tenantId
         SourceProviderInstanceDisplayName = if ($sourceProvider -eq 'ActiveDirectory') { 'USAG-CYBER Active Directory' } else { 'USAG Cyber Microsoft Entra ID' }
         AuthenticationMethod = if ($sourceProvider -eq 'ActiveDirectory') { 'Hybrid' } else { 'Credentials' }
-        AuthenticationSourceAcccountId = if ($sourceProvider -eq 'ActiveDirectory') { $sourceProviderAccountId } else { '' }
+        AuthenticationSourceAccountId = if ($sourceProvider -eq 'ActiveDirectory') { $sourceProviderAccountId } else { '' }
         EnrolledMfas = if ($user.IsServiceAccount) { @() } else { @('Temporary Access Pass', 'SMS') }
         LastPasswordChangeTime = Format-WorkshopTime $passwordTime
         GroupMembership = $identityGroups
@@ -1289,13 +1290,15 @@ foreach ($user in $users) {
         CreatedDateTime = Format-WorkshopTime $createdTime
         DeletedDateTime = Format-WorkshopTime $deletedTime
         Tags = $accountTags
-        SourceProvderRiskLevel = $sourceProviderRisk
+        SourceProviderRiskLevel = $sourceProviderRisk
+        SourceProviderRiskLevelDetails = if ($sourceProviderRisk) { 'none' } else { '' }
         AdditionalFields = @{
             SourceSample = 'IdentityAccountInfo-RealTelemetry.csv'
             IdentityEnvironment = if ($sourceProvider -eq 'ActiveDirectory') { 'Hybrid' } else { 'CloudOnly' }
             AccountIdFormat = $accountIdPrefix
         }
         TenantId = $tenantId
+        SourceSystem = 'AzureAD'
     }
 }
 
@@ -1364,6 +1367,7 @@ function Add-NetworkEvent {
 
     Add-Record -Table 'DeviceNetworkEvents' -Time $Time -Values @{
         Timestamp = Format-WorkshopTime $Time
+        TimeGenerated = Format-WorkshopTime $Time
         DeviceId = $win04.DeviceId
         DeviceName = $win04.Name
         ActionType = 'ConnectionSuccess'
@@ -1382,6 +1386,10 @@ function Add-NetworkEvent {
         InitiatingProcessAccountSid = $victor.Sid
         InitiatingProcessAccountUpn = $victor.Upn
         ReportId = $ReportId
+        TenantId = $tenantId
+        Type = 'DeviceNetworkEvents'
+        SourceSystem = 'MDE'
+        MachineGroup = 'Workstations'
         AdditionalFields = '{"Scenario":"MIDNIGHT BLIZZARD credential access"}'
     }
 }
@@ -1527,6 +1535,8 @@ function New-NormalTelemetryValues {
             }
 
             $values.LocalPort = 49152 + ($Index % 12000)
+            $values.SourceSystem = 'MDE'
+            $values.MachineGroup = if ($device.Type -eq 'DomainController') { 'Domain Controllers' } elseif ($device.Type -eq 'EntraConnect') { 'Identity Tier 0' } elseif ($isUbuntuDevice) { 'Linux Servers' } else { 'Workstations' }
         }
         'DeviceLogonEvents' {
             $values.ActionType = if (($Index % 17) -eq 0) { 'LogonFailed' } else { 'LogonSuccess' }
@@ -2600,6 +2610,7 @@ Add-Record -Table 'DeviceImageLoadEvents' -Time $StartTime.AddMinutes(66) -Value
 }
 Add-Record -Table 'DeviceNetworkEvents' -Time $StartTime.AddMinutes(67) -Values @{
     Timestamp = Format-WorkshopTime $StartTime.AddMinutes(67)
+    TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(67)
     DeviceId = $linux03.DeviceId
     DeviceName = $linux03.Name
     ActionType = 'ConnectionSuccess'
@@ -2616,6 +2627,10 @@ Add-Record -Table 'DeviceNetworkEvents' -Time $StartTime.AddMinutes(67) -Values 
     InitiatingProcessAccountDomain = 'root'
     InitiatingProcessAccountName = 'root'
     ReportId = 8600671
+    TenantId = $tenantId
+    Type = 'DeviceNetworkEvents'
+    SourceSystem = 'MDE'
+    MachineGroup = 'Linux Servers'
     AdditionalFields = '{"CveContext":"CVE-2024-47176","Scenario":"CUPS IPP exposure"}'
 }
 Add-Record -Table 'DeviceEvents' -Time $StartTime.AddMinutes(68) -Values @{
@@ -2761,6 +2776,7 @@ Add-Record -Table 'DeviceProcessEvents' -Time $StartTime.AddMinutes(72) -Values 
 }
 Add-Record -Table 'DeviceNetworkEvents' -Time $StartTime.AddMinutes(72) -Values @{
     Timestamp = Format-WorkshopTime $StartTime.AddMinutes(72)
+    TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(72)
     DeviceId = $linux03.DeviceId
     DeviceName = $linux03.Name
     ActionType = 'ConnectionSuccess'
@@ -2777,6 +2793,10 @@ Add-Record -Table 'DeviceNetworkEvents' -Time $StartTime.AddMinutes(72) -Values 
     InitiatingProcessAccountDomain = $linux03.ShortName
     InitiatingProcessAccountName = 'root'
     ReportId = 8600721
+    TenantId = $tenantId
+    Type = 'DeviceNetworkEvents'
+    SourceSystem = 'MDE'
+    MachineGroup = 'Linux Servers'
     AdditionalFields = '{"Protocol":"Oracle TNS","Scenario":"Oracle database access from compromised Linux host"}'
 }
 Add-Record -Table 'DeviceProcessEvents' -Time $StartTime.AddMinutes(73) -Values @{
