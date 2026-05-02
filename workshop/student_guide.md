@@ -58,13 +58,14 @@ union withsource=TableName
     GraphApiAuditEvents,
     DeviceProcessEvents,
     IdentityQueryEvents,
+    SecurityIncident,
     AlertInfo,
     AlertEvidence
 | summarize Rows=count() by TableName
 | order by TableName asc
 ```
 
-You should get nine rows back, one per table, each with a row count. If a table shows zero rows or you get an error, raise your hand.
+You should get ten rows back, one per table, each with a row count. If a table shows zero rows or you get an error, raise your hand.
 
 **What's happening here?** `union` stacks rows from multiple tables on top of each other. `withsource=TableName` adds a column telling you which table each row came from. Then we count by table to inventory what we have.
 
@@ -352,9 +353,9 @@ You should see `svc_sql` performing a `RemoteInteractive` (WinRM) logon to `AADC
 
 ---
 
-## Act 9 — Connect the alerts to the evidence
+## Act 9 — Connect incidents, alerts, and evidence
 
-Defender XDR raised six core cloud/Windows/hybrid identity alerts during this incident. Each alert is a one-line summary in `AlertInfo`, with the gory details in `AlertEvidence`. To get the full picture, we **join** them.
+Defender XDR raised core cloud/Windows/hybrid identity alerts during this incident. Each alert is a one-line summary in `AlertInfo`, with the gory details in `AlertEvidence`. Microsoft Sentinel-style incident records in `SecurityIncident` show how a SOC queue groups those signals into analyst-friendly incidents. The incident titles are intentionally generic — names like "Multi-stage incident involving identity and endpoint activity" — but the supporting fields point back to the scenario evidence.
 
 Joins are how you stitch two tables together using a shared column. Here's the picture:
 
@@ -364,7 +365,7 @@ The query:
 
 ```kql
 AlertInfo
-| where AlertId startswith "MIDNIGHT-BLIZZARD-"
+| where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "XDR-CORR-"
 | join kind=inner AlertEvidence on AlertId
 | project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, ServiceSource=ServiceSource1, AttackTechniques=AttackTechniques1, EntityType, DeviceName, AccountUpn, FileName, ProcessCommandLine
 | order by Timestamp asc
@@ -376,19 +377,48 @@ A few things going on here:
 - **`Timestamp=Timestamp1`** — when both tables have a column called `Timestamp`, the join names them `Timestamp` and `Timestamp1` to disambiguate. We're saying "give me the one from the right side and call it `Timestamp`."
 - The result is a wide row that has the alert headline (from `AlertInfo`) *and* the artifact details (from `AlertEvidence`) together.
 
-You'll get one row per piece of evidence per alert — about 6 rows total — and each row tells you both *what triggered* and *what fired it*.
+You'll get one row per piece of evidence per alert, and each row tells you both *what triggered* and *what fired it*. The `XDR-CORR-*` alerts are generic correlation alerts used by the `SecurityIncident` records; they are not threat-actor names.
 
 > **Mentor moment.** This is the most important pattern in Defender XDR hunting. `AlertInfo` is "what." `AlertEvidence` is "why we think so." You almost never want one without the other.
 
-**Stretch:** Try `kind=leftouter` instead of `kind=inner`. What changes? (Hint: rows from `AlertInfo` that have no matching evidence will still appear, with empty columns on the right.)
+**Now look at the incident queue:**
+
+```kql
+SecurityIncident
+| where Labels has "WorkshopScenario"
+| project TimeGenerated, IncidentNumber, Title, Severity, Status, ProviderName, ProviderIncidentId, FirstActivityTime, LastActivityTime, AlertIds, AdditionalData
+| order by FirstActivityTime asc
+```
+
+Focus on three fields:
+
+- **`Title`** — the SOC-facing incident name. It should be generic, not actor-branded.
+- **`AlertIds`** — the alert IDs that Sentinel/XDR grouped into the incident.
+- **`AdditionalData`** — dynamic metadata with tactics, techniques, entities, and supporting TVM tables.
+
+**Pivot from incidents back to alerts:**
+
+```kql
+SecurityIncident
+| where Labels has "WorkshopScenario"
+| mv-expand AlertIds
+| extend AlertId = tostring(AlertIds)
+| join kind=leftouter AlertInfo on AlertId
+| project TimeGenerated, IncidentNumber, IncidentTitle=Title, IncidentSeverity=Severity, Status, AlertId, AlertTitle=Title1, AlertSeverity=Severity1, Tactics=tostring(AdditionalData.tactics), Techniques=tostring(AdditionalData.techniques), TvmEvidenceTables=tostring(AdditionalData.tvmEvidenceTables)
+| order by TimeGenerated asc, IncidentNumber asc
+```
+
+This is the bridge from "SOC case management" to "huntable evidence." You start with a generic incident title, expand the grouped alert IDs, then pivot back to `AlertInfo`, `AlertEvidence`, and the TVM tables called out in `AdditionalData.tvmEvidenceTables`.
+
+**Stretch:** Try `kind=inner` instead of `kind=leftouter` in the incident-to-alert query. What changes? (Hint: rows from `SecurityIncident` that have no matching alert would disappear.)
 
 ---
 
 ## Act 10 — Build the timeline
 
-Final exercise. We've collected evidence from four different telemetry sources — endpoint processes, identity queries, cloud OAuth events, and alerts. Let's stitch them into one chronological story.
+Final exercise. We've collected evidence from five different telemetry sources — endpoint processes, identity queries, cloud OAuth events, alerts, and SOC incident records. Let's stitch them into one chronological story.
 
-This is a *long* query, but it's just the same pattern repeated four times. We'll use `let` blocks to define each stream, then `union` them into a single timeline.
+This is a *long* query, but it's just the same pattern repeated for each stream. We'll use `let` blocks to define each stream, then `union` them into a single timeline.
 
 **Build it up step by step.** First, define the endpoint stream:
 
@@ -437,8 +467,17 @@ Then alerts:
 ```kql
 let alerts =
     AlertInfo
-    | where AlertId startswith "MIDNIGHT-BLIZZARD-"
+    | where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "XDR-CORR-"
     | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
+```
+
+Then incident records:
+
+```kql
+let incidents =
+    SecurityIncident
+    | where Labels has "WorkshopScenario"
+    | project Timestamp=TimeGenerated, SourceTable="SecurityIncident", Entity=strcat("Incident ", tostring(IncidentNumber)), Detail=strcat(Severity, " :: ", Title, " :: ", Status);
 ```
 
 And finally `union` them all together and sort by time:
@@ -463,13 +502,17 @@ let servicePrincipal =
     | project Timestamp=TimeGenerated, SourceTable="AADServicePrincipalSignInLogs", Entity=ServicePrincipalName, Detail=strcat(ClientCredentialType, " :: ", ResourceDisplayName, " :: ", IPAddress);
 let alerts =
     AlertInfo
-    | where AlertId startswith "MIDNIGHT-BLIZZARD-"
+    | where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "XDR-CORR-"
     | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
-union endpoint, identity, cloud, servicePrincipal, alerts
+let incidents =
+    SecurityIncident
+    | where Labels has "WorkshopScenario"
+    | project Timestamp=TimeGenerated, SourceTable="SecurityIncident", Entity=strcat("Incident ", tostring(IncidentNumber)), Detail=strcat(Severity, " :: ", Title, " :: ", Status);
+union endpoint, identity, cloud, servicePrincipal, alerts, incidents
 | order by Timestamp asc
 ```
 
-Run it. You'll get a single sorted timeline with rows from all four sources interleaved by time. Read it top to bottom — that's the entire incident.
+Run it. You'll get a single sorted timeline with rows from all sources interleaved by time. Read it top to bottom — that's the entire incident.
 
 > **Mentor moment.** **Each `project` produces the same column shape** (`Timestamp`, `SourceTable`, `Entity`, `Detail`). That's the trick to making `union` work cleanly across different telemetry sources — normalize the shape first, then stack.
 

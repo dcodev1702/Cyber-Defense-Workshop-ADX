@@ -59,6 +59,28 @@ function Test-GeneratedFileContainsText {
     }
 }
 
+function Test-GeneratedFileDoesNotContainText {
+    param(
+        [Parameter(Mandatory)][string]$DataDirectory,
+        [Parameter(Mandatory)][string]$FileName,
+        [Parameter(Mandatory)][string[]]$Needles,
+        [Parameter(Mandatory)][string]$Description
+    )
+
+    $filePath = Join-Path $DataDirectory $FileName
+    if (-not (Test-Path $filePath)) {
+        Add-TestError "Scenario validation expected $FileName for $Description."
+        return
+    }
+
+    $content = [System.IO.File]::ReadAllText($filePath)
+    foreach ($needle in $Needles) {
+        if ($content.Contains($needle)) {
+            Add-TestError "Scenario validation found disallowed '$needle' in $FileName for $Description."
+        }
+    }
+}
+
 $scriptFiles = Get-ChildItem -Path (Join-Path $Root 'scripts') -Include '*.ps1', '*.psm1' -Recurse
 foreach ($scriptFile in $scriptFiles) {
     $tokens = $null
@@ -387,13 +409,48 @@ else {
         },
         @{
             FileName = 'DeviceTvmSoftwareVulnerabilitiesKB.json'
-            Needles = @('DeviceTvmSoftwareVulnerabilitiesKB', 'CvssVector', 'CveSupportability', 'EpssScore', 'AffectedSoftware')
+            Needles = @('DeviceTvmSoftwareVulnerabilitiesKB', 'CvssVector', 'CveSupportability', 'EpssScore', 'AffectedSoftware', 'CVE-2025-0411', 'CVE-2025-32463')
             Description = 'Defender Vulnerability Management vulnerability knowledge base shape'
         },
         @{
+            FileName = 'DeviceTvmSoftwareVulnerabilities.json'
+            Needles = @('CVE-2025-0411', 'CVE-2024-4671', 'CVE-2024-30088', 'AADCONNECT01.usag-cyber.local')
+            Description = 'scenario-specific software vulnerability context for Windows endpoint and identity tier'
+        },
+        @{
+            FileName = 'DeviceTvmSoftwareInventory.json'
+            Needles = @('microsoft_entra_connect_sync', 'oracle_database_19c', 'openssh-server', '7-zip')
+            Description = 'scenario-specific software inventory for endpoint, identity, and Linux branches'
+        },
+        @{
+            FileName = 'DeviceTvmInfoGatheringKB.json'
+            Needles = @('igid-scenario-asr', 'AsrConfigurationStates', 'AvScanResults', 'EBPFStatus')
+            Description = 'scenario-specific info gathering KB entries for Defender health and ASR context'
+        },
+        @{
+            FileName = 'DeviceTvmHardwareFirmware.json'
+            Needles = @('CredentialGuardCapable', 'Identity Tier 0', 'Ubuntu MDE sensor host')
+            Description = 'scenario-specific hardware and firmware context'
+        },
+        @{
+            FileName = 'DeviceTvmSoftwareEvidenceBeta.json'
+            Needles = @('Login Data', 'cred_bundle.zip', 'finance_user_catalog.csv', 'ADSync.exe')
+            Description = 'scenario-specific software evidence paths'
+        },
+        @{
+            FileName = 'DeviceTvmCertificateInfo.json'
+            Needles = @('Entra Connect Sync Client Authentication Certificate', 'Oracle Listener Server Certificate', 'Workstation Client Authentication Certificate')
+            Description = 'scenario-specific certificate context'
+        },
+        @{
+            FileName = 'DeviceTvmSecureConfigurationAssessment.json'
+            Needles = @('Credential Guard', 'Service account interactive logon', 'OpenSSH hardening', 'Block credential stealing from LSASS')
+            Description = 'scenario-specific secure configuration gaps'
+        },
+        @{
             FileName = 'SecurityIncident.json'
-            Needles = @('SecurityIncident', 'Microsoft XDR', 'ProviderIncidentId', 'RelatedAnalyticRuleIds', 'AdditionalData')
-            Description = 'Microsoft Sentinel SecurityIncident telemetry shape'
+            Needles = @('SecurityIncident', 'Microsoft XDR', 'ProviderIncidentId', 'RelatedAnalyticRuleIds', 'AdditionalData', 'Multi-stage incident involving identity and endpoint activity', 'XDR-CORR-000', 'DeviceTvmSoftwareEvidenceBeta')
+            Description = 'Microsoft Sentinel SecurityIncident telemetry shape and scenario correlation'
         },
         @{
             FileName = 'IdentityLogonEvents.json'
@@ -407,19 +464,21 @@ else {
         },
         @{
             FileName = 'AlertInfo.json'
-            Needles = @('MIDNIGHT-BLIZZARD-000', 'Suspicious OAuth service principal persistence', 'T1528,T1098.001,T1550.001')
-            Description = 'OAuth service-principal alert'
+            Needles = @('MIDNIGHT-BLIZZARD-000', 'Suspicious OAuth service principal persistence', 'T1528,T1098.001,T1550.001', 'XDR-CORR-000', 'OAuth application credential added and used for Graph access')
+            Description = 'OAuth service-principal alert and generic incident-correlation alert'
         },
         @{
             FileName = 'AlertEvidence.json'
-            Needles = @('MIDNIGHT-BLIZZARD-000', 'USAG Cyber Sync Helper', 'OAuthApplicationId')
-            Description = 'OAuth service-principal alert evidence'
+            Needles = @('MIDNIGHT-BLIZZARD-000', 'USAG Cyber Sync Helper', 'OAuthApplicationId', 'XDR-CORR-002', 'AADCONNECT01.usag-cyber.local')
+            Description = 'OAuth service-principal and hybrid identity alert evidence'
         }
     )
 
     foreach ($scenarioCheck in $scenarioChecks) {
         Test-GeneratedFileContainsText -DataDirectory $DataDirectory -FileName $scenarioCheck['FileName'] -Needles $scenarioCheck['Needles'] -Description $scenarioCheck['Description']
     }
+
+    Test-GeneratedFileDoesNotContainText -DataDirectory $DataDirectory -FileName 'SecurityIncident.json' -Needles @('MIDNIGHT-BLIZZARD', 'MIDNIGHT BLIZZARD') -Description 'generic SOC-style incident naming'
 }
 
 if ($errors.Count -gt 0) {

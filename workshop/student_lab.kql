@@ -22,6 +22,7 @@ union withsource=TableName
     GraphApiAuditEvents,
     DeviceProcessEvents,
     IdentityQueryEvents,
+    SecurityIncident,
     AlertInfo,
     AlertEvidence
 | summarize Rows=count() by TableName
@@ -192,18 +193,32 @@ DeviceLogonEvents
 | project Timestamp, DeviceName, ActionType, LogonType, AccountDomain, AccountName, RemoteDeviceName, RemoteIP, Protocol, IsLocalAdmin
 | order by Timestamp asc
 
-// 10. Correlate alert metadata with evidence.
-// Why: AlertInfo tells you what was detected; AlertEvidence tells you which entity, process, user, or file supported it.
-// Scenario tie-in: This joins Defender-style alert titles to the exact device/user/process evidence students already hunted.
+// 10. Correlate incident, alert, and evidence records.
+// Why: SecurityIncident is the SOC queue; AlertInfo tells you what was detected; AlertEvidence tells you which entity, process, user, or file supported it.
+// Scenario tie-in: The incident titles are generic SOC-style names, while their alert and evidence pivots support the identity, endpoint, hybrid, and Linux branches.
 // KQL notes:
 // - inner join returns only alerts that have matching evidence.
 // - AlertId is the shared key.
 // - KQL suffixes duplicate column names, so Timestamp1/Title1/Severity1 come from the joined table shape.
 AlertInfo
-| where AlertId startswith "MIDNIGHT-BLIZZARD-"
+| where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "XDR-CORR-"
 | join kind=inner AlertEvidence on AlertId
 | project Timestamp=Timestamp1, AlertId, Title=Title1, Severity=Severity1, ServiceSource=ServiceSource1, AttackTechniques=AttackTechniques1, EntityType, DeviceName, AccountUpn, FileName, ProcessCommandLine
 | order by Timestamp asc
+
+// 10b. Review the Sentinel-style incident queue and pivot from incidents to correlated alerts.
+// Why: SecurityIncident shows how a SOC analyst sees the story after multiple signals are grouped into incidents.
+// Scenario tie-in: Incident titles stay generic, but AdditionalData and AlertIds point back to the same cloud, endpoint, identity, Linux, and TVM context.
+// KQL notes:
+// - mv-expand turns the dynamic AlertIds array into one row per alert ID.
+// - leftouter keeps the incident row even if a joined alert is missing.
+SecurityIncident
+| where Labels has "WorkshopScenario"
+| mv-expand AlertIds
+| extend AlertId = tostring(AlertIds)
+| join kind=leftouter AlertInfo on AlertId
+| project TimeGenerated, IncidentNumber, IncidentTitle=Title, IncidentSeverity=Severity, Status, AlertId, AlertTitle=Title1, AlertSeverity=Severity1, Tactics=tostring(AdditionalData.tactics), Techniques=tostring(AdditionalData.techniques), TvmEvidenceTables=tostring(AdditionalData.tvmEvidenceTables)
+| order by TimeGenerated asc, IncidentNumber asc
 
 // 11. Optional Linux MDE branch: reuse an Ubuntu device set.
 // Why: Linux telemetry should be grounded in MDE device tables, not MDI.
@@ -348,7 +363,7 @@ AlertInfo
 
 // 13. Build a concise incident timeline.
 // Why: A timeline is the final product of most incident investigations.
-// Scenario tie-in: This combines cloud, Windows endpoint, identity, Linux, and alert milestones into one ordered view.
+// Scenario tie-in: This combines cloud, Windows endpoint, identity, Linux, alert, and SOC incident milestones into one ordered view.
 // KQL notes:
 // - let defines normalized subqueries with the same output columns: Timestamp, SourceTable, Entity, Detail.
 // - union stacks those normalized rows into one timeline.
@@ -376,7 +391,11 @@ let servicePrincipal =
     | project Timestamp=TimeGenerated, SourceTable="AADServicePrincipalSignInLogs", Entity=ServicePrincipalName, Detail=strcat(ClientCredentialType, " :: ", ResourceDisplayName, " :: ", IPAddress);
 let alerts =
     AlertInfo
-    | where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "LINUX-"
+    | where AlertId startswith "MIDNIGHT-BLIZZARD-" or AlertId startswith "XDR-CORR-" or AlertId startswith "LINUX-"
     | project Timestamp, SourceTable="AlertInfo", Entity=AlertId, Detail=strcat(Severity, " :: ", Title, " :: ", AttackTechniques);
-union endpoint, linux, identity, cloud, servicePrincipal, alerts
+let incidents =
+    SecurityIncident
+    | where Labels has "WorkshopScenario"
+    | project Timestamp=TimeGenerated, SourceTable="SecurityIncident", Entity=strcat("Incident ", tostring(IncidentNumber)), Detail=strcat(Severity, " :: ", Title, " :: ", Status);
+union endpoint, linux, identity, cloud, servicePrincipal, alerts, incidents
 | order by Timestamp asc

@@ -919,6 +919,201 @@ function Add-Record {
     }
 }
 
+function Get-WorkshopScenarioMachineGroup {
+    param([Parameter(Mandatory)]$Device)
+
+    switch ($Device.Type) {
+        'DomainController' { 'XDR-LiveResponse-DomainControllers-ONLY' }
+        'EntraConnect' { 'EUROPE' }
+        'LinuxServer' { 'UnassignedGroup' }
+        default { 'EUROPE' }
+    }
+}
+
+function Get-WorkshopScenarioOsVersion {
+    param([Parameter(Mandatory)]$Device)
+
+    if ($Device.OS -eq 'Ubuntu') { return '24.04 LTS' }
+    if ($Device.OS -eq 'Windows11') { return '25H2' }
+    return 'Server 2025'
+}
+
+function Add-WorkshopScenarioCorrelationAlert {
+    param(
+        [Parameter(Mandatory)][string]$AlertId,
+        [Parameter(Mandatory)][datetime]$Time,
+        [Parameter(Mandatory)][string]$Title,
+        [Parameter(Mandatory)][string]$Category,
+        [Parameter(Mandatory)][string]$Severity,
+        [Parameter(Mandatory)][string]$ServiceSource,
+        [Parameter(Mandatory)][string]$DetectionSource,
+        [Parameter(Mandatory)][string]$AttackTechniques,
+        [Parameter(Mandatory)][string]$EntityType,
+        [string]$DeviceId = '',
+        [string]$DeviceName = '',
+        [string]$AccountName = '',
+        [string]$AccountDomain = '',
+        [string]$AccountSid = '',
+        [string]$AccountObjectId = '',
+        [string]$AccountUpn = '',
+        [string]$FileName = '',
+        [string]$FolderPath = '',
+        [string]$ProcessCommandLine = '',
+        [string]$Application = '',
+        [string]$OAuthApplicationId = '',
+        [string]$AdditionalFields = '{}'
+    )
+
+    Add-Record -Table 'AlertInfo' -Time $Time -Values @{
+        Timestamp = Format-WorkshopTime $Time
+        AlertId = $AlertId
+        Title = $Title
+        Category = $Category
+        Severity = $Severity
+        ServiceSource = $ServiceSource
+        DetectionSource = $DetectionSource
+        AttackTechniques = $AttackTechniques
+    }
+    Add-Record -Table 'AlertEvidence' -Time $Time -Values @{
+        Timestamp = Format-WorkshopTime $Time
+        AlertId = $AlertId
+        Title = $Title
+        Categories = "[`"$Category`"]"
+        AttackTechniques = $AttackTechniques
+        ServiceSource = $ServiceSource
+        DetectionSource = $DetectionSource
+        EntityType = $EntityType
+        EvidenceRole = 'Impacted'
+        EvidenceDirection = 'Source'
+        FileName = $FileName
+        FolderPath = $FolderPath
+        AccountName = $AccountName
+        AccountDomain = $AccountDomain
+        AccountSid = $AccountSid
+        AccountObjectId = $AccountObjectId
+        AccountUpn = $AccountUpn
+        DeviceId = $DeviceId
+        DeviceName = $DeviceName
+        Application = $Application
+        OAuthApplicationId = $OAuthApplicationId
+        ProcessCommandLine = $ProcessCommandLine
+        AdditionalFields = $AdditionalFields
+        Severity = $Severity
+    }
+}
+
+function Add-WorkshopScenarioSecurityIncident {
+    param(
+        [Parameter(Mandatory)][int]$IncidentNumber,
+        [Parameter(Mandatory)][string]$ProviderIncidentId,
+        [Parameter(Mandatory)][datetime]$TimeGenerated,
+        [Parameter(Mandatory)][datetime]$FirstActivityTime,
+        [Parameter(Mandatory)][datetime]$LastActivityTime,
+        [Parameter(Mandatory)][string]$Title,
+        [Parameter(Mandatory)][string]$Description,
+        [Parameter(Mandatory)][string]$Severity,
+        [Parameter(Mandatory)][string]$Status,
+        [Parameter(Mandatory)][string[]]$AlertIds,
+        [Parameter(Mandatory)][string[]]$Tactics,
+        [Parameter(Mandatory)][string[]]$Techniques,
+        [Parameter(Mandatory)][hashtable]$Entities,
+        [string[]]$TvmTables = @()
+    )
+
+    $isClosed = $Status -eq 'Closed'
+    $ruleIds = @(
+        (New-StableGuid -Seed "scenario-incident|$ProviderIncidentId|rule|primary")
+        (New-StableGuid -Seed "scenario-incident|$ProviderIncidentId|rule|correlation")
+    )
+    $tasks = @(
+        @{
+            title = 'Triage correlated identity, endpoint, and vulnerability context'
+            status = if ($isClosed) { 'Completed' } else { 'New' }
+            taskId = New-StableGuid "scenario-incident|$ProviderIncidentId|task|triage"
+            createdTimeUtc = Format-WorkshopTime $TimeGenerated.AddMinutes(-4)
+            lastModifiedTimeUtc = Format-WorkshopTime $TimeGenerated
+            createdBy = @{ name = 'SOC automation'; userPrincipalName = 'sentinel-automation@usag-cyber.local' }
+            lastModifiedBy = @{ name = 'SOC automation'; userPrincipalName = 'sentinel-automation@usag-cyber.local' }
+        },
+        @{
+            title = 'Review supporting TVM exposure rows'
+            status = 'New'
+            taskId = New-StableGuid "scenario-incident|$ProviderIncidentId|task|tvm"
+            createdTimeUtc = Format-WorkshopTime $TimeGenerated.AddMinutes(-3)
+            lastModifiedTimeUtc = Format-WorkshopTime $TimeGenerated
+            createdBy = @{ name = 'SOC automation'; userPrincipalName = 'sentinel-automation@usag-cyber.local' }
+            lastModifiedBy = @{ name = 'SOC automation'; userPrincipalName = 'sentinel-automation@usag-cyber.local' }
+        }
+    )
+
+    Add-Record -Table 'SecurityIncident' -Time $TimeGenerated -Values @{
+        TimeGenerated = Format-WorkshopTime $TimeGenerated
+        TenantId = $tenantId
+        IncidentName = New-StableGuid "scenario-incident|$ProviderIncidentId"
+        Title = $Title
+        Description = $Description
+        Severity = $Severity
+        Status = $Status
+        Classification = if ($isClosed) { 'TruePositive' } else { '' }
+        ClassificationComment = if ($isClosed) { 'Workshop scenario incident closed after triage.' } else { '' }
+        ClassificationReason = if ($isClosed) { 'SuspiciousActivity' } else { '' }
+        Owner = @{
+            objectId = New-StableGuid "scenario-incident|$ProviderIncidentId|owner"
+            email = 'soc.analyst@usag-cyber.local'
+            assignedTo = 'SOC Analyst'
+            userPrincipalName = 'soc.analyst@usag-cyber.local'
+        }
+        ProviderName = 'Microsoft XDR'
+        ProviderIncidentId = $ProviderIncidentId
+        FirstActivityTime = Format-WorkshopTime $FirstActivityTime
+        LastActivityTime = Format-WorkshopTime $LastActivityTime
+        FirstModifiedTime = Format-WorkshopTime $TimeGenerated.AddMinutes(-3)
+        LastModifiedTime = Format-WorkshopTime $TimeGenerated
+        CreatedTime = Format-WorkshopTime $TimeGenerated.AddMinutes(-5)
+        ClosedTime = if ($isClosed) { Format-WorkshopTime $TimeGenerated } else { $null }
+        IncidentNumber = $IncidentNumber
+        RelatedAnalyticRuleIds = [object[]]$ruleIds
+        AlertIds = [object[]]$AlertIds
+        BookmarkIds = [object[]]@()
+        Comments = [object[]]@(
+            @{
+                message = 'Correlated workshop incident created from Defender XDR alert evidence and TVM exposure context.'
+                createdTimeUtc = Format-WorkshopTime $TimeGenerated.AddMinutes(-2)
+                lastModifiedTimeUtc = Format-WorkshopTime $TimeGenerated.AddMinutes(-2)
+                author = @{ name = 'SOC automation'; userPrincipalName = 'sentinel-automation@usag-cyber.local' }
+            },
+            @{
+                message = 'Use AlertIds to pivot into AlertInfo and AlertEvidence, then validate exposed software and configuration state in TVM tables.'
+                createdTimeUtc = Format-WorkshopTime $TimeGenerated.AddMinutes(-1)
+                lastModifiedTimeUtc = Format-WorkshopTime $TimeGenerated.AddMinutes(-1)
+                author = @{ name = 'SOC Analyst'; userPrincipalName = 'soc.analyst@usag-cyber.local' }
+            }
+        )
+        Tasks = [object[]]$tasks
+        Labels = [object[]]@(
+            @{ labelName = 'WorkshopScenario'; labelType = 'AutoAssigned' },
+            @{ labelName = 'XDRCorrelation'; labelType = 'AutoAssigned' }
+        )
+        IncidentUrl = "https://portal.azure.com/#asset/Microsoft_Azure_Security_Insights/Incident/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sentinel/providers/Microsoft.OperationalInsights/workspaces/usag-cyber/providers/Microsoft.SecurityInsights/Incidents/$(New-StableGuid "scenario-incident|$ProviderIncidentId")"
+        AdditionalData = @{
+            alertsCount = $AlertIds.Count
+            bookmarksCount = 0
+            commentsCount = 2
+            tasksCount = 2
+            alertProductNames = [object[]]@('Microsoft Defender XDR', 'Microsoft Sentinel')
+            tactics = [object[]]$Tactics
+            techniques = [object[]]$Techniques
+            providerIncidentUrl = "https://security.microsoft.com/incident2/$ProviderIncidentId/overview?tid=$tenantId"
+            entities = $Entities
+            supportingTables = [object[]]@('AlertInfo', 'AlertEvidence', 'SecurityIncident')
+            tvmEvidenceTables = [object[]]$TvmTables
+        }
+        ModifiedBy = if ($isClosed) { 'SOC analyst' } else { 'Microsoft Defender XDR - alert correlation' }
+        SourceSystem = 'Azure'
+        Type = 'SecurityIncident'
+    }
+}
+
 if (-not (Test-Path $SchemaDirectory)) {
     throw "Schema directory not found: $SchemaDirectory"
 }
@@ -2552,7 +2747,7 @@ function New-NormalTelemetryValues {
             $values.FirstModifiedTime = Format-WorkshopTime $Time.AddMinutes(-40)
             $values.LastModifiedTime = $timeText
             $values.CreatedTime = Format-WorkshopTime $Time.AddMinutes(-35)
-            $values.ClosedTime = if ($isClosed) { Format-WorkshopTime $Time.AddMinutes(-5) } else { Format-WorkshopTime $Time }
+            $values.ClosedTime = if ($isClosed) { Format-WorkshopTime $Time.AddMinutes(-5) } else { $null }
             $values.IncidentNumber = 100 + ($Index % 9000)
             $values.RelatedAnalyticRuleIds = [object[]]@($ruleId)
             $values.AlertIds = [object[]]@($alertId)
@@ -3209,6 +3404,91 @@ foreach ($alert in $alerts) {
     }
 }
 
+$scenarioCorrelationAlerts = @(
+    [pscustomobject]@{
+        AlertId = 'XDR-CORR-000'
+        Offset = 6
+        Title = 'OAuth application credential added and used for Graph access'
+        Category = 'Persistence'
+        Severity = 'High'
+        ServiceSource = 'Microsoft Defender XDR'
+        DetectionSource = 'Microsoft Sentinel analytics'
+        AttackTechniques = 'T1528,T1098.001,T1550.001'
+        EntityType = 'OAuthApplication'
+        Device = $win04
+        Account = $victor
+        FileName = ''
+        FolderPath = ''
+        Command = 'USAG Cyber Sync Helper service-principal credential added and used for Microsoft Graph'
+        Application = 'USAG Cyber Sync Helper'
+        OAuthApplicationId = $maliciousOAuthAppId
+        AdditionalFields = '{"Scenario":"OAuth persistence and Graph access","ServicePrincipal":"USAG Cyber Sync Helper","EvidenceTables":["CloudAppEvents","AuditLogs","AADServicePrincipalSignInLogs","GraphApiAuditEvents","MicrosoftGraphActivityLogs"]}'
+    },
+    [pscustomobject]@{
+        AlertId = 'XDR-CORR-001'
+        Offset = 50
+        Title = 'Credential material collection on one endpoint'
+        Category = 'CredentialAccess'
+        Severity = 'High'
+        ServiceSource = 'Microsoft Defender for Endpoint'
+        DetectionSource = 'Microsoft Sentinel analytics'
+        AttackTechniques = 'T1003.001,T1552.002,T1555,T1558.003'
+        EntityType = 'Device'
+        Device = $win04
+        Account = $victor
+        FileName = "$targetLsLower.dmp"
+        FolderPath = "$stage\$targetLsLower.dmp"
+        Command = "$toolProc.exe -ma $targetLsLower.exe"
+        Application = ''
+        OAuthApplicationId = ''
+        AdditionalFields = '{"Scenario":"Endpoint credential material collection","EvidencePath":"C:\\ProgramData\\wrstage","SupportingTables":["DeviceProcessEvents","DeviceFileEvents","DeviceRegistryEvents","DeviceTvmSoftwareEvidenceBeta","DeviceTvmSecureConfigurationAssessment"]}'
+    },
+    [pscustomobject]@{
+        AlertId = 'XDR-CORR-002'
+        Offset = 82
+        Title = 'Service account interactive sign-in to identity synchronization server'
+        Category = 'LateralMovement'
+        Severity = 'High'
+        ServiceSource = 'Microsoft Defender XDR'
+        DetectionSource = 'Microsoft Sentinel analytics'
+        AttackTechniques = 'T1078.002,T1021.006'
+        EntityType = 'User'
+        Device = $aadc
+        Account = $svcSql
+        FileName = ''
+        FolderPath = ''
+        Command = 'svc_sql RemoteInteractive logon to AADCONNECT01 from WIN11-04'
+        Application = ''
+        OAuthApplicationId = ''
+        AdditionalFields = '{"Scenario":"Hybrid identity pivot","SourceDevice":"WIN11-04.usag-cyber.local","TargetDevice":"AADCONNECT01.usag-cyber.local","SupportingTables":["DeviceLogonEvents","IdentityLogonEvents","DeviceTvmSoftwareInventory","DeviceTvmSecureConfigurationAssessment"]}'
+    }
+)
+foreach ($correlationAlert in $scenarioCorrelationAlerts) {
+    Add-WorkshopScenarioCorrelationAlert `
+        -AlertId $correlationAlert.AlertId `
+        -Time $StartTime.AddMinutes($correlationAlert.Offset) `
+        -Title $correlationAlert.Title `
+        -Category $correlationAlert.Category `
+        -Severity $correlationAlert.Severity `
+        -ServiceSource $correlationAlert.ServiceSource `
+        -DetectionSource $correlationAlert.DetectionSource `
+        -AttackTechniques $correlationAlert.AttackTechniques `
+        -EntityType $correlationAlert.EntityType `
+        -DeviceId $correlationAlert.Device.DeviceId `
+        -DeviceName $correlationAlert.Device.Name `
+        -AccountName $correlationAlert.Account.Name `
+        -AccountDomain $adDomain `
+        -AccountSid $correlationAlert.Account.Sid `
+        -AccountObjectId $correlationAlert.Account.ObjectId `
+        -AccountUpn $correlationAlert.Account.Upn `
+        -FileName $correlationAlert.FileName `
+        -FolderPath $correlationAlert.FolderPath `
+        -ProcessCommandLine $correlationAlert.Command `
+        -Application $correlationAlert.Application `
+        -OAuthApplicationId $correlationAlert.OAuthApplicationId `
+        -AdditionalFields $correlationAlert.AdditionalFields
+}
+
 $linuxAdminUser = $alice.Name -replace '\.', ''
 $linuxExternalIp = '203.0.113.91'
 $linuxAlertTime = $StartTime.AddMinutes(68)
@@ -3602,8 +3882,282 @@ foreach ($vulnerability in $linuxScenarioVulnerabilities) {
         RecommendedSecurityUpdate = $vulnerability.Update
         RecommendedSecurityUpdateId = $vulnerability.CveId
         CveTags = @('Linux', 'Ubuntu', 'Workshop')
+        TenantId = ''
+        Type = 'DeviceTvmSoftwareVulnerabilities'
+        SourceSystem = ''
+        MachineGroup = Get-WorkshopScenarioMachineGroup -Device $linux03
     }
 }
+
+$scenarioSoftwareInventory = @(
+    [pscustomobject]@{ Device = $win04; Vendor = 'microsoft'; Name = 'edge'; Version = '125.0.2535.67'; EosStatus = ''; EosDate = '2029-10-09T00:00:00.0000000Z'; Cpe = 'cpe:2.3:a:microsoft:edge:125.0.2535.67:*:*:*:*:*:*:*' },
+    [pscustomobject]@{ Device = $win04; Vendor = 'google'; Name = 'chrome'; Version = '124.0.6367.119'; EosStatus = ''; EosDate = '2028-05-01T00:00:00.0000000Z'; Cpe = 'cpe:2.3:a:google:chrome:124.0.6367.119:*:*:*:*:*:*:*' },
+    [pscustomobject]@{ Device = $win04; Vendor = '7-zip'; Name = '7-zip'; Version = '24.08.0.0'; EosStatus = ''; EosDate = '2028-12-31T00:00:00.0000000Z'; Cpe = 'cpe:2.3:a:7-zip:7-zip:24.08:*:*:*:*:*:*:*' },
+    [pscustomobject]@{ Device = $aadc; Vendor = 'microsoft'; Name = 'microsoft_entra_connect_sync'; Version = '2.3.20.0'; EosStatus = ''; EosDate = '2028-12-31T00:00:00.0000000Z'; Cpe = 'cpe:2.3:a:microsoft:entra_connect_sync:2.3.20.0:*:*:*:*:*:*:*' },
+    [pscustomobject]@{ Device = $linux03; Vendor = 'openbsd'; Name = 'openssh-server'; Version = '1:9.6p1-3ubuntu13.5'; EosStatus = ''; EosDate = '2029-05-31T00:00:00.0000000Z'; Cpe = 'cpe:2.3:a:openbsd:openssh:9.6p1:*:*:*:*:*:*:*' },
+    [pscustomobject]@{ Device = $linux03; Vendor = 'sudo_project'; Name = 'sudo'; Version = '1.9.15p5-3ubuntu5.24.04.1'; EosStatus = ''; EosDate = '2029-05-31T00:00:00.0000000Z'; Cpe = 'cpe:2.3:a:sudo_project:sudo:1.9.15p5:*:*:*:*:*:*:*' },
+    [pscustomobject]@{ Device = $linuxDb; Vendor = 'oracle'; Name = 'oracle_database_19c'; Version = '19.22.0.0.0'; EosStatus = 'Upcoming EOS Version'; EosDate = '2027-04-30T00:00:00.0000000Z'; Cpe = 'cpe:2.3:a:oracle:database:19.22:*:*:*:*:*:*:*' }
+)
+foreach ($softwareItem in $scenarioSoftwareInventory) {
+    Add-Record -Table 'DeviceTvmSoftwareInventory' -Time $StartTime.AddMinutes(12) -Values @{
+        DeviceId = $softwareItem.Device.DeviceId
+        DeviceName = $softwareItem.Device.Name
+        OSPlatform = if ($softwareItem.Device.OS -eq 'Ubuntu') { 'Ubuntu' } else { $softwareItem.Device.OS }
+        OSVersion = Get-WorkshopScenarioOsVersion -Device $softwareItem.Device
+        OSArchitecture = 'x64'
+        SoftwareVendor = $softwareItem.Vendor
+        SoftwareName = $softwareItem.Name
+        SoftwareVersion = $softwareItem.Version
+        EndOfSupportStatus = $softwareItem.EosStatus
+        EndOfSupportDate = $softwareItem.EosDate
+        ProductCodeCpe = $softwareItem.Cpe
+        TenantId = ''
+        Type = 'DeviceTvmSoftwareInventory'
+        SourceSystem = ''
+        MachineGroup = Get-WorkshopScenarioMachineGroup -Device $softwareItem.Device
+    }
+}
+
+$scenarioWindowsVulnerabilities = @(
+    [pscustomobject]@{ Device = $win04; Vendor = '7-zip'; Name = '7-zip'; Version = '24.08.0.0'; CveId = 'CVE-2025-0411'; Severity = 'High'; Update = 'Update 7-Zip to 24.09 or later'; UpdateId = '7ZIP-24.09'; Tags = @('ExploitAvailable', 'UserInteractionRequired', 'CredentialPackageRisk') },
+    [pscustomobject]@{ Device = $win04; Vendor = 'google'; Name = 'chrome'; Version = '124.0.6367.119'; CveId = 'CVE-2024-4671'; Severity = 'High'; Update = 'Update Chrome to the latest stable build'; UpdateId = 'CHROME-125'; Tags = @('Browser', 'CredentialStoreContext', 'ExploitAvailable') },
+    [pscustomobject]@{ Device = $aadc; Vendor = 'microsoft'; Name = 'microsoft_entra_connect_sync'; Version = '2.3.20.0'; CveId = 'CVE-2024-30088'; Severity = 'Medium'; Update = 'Apply current Microsoft security updates to identity synchronization server'; UpdateId = 'KB5039217'; Tags = @('IdentityTier0', 'HybridIdentity', 'ServiceAccountExposure') }
+)
+foreach ($vulnerability in $scenarioWindowsVulnerabilities) {
+    Add-Record -Table 'DeviceTvmSoftwareVulnerabilities' -Time $StartTime.AddMinutes(13) -Values @{
+        DeviceId = $vulnerability.Device.DeviceId
+        DeviceName = $vulnerability.Device.Name
+        OSPlatform = $vulnerability.Device.OS
+        OSVersion = Get-WorkshopScenarioOsVersion -Device $vulnerability.Device
+        OSArchitecture = 'x64'
+        SoftwareVendor = $vulnerability.Vendor
+        SoftwareName = $vulnerability.Name
+        SoftwareVersion = $vulnerability.Version
+        CveId = $vulnerability.CveId
+        VulnerabilitySeverityLevel = $vulnerability.Severity
+        RecommendedSecurityUpdate = $vulnerability.Update
+        RecommendedSecurityUpdateId = $vulnerability.UpdateId
+        CveTags = [object[]]$vulnerability.Tags
+        CveMitigationStatus = ''
+        AadDeviceId = New-StableGuid "aad-device|$($vulnerability.Device.DeviceId)"
+        TenantId = ''
+        Type = 'DeviceTvmSoftwareVulnerabilities'
+        SourceSystem = ''
+        MachineGroup = Get-WorkshopScenarioMachineGroup -Device $vulnerability.Device
+    }
+}
+
+$scenarioVulnerabilityKb = @(
+    [pscustomobject]@{ CveId = 'CVE-2025-0411'; Cvss = 7.8; Vector = 'CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H'; Severity = 'High'; Exploit = $true; Epss = 0.71342; Description = '7-Zip Mark-of-the-Web bypass context relevant to archive handling during credential material staging.'; Software = @('7-zip:7-zip:24.08.0.0', '7-zip:7-zip:24.09.0.0') },
+    [pscustomobject]@{ CveId = 'CVE-2024-4671'; Cvss = 8.8; Vector = 'CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H'; Severity = 'High'; Exploit = $true; Epss = 0.61218; Description = 'Browser vulnerability context for the endpoint where browser credential data was collected.'; Software = @('google:chrome:124.0.6367.119', 'google:chrome:125.0.6422.60') },
+    [pscustomobject]@{ CveId = 'CVE-2024-30088'; Cvss = 6.5; Vector = 'CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:L/A:N'; Severity = 'Medium'; Exploit = $false; Epss = 0.08175; Description = 'Windows security update context for the identity synchronization server involved in service-account misuse.'; Software = @('microsoft:windows_server_2025:24h2', 'microsoft:entra_connect_sync:2.3.20.0') },
+    [pscustomobject]@{ CveId = 'CVE-2024-6387'; Cvss = 8.1; Vector = 'CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H'; Severity = 'High'; Exploit = $true; Epss = 0.39211; Description = 'OpenSSH regreSSHion context for Ubuntu SSH exposure review.'; Software = @('openbsd:openssh:9.6p1', 'ubuntu:openssh-server:1:9.6p1-3ubuntu13.5') },
+    [pscustomobject]@{ CveId = 'CVE-2025-32463'; Cvss = 9.3; Vector = 'CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:C/C:H/I:H/A:H'; Severity = 'Critical'; Exploit = $true; Epss = 0.84429; Description = 'Sudo chroot privilege-escalation context for the Linux bonus path.'; Software = @('sudo_project:sudo:1.9.15p5', 'ubuntu:sudo:1.9.15p5-3ubuntu5.24.04.1') },
+    [pscustomobject]@{ CveId = 'CVE-2024-47176'; Cvss = 8.6; Vector = 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:H/A:H'; Severity = 'High'; Exploit = $true; Epss = 0.50761; Description = 'CUPS IPP context that explains the Linux network-service exposure rows.'; Software = @('openprinting:cups:2.4.7', 'ubuntu:cups:2.4.7-1.2ubuntu7.3') }
+)
+foreach ($kb in $scenarioVulnerabilityKb) {
+    Add-Record -Table 'DeviceTvmSoftwareVulnerabilitiesKB' -Time $StartTime.AddMinutes(13) -Values @{
+        CveId = $kb.CveId
+        CvssScore = $kb.Cvss
+        CvssVector = $kb.Vector
+        CveSupportability = 'Supported'
+        IsExploitAvailable = $kb.Exploit
+        VulnerabilitySeverityLevel = $kb.Severity
+        LastModifiedTime = Format-WorkshopTime $StartTime.AddDays(-3)
+        PublishedDate = Format-WorkshopTime $StartTime.AddDays(-120)
+        VulnerabilityDescription = $kb.Description
+        AffectedSoftware = [object[]]$kb.Software
+        EpssScore = $kb.Epss
+        TenantId = ''
+        Type = 'DeviceTvmSoftwareVulnerabilitiesKB'
+        SourceSystem = ''
+    }
+}
+
+$scenarioSoftwareEvidence = @(
+    [pscustomobject]@{ Device = $win04; Vendor = 'google'; Name = 'chrome'; Version = '124.0.6367.119'; Registry = @('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Google Chrome', 'HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Google\Update\Clients\Chrome'); Disk = @('C:\Program Files\Google\Chrome\Application\chrome.exe', 'C:\Users\victor.alvarez\AppData\Local\Google\Chrome\User Data\Default\Login Data') },
+    [pscustomobject]@{ Device = $win04; Vendor = '7-zip'; Name = '7-zip'; Version = '24.08.0.0'; Registry = @('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip', 'HKEY_LOCAL_MACHINE\SOFTWARE\7-Zip'); Disk = @('C:\Program Files\7-Zip\7z.exe', 'C:\ProgramData\wrstage\cred_bundle.zip') },
+    [pscustomobject]@{ Device = $aadc; Vendor = 'microsoft'; Name = 'microsoft_entra_connect_sync'; Version = '2.3.20.0'; Registry = @('HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Azure AD Connect', 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\ADSync'); Disk = @('C:\Program Files\Microsoft Azure AD Sync\Bin\miiserver.exe', 'C:\Program Files\Microsoft Azure AD Sync\Bin\ADSync.exe') },
+    [pscustomobject]@{ Device = $linux03; Vendor = 'sudo_project'; Name = 'sudo'; Version = '1.9.15p5-3ubuntu5.24.04.1'; Registry = @(); Disk = @('/usr/bin/sudo', '/tmp/.cache/nss/etc/nsswitch.conf') },
+    [pscustomobject]@{ Device = $linuxDb; Vendor = 'oracle'; Name = 'oracle_database_19c'; Version = '19.22.0.0.0'; Registry = @(); Disk = @('/opt/oracle/product/19c/dbhome_1/bin/oracle', '/tmp/.oracle/finance_user_catalog.csv') }
+)
+foreach ($evidence in $scenarioSoftwareEvidence) {
+    Add-Record -Table 'DeviceTvmSoftwareEvidenceBeta' -Time $StartTime.AddMinutes(14) -Values @{
+        DeviceId = $evidence.Device.DeviceId
+        SoftwareVendor = $evidence.Vendor
+        SoftwareName = $evidence.Name
+        SoftwareVersion = $evidence.Version
+        RegistryPaths = [object[]]$evidence.Registry
+        DiskPaths = [object[]]$evidence.Disk
+        LastSeenTime = Format-WorkshopTime $StartTime.AddMinutes(14)
+        TenantId = ''
+        Type = 'DeviceTvmSoftwareEvidenceBeta'
+        SourceSystem = ''
+        MachineGroup = Get-WorkshopScenarioMachineGroup -Device $evidence.Device
+    }
+}
+
+$scenarioInfoGatheringKb = @(
+    [pscustomobject]@{ Id = 'igid-scenario-asr'; Field = 'AsrConfigurationStates'; Description = 'Attack surface reduction configuration state used to explain why credential-theft behaviors were observable on the workstation.'; Categories = @('endpoint security', 'attack surface reduction', 'credential theft'); DataStructure = 'JSON object' },
+    [pscustomobject]@{ Id = 'igid-scenario-avscan'; Field = 'AvScanResults'; Description = 'Recent Defender Antivirus scan state used to distinguish sensor health from attacker activity.'; Categories = @('endpoint security', 'antivirus', 'sensor health'); DataStructure = 'JSON object' },
+    [pscustomobject]@{ Id = 'igid-scenario-cloud'; Field = 'CloudProtectionState'; Description = 'Cloud-delivered protection state for Windows endpoints and Linux servers in the investigation.'; Categories = @('endpoint security', 'cloud protection', 'sensor health'); DataStructure = 'String or null' },
+    [pscustomobject]@{ Id = 'igid-scenario-ebpf'; Field = 'EBPFStatus'; Description = 'Linux eBPF sensor state that supports the Ubuntu telemetry comparison branch.'; Categories = @('linux', 'sensor', 'ebpf'); DataStructure = 'String or null' },
+    [pscustomobject]@{ Id = 'igid-scenario-tls'; Field = 'TlsServer12'; Description = 'TLS configuration state relevant to server hardening review during post-incident remediation.'; Categories = @('network protocol', 'tls', 'hardening'); DataStructure = 'String or null' }
+)
+foreach ($kb in $scenarioInfoGatheringKb) {
+    Add-Record -Table 'DeviceTvmInfoGatheringKB' -Time $StartTime.AddMinutes(14) -Values @{
+        IgId = $kb.Id
+        FieldName = $kb.Field
+        Description = $kb.Description
+        Categories = [object[]]$kb.Categories
+        DataStructure = $kb.DataStructure
+        TenantId = ''
+        Type = 'DeviceTvmInfoGatheringKB'
+        SourceSystem = ''
+    }
+}
+
+$scenarioHardwareFirmware = @(
+    [pscustomobject]@{ Device = $win04; Type = 'Tpm'; Manufacturer = 'microsoft'; Name = 'trusted_platform_module'; Family = 'TPM'; Version = '2.0'; Additional = @{ SecureBoot = 'Enabled'; VirtualizationBasedSecurity = 'NotEnabled'; CredentialGuardCapable = $true; Scenario = 'Patient-zero workstation hardening context' } },
+    [pscustomobject]@{ Device = $aadc; Type = 'Bios'; Manufacturer = 'microsoft'; Name = 'virtual_machine_firmware'; Family = 'Virtual Machine'; Version = '4.1.0.0'; Additional = @{ SecureBoot = 'Enabled'; Tier = 'Identity Tier 0'; BIOSReleaseDate = Format-WorkshopTime $StartTime.AddDays(-180); Scenario = 'Hybrid identity synchronization server' } },
+    [pscustomobject]@{ Device = $linux03; Type = 'Bios'; Manufacturer = 'microsoft'; Name = 'hyper-v_uefi'; Family = 'Virtual Machine'; Version = '4.1.0.0'; Additional = @{ SecureBoot = 'Enabled'; Kernel = '6.8.0-58-generic'; Scenario = 'Ubuntu MDE sensor host' } }
+)
+foreach ($component in $scenarioHardwareFirmware) {
+    Add-Record -Table 'DeviceTvmHardwareFirmware' -Time $StartTime.AddMinutes(15) -Values @{
+        DeviceId = $component.Device.DeviceId
+        DeviceName = $component.Device.Name
+        ComponentType = $component.Type
+        Manufacturer = $component.Manufacturer
+        ComponentName = $component.Name
+        ComponentFamily = $component.Family
+        ComponentVersion = $component.Version
+        AdditionalFields = $component.Additional
+        TenantId = ''
+        Type = 'DeviceTvmHardwareFirmware'
+        SourceSystem = ''
+        MachineGroup = Get-WorkshopScenarioMachineGroup -Device $component.Device
+    }
+}
+
+$scenarioCertificates = @(
+    [pscustomobject]@{ Device = $win04; FriendlyName = 'USAG Cyber Workstation Client Authentication Certificate'; Subject = @{ CommonName = $win04.Name; Organization = 'USAG Cyber'; OrganizationalUnit = 'Workstations' }; Eku = @('Client Authentication', 'Smart Card Logon'); Days = 280 },
+    [pscustomobject]@{ Device = $aadc; FriendlyName = 'USAG Cyber Entra Connect Sync Client Authentication Certificate'; Subject = @{ CommonName = $aadc.Name; Organization = 'USAG Cyber'; OrganizationalUnit = 'Identity Tier 0' }; Eku = @('Client Authentication', 'Server Authentication'); Days = 75 },
+    [pscustomobject]@{ Device = $linuxDb; FriendlyName = 'USAG Cyber Oracle Listener Server Certificate'; Subject = @{ CommonName = $linuxDb.Name; Organization = 'USAG Cyber'; OrganizationalUnit = 'Database Services' }; Eku = @('Server Authentication', 'Client Authentication'); Days = 42 }
+)
+foreach ($certificate in $scenarioCertificates) {
+    Add-Record -Table 'DeviceTvmCertificateInfo' -Time $StartTime.AddMinutes(15) -Values @{
+        DeviceId = $certificate.Device.DeviceId
+        Thumbprint = (New-StableHex "scenario-certificate|$($certificate.Device.DeviceId)" 40).ToUpperInvariant()
+        Path = if ($certificate.Device.OS -eq 'Ubuntu') { "/etc/ssl/certs/$($certificate.Device.ShortName.ToLowerInvariant()).pem" } else { "Microsoft.PowerShell.Security\Certificate::LocalMachine\My\$((New-StableHex "scenario-certificate|$($certificate.Device.DeviceId)" 40).ToUpperInvariant())" }
+        SerialNumber = (New-StableHex "scenario-certificate-serial|$($certificate.Device.DeviceId)" 32).ToUpperInvariant()
+        IssuedTo = $certificate.Subject
+        IssuedBy = @{ CommonName = 'USAG Cyber Root CA'; Organization = 'USAG Cyber'; CountryName = 'US' }
+        FriendlyName = $certificate.FriendlyName
+        SignatureAlgorithm = 'sha256RSA'
+        KeySize = 4096
+        ExpirationDate = Format-WorkshopTime $StartTime.AddDays($certificate.Days)
+        IssueDate = Format-WorkshopTime $StartTime.AddDays(-365)
+        SubjectType = 'End Entity'
+        KeyUsage = [object[]]@('Digital Signature', 'Key Encipherment')
+        ExtendedKeyUsage = [object[]]$certificate.Eku
+        TenantId = ''
+        Type = 'DeviceTvmCertificateInfo'
+        SourceSystem = ''
+        MachineGroup = Get-WorkshopScenarioMachineGroup -Device $certificate.Device
+    }
+}
+
+$scenarioSecureConfigurations = @(
+    [pscustomobject]@{ Device = $win04; Id = 'scid-91'; Category = 'Security controls'; Subcategory = 'Attack Surface Reduction'; Impact = 8.5; Compliant = $false; Context = @(@{ Rule = 'Block credential stealing from LSASS'; State = 'Audit' }, @{ Rule = 'Block Office child process creation'; State = 'Warn' }) },
+    [pscustomobject]@{ Device = $win04; Id = 'scid-2011'; Category = 'OS'; Subcategory = 'Credential Guard'; Impact = 9.0; Compliant = $false; Context = @(@{ Setting = 'CredentialGuard'; State = 'Disabled' }, @{ Setting = 'LSAProtection'; State = 'Disabled' }) },
+    [pscustomobject]@{ Device = $aadc; Id = 'scid-5002'; Category = 'Accounts'; Subcategory = 'Service account interactive logon'; Impact = 9.5; Compliant = $false; Context = @(@{ Account = 'svc_sql'; Observation = 'RemoteInteractive logon to identity synchronization server' }, @{ SourceDevice = $win04.Name; TargetDevice = $aadc.Name }) },
+    [pscustomobject]@{ Device = $linux03; Id = 'scid-linux-ssh-01'; Category = 'OS'; Subcategory = 'OpenSSH hardening'; Impact = 7.0; Compliant = $false; Context = @(@{ Setting = 'PasswordAuthentication'; State = 'Enabled' }, @{ Setting = 'PermitRootLogin'; State = 'prohibit-password' }) }
+)
+foreach ($configuration in $scenarioSecureConfigurations) {
+    Add-Record -Table 'DeviceTvmSecureConfigurationAssessment' -Time $StartTime.AddMinutes(16) -Values @{
+        TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(16)
+        DeviceId = $configuration.Device.DeviceId
+        DeviceName = $configuration.Device.Name
+        OSPlatform = if ($configuration.Device.OS -eq 'Ubuntu') { 'Ubuntu' } else { $configuration.Device.OS }
+        Timestamp = Format-WorkshopTime $StartTime.AddMinutes(16)
+        ConfigurationId = $configuration.Id
+        ConfigurationCategory = $configuration.Category
+        ConfigurationSubcategory = $configuration.Subcategory
+        ConfigurationImpact = $configuration.Impact
+        IsCompliant = $configuration.Compliant
+        IsApplicable = $true
+        Context = [object[]]$configuration.Context
+        IsExpectedUserImpact = $true
+        TenantId = ''
+        Type = 'DeviceTvmSecureConfigurationAssessment'
+        SourceSystem = ''
+        MachineGroup = Get-WorkshopScenarioMachineGroup -Device $configuration.Device
+    }
+}
+
+Add-WorkshopScenarioSecurityIncident `
+    -IncidentNumber 3001 `
+    -ProviderIncidentId '3001' `
+    -TimeGenerated $StartTime.AddMinutes(83) `
+    -FirstActivityTime $StartTime `
+    -LastActivityTime $StartTime.AddMinutes(82) `
+    -Title 'Multi-stage incident involving identity and endpoint activity' `
+    -Description 'Correlates risky user sign-in, OAuth application consent, service-principal credential creation, Graph access, endpoint credential material collection, Kerberoasting, and service-account use against the identity synchronization server.' `
+    -Severity 'High' `
+    -Status 'Active' `
+    -AlertIds @('XDR-CORR-000', 'XDR-CORR-001', 'XDR-CORR-002') `
+    -Tactics @('InitialAccess', 'Persistence', 'CredentialAccess', 'LateralMovement') `
+    -Techniques @('T1078', 'T1528', 'T1098.001', 'T1550.001', 'T1003.001', 'T1558.003', 'T1021.006') `
+    -Entities @{ user = $victor.Upn; primaryDevice = $win04.Name; servicePrincipal = 'USAG Cyber Sync Helper'; serviceAccount = $svcSql.Upn; targetDevice = $aadc.Name; sourceIp = $externalIp } `
+    -TvmTables @('DeviceTvmSoftwareVulnerabilities', 'DeviceTvmSoftwareInventory', 'DeviceTvmInfoGatheringKB', 'DeviceTvmHardwareFirmware', 'DeviceTvmSoftwareEvidenceBeta', 'DeviceTvmSoftwareVulnerabilitiesKB', 'DeviceTvmCertificateInfo', 'DeviceTvmSecureConfigurationAssessment')
+
+Add-WorkshopScenarioSecurityIncident `
+    -IncidentNumber 3002 `
+    -ProviderIncidentId '3002' `
+    -TimeGenerated $StartTime.AddMinutes(12) `
+    -FirstActivityTime $StartTime `
+    -LastActivityTime $StartTime.AddMinutes(12) `
+    -Title 'Authentication Attempt from New Country involving one user' `
+    -Description 'Risky interactive sign-in from an unfamiliar location is followed by user-consented application access and Microsoft Graph activity.' `
+    -Severity 'Medium' `
+    -Status 'New' `
+    -AlertIds @('XDR-CORR-000', 'XDR-CORR-001') `
+    -Tactics @('InitialAccess', 'Persistence') `
+    -Techniques @('T1078', 'T1528', 'T1098.001') `
+    -Entities @{ user = $victor.Upn; sourceIp = $externalIp; application = 'USAG Cyber Sync Helper'; appId = $maliciousOAuthAppId } `
+    -TvmTables @('DeviceTvmInfoGatheringKB', 'DeviceTvmSecureConfigurationAssessment')
+
+Add-WorkshopScenarioSecurityIncident `
+    -IncidentNumber 3003 `
+    -ProviderIncidentId '3003' `
+    -TimeGenerated $StartTime.AddMinutes(76) `
+    -FirstActivityTime $StartTime.AddMinutes(15) `
+    -LastActivityTime $StartTime.AddMinutes(74) `
+    -Title 'Suspicious activity involving Microsoft Defender XDR alert correlation' `
+    -Description 'Defender XDR alert evidence correlates endpoint credential collection artifacts with service-account misuse and exposed software/configuration context.' `
+    -Severity 'High' `
+    -Status 'Active' `
+    -AlertIds @('XDR-CORR-001', 'XDR-CORR-002') `
+    -Tactics @('CredentialAccess', 'LateralMovement') `
+    -Techniques @('T1003.001', 'T1552.002', 'T1555', 'T1558.003', 'T1021.006') `
+    -Entities @{ user = $victor.Upn; primaryDevice = $win04.Name; serviceAccount = $svcSql.Upn; targetDevice = $aadc.Name; evidencePath = $stage } `
+    -TvmTables @('DeviceTvmSoftwareVulnerabilities', 'DeviceTvmSoftwareInventory', 'DeviceTvmSoftwareEvidenceBeta', 'DeviceTvmSoftwareVulnerabilitiesKB', 'DeviceTvmCertificateInfo', 'DeviceTvmSecureConfigurationAssessment')
+
+Add-WorkshopScenarioSecurityIncident `
+    -IncidentNumber 3004 `
+    -ProviderIncidentId '3004' `
+    -TimeGenerated $StartTime.AddMinutes(75) `
+    -FirstActivityTime $StartTime.AddMinutes(61) `
+    -LastActivityTime $StartTime.AddMinutes(74) `
+    -Title 'Linux privilege escalation and data access activity' `
+    -Description 'Optional Linux branch incident correlating SSH/PAM activity, sudo privilege escalation, staged Python and Go tooling, Oracle TNS access, and vulnerable Ubuntu package context.' `
+    -Severity 'High' `
+    -Status 'New' `
+    -AlertIds @('LINUX-001', 'LINUX-002') `
+    -Tactics @('PrivilegeEscalation', 'Execution', 'Collection') `
+    -Techniques @('T1548.003', 'T1059.006', 'T1005') `
+    -Entities @{ user = $alice.Upn; sourceDevice = $linux03.Name; targetDevice = $linuxDb.Name; database = 'Oracle ORCL'; sourceIp = '10.42.30.10' } `
+    -TvmTables @('DeviceTvmSoftwareVulnerabilities', 'DeviceTvmSoftwareInventory', 'DeviceTvmHardwareFirmware', 'DeviceTvmSoftwareEvidenceBeta', 'DeviceTvmSoftwareVulnerabilitiesKB', 'DeviceTvmCertificateInfo', 'DeviceTvmSecureConfigurationAssessment')
 
 Add-Record -Table 'AADRiskyUsers' -Time $StartTime.AddMinutes(2) -Values @{
     TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(2)
