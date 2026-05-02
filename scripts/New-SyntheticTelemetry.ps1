@@ -387,6 +387,319 @@ function Import-WorkshopDeviceNetworkEventProfileCatalog {
     }
 }
 
+function Get-WorkshopPropertyText {
+    param(
+        [Parameter(Mandatory)]$InputObject,
+        [Parameter(Mandatory)][string]$Name
+    )
+
+    $property = $InputObject.PSObject.Properties[$Name]
+    if (-not $property -or $null -eq $property.Value) {
+        return ''
+    }
+
+    return ([string]$property.Value).Trim()
+}
+
+function ConvertFrom-WorkshopBooleanText {
+    param(
+        [AllowEmptyString()][string]$Value = '',
+        [bool]$Default = $false
+    )
+
+    $valueText = $Value.Trim()
+    if ([string]::IsNullOrWhiteSpace($valueText)) {
+        return $Default
+    }
+
+    if ($valueText -match '^(?i:true|1)$') {
+        return $true
+    }
+
+    if ($valueText -match '^(?i:false|0)$') {
+        return $false
+    }
+
+    return $Default
+}
+
+function ConvertFrom-WorkshopLongText {
+    param(
+        [AllowEmptyString()][string]$Value = '',
+        [long]$Default = 0
+    )
+
+    $parsed = [long]0
+    if ([long]::TryParse($Value.Trim(), [ref]$parsed)) {
+        return $parsed
+    }
+
+    return $Default
+}
+
+function New-WorkshopDeviceInfoFallbackProfileCatalog {
+    @(
+        [pscustomobject]@{ ClientVersion = '10.8821.26200.8246'; OSArchitecture = '64-bit'; OSPlatform = 'Windows11'; OSBuild = '26200'; IsAzureADJoined = '0'; JoinType = 'Domain Joined'; OSVersion = '10.0'; MachineGroup = 'EUROPE'; OnboardingStatus = 'Onboarded'; DeviceCategory = 'Endpoint'; DeviceType = 'Workstation'; DeviceSubtype = 'Workstation'; Model = ''; Vendor = 'Microsoft'; OSDistribution = 'Windows11'; OSVersionInfo = '25H2'; SensorHealthState = 'Active'; IsExcluded = '0'; ExclusionReason = ''; ExposureLevel = 'Medium'; DeviceManualTags = ''; DeviceDynamicTags = '["Unified Sensor RPC Audit"]'; CloudPlatforms = ''; IsTransient = '0'; OsBuildRevision = '8246'; MitigationStatus = ''; ConnectivityType = 'Streamlined'; DiscoverySources = ''; FirmwareVersions = '' }
+        [pscustomobject]@{ ClientVersion = '10.8805.26100.32522'; OSArchitecture = '64-bit'; OSPlatform = 'WindowsServer2025'; OSBuild = '26100'; IsAzureADJoined = '0'; JoinType = 'Domain Joined'; OSVersion = '10.0'; MachineGroup = 'XDR-LiveResponse-DomainControllers-ONLY'; OnboardingStatus = 'Onboarded'; DeviceCategory = 'Endpoint'; DeviceType = 'Server'; DeviceSubtype = 'Server'; Model = ''; Vendor = 'Microsoft'; OSDistribution = 'WindowsServer2025'; OSVersionInfo = '24H2'; SensorHealthState = 'Active'; IsExcluded = '0'; ExclusionReason = ''; ExposureLevel = 'Medium'; DeviceManualTags = ''; DeviceDynamicTags = '["Unified Sensor RPC Audit"]'; CloudPlatforms = '["Azure"]'; IsTransient = '0'; OsBuildRevision = '32522'; MitigationStatus = ''; ConnectivityType = 'Streamlined'; DiscoverySources = ''; FirmwareVersions = '' }
+        [pscustomobject]@{ ClientVersion = '101.25042.0000'; OSArchitecture = '64-bit'; OSPlatform = 'Linux'; OSBuild = '4'; IsAzureADJoined = ''; JoinType = ''; OSVersion = '24.04'; MachineGroup = 'UnassignedGroup'; OnboardingStatus = 'Onboarded'; DeviceCategory = 'Endpoint'; DeviceType = 'Server'; DeviceSubtype = 'Server'; Model = ''; Vendor = 'Microsoft'; OSDistribution = 'Ubuntu'; OSVersionInfo = '24.4'; SensorHealthState = 'Active'; IsExcluded = '0'; ExclusionReason = ''; ExposureLevel = 'Medium'; DeviceManualTags = ''; DeviceDynamicTags = ''; CloudPlatforms = '["Azure"]'; IsTransient = '0'; OsBuildRevision = '58'; MitigationStatus = ''; ConnectivityType = 'Streamlined'; DiscoverySources = ''; FirmwareVersions = '' }
+        [pscustomobject]@{ ClientVersion = '1.0'; OSArchitecture = '64-bit'; OSPlatform = 'Android'; OSBuild = '12'; IsAzureADJoined = ''; JoinType = ''; OSVersion = '12'; MachineGroup = 'Discovered'; OnboardingStatus = 'Unsupported'; DeviceCategory = 'IoT'; DeviceType = 'AudioAndVideo'; DeviceSubtype = 'SmartTV'; Model = 'SmartTV 4K'; Vendor = 'Hisense'; OSDistribution = 'EmbeddedOs'; OSVersionInfo = '12'; SensorHealthState = ''; IsExcluded = '0'; ExclusionReason = ''; ExposureLevel = 'None'; DeviceManualTags = ''; DeviceDynamicTags = '["Discovered"]'; CloudPlatforms = ''; IsTransient = '1'; OsBuildRevision = ''; MitigationStatus = ''; ConnectivityType = ''; DiscoverySources = ''; FirmwareVersions = '15.1.4' }
+        [pscustomobject]@{ ClientVersion = '1.0'; OSArchitecture = '64-bit'; OSPlatform = 'Linux'; OSBuild = '3'; IsAzureADJoined = ''; JoinType = ''; OSVersion = '15'; MachineGroup = 'Discovered'; OnboardingStatus = 'Can be onboarded'; DeviceCategory = 'NetworkDevice'; DeviceType = 'NetworkDevice'; DeviceSubtype = 'Router'; Model = 'U6-Pro'; Vendor = 'Ubiquiti'; OSDistribution = 'UnifiOS'; OSVersionInfo = '15'; SensorHealthState = ''; IsExcluded = '0'; ExclusionReason = ''; ExposureLevel = 'None'; DeviceManualTags = ''; DeviceDynamicTags = '["Discovered"]'; CloudPlatforms = ''; IsTransient = '1'; OsBuildRevision = ''; MitigationStatus = ''; ConnectivityType = ''; DiscoverySources = ''; FirmwareVersions = '6.8.2.15592' }
+        [pscustomobject]@{ ClientVersion = '1.0'; OSArchitecture = ''; OSPlatform = ''; OSBuild = ''; IsAzureADJoined = ''; JoinType = ''; OSVersion = ''; MachineGroup = 'Discovered'; OnboardingStatus = 'Insufficient info'; DeviceCategory = 'Unknown'; DeviceType = 'Unknown'; DeviceSubtype = ''; Model = ''; Vendor = ''; OSDistribution = ''; OSVersionInfo = ''; SensorHealthState = ''; IsExcluded = '0'; ExclusionReason = ''; ExposureLevel = 'None'; DeviceManualTags = ''; DeviceDynamicTags = '["Discovered"]'; CloudPlatforms = ''; IsTransient = '1'; OsBuildRevision = ''; MitigationStatus = ''; ConnectivityType = ''; DiscoverySources = ''; FirmwareVersions = '' }
+    )
+}
+
+function Import-WorkshopDeviceInfoProfileCatalog {
+    param([Parameter(Mandatory)][string]$Path)
+
+    if (-not (Test-Path $Path)) {
+        return @(New-WorkshopDeviceInfoFallbackProfileCatalog)
+    }
+
+    $profileColumns = @(
+        'ClientVersion', 'OSArchitecture', 'OSPlatform', 'OSBuild', 'IsAzureADJoined', 'JoinType', 'OSVersion',
+        'MachineGroup', 'OnboardingStatus', 'DeviceCategory', 'DeviceType', 'DeviceSubtype', 'Model', 'Vendor',
+        'OSDistribution', 'OSVersionInfo', 'SensorHealthState', 'IsExcluded', 'ExclusionReason', 'ExposureLevel',
+        'DeviceManualTags', 'DeviceDynamicTags', 'CloudPlatforms', 'IsTransient', 'OsBuildRevision',
+        'MitigationStatus', 'ConnectivityType', 'DiscoverySources', 'FirmwareVersions'
+    )
+    $seen = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
+    $profiles = foreach ($row in (Import-Csv -Path $Path)) {
+        $profile = [ordered]@{}
+        foreach ($column in $profileColumns) {
+            $profile[$column] = Get-WorkshopPropertyText -InputObject $row -Name $column
+        }
+
+        if ([string]::IsNullOrWhiteSpace($profile.OSPlatform) -and [string]::IsNullOrWhiteSpace($profile.DeviceCategory) -and [string]::IsNullOrWhiteSpace($profile.OnboardingStatus)) {
+            continue
+        }
+
+        $key = ($profileColumns | ForEach-Object { $profile[$_] }) -join '|'
+        if ($seen.Add($key)) {
+            [pscustomobject]$profile
+        }
+    }
+
+    if (@($profiles).Count -eq 0) {
+        return @(New-WorkshopDeviceInfoFallbackProfileCatalog)
+    }
+
+    return @($profiles)
+}
+
+function Select-WorkshopDeviceInfoProfile {
+    param(
+        [Parameter(Mandatory)]$Device,
+        [Parameter(Mandatory)][int]$Index,
+        [switch]$Ambient
+    )
+
+    if (-not $deviceInfoProfiles -or $deviceInfoProfiles.Count -eq 0) {
+        return $null
+    }
+
+    if ($Ambient) {
+        return $deviceInfoProfiles[$Index % $deviceInfoProfiles.Count]
+    }
+
+    $profilePool = if ($Device.OS -eq 'Ubuntu') {
+        $deviceInfoLinuxProfiles
+    }
+    elseif ($Device.Type -in @('DomainController', 'EntraConnect')) {
+        $deviceInfoServerProfiles
+    }
+    else {
+        $deviceInfoWindows11Profiles
+    }
+
+    if (-not $profilePool -or $profilePool.Count -eq 0) {
+        $profilePool = $deviceInfoProfiles
+    }
+
+    return $profilePool[$Index % $profilePool.Count]
+}
+
+function New-WorkshopDeviceInfoDiscoverySources {
+    param(
+        [Parameter(Mandatory)][datetime]$Time,
+        [Parameter(Mandatory)][string]$DeviceType,
+        [AllowEmptyString()][string]$CloudPlatforms = '',
+        [Parameter(Mandatory)][int]$Index
+    )
+
+    $date = $Time.ToUniversalTime().ToString('yyyy-MM-dd')
+    $sources = [ordered]@{ 'Defender for Endpoint' = $date }
+    if ($DeviceType -eq 'Server' -or ($Index % 7) -eq 0) {
+        $sources['Defender for Identity'] = $Time.AddDays(-(($Index % 30) + 1)).ToUniversalTime().ToString('yyyy-MM-dd')
+    }
+    if (-not [string]::IsNullOrWhiteSpace($CloudPlatforms) -or ($Index % 3) -eq 0) {
+        $sources['Defender for Cloud'] = $date
+    }
+
+    return ConvertTo-Json -InputObject $sources -Compress -Depth 4
+}
+
+function New-WorkshopDeviceInfoDlpInfo {
+    param(
+        [AllowEmptyString()][string]$UserPrincipalName = '',
+        [bool]$Healthy = $true,
+        [bool]$Enabled = $false,
+        [bool]$HasValidUpn = $false
+    )
+
+    $dlpUpn = if ($HasValidUpn -and -not [string]::IsNullOrWhiteSpace($UserPrincipalName)) { $UserPrincipalName } else { $null }
+    $info = [ordered]@{
+        IsDlpConfigurationValid = $Healthy
+        DlpPolicyLastModifiedTimeUTC = $null
+        IsDlpEnabled = $Enabled
+        IsDefenderRealTimeProtectionEnabled = $Healthy
+        IsDefenderBehaviorMonitoringEnabled = $Healthy
+        HasDlpACBandwidthExceeded = $false
+        HasDlpValidUpn = $HasValidUpn
+        DlpUpn = $dlpUpn
+    }
+
+    return ConvertTo-Json -InputObject $info -Compress -Depth 4
+}
+
+function New-WorkshopDeviceInfoValues {
+    param(
+        [Parameter(Mandatory)]$Device,
+        [Parameter(Mandatory)][datetime]$Time,
+        [Parameter(Mandatory)][int]$Index,
+        [Parameter(Mandatory)]$User,
+        [switch]$Ambient
+    )
+
+    $profile = Select-WorkshopDeviceInfoProfile -Device $Device -Index $Index -Ambient:$Ambient
+    $timeText = Format-WorkshopTime $Time
+    $isUbuntuDevice = $Device.OS -eq 'Ubuntu'
+    $fallbackOsPlatform = if ($isUbuntuDevice) { 'Linux' } else { $Device.OS }
+    $fallbackOsBuild = if ($Device.OS -eq 'Windows11') { 26200L } elseif ($Device.OS -like 'WindowsServer*') { 26100L } elseif ($isUbuntuDevice) { 4L } else { 0L }
+    $fallbackOsDistribution = if ($isUbuntuDevice) { 'Ubuntu' } else { $Device.OS }
+    $fallbackOsVersionInfo = if ($Device.OS -eq 'Windows11') { '25H2' } elseif ($Device.OS -like 'WindowsServer*') { '24H2' } elseif ($isUbuntuDevice) { '24.4' } else { '' }
+    $fallbackDeviceType = if ($Device.Type -in @('DomainController', 'EntraConnect', 'LinuxServer')) { 'Server' } else { 'Workstation' }
+    $fallbackMachineGroup = if ($Device.Type -eq 'DomainController') { 'XDR-LiveResponse-DomainControllers-ONLY' } elseif ($Device.Type -eq 'EntraConnect') { 'EUROPE' } elseif ($isUbuntuDevice) { 'UnassignedGroup' } elseif (($Index % 5) -eq 0) { 'KOREA' } else { 'EUROPE' }
+
+    $osPlatform = if ($profile) { Get-WorkshopPropertyText $profile 'OSPlatform' } else { '' }
+    if ([string]::IsNullOrWhiteSpace($osPlatform)) { $osPlatform = $fallbackOsPlatform }
+    $deviceCategory = if ($profile) { Get-WorkshopPropertyText $profile 'DeviceCategory' } else { '' }
+    if ([string]::IsNullOrWhiteSpace($deviceCategory)) { $deviceCategory = 'Endpoint' }
+    $deviceType = if ($profile) { Get-WorkshopPropertyText $profile 'DeviceType' } else { '' }
+    if ([string]::IsNullOrWhiteSpace($deviceType)) { $deviceType = $fallbackDeviceType }
+    $deviceSubtype = if ($profile) { Get-WorkshopPropertyText $profile 'DeviceSubtype' } else { '' }
+    if ([string]::IsNullOrWhiteSpace($deviceSubtype)) { $deviceSubtype = $deviceType }
+    $onboardingStatus = if ($profile) { Get-WorkshopPropertyText $profile 'OnboardingStatus' } else { '' }
+    if ([string]::IsNullOrWhiteSpace($onboardingStatus)) { $onboardingStatus = 'Onboarded' }
+
+    $deviceName = $Device.Name
+    $deviceId = $Device.DeviceId
+    $publicIp = $Device.PublicIP
+    if ($Ambient) {
+        $prefix = switch ($deviceCategory) {
+            'IoT' { 'iot' }
+            'NetworkDevice' { 'net' }
+            'Unknown' { 'unknown' }
+            default { if ($deviceType -eq 'Server') { 'srv' } elseif ($osPlatform -eq 'Linux') { 'linux' } else { 'endpoint' } }
+        }
+        $deviceName = '{0}-{1:D5}.inventory.{2}' -f $prefix, $Index, $corpFqdn
+        $deviceId = New-StableHex "DeviceInfo|$deviceName" 40
+        $publicIp = if ($onboardingStatus -eq 'Onboarded' -and ($Index % 4) -eq 0) { '198.51.100.{0}' -f (20 + ($Index % 180)) } else { '' }
+    }
+
+    $osDistribution = if ($profile) { Get-WorkshopPropertyText $profile 'OSDistribution' } else { '' }
+    if ([string]::IsNullOrWhiteSpace($osDistribution)) { $osDistribution = $fallbackOsDistribution }
+    $osVersionInfo = if ($profile) { Get-WorkshopPropertyText $profile 'OSVersionInfo' } else { '' }
+    if ([string]::IsNullOrWhiteSpace($osVersionInfo)) { $osVersionInfo = $fallbackOsVersionInfo }
+    $osVersion = if ($profile) { Get-WorkshopPropertyText $profile 'OSVersion' } else { '' }
+    if ([string]::IsNullOrWhiteSpace($osVersion)) { $osVersion = if ($isUbuntuDevice -or $osPlatform -eq 'Linux') { '24.04' } elseif ($osPlatform -like 'Windows*') { '10.0' } else { $osVersionInfo } }
+    $machineGroup = if ($profile) { Get-WorkshopPropertyText $profile 'MachineGroup' } else { '' }
+    if ([string]::IsNullOrWhiteSpace($machineGroup) -or -not $Ambient) { $machineGroup = $fallbackMachineGroup }
+    $cloudPlatforms = if ($profile) { Get-WorkshopPropertyText $profile 'CloudPlatforms' } else { '' }
+    if (-not $Ambient -and [string]::IsNullOrWhiteSpace($cloudPlatforms)) { $cloudPlatforms = '["Azure"]' }
+    $hardwareUuid = New-StableGuid "hardware|$deviceId"
+    $hasAzureResource = $cloudPlatforms -match 'Azure'
+    $resourceGroup = if ($Device.Type -eq 'DomainController') { 'identity-tier0' } elseif ($Device.Type -eq 'EntraConnect') { 'hybrid-identity' } elseif ($isUbuntuDevice -or $osPlatform -eq 'Linux') { 'linux-mde' } else { 'workstations' }
+    $azureResourceId = if ($hasAzureResource) { '/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Compute/virtualMachines/{2}' -f $subscriptionId, $resourceGroup, ($deviceName.Split('.')[0]).ToLowerInvariant() } else { '' }
+    $sensorHealth = if ($profile) { Get-WorkshopPropertyText $profile 'SensorHealthState' } else { '' }
+    if ([string]::IsNullOrWhiteSpace($sensorHealth) -and $onboardingStatus -eq 'Onboarded') { $sensorHealth = if (($Index % 67) -eq 0) { 'Inactive' } else { 'Active' } }
+    $exposureLevel = if ($profile) { Get-WorkshopPropertyText $profile 'ExposureLevel' } else { '' }
+    if ([string]::IsNullOrWhiteSpace($exposureLevel)) { $exposureLevel = if ($onboardingStatus -eq 'Onboarded') { if ($Device.AssetValue -eq 'High') { 'Medium' } else { 'Low' } } else { 'None' } }
+    $isExcludedText = if ($profile) { Get-WorkshopPropertyText $profile 'IsExcluded' } else { '' }
+    $isExcluded = ConvertFrom-WorkshopBooleanText -Value $isExcludedText -Default:(($Index % 173) -eq 0)
+    $exclusionReason = if ($profile) { Get-WorkshopPropertyText $profile 'ExclusionReason' } else { '' }
+    if ($isExcluded -and [string]::IsNullOrWhiteSpace($exclusionReason)) { $exclusionReason = if (($Index % 2) -eq 0) { 'SystemMerged' } else { 'SystemOther' } }
+    $isAzureJoined = ConvertFrom-WorkshopBooleanText -Value $(if ($profile) { Get-WorkshopPropertyText $profile 'IsAzureADJoined' } else { '' }) -Default:($onboardingStatus -eq 'Onboarded' -and $osPlatform -like 'Windows*' -and $Device.Type -ne 'DomainController')
+    $joinType = if ($profile) { Get-WorkshopPropertyText $profile 'JoinType' } else { '' }
+    if ([string]::IsNullOrWhiteSpace($joinType) -and $isAzureJoined) { $joinType = if (($Index % 4) -eq 0) { 'AAD Joined' } else { 'Domain Joined' } }
+    $aadDeviceId = if ($isAzureJoined -or (-not $Ambient -and $Device.Type -ne 'DomainController')) { New-StableGuid "aad-device|$deviceId" } else { '' }
+    $loggedOnUsers = if ($onboardingStatus -eq 'Onboarded' -and $deviceCategory -eq 'Endpoint' -and ($Index % 3) -eq 0) {
+        ConvertTo-Json -InputObject @(@{ UserName = $User.Name; DomainName = if ($osPlatform -eq 'Linux') { $deviceName.Split('.')[0] } elseif ($isAzureJoined) { 'AzureAD' } else { $adDomain }; Sid = $User.Sid }) -Compress -Depth 4
+    }
+    else {
+        '[]'
+    }
+    $discoverySources = New-WorkshopDeviceInfoDiscoverySources -Time $Time -DeviceType $deviceType -CloudPlatforms $cloudPlatforms -Index $Index
+    $healthyDlp = $sensorHealth -ne 'Inactive'
+    $dlpInfo = New-WorkshopDeviceInfoDlpInfo -UserPrincipalName $User.Upn -Healthy:$healthyDlp -Enabled:($Index % 11 -eq 0) -HasValidUpn:($onboardingStatus -eq 'Onboarded' -and $deviceCategory -eq 'Endpoint' -and ($Index % 4) -eq 0)
+
+    @{
+        TimeGenerated = $timeText
+        Timestamp = $timeText
+        DeviceId = $deviceId
+        DeviceName = $deviceName
+        ClientVersion = $(if ($profile) { $text = Get-WorkshopPropertyText $profile 'ClientVersion'; if ($text) { $text } elseif ($osPlatform -eq 'Linux') { '101.25042.0000' } else { '10.8821.26200.8246' } } elseif ($osPlatform -eq 'Linux') { '101.25042.0000' } else { '10.8821.26200.8246' })
+        PublicIP = $publicIp
+        OSArchitecture = $(if ($profile) { $text = Get-WorkshopPropertyText $profile 'OSArchitecture'; if ($text) { $text } else { '64-bit' } } else { '64-bit' })
+        OSPlatform = $osPlatform
+        OSBuild = ConvertFrom-WorkshopLongText -Value $(if ($profile) { Get-WorkshopPropertyText $profile 'OSBuild' } else { '' }) -Default $fallbackOsBuild
+        IsAzureADJoined = $isAzureJoined
+        JoinType = $joinType
+        AadDeviceId = $aadDeviceId
+        LoggedOnUsers = $loggedOnUsers
+        RegistryDeviceTag = ''
+        OSVersion = $osVersion
+        MachineGroup = $machineGroup
+        ReportId = 639132700000000000L + $Index
+        OnboardingStatus = $onboardingStatus
+        AdditionalFields = if (-not $Ambient -and $Device.ShortName -eq 'UBUNTU-05') { '{"Workshop":"CyberDefenseKQL","Sensor":"MDE","Distribution":"Ubuntu 24.04 LTS","KernelVersion":"6.8.0-58-generic","Role":"OracleDatabase","OracleSid":"ORCL"}' } elseif (-not $Ambient -and $isUbuntuDevice) { '{"Workshop":"CyberDefenseKQL","Sensor":"MDE","Distribution":"Ubuntu 24.04 LTS","KernelVersion":"6.8.0-58-generic"}' } else { '' }
+        DeviceCategory = $deviceCategory
+        DeviceType = $deviceType
+        DeviceSubtype = $deviceSubtype
+        Model = $(if ($profile) { Get-WorkshopPropertyText $profile 'Model' } else { '' })
+        Vendor = $(if ($profile) { $text = Get-WorkshopPropertyText $profile 'Vendor'; if ($text) { $text } elseif ($deviceCategory -eq 'Endpoint') { 'Microsoft' } else { '' } } elseif ($deviceCategory -eq 'Endpoint') { 'Microsoft' } else { '' })
+        OSDistribution = $osDistribution
+        OSVersionInfo = $osVersionInfo
+        MergedDeviceIds = if (($Index % 11) -eq 0) { ConvertTo-Json -InputObject @((New-StableHex "merged|$deviceId|$Index" 40)) -Compress } else { '' }
+        MergedToDeviceId = if (($Index % 197) -eq 0) { New-StableHex "merged-to|$deviceId|$Index" 40 } else { '' }
+        IsInternetFacing = $false
+        SensorHealthState = $sensorHealth
+        IsExcluded = $isExcluded
+        ExclusionReason = $exclusionReason
+        ExposureLevel = $exposureLevel
+        AssetValue = if (-not $Ambient) { $Device.AssetValue } else { '' }
+        DeviceManualTags = $(if ($profile) { Get-WorkshopPropertyText $profile 'DeviceManualTags' } elseif (-not $Ambient -and $Device.ShortName -eq 'WIN11-04') { '["ForensicCollect"]' } else { '' })
+        DeviceDynamicTags = $(if ($profile) { Get-WorkshopPropertyText $profile 'DeviceDynamicTags' } elseif ($Device.Type -in @('DomainController', 'EntraConnect')) { '["Unified Sensor RPC Audit"]' } else { '' })
+        HardwareUuid = $hardwareUuid
+        CloudPlatforms = $cloudPlatforms
+        AzureVmId = if ($hasAzureResource) { $hardwareUuid } else { '' }
+        AzureResourceId = $azureResourceId
+        AzureVmSubscriptionId = if ($hasAzureResource) { $subscriptionId } else { '' }
+        GcpFullResourceName = ''
+        AwsResourceName = ''
+        IsTransient = ConvertFrom-WorkshopBooleanText -Value $(if ($profile) { Get-WorkshopPropertyText $profile 'IsTransient' } else { '' }) -Default:($Ambient -and $onboardingStatus -ne 'Onboarded')
+        OsBuildRevision = $(if ($profile) { $text = Get-WorkshopPropertyText $profile 'OsBuildRevision'; if ($text) { $text } elseif ($Device.OS -eq 'Windows11') { '8246' } elseif ($Device.OS -like 'WindowsServer*') { '32522' } else { '58' } } elseif ($Device.OS -eq 'Windows11') { '8246' } elseif ($Device.OS -like 'WindowsServer*') { '32522' } else { '58' })
+        HostDeviceId = ''
+        MitigationStatus = $(if ($profile) { Get-WorkshopPropertyText $profile 'MitigationStatus' } else { '' })
+        ConnectivityType = $(if ($profile) { $text = Get-WorkshopPropertyText $profile 'ConnectivityType'; if ($text) { $text } elseif ($onboardingStatus -eq 'Onboarded') { 'Streamlined' } else { '' } } elseif ($onboardingStatus -eq 'Onboarded') { 'Streamlined' } else { '' })
+        DiscoverySources = $discoverySources
+        FirmwareVersions = $(if ($profile) { Get-WorkshopPropertyText $profile 'FirmwareVersions' } else { '' })
+        DlpInfo = $dlpInfo
+        TenantId = ''
+        Type = 'DeviceInfo'
+        SourceSystem = ''
+    }
+}
+
 function Resolve-WorkshopDeviceNetworkProcessProfile {
     param(
         [Parameter(Mandatory)][string]$FileName,
@@ -985,6 +1298,11 @@ $linuxRemoteEndpoints = @(
 $linuxRemoteEndpoints += @(New-WorkshopRemoteEndpointCatalog -Prefix 'linux-repo' -Domain 'workshop.example' -IpPrefix '192.0.2' -Ports @(443, 80, 22, 123, 53, 514, 631, 1521, 8080, 9092) -Protocols @('Tcp', 'Tcp', 'Tcp', 'Udp', 'Udp') -Count 200)
 $deviceNetworkEventsSamplePath = Join-Path $PSScriptRoot '..\sample\DeviceNetworkEvents-Real.csv'
 $deviceNetworkEventProfiles = @(Import-WorkshopDeviceNetworkEventProfileCatalog -Path $deviceNetworkEventsSamplePath)
+$deviceInfoSamplePath = Join-Path $PSScriptRoot '..\sample\DeviceInfo-RealTelemetry.csv'
+$deviceInfoProfiles = @(Import-WorkshopDeviceInfoProfileCatalog -Path $deviceInfoSamplePath)
+$deviceInfoWindows11Profiles = @($deviceInfoProfiles | Where-Object { $_.OSPlatform -eq 'Windows11' -and $_.DeviceType -eq 'Workstation' })
+$deviceInfoServerProfiles = @($deviceInfoProfiles | Where-Object { $_.OSPlatform -like 'WindowsServer*' -and $_.DeviceType -eq 'Server' })
+$deviceInfoLinuxProfiles = @($deviceInfoProfiles | Where-Object { $_.OSPlatform -eq 'Linux' -or $_.OSDistribution -eq 'Ubuntu' })
 
 $linuxSoftwareInventoryPath = Join-Path $PSScriptRoot '..\sample\export-tvm-machine-software-inventory-linux.csv'
 $linuxSoftwareCatalog = @(
@@ -1126,29 +1444,8 @@ Assert-WorkshopCatalogMinimum -Name 'Linux software catalog' -Items $linuxSoftwa
 
 foreach ($device in $devices) {
     $deviceIndex = [array]::IndexOf($devices, $device) + 1
-    Add-Record -Table 'DeviceInfo' -Time $StartTime.AddMinutes(-30) -Values @{
-        Timestamp = Format-WorkshopTime $StartTime.AddMinutes(-30)
-        DeviceId = $device.DeviceId
-        DeviceName = $device.Name
-        PublicIP = $device.PublicIP
-        OSPlatform = $device.OS
-        OSBuild = if ($device.OS -eq 'Windows11') { '25H2' } elseif ($device.OS -like 'Windows*') { '26100' } else { '24.04' }
-        OSDistribution = if ($device.OS -eq 'Ubuntu') { 'Ubuntu' } else { '' }
-        IsAzureADJoined = $device.OS -ne 'Ubuntu'
-        JoinType = if ($device.OS -eq 'Ubuntu') { '' } else { 'Hybrid Azure AD joined' }
-        AadDeviceId = New-StableGuid $device.DeviceId
-        LoggedOnUsers = if ($device.ShortName -eq 'WIN11-04') { '[{"UserName":"victor.alvarez"}]' } elseif ($device.OS -eq 'Ubuntu') { '[{"UserName":"svc_app0001"}]' } else { '[]' }
-        MachineGroup = if ($device.Type -eq 'DomainController') { 'Domain Controllers' } elseif ($device.Type -eq 'EntraConnect') { 'Identity Tier 0' } elseif ($device.OS -eq 'Ubuntu') { 'Linux Servers' } else { 'Workstations' }
-        OnboardingStatus = 'Onboarded'
-        DeviceType = $device.Type
-        IsInternetFacing = $false
-        SensorHealthState = 'Active'
-        ExposureLevel = if ($device.AssetValue -eq 'High') { 'Medium' } else { 'Low' }
-        AssetValue = $device.AssetValue
-        ConnectivityType = 'Corporate'
-        ReportId = 1000 + $deviceIndex
-        AdditionalFields = if ($device.ShortName -eq 'UBUNTU-05') { '{"Workshop":"CyberDefenseKQL","Sensor":"MDE","Distribution":"Ubuntu 24.04 LTS","KernelVersion":"6.8.0-58-generic","Role":"OracleDatabase","OracleSid":"ORCL"}' } elseif ($device.OS -eq 'Ubuntu') { '{"Workshop":"CyberDefenseKQL","Sensor":"MDE","Distribution":"Ubuntu 24.04 LTS","KernelVersion":"6.8.0-58-generic"}' } else { '{"Workshop":"CyberDefenseKQL","Sensor":"MDE"}' }
-    }
+    $deviceUser = if ($device.ShortName -eq 'WIN11-04') { $victor } elseif ($device.OS -eq 'Ubuntu') { $svcSql } else { $users[$deviceIndex % $users.Count] }
+    Add-Record -Table 'DeviceInfo' -Time $StartTime.AddMinutes(-30) -Values (New-WorkshopDeviceInfoValues -Device $device -Time $StartTime.AddMinutes(-30) -Index $deviceIndex -User $deviceUser)
 
     Add-Record -Table 'DeviceNetworkInfo' -Time $StartTime.AddMinutes(-29) -Values @{
         Timestamp = Format-WorkshopTime $StartTime.AddMinutes(-29)
@@ -1555,20 +1852,10 @@ function New-NormalTelemetryValues {
             $values.RegistryValueType = 'REG_SZ'
         }
         'DeviceInfo' {
-            $values.OSPlatform = $device.OS
-            $values.OSBuild = if ($device.OS -eq 'Windows11') { '25H2' } elseif ($device.OS -like 'Windows*') { '26100' } else { '24.04' }
-            $values.OSDistribution = if ($device.OS -eq 'Ubuntu') { 'Ubuntu' } else { '' }
-            $values.IsAzureADJoined = -not $isUbuntuDevice
-            $values.JoinType = if ($isUbuntuDevice) { '' } else { 'Hybrid Azure AD joined' }
-            $values.AadDeviceId = New-StableGuid $device.DeviceId
-            $values.LoggedOnUsers = @(@{ UserName = if ($isUbuntuDevice) { $linuxLocalUser } else { $user.Name }; DomainName = $accountDomain })
-            $values.MachineGroup = if ($device.Type -eq 'DomainController') { 'Domain Controllers' } elseif ($device.Type -eq 'EntraConnect') { 'Identity Tier 0' } elseif ($isUbuntuDevice) { 'Linux Servers' } else { 'Workstations' }
-            $values.OnboardingStatus = 'Onboarded'
-            $values.DeviceType = $device.Type
-            $values.SensorHealthState = 'Active'
-            $values.ExposureLevel = if ($device.AssetValue -eq 'High') { 'Medium' } else { 'Low' }
-            $values.AssetValue = $device.AssetValue
-            $values.ConnectivityType = 'Corporate'
+            $deviceInfoValues = New-WorkshopDeviceInfoValues -Device $device -Time $Time -Index $Index -User $user -Ambient
+            foreach ($deviceInfoKey in $deviceInfoValues.Keys) {
+                $values[$deviceInfoKey] = $deviceInfoValues[$deviceInfoKey]
+            }
         }
         'DeviceNetworkInfo' {
             $values.NetworkAdapterName = if ($isUbuntuDevice) { Get-WorkshopRandomItem @('ens160', 'eth0') } else { 'Ethernet0' }

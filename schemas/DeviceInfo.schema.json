@@ -6,8 +6,14 @@
   ],
   "sourceProduct": "Microsoft Defender for Endpoint",
   "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceinfo-table",
-  "schemaSource": "Microsoft Learn",
+  "schemaSource": "Microsoft Learn + real telemetry sample",
   "columns": [
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Azure Monitor ingestion timestamp from real XDR table export"
+    },
     {
       "name": "Timestamp",
       "type": "datetime",
@@ -291,16 +297,40 @@
       "description": "Indicates the mitigation action applied to a device"
     },
     {
-      "name": "Site",
-      "type": "string",
-      "sourceType": "string",
-      "description": "Represents the physical location where the device is located"
-    },
-    {
       "name": "DiscoverySources",
       "type": "string",
       "sourceType": "string",
       "description": "Products or services that have seen or reported the device, including when they last reported it."
+    },
+    {
+      "name": "FirmwareVersions",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Firmware versions observed for discovered devices"
+    },
+    {
+      "name": "DlpInfo",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Data loss prevention state and policy metadata for the device in JSON object format"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Tenant identifier from Azure Monitor exports when present"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Azure Monitor table type"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Azure Monitor source system when present"
     }
   ],
   "adx": {
