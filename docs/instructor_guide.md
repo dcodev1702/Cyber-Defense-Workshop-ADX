@@ -49,6 +49,8 @@ Use the Ubuntu branch as an optional comparison pivot after the Windows path is 
 
 Do not put these IDs on the student slides. The generated `AlertId` values are intentionally opaque so students learn to hunt by behavior, title, timestamp, entity, MITRE technique, `SecurityIncident.AlertIds`, and `AlertEvidence`, not by actor-branded IDs.
 
+Use [`workshop\instructor_alert_answer_key.kql`](../workshop/instructor_alert_answer_key.kql) as the corresponding instructor-only query pack. It contains the static AlertId answer key plus the cloud, endpoint, identity, incident, TVM, Linux/Oracle, and full-timeline pivots needed to tell the scenario story.
+
 | Scenario signal | AlertId | Offset | Alert title | MITRE ATT&CK |
 | --- | --- | --- | --- | --- |
 | OAuth service-principal persistence | `09fb0e10-de44-00fd-6478-518affd9a260` | +6 min | Suspicious OAuth service principal persistence | T1528, T1098.001, T1550.001 |

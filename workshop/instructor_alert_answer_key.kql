@@ -1,0 +1,438 @@
+// Cyber Defense KQL Workshop - Instructor Alert Answer Key
+// Database: CyberDefenseKqlWorkshop / workshop ADX database
+//
+// Instructor-only use:
+// - This file complements docs\instructor_guide.md and the opaque AlertId answer key.
+// - Do not distribute this as the student handout. It intentionally contains the static
+//   AlertIds, expected entities, and "why it matters" notes for facilitation.
+// - Highlight and run one numbered section at a time in the ADX Web UI.
+//
+// Scenario window:
+// - Start: 2026-05-01 10:30:00 UTC
+// - End:   2026-05-01 12:00:00 UTC
+//
+// Core story:
+// A Midnight Blizzard-inspired intrusion begins with a risky Entra sign-in for
+// victor.alvarez@usag-cyber.local from 185.225.73.18. The actor grants OAuth
+// access to "USAG Cyber Sync Helper", adds service-principal credentials, uses
+// Microsoft Graph, pivots to WIN11-04 for credential access, Kerberoasts service
+// accounts, dumps credential material, and then uses svc_sql against AADCONNECT01.
+// The Ubuntu/Oracle branch is optional bonus telemetry for Acts 11/12.
+
+// =============================================================================
+// Query 01 - Instructor storyboard and expected telemetry pivots
+// Why it matters:
+// This is the facilitation map. Use it to decide what hint to give students next
+// without revealing static AlertIds too early.
+// Scenario tie-back:
+// Each row names the scenario phase, the primary telemetry source, and the reason
+// that telemetry proves the attack progressed.
+// =============================================================================
+datatable(
+    Sequence:int,
+    ScenarioPhase:string,
+    PrimaryTables:string,
+    ExpectedPivot:string,
+    MITRE:string,
+    InstructorNote:string
+)
+[
+    1, 'Risky user sign-in', 'SigninLogs, EntraIdSignInEvents', 'victor.alvarez@usag-cyber.local from 185.225.73.18', 'T1078.004, T1110.003, T1090.002', 'Earliest cloud signal; establishes the compromised user and suspicious source IP.',
+    2, 'OAuth consent and app persistence', 'CloudAppEvents, AuditLogs, AADServicePrincipalSignInLogs', 'USAG Cyber Sync Helper consent, credential add, app-only sign-in', 'T1528, T1098.001, T1550.001', 'Strong Midnight Blizzard-aligned identity/OAuth tradecraft; survives simple password reset response.',
+    3, 'Graph API enumeration and collection', 'GraphApiAuditEvents, MicrosoftGraphActivityLogs', 'ApplicationId for USAG Cyber Sync Helper; mailbox/file/directory Graph requests', 'T1087.004, T1114.002, T1213.002', 'Shows what the OAuth foothold accessed after consent and credential creation.',
+    4, 'Endpoint staging on WIN11-04', 'DeviceNetworkEvents, DeviceProcessEvents, DeviceFileEvents', 'WIN11-04.usag-cyber.local, cdn.update-check.example, C:\\ProgramData\\wrstage', 'T1105, T1059.001', 'Cloud identity compromise becomes endpoint execution and staged credential tooling.',
+    5, 'Windows credential-access chain', 'DeviceProcessEvents, DeviceFileEvents, DeviceRegistryEvents, AlertInfo, AlertEvidence', 'reg.exe, esentutl.exe, procdump64.exe, PwDump7, gsecdump, LaZagne, Mimikatz', 'T1552.002, T1003.002, T1555.003, T1003.001, T1555', 'Matches the screenshot tool families while keeping focus on technique, host, and user context.',
+    6, 'Kerberoasting and service account targeting', 'IdentityQueryEvents, IdentityLogonEvents', 'servicePrincipalName LDAP queries and Kerberos service-ticket activity', 'T1558.003', 'Identity telemetry confirms service-account targeting that endpoint telemetry alone cannot explain.',
+    7, 'Hybrid identity lateral movement', 'DeviceLogonEvents, IdentityLogonEvents, SecurityIncident', 'svc_sql RemoteInteractive/WinRM logon to AADCONNECT01 from WIN11-04', 'T1078.002, T1021.006', 'This is the high-risk pivot into the Entra Connect synchronization tier.',
+    8, 'SOC incident grouping', 'SecurityIncident, AlertInfo, AlertEvidence', 'Labels has WorkshopScenario; expand AlertIds; join AlertInfo and AlertEvidence', 'Multiple', 'Shows how XDR/Sentinel-style case management groups opaque alert IDs into analyst-friendly incidents.',
+    9, 'Exposure and hardening context', 'DeviceTvm* tables', 'WIN11-04, AADCONNECT01, UBUNTU-03, UBUNTU-05 TVM rows', 'Defensive context', 'Explains why the activity was high-impact and what hardening would reduce blast radius.',
+    10, 'Linux/Oracle bonus branch', 'DeviceLogonEvents, DeviceProcessEvents, DeviceNetworkEvents, DeviceFileEvents, AlertInfo, AlertEvidence', 'UBUNTU-03 sudo chroot and Oracle TNS access to UBUNTU-05:1521', 'T1548.003, T1059.006, T1005', 'Optional comparison path for Linux MDE telemetry and database collection evidence.'
+]
+| order by Sequence asc
+
+// =============================================================================
+// Query 02 - Static opaque AlertId answer key joined to AlertInfo
+// Why it matters:
+// This proves the static instructor answer key maps to live AlertInfo rows without
+// using actor-branded AlertIds. The AlertIds are deterministic but intentionally
+// opaque, matching real SOC conditions better than "MIDNIGHT-BLIZZARD-*" labels.
+// Scenario tie-back:
+// Use this when students have found titles, entities, or techniques and you need
+// to confirm they are on the expected alert path.
+// =============================================================================
+let AlertAnswerKey = datatable(
+    Sequence:int,
+    ScenarioSignal:string,
+    AlertId:string,
+    ExpectedTime:datetime,
+    ExpectedTitle:string,
+    ExpectedTechniques:string,
+    InstructorNote:string
+)
+[
+    1, 'OAuth service-principal persistence', '09fb0e10-de44-00fd-6478-518affd9a260', datetime(2026-05-01T10:36:00Z), 'Suspicious OAuth service principal persistence', 'T1528,T1098.001,T1550.001', 'OAuth persistence alert tied to USAG Cyber Sync Helper.',
+    2, 'PowerShell credential discovery', '621e484e-f436-6fbb-0a0c-7af49802e455', datetime(2026-05-01T10:45:00Z), 'Suspicious PowerShell credential discovery', 'T1552.002', 'Early endpoint credential discovery activity after the cloud foothold.',
+    3, 'Kerberoasting', '1d5d47bd-113b-c938-6499-e01752a4d4db', datetime(2026-05-01T11:05:00Z), 'Suspected Kerberoasting activity', 'T1558.003', 'Connects Rubeus/SPN behavior to identity telemetry.',
+    4, 'LSASS dump', '97185c44-fd9b-0dc3-ae32-ef6315b35a26', datetime(2026-05-01T11:20:00Z), 'Credential dumping from LSASS', 'T1003.001', 'High-confidence endpoint credential dumping alert.',
+    5, 'Password-store harvesting', 'df57168c-010c-a303-3edb-d05782c407a9', datetime(2026-05-01T11:35:00Z), 'Password store harvesting tool observed', 'T1555', 'Password-store tooling and output under the staging directory.',
+    6, 'Credential dumping tool', '710e468b-1a6f-1455-61d3-7bc4181de115', datetime(2026-05-01T11:43:00Z), 'Mimikatz credential dumping', 'T1003.001', 'Final credential-dumping tool alert in the Windows path.',
+    7, 'OAuth and Graph correlation', '9b507934-0bc3-d4ff-32d2-1b2a64796429', datetime(2026-05-01T10:36:00Z), 'OAuth application credential added and used for Graph access', 'T1528,T1098.001,T1550.001', 'Correlation alert for app credential creation and Graph use.',
+    8, 'Endpoint credential material correlation', '196bc75c-9d49-eb62-a9fe-79941b6507e0', datetime(2026-05-01T11:20:00Z), 'Credential material collection on one endpoint', 'T1003.001,T1552.002,T1555,T1558.003', 'Correlation alert joining multiple credential-access artifacts on WIN11-04.',
+    9, 'Hybrid identity lateral movement correlation', '3d3bc433-e857-dc28-fec2-0131500cbf87', datetime(2026-05-01T11:52:00Z), 'Service account interactive sign-in to identity synchronization server', 'T1078.002,T1021.006', 'Correlation alert for svc_sql use against AADCONNECT01.',
+    10, 'Linux sudo privilege escalation', '16f35dea-f474-2198-8d0c-3467e6da3f26', datetime(2026-05-01T11:38:00Z), 'Suspicious sudo chroot usage on Linux server', 'T1548.003,T1059.004', 'Optional Linux branch privilege-escalation alert.',
+    11, 'Linux Oracle collection', 'b28ccabf-2b63-fc49-2ef3-31864d151643', datetime(2026-05-01T11:44:00Z), 'Linux privilege escalation followed by Oracle data access', 'T1548.003,T1059.006,T1005', 'Optional Linux/Oracle collection alert.'
+];
+AlertAnswerKey
+| join kind=leftouter (
+    AlertInfo
+    | project AlertId, ObservedTime=Timestamp, ObservedTitle=Title, Severity, Category, ServiceSource, DetectionSource, ObservedTechniques=AttackTechniques
+) on AlertId
+| extend Present=iff(isnotnull(ObservedTime), 'Present', 'Missing')
+| project Sequence, Present, ScenarioSignal, AlertId, ExpectedTime, ObservedTime, ExpectedTitle, ObservedTitle, Severity, Category, ServiceSource, DetectionSource, ExpectedTechniques, ObservedTechniques, InstructorNote
+| order by Sequence asc
+
+// =============================================================================
+// Query 03 - SecurityIncident grouping to AlertInfo
+// Why it matters:
+// SecurityIncident is the SOC queue. It turns many signals into analyst-friendly
+// cases while preserving opaque AlertIds for pivoting.
+// Scenario tie-back:
+// Demonstrates that generic incident names still point back to the complete cloud,
+// endpoint, identity, hybrid, TVM, and Linux evidence path.
+// =============================================================================
+SecurityIncident
+| where Labels has 'WorkshopScenario'
+| mv-expand AlertIds
+| extend AlertId=tostring(AlertIds)
+| join kind=leftouter (
+    AlertInfo
+    | project AlertId, AlertTime=Timestamp, AlertTitle=Title, AlertSeverity=Severity, Category, ServiceSource, DetectionSource, AttackTechniques
+) on AlertId
+| project TimeGenerated, IncidentNumber, IncidentTitle=Title, IncidentSeverity=Severity, Status, ProviderName, ProviderIncidentId, AlertId, AlertTime, AlertTitle, AlertSeverity, Category, ServiceSource, DetectionSource, AttackTechniques, Entities=tostring(AdditionalData.entities), Tactics=tostring(AdditionalData.tactics), Techniques=tostring(AdditionalData.techniques), TvmEvidenceTables=tostring(AdditionalData.tvmEvidenceTables)
+| order by TimeGenerated asc, AlertTime asc
+
+// =============================================================================
+// Query 04 - AlertInfo to AlertEvidence, using incident-derived AlertIds
+// Why it matters:
+// AlertInfo is the headline. AlertEvidence explains why the alert fired and which
+// entity, account, host, app, file, or command line supports it.
+// Scenario tie-back:
+// This is the central instructor pivot when students ask, "What should I look at
+// after finding the alert?"
+// =============================================================================
+let scenarioAlertIds =
+    SecurityIncident
+    | where Labels has 'WorkshopScenario'
+    | mv-expand AlertIds
+    | distinct AlertId=tostring(AlertIds);
+scenarioAlertIds
+| join kind=inner (
+    AlertInfo
+    | project AlertId, AlertTime=Timestamp, AlertTitle=Title, AlertSeverity=Severity, Category, ServiceSource, DetectionSource, AlertTechniques=AttackTechniques
+) on AlertId
+| join kind=leftouter (
+    AlertEvidence
+    | project AlertId, EvidenceTime=Timestamp, EntityType, EvidenceRole, EvidenceDirection, DeviceName, AccountUpn, AccountName, Application, OAuthApplicationId, FileName, FolderPath, ProcessCommandLine, AdditionalFields
+) on AlertId
+| project AlertTime, EvidenceTime, AlertTitle, AlertSeverity, Category, ServiceSource, DetectionSource, AlertTechniques, EntityType, EvidenceRole, EvidenceDirection, DeviceName, AccountUpn, AccountName, Application, OAuthApplicationId, FileName, FolderPath, ProcessCommandLine, AdditionalFields
+| order by AlertTime asc, AlertTitle asc, EvidenceTime asc
+
+// =============================================================================
+// Query 05 - Initial risky sign-in
+// Why it matters:
+// The first observable signal is a risky interactive sign-in with MFA. This gives
+// students the compromised user, suspicious IP, and time anchor for the rest of the hunt.
+// Scenario tie-back:
+// victor.alvarez@usag-cyber.local signs in from 185.225.73.18 before OAuth,
+// Graph, endpoint, and service-account activity unfolds.
+// =============================================================================
+let StartTime=datetime(2026-05-01T10:30:00Z);
+let EndTime=datetime(2026-05-01T12:00:00Z);
+let CompromisedUser='victor.alvarez@usag-cyber.local';
+let SuspiciousIp='185.225.73.18';
+SigninLogs
+| where TimeGenerated between (StartTime .. EndTime)
+| where UserPrincipalName =~ CompromisedUser or IPAddress == SuspiciousIp or IsRisky == true or RiskLevelDuringSignIn in~ ('high', 'medium')
+| extend InstructorNote='Start here: establishes compromised user, external IP, MFA context, and first timestamp.'
+| project TimeGenerated, UserPrincipalName, IPAddress, AppDisplayName, ResultType, ResultDescription, AuthenticationMethodsUsed, ConditionalAccessStatus, RiskLevelDuringSignIn, RiskState, UserAgent, InstructorNote
+| order by TimeGenerated asc
+
+// =============================================================================
+// Query 06 - OAuth consent, service-principal credential, and Graph activity
+// Why it matters:
+// OAuth abuse is the cloud identity persistence path. App-only Graph activity can
+// continue after user password resets unless the app/credential is removed.
+// Scenario tie-back:
+// USAG Cyber Sync Helper receives consent/credentials and then accesses Graph from
+// the suspicious source infrastructure.
+// =============================================================================
+let StartTime=datetime(2026-05-01T10:30:00Z);
+let EndTime=datetime(2026-05-01T12:00:00Z);
+let AppName='USAG Cyber Sync Helper';
+let SuspiciousIp='185.225.73.18';
+let cloud =
+    CloudAppEvents
+    | where Timestamp between (StartTime .. EndTime)
+    | where ObjectName has AppName or IPAddress == SuspiciousIp or ActionType has_any ('Consent', 'OAuth', 'ServicePrincipal', 'Add')
+    | project Timestamp, SourceTable='CloudAppEvents', Actor=tostring(AccountId), Entity=tostring(ObjectName), Action=tostring(ActionType), Detail=strcat('Application=', tostring(Application), '; OAuthAppId=', tostring(OAuthAppId), '; IP=', IPAddress), InstructorNote='OAuth consent/cloud-app activity links the risky user session to the suspicious app.';
+let audit =
+    AuditLogs
+    | where TimeGenerated between (StartTime .. EndTime)
+    | where TargetResources has AppName or ActivityDisplayName has_any ('Consent to application', 'service principal credentials') or OperationName has_any ('Consent to application', 'service principal credentials')
+    | project Timestamp=TimeGenerated, SourceTable='AuditLogs', Actor=tostring(Identity), Entity=tostring(TargetResources), Action=iff(isnotempty(ActivityDisplayName), ActivityDisplayName, OperationName), Detail=strcat('Result=', Result, '; Details=', tostring(AdditionalDetails)), InstructorNote='AuditLogs proves consent and service-principal credential changes.';
+let spnSignin =
+    AADServicePrincipalSignInLogs
+    | where TimeGenerated between (StartTime .. EndTime)
+    | where ServicePrincipalName has AppName or IPAddress == SuspiciousIp
+    | project Timestamp=TimeGenerated, SourceTable='AADServicePrincipalSignInLogs', Actor=tostring(ServicePrincipalName), Entity=tostring(AppId), Action=strcat('ClientCredentialType=', tostring(ClientCredentialType)), Detail=strcat('Resource=', ResourceDisplayName, '; IP=', IPAddress, '; ResultType=', tostring(ResultType)), InstructorNote='Service-principal sign-in shows app-only Graph access using credentials.';
+let graphAudit =
+    GraphApiAuditEvents
+    | where TimeGenerated between (StartTime .. EndTime)
+    | where IpAddress == SuspiciousIp or RequestUri has_any ('/users', '/messages', '/drive', '/groups', '/directoryRoles')
+    | project Timestamp=TimeGenerated, SourceTable='GraphApiAuditEvents', Actor=tostring(AccountObjectId), Entity=tostring(ApplicationId), Action=strcat(RequestMethod, ' ', RequestUri), Detail=strcat('Scopes=', Scopes, '; Status=', ResponseStatusCode, '; IP=', IpAddress), InstructorNote='Graph audit records show the data-access and enumeration API calls.';
+let graphActivity =
+    MicrosoftGraphActivityLogs
+    | where TimeGenerated between (StartTime .. EndTime)
+    | where IPAddress == SuspiciousIp or RequestUri has_any ('/users', '/messages', '/drive', '/groups', '/directoryRoles')
+    | project Timestamp=TimeGenerated, SourceTable='MicrosoftGraphActivityLogs', Actor=tostring(UserId), Entity=tostring(AppId), Action=strcat(RequestMethod, ' ', RequestUri), Detail=strcat('Scopes=', Scopes, '; Status=', tostring(ResponseStatusCode), '; IP=', IPAddress), InstructorNote='Graph activity mirrors Graph API access in a Log Analytics-style table.';
+union cloud, audit, spnSignin, graphAudit, graphActivity
+| order by Timestamp asc, SourceTable asc
+
+// =============================================================================
+// Query 07 - Windows endpoint credential-access evidence
+// Why it matters:
+// This surfaces the screenshot-driven Windows credential-access behaviors in one
+// place: registry discovery, SAM save, browser database copy, Kerberoasting tooling,
+// LSASS dump, password store harvesting, and credential dumping tools.
+// Scenario tie-back:
+// The activity centers on WIN11-04 under Victor Alvarez and stages artifacts under
+// C:\ProgramData\wrstage.
+// =============================================================================
+let StartTime=datetime(2026-05-01T10:30:00Z);
+let EndTime=datetime(2026-05-01T12:00:00Z);
+let SearchStart=StartTime - 14d;
+let SearchEnd=EndTime + 14d;
+let TargetDevice='WIN11-04.usag-cyber.local';
+let processes =
+    DeviceProcessEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where DeviceName =~ TargetDevice
+    | where FileName in~ ('powershell.exe', 'reg.exe', 'esentutl.exe', 'Rubeus.exe', 'procdump64.exe', 'PwDump7.exe', 'gsecdump.exe', 'lazagne.exe', 'mimikatz.exe', 'rundll32.exe')
+        or ProcessCommandLine has_any ('collect-reg-creds', 'sam.save', 'LoginData.db', 'kerberoast', 'lsass', 'logonpasswords', 'pwdump', 'gsecdump', 'lazagne')
+    | project Timestamp, SourceTable='DeviceProcessEvents', DeviceName, Account=tostring(AccountUpn), Evidence=FileName, Detail=ProcessCommandLine, InstructorNote='Process execution shows tool use and command intent.';
+let files =
+    DeviceFileEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where DeviceName =~ TargetDevice
+    | where FolderPath has @'C:\ProgramData\wrstage' or FileName has_any ('sam.save', 'system.save', 'security.save', 'lsass.dmp', 'Login Data', 'cred_bundle.zip')
+    | project Timestamp, SourceTable='DeviceFileEvents', DeviceName, Account=tostring(InitiatingProcessAccountUpn), Evidence=FileName, Detail=strcat(ActionType, ' ', FolderPath, ' by ', InitiatingProcessFileName, ' :: ', InitiatingProcessCommandLine), InstructorNote='File events show staged outputs and copied credential stores.';
+let registry =
+    DeviceRegistryEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where DeviceName =~ TargetDevice
+    | where RegistryKey has_any ('VPN', 'Run', 'Winlogon') or RegistryValueName has_any ('SavedPassword', 'DefaultPassword')
+    | project Timestamp, SourceTable='DeviceRegistryEvents', DeviceName, Account='', Evidence=strcat(RegistryKey, '\\', RegistryValueName), Detail=strcat('Value=', RegistryValueData, '; Process=', InitiatingProcessFileName, ' :: ', InitiatingProcessCommandLine), InstructorNote='Registry activity supports stored credential discovery.';
+union processes, files, registry
+| order by Timestamp asc, SourceTable asc
+
+// =============================================================================
+// Query 08 - Kerberoasting and service-account targeting
+// Why it matters:
+// Kerberoasting is often confirmed in identity telemetry, where SPN queries and
+// Kerberos service-ticket activity are visible.
+// Scenario tie-back:
+// This is the bridge from endpoint credential tooling to service account targeting
+// before svc_sql is used against Entra Connect.
+// =============================================================================
+let StartTime=datetime(2026-05-01T10:30:00Z);
+let EndTime=datetime(2026-05-01T12:00:00Z);
+let SearchStart=StartTime - 14d;
+let SearchEnd=EndTime + 14d;
+let identityQueries =
+    IdentityQueryEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where Query has 'servicePrincipalName' or AdditionalFields has 'T1558.003'
+    | project Timestamp, SourceTable='IdentityQueryEvents', Account=tostring(AccountUpn), DeviceName, DestinationDeviceName, Action=strcat(QueryType, ' ', Application), Detail=strcat(QueryTarget, ' :: ', Query), InstructorNote='LDAP SPN search indicates Kerberoasting reconnaissance.';
+let identityLogons =
+    IdentityLogonEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where Protocol =~ 'Kerberos' or AdditionalFields has 'ServicePrincipalName' or TargetAccountDisplayName has 'svc_'
+    | project Timestamp, SourceTable='IdentityLogonEvents', Account=tostring(AccountUpn), DeviceName, DestinationDeviceName, Action=strcat(Protocol, ' ', DestinationPort), Detail=strcat('Target=', TargetAccountDisplayName, '; IP=', IPAddress, '; Additional=', tostring(AdditionalFields)), InstructorNote='Kerberos activity supports service-account targeting after SPN discovery.';
+union identityQueries, identityLogons
+| order by Timestamp asc
+
+// =============================================================================
+// Query 09 - Service account lateral movement to Entra Connect
+// Why it matters:
+// A service account with interactive/remote logon to the identity sync server is a
+// high-confidence hybrid identity compromise signal.
+// Scenario tie-back:
+// svc_sql is used from WIN11-04 against AADCONNECT01, the Entra Connect server.
+// =============================================================================
+let StartTime=datetime(2026-05-01T10:30:00Z);
+let EndTime=datetime(2026-05-01T12:00:00Z);
+let SearchStart=StartTime - 14d;
+let SearchEnd=EndTime + 14d;
+let deviceLogons =
+    DeviceLogonEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where AccountName =~ 'svc_sql' or DeviceName has 'AADCONNECT01' or RemoteDeviceName has 'WIN11-04'
+    | project Timestamp, SourceTable='DeviceLogonEvents', Account=strcat(AccountDomain, '\\', AccountName), DeviceName, RemoteDeviceName, RemoteIP, Action=strcat(ActionType, ' ', LogonType, ' ', Protocol), Detail=strcat('IsLocalAdmin=', tostring(IsLocalAdmin)), InstructorNote='Endpoint logon event confirms the service account interactive use.';
+let identityLogons =
+    IdentityLogonEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where AccountUpn has 'svc_sql' or DestinationDeviceName has 'AADCONNECT01' or DeviceName has 'WIN11-04'
+    | project Timestamp, SourceTable='IdentityLogonEvents', Account=tostring(AccountUpn), DeviceName, RemoteDeviceName='', RemoteIP=IPAddress, Action=strcat(LogonType, ' ', Protocol), Detail=strcat('Destination=', DestinationDeviceName, '; Target=', TargetAccountDisplayName, '; Additional=', tostring(AdditionalFields)), InstructorNote='Identity telemetry confirms the hybrid identity target and authentication context.';
+union deviceLogons, identityLogons
+| order by Timestamp asc
+
+// =============================================================================
+// Query 10 - TVM exposure and hardening context
+// Why it matters:
+// TVM rows are not attacker activity; they explain exposure, impact, and hardening
+// gaps that made the intrusion more dangerous.
+// Scenario tie-back:
+// WIN11-04, AADCONNECT01, UBUNTU-03, and UBUNTU-05 carry vulnerability, inventory,
+// evidence-path, and secure-configuration context used by SecurityIncident.AdditionalData.
+// =============================================================================
+let scenarioDeviceIds =
+    DeviceInfo
+    | where DeviceName in~ ('WIN11-04.usag-cyber.local', 'AADCONNECT01.usag-cyber.local', 'UBUNTU-03.usag-cyber.local', 'UBUNTU-05.usag-cyber.local')
+    | project DeviceId, DeviceName;
+let vulnerabilities =
+    DeviceTvmSoftwareVulnerabilities
+    | where DeviceName in~ ('WIN11-04.usag-cyber.local', 'AADCONNECT01.usag-cyber.local', 'UBUNTU-03.usag-cyber.local', 'UBUNTU-05.usag-cyber.local')
+    | project Timestamp=todatetime(''), SourceTable='DeviceTvmSoftwareVulnerabilities', DeviceName, Finding=strcat(SoftwareName, ' ', SoftwareVersion, ' ', CveId), Severity=VulnerabilitySeverityLevel, Detail=RecommendedSecurityUpdate, InstructorNote='Vulnerable software explains exposure and prioritization.';
+let inventory =
+    DeviceTvmSoftwareInventory
+    | where DeviceName in~ ('WIN11-04.usag-cyber.local', 'AADCONNECT01.usag-cyber.local', 'UBUNTU-03.usag-cyber.local', 'UBUNTU-05.usag-cyber.local')
+    | where SoftwareName has_any ('Microsoft Entra Connect', 'Chrome', 'OpenSSH', 'sudo', 'cups', 'Oracle', 'Microsoft Defender')
+    | project Timestamp=EndOfSupportDate, SourceTable='DeviceTvmSoftwareInventory', DeviceName, Finding=strcat(SoftwareVendor, ' ', SoftwareName, ' ', SoftwareVersion), Severity=EndOfSupportStatus, Detail=ProductCodeCpe, InstructorNote='Software inventory confirms the relevant products and host roles.';
+let evidence =
+    scenarioDeviceIds
+    | join kind=inner (
+        DeviceTvmSoftwareEvidenceBeta
+        | project DeviceId, SoftwareName, SoftwareVersion, RegistryPaths, DiskPaths, LastSeenTime, MachineGroup
+    ) on DeviceId
+    | where tostring(DiskPaths) has_any ('wrstage', 'Login Data', 'oracle', 'ADSync') or SoftwareName has_any ('Chrome', 'Microsoft Entra Connect', 'Oracle', 'sudo')
+    | project Timestamp=LastSeenTime, SourceTable='DeviceTvmSoftwareEvidenceBeta', DeviceName, Finding=strcat(SoftwareName, ' ', SoftwareVersion), Severity='', Detail=strcat('DiskPaths=', tostring(DiskPaths), '; RegistryPaths=', tostring(RegistryPaths), '; MachineGroup=', MachineGroup), InstructorNote='Evidence rows tie installed software to paths relevant to the scenario.';
+let secureConfig =
+    DeviceTvmSecureConfigurationAssessment
+    | where DeviceName in~ ('WIN11-04.usag-cyber.local', 'AADCONNECT01.usag-cyber.local', 'UBUNTU-03.usag-cyber.local', 'UBUNTU-05.usag-cyber.local')
+    | where ConfigurationSubcategory has_any ('Credential Guard', 'Service account interactive logon', 'OpenSSH hardening') or tostring(Context) has_any ('LSASS', 'RemoteInteractive', 'PasswordAuthentication')
+    | project Timestamp=TimeGenerated, SourceTable='DeviceTvmSecureConfigurationAssessment', DeviceName, Finding=strcat(ConfigurationCategory, ' / ', ConfigurationSubcategory), Severity=iff(IsCompliant, 'Compliant', 'Not compliant'), Detail=strcat('Impact=', tostring(ConfigurationImpact), '; Context=', tostring(Context)), InstructorNote='Secure configuration gaps explain what prevention or hardening students should recommend.';
+union vulnerabilities, inventory, evidence, secureConfig
+| order by DeviceName asc, SourceTable asc, Timestamp asc
+
+// =============================================================================
+// Query 11 - Optional Linux/Oracle branch
+// Why it matters:
+// This branch shows how MDE on Linux differs from Windows/MDI telemetry: SSH/PAM,
+// sudo, auditd, Unix paths, Oracle TNS, and Linux package/CVE context.
+// Scenario tie-back:
+// UBUNTU-03 is used for sudo privilege escalation and Oracle collection against
+// UBUNTU-05 on TCP/1521.
+// =============================================================================
+let StartTime=datetime(2026-05-01T10:30:00Z);
+let EndTime=datetime(2026-05-01T12:00:00Z);
+let SearchStart=StartTime - 14d;
+let SearchEnd=EndTime + 14d;
+let linuxLogons =
+    DeviceLogonEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where DeviceName has_any ('UBUNTU-03', 'UBUNTU-05') and (Protocol in~ ('Ssh', 'PAM') or LogonType in~ ('Ssh', 'Sudo'))
+    | project Timestamp, SourceTable='DeviceLogonEvents', DeviceName, Account=AccountName, Action=strcat(ActionType, ' ', LogonType, ' ', Protocol), Detail=strcat('RemoteIP=', RemoteIP, '; Additional=', tostring(AdditionalFields)), InstructorNote='Linux SSH/PAM activity establishes the Linux branch access path.';
+let linuxProcesses =
+    DeviceProcessEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where DeviceName has_any ('UBUNTU-03', 'UBUNTU-05') and ProcessCommandLine has_any ('sudo', 'auditd', 'sshd', 'oracle_privcheck.py', 'ora_collect_linux_amd64', 'ORCL')
+    | project Timestamp, SourceTable='DeviceProcessEvents', DeviceName, Account=AccountName, Action=FileName, Detail=ProcessCommandLine, InstructorNote='Linux process telemetry shows sudo privilege escalation and Oracle tooling.';
+let linuxNetwork =
+    DeviceNetworkEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where DeviceName has_any ('UBUNTU-03', 'UBUNTU-05') and (RemotePort == 1521 or AdditionalFields has 'Oracle TNS')
+    | project Timestamp, SourceTable='DeviceNetworkEvents', DeviceName, Account=InitiatingProcessAccountName, Action=strcat(InitiatingProcessFileName, ' -> ', RemoteUrl, ':', tostring(RemotePort)), Detail=strcat('RemoteIP=', RemoteIP, '; Additional=', tostring(AdditionalFields)), InstructorNote='Network telemetry confirms Oracle TNS access.';
+let linuxFiles =
+    DeviceFileEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where DeviceName has_any ('UBUNTU-03', 'UBUNTU-05') and (FolderPath has_any ('/tmp/.cache', '/tmp/.oracle') or FileName has_any ('oracle_privcheck.py', 'ora_collect_linux_amd64', 'finance_user_catalog.csv'))
+    | project Timestamp, SourceTable='DeviceFileEvents', DeviceName, Account=InitiatingProcessAccountName, Action=strcat(ActionType, ' ', FileName), Detail=strcat(FolderPath, ' by ', InitiatingProcessFileName, ' :: ', InitiatingProcessCommandLine), InstructorNote='File telemetry shows staged tooling and synthetic Oracle export output.';
+let linuxAlerts =
+    AlertInfo
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where Title has_any ('Linux', 'Oracle', 'sudo') or AttackTechniques has_any ('T1548.003', 'T1059.006', 'T1005')
+    | project Timestamp, SourceTable='AlertInfo', DeviceName='', Account='', Action=Title, Detail=strcat(Severity, '; ', AttackTechniques), InstructorNote='Alerts summarize the optional Linux/Oracle branch.';
+union linuxLogons, linuxProcesses, linuxNetwork, linuxFiles, linuxAlerts
+| order by Timestamp asc, SourceTable asc
+
+// =============================================================================
+// Query 12 - Full instructor timeline
+// Why it matters:
+// This is the answer-key narrative view. It normalizes the major cloud, endpoint,
+// identity, alert, incident, and Linux signals into one ordered table.
+// Scenario tie-back:
+// Use this to walk the class through what happened after students complete the hunt.
+// =============================================================================
+let StartTime=datetime(2026-05-01T10:30:00Z);
+let EndTime=datetime(2026-05-01T12:00:00Z);
+let SearchStart=StartTime - 14d;
+let SearchEnd=EndTime + 14d;
+let CompromisedUser='victor.alvarez@usag-cyber.local';
+let SuspiciousIp='185.225.73.18';
+let AppName='USAG Cyber Sync Helper';
+let scenarioAlertIds =
+    SecurityIncident
+    | where Labels has 'WorkshopScenario'
+    | mv-expand AlertIds
+    | distinct AlertId=tostring(AlertIds);
+let signin =
+    SigninLogs
+    | where TimeGenerated between (SearchStart .. SearchEnd)
+    | where UserPrincipalName =~ CompromisedUser or IPAddress == SuspiciousIp or IsRisky == true
+    | project Timestamp=TimeGenerated, SourceTable='SigninLogs', Entity=UserPrincipalName, Detail=strcat('Risk=', RiskLevelDuringSignIn, '; IP=', IPAddress, '; App=', AppDisplayName), InstructorNote='Initial compromised identity signal.';
+let oauth =
+    CloudAppEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where ObjectName has AppName or IPAddress == SuspiciousIp
+    | project Timestamp, SourceTable='CloudAppEvents', Entity=AccountId, Detail=strcat(ActionType, ' :: ', ObjectName, ' :: ', OAuthAppId), InstructorNote='OAuth consent/application activity.';
+let audit =
+    AuditLogs
+    | where TimeGenerated between (SearchStart .. SearchEnd)
+    | where TargetResources has AppName or ActivityDisplayName has_any ('Consent to application', 'service principal credentials') or OperationName has_any ('Consent to application', 'service principal credentials')
+    | project Timestamp=TimeGenerated, SourceTable='AuditLogs', Entity=tostring(Identity), Detail=strcat(iff(isnotempty(ActivityDisplayName), ActivityDisplayName, OperationName), ' :: ', tostring(TargetResources)), InstructorNote='Service-principal object change.';
+let graph =
+    GraphApiAuditEvents
+    | where TimeGenerated between (SearchStart .. SearchEnd)
+    | where IpAddress == SuspiciousIp or RequestUri has_any ('/users', '/messages', '/drive', '/groups', '/directoryRoles')
+    | project Timestamp=TimeGenerated, SourceTable='GraphApiAuditEvents', Entity=ApplicationId, Detail=strcat(RequestMethod, ' ', RequestUri, ' :: ', ResponseStatusCode), InstructorNote='Graph enumeration/data-access activity.';
+let endpoint =
+    DeviceProcessEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where DeviceName has 'WIN11-04' and (FolderPath has @'C:\ProgramData\wrstage' or ProcessCommandLine has_any ('kerberoast', 'sam.save', 'LoginData.db', 'lsass', 'logonpasswords', 'pwdump', 'gsecdump', 'lazagne'))
+    | project Timestamp, SourceTable='DeviceProcessEvents', Entity=DeviceName, Detail=strcat(FileName, ' :: ', ProcessCommandLine), InstructorNote='Windows credential-access process activity.';
+let identity =
+    IdentityQueryEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where Query has 'servicePrincipalName' or AdditionalFields has 'T1558.003'
+    | project Timestamp, SourceTable='IdentityQueryEvents', Entity=AccountUpn, Detail=strcat(Application, ' :: ', QueryTarget, ' :: ', DestinationDeviceName), InstructorNote='Kerberoasting/SPN discovery.';
+let lateral =
+    DeviceLogonEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where AccountName =~ 'svc_sql' or DeviceName has 'AADCONNECT01'
+    | project Timestamp, SourceTable='DeviceLogonEvents', Entity=DeviceName, Detail=strcat(AccountDomain, '\\', AccountName, ' ', LogonType, ' from ', RemoteDeviceName, ' ', RemoteIP), InstructorNote='Service-account use against Entra Connect.';
+let alerts =
+    AlertInfo
+    | where AlertId in (scenarioAlertIds)
+    | project Timestamp, SourceTable='AlertInfo', Entity=AlertId, Detail=strcat(Severity, ' :: ', Title, ' :: ', AttackTechniques), InstructorNote='Expected scenario alerts with opaque IDs.';
+let incidents =
+    SecurityIncident
+    | where Labels has 'WorkshopScenario'
+    | project Timestamp=TimeGenerated, SourceTable='SecurityIncident', Entity=strcat('Incident ', tostring(IncidentNumber)), Detail=strcat(Severity, ' :: ', Title, ' :: ', Status), InstructorNote='SOC incident grouping.';
+let linux =
+    DeviceProcessEvents
+    | where Timestamp between (SearchStart .. SearchEnd)
+    | where DeviceName has_any ('UBUNTU-03', 'UBUNTU-05') and ProcessCommandLine has_any ('sudo', 'oracle_privcheck.py', 'ora_collect_linux_amd64', 'ORCL')
+    | project Timestamp, SourceTable='DeviceProcessEvents', Entity=DeviceName, Detail=strcat(FileName, ' :: ', ProcessCommandLine), InstructorNote='Optional Linux/Oracle branch.';
+union signin, oauth, audit, graph, endpoint, identity, lateral, alerts, incidents, linux
+| order by Timestamp asc, SourceTable asc
+
