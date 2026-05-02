@@ -95,7 +95,7 @@ You'll see:
 
 ## Act 2 — Find the suspicious sign-in
 
-The intrusion starts in the cloud. An identity provider sees the attacker first, before any endpoint does. So that's where we start.
+The intrusion starts in the cloud. An identity provider (Entra ID - Threat Protection) sees the attacker first, before any endpoint does. So that's where we start. Because in cloud, since you can login from virtually anywhere, identity IS the NEW perimeter!
 
 ```kql
 SigninLogs
