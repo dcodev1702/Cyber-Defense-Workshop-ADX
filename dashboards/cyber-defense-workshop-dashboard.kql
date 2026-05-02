@@ -298,6 +298,15 @@ AlertInfo
 | order by Alerts desc
 
 // -----------------------------------------------------------------------------
+// Tile: Top 20 security incidents by name and number
+SecurityIncident
+| where TimeGenerated between (StartTime .. EndTime)
+| summarize arg_max(TimeGenerated, *) by IncidentName
+| extend AlertCount=coalesce(array_length(AlertIds), 0)
+| project ['#']=IncidentNumber, ['Security incident name']=Title, Severity, Status, AlertCount, ProviderIncidentId, LastActivityTime, TimeGenerated
+| top 20 by TimeGenerated desc
+
+// -----------------------------------------------------------------------------
 // Tile: Scenario signal timeline
 let AlertSignals = AlertInfo | where Timestamp between (StartTime .. EndTime) | project Timestamp, Signal='Alert', Entity=Title, Detail=strcat(Severity, ' | ', AttackTechniques);
 let NetworkSignals = DeviceNetworkEvents | where TimeGenerated between (StartTime .. EndTime) | where RemoteIPType == 'Public' | extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl) | project Timestamp=TimeGenerated, Signal='Public network connection', Entity=DeviceName, Detail=strcat(InitiatingProcessFileName, ' -> ', Destination, ':', tostring(RemotePort));

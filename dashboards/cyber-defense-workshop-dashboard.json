@@ -943,6 +943,28 @@
       ]
     },
     {
+      "id": "0cfd9690-8596-ef91-3e9a-d4e8f78c7c78",
+      "title": "Top 20 security incidents by name and number",
+      "query": "SecurityIncident\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| summarize arg_max(TimeGenerated, *) by IncidentName\r\n| extend AlertCount=coalesce(array_length(AlertIds), 0)\r\n| project ['#']=IncidentNumber, ['Security incident name']=Title, Severity, Status, AlertCount, ProviderIncidentId, LastActivityTime, TimeGenerated\r\n| top 20 by TimeGenerated desc",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "4d099421-a700-18b4-1cfb-7978f03935ca",
+      "layout": {
+        "x": 0,
+        "y": 5,
+        "width": 12,
+        "height": 7
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
       "id": "1060de0e-2d3f-58a4-efbb-b49d1310cdf3",
       "title": "Scenario signal timeline",
       "query": "let AlertSignals = AlertInfo | where Timestamp between (['_startTime'] .. ['_endTime']) | project Timestamp, Signal='Alert', Entity=Title, Detail=strcat(Severity, ' | ', AttackTechniques);\r\nlet NetworkSignals = DeviceNetworkEvents | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where RemoteIPType == 'Public' | extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl) | project Timestamp=TimeGenerated, Signal='Public network connection', Entity=DeviceName, Detail=strcat(InitiatingProcessFileName, ' -> ', Destination, ':', tostring(RemotePort));\r\nlet GraphSignals = GraphApiAuditEvents | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where toint(ResponseStatusCode) >= 400 or RequestMethod in ('POST','PATCH','DELETE') | project Timestamp=TimeGenerated, Signal='Graph API activity', Entity=ApplicationId, Detail=strcat(RequestMethod, ' ', RequestUri, ' -> ', ResponseStatusCode);\r\nunion AlertSignals, NetworkSignals, GraphSignals\r\n| top 50 by Timestamp desc",
@@ -951,7 +973,7 @@
       "pageId": "4d099421-a700-18b4-1cfb-7978f03935ca",
       "layout": {
         "x": 0,
-        "y": 5,
+        "y": 12,
         "width": 12,
         "height": 8
       },
