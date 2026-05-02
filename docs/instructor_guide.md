@@ -27,23 +27,7 @@ Use the Ubuntu branch as an optional comparison pivot after the Windows path is 
 
 ## Expected key findings
 
-| Finding | Evidence |
-| --- | --- |
-| Suspicious sign-in | `SigninLogs` and `EntraIdSignInEvents` show high-risk sign-in for Victor Alvarez |
-| OAuth/Graph activity | `CloudAppEvents`, `AuditLogs`, `GraphApiAuditEvents`, and `MicrosoftGraphActivityLogs` show app consent, service-principal credential creation, app-only Graph sign-in, mailbox reads, file reads, and directory enumeration |
-| Service-principal persistence | `AuditLogs`, `CloudAppEvents`, `AADServicePrincipalSignInLogs`, `GraphApiAuditEvents`, `AlertInfo`, and `AlertEvidence` show `USAG Cyber Sync Helper` receiving a credential and using Microsoft Graph |
-| SOC incident grouping | `SecurityIncident` shows generic SOC-style incidents such as `Multi-stage incident involving identity and endpoint activity`, with `AlertIds` joining to `AlertInfo`/`AlertEvidence` and `AdditionalData.tvmEvidenceTables` pointing to the TVM context |
-| Endpoint staging | `DeviceNetworkEvents` shows `WIN11-04` connecting to `cdn.update-check.example` |
-| Registry credentials | `DeviceRegistryEvents` shows saved VPN credential value access |
-| SAM hive dumping | `DeviceProcessEvents` and `DeviceFileEvents` show `reg.exe save HKLM\SAM` and output files |
-| Browser credential collection | `DeviceProcessEvents` and `DeviceFileEvents` show `esentutl.exe` copying Chrome Login Data |
-| Kerberoasting | `IdentityQueryEvents` shows LDAP SPN search and `IdentityLogonEvents` shows Kerberos activity |
-| LSASS dumping | `DeviceProcessEvents`, `DeviceFileEvents`, and alerts show minidump behavior |
-| Password-store harvesting | Process events show PwDump7, gsecdump, LaZagne, and Mimikatz-style tools |
-| Lateral movement | `DeviceLogonEvents` and `IdentityLogonEvents` show `svc_sql` remote logon to `AADCONNECT01` |
-| TVM exposure context | The aligned TVM tables show vulnerable software, inventory, evidence paths, configuration gaps, certificate context, hardware/firmware context, and vulnerability KB entries for `WIN11-04`, `AADCONNECT01`, and the Ubuntu branch |
-| Linux SSH/sudo branch | `DeviceLogonEvents`, `DeviceProcessEvents`, `DeviceEvents`, `DeviceImageLoadEvents`, `DeviceNetworkEvents`, and TVM tables show Ubuntu SSH, sudo, auditd, CUPS/IPP, `.so`, and package/CVE context |
-| Linux Oracle branch | `DeviceProcessEvents`, `DeviceNetworkEvents`, `DeviceFileEvents`, `AlertInfo`, and `AlertEvidence` show Python/Go tooling, Oracle TNS access on TCP/1521, and a synthetic sensitive export |
+![Expected key findings for the ADX workshop](../images/expected-findings-adx-modern.svg)
 
 ## Instructor-only alert answer key
 
