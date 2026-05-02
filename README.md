@@ -163,6 +163,10 @@ https://dataexplorer.azure.com/clusters/<cluster>.<region>.kusto.windows.net/dat
 
 Students should sign in with their workshop username/password and complete MFA using TAP or SMS.
 
+After login, students should see the ADX database, workshop tables, and query results in the web UI. The screenshot below shows the expected query experience using `SecurityIncident` telemetry:
+
+![ADX Web UI showing SecurityIncident query results](images/adx-query-securityincident-results.png)
+
 ### 5. Import the ADX SOC threat protection dashboard
 
 The repository includes an Azure Data Explorer dashboard template with a SOC-style landing page plus drilldown pages for identity/sign-ins, network/Graph activity, alert timeline review, and inventory/posture:
@@ -182,6 +186,10 @@ dashboards\cyber-defense-workshop-dashboard.json
 If you already imported an older copy, open that dashboard and use **File** > **Replace dashboard with file** to update it in place.
 
 If dashboard import is unavailable, use `dashboards\cyber-defense-workshop-dashboard.kql` to run and pin the same KQL tiles manually.
+
+After import, the **SOC Overview** page should provide a threat-protection landing view with alert, sign-in, identity, Graph, egress, MITRE, and scenario timeline tiles:
+
+![ADX SOC Overview dashboard for the cyber defense workshop](images/adx-soc-overview-dashboard.png)
 
 ### 6. Validate the package
 
