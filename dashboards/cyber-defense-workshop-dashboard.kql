@@ -228,6 +228,34 @@ AuditLogs
 | order by TimeGenerated asc
 
 // -----------------------------------------------------------------------------
+// Tile: Risky OAuth Consent
+let suspiciousIp =
+    SigninLogs
+    | where TimeGenerated between (StartTime .. EndTime)
+    | where IsRisky == true
+    | top 1 by TimeGenerated asc
+    | project IPAddress;
+CloudAppEvents
+| where Timestamp between (StartTime .. EndTime)
+| where IPAddress in (suspiciousIp)
+| project Timestamp, AccountDisplayName, AccountId, ActionType, ObjectName, OAuthAppId, RawEventData
+| order by Timestamp asc
+
+// -----------------------------------------------------------------------------
+// Tile: Risky User - Graph API Calls
+let suspiciousIp =
+    SigninLogs
+    | where TimeGenerated between (StartTime .. EndTime)
+    | where IsRisky == true
+    | top 1 by TimeGenerated asc
+    | project IPAddress;
+GraphApiAuditEvents
+| where TimeGenerated between (StartTime .. EndTime)
+| where IpAddress in (suspiciousIp)
+| project Timestamp=TimeGenerated, AccountObjectId, ApplicationId, RequestMethod, RequestUri, Scopes, ResponseStatusCode
+| order by Timestamp asc
+
+// -----------------------------------------------------------------------------
 // Tile: Top network destinations
 DeviceNetworkEvents
 | where TimeGenerated between (StartTime .. EndTime)

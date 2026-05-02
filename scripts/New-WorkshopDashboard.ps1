@@ -300,6 +300,34 @@ AuditLogs
 | order by TimeGenerated asc
 '@
 
+$riskyOAuthConsentQuery = @'
+let suspiciousIp =
+    SigninLogs
+    | where TimeGenerated between (['_startTime'] .. ['_endTime'])
+    | where IsRisky == true
+    | top 1 by TimeGenerated asc
+    | project IPAddress;
+CloudAppEvents
+| where Timestamp between (['_startTime'] .. ['_endTime'])
+| where IPAddress in (suspiciousIp)
+| project Timestamp, AccountDisplayName, AccountId, ActionType, ObjectName, OAuthAppId, RawEventData
+| order by Timestamp asc
+'@
+
+$riskyUserGraphApiCallsQuery = @'
+let suspiciousIp =
+    SigninLogs
+    | where TimeGenerated between (['_startTime'] .. ['_endTime'])
+    | where IsRisky == true
+    | top 1 by TimeGenerated asc
+    | project IPAddress;
+GraphApiAuditEvents
+| where TimeGenerated between (['_startTime'] .. ['_endTime'])
+| where IpAddress in (suspiciousIp)
+| project Timestamp=TimeGenerated, AccountObjectId, ApplicationId, RequestMethod, RequestUri, Scopes, ResponseStatusCode
+| order by Timestamp asc
+'@
+
 $loginOutcomesQuery = @'
 let Logons = union isfuzzy=true
 (SigninLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Timestamp=TimeGenerated, Source='Interactive Entra', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
@@ -448,6 +476,8 @@ $tiles.Add((New-Tile -Title 'Failed logins by source' -Query $failedLoginSources
 $tiles.Add((New-Tile -Title 'Top failed principals' -Query $topFailedPrincipalsQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'table' -X 6 -Y 6 -Width 6 -Height 5 -VisualOptions (New-TableOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Privileged / high-risk identities' -Query $privilegedIdentitiesQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 11 -Width 12 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Entra ID - Application Consent' -Query $entraApplicationConsentQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 18 -Width 12 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Risky OAuth Consent' -Query $riskyOAuthConsentQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 25 -Width 6 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
+$tiles.Add((New-Tile -Title 'Risky User - Graph API Calls' -Query $riskyUserGraphApiCallsQuery -PageId $identityPageId -DataSourceId $dataSourceId -VisualType 'table' -X 6 -Y 25 -Width 6 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
 
 $tiles.Add((New-Tile -Title 'Top network destinations' -Query $topNetworkDestinationsQuery -PageId $networkPageId -DataSourceId $dataSourceId -VisualType 'table' -X 0 -Y 0 -Width 7 -Height 7 -VisualOptions (New-TableOptions))) | Out-Null
 $tiles.Add((New-Tile -Title 'Network connections by process' -Query $networkByProcessQuery -PageId $networkPageId -DataSourceId $dataSourceId -VisualType 'bar' -X 7 -Y 0 -Width 5 -Height 7 -VisualOptions (New-ChartOptions -YAxisLabel 'Connections'))) | Out-Null

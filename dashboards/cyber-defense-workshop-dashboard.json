@@ -682,6 +682,50 @@
       ]
     },
     {
+      "id": "d9c5ca8f-1884-ca47-6068-23816a8bac2f",
+      "title": "Risky OAuth Consent",
+      "query": "let suspiciousIp =\r\n    SigninLogs\r\n    | where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n    | where IsRisky == true\r\n    | top 1 by TimeGenerated asc\r\n    | project IPAddress;\r\nCloudAppEvents\r\n| where Timestamp between (['_startTime'] .. ['_endTime'])\r\n| where IPAddress in (suspiciousIp)\r\n| project Timestamp, AccountDisplayName, AccountId, ActionType, ObjectName, OAuthAppId, RawEventData\r\n| order by Timestamp asc",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "6579b92c-2ec1-06bb-fd6d-6def689c4fa4",
+      "layout": {
+        "x": 0,
+        "y": 25,
+        "width": 6,
+        "height": 7
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
+      "id": "6d42fb6b-d57d-7f60-8b1d-80a8d91ad461",
+      "title": "Risky User - Graph API Calls",
+      "query": "let suspiciousIp =\r\n    SigninLogs\r\n    | where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n    | where IsRisky == true\r\n    | top 1 by TimeGenerated asc\r\n    | project IPAddress;\r\nGraphApiAuditEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| where IpAddress in (suspiciousIp)\r\n| project Timestamp=TimeGenerated, AccountObjectId, ApplicationId, RequestMethod, RequestUri, Scopes, ResponseStatusCode\r\n| order by Timestamp asc",
+      "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
+      "visualType": "table",
+      "pageId": "6579b92c-2ec1-06bb-fd6d-6def689c4fa4",
+      "layout": {
+        "x": 6,
+        "y": 25,
+        "width": 6,
+        "height": 7
+      },
+      "visualOptions": {
+        "hideTileTitle": false,
+        "table__enableRenderLinks": false
+      },
+      "usedParamVariables": [
+        "_startTime",
+        "_endTime"
+      ]
+    },
+    {
       "id": "adbe1c26-1b20-eb69-c0f0-4088603cf2e4",
       "title": "Top network destinations",
       "query": "DeviceNetworkEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl)\r\n| summarize Connections=count(), Devices=dcount(DeviceId), Ports=make_set(RemotePort, 8), Processes=make_set(InitiatingProcessFileName, 8) by Destination, RemoteIP, RemoteIPType, Protocol\r\n| top 25 by Connections desc",
