@@ -582,10 +582,6 @@ function New-WorkshopIdentity {
 function Get-WorkshopIdentityNameParts {
     param([Parameter(Mandatory)]$Identity)
 
-    if ($Identity.IsServiceAccount) {
-        return [pscustomobject]@{ GivenName = ''; Surname = '' }
-    }
-
     $parts = @($Identity.DisplayName -split '\s+', 2)
     [pscustomobject]@{
         GivenName = $parts[0]
@@ -619,21 +615,79 @@ function Get-WorkshopIdentitySourceProvider {
     return 'AzureActiveDirectory'
 }
 
+$identityGroupCatalog = @(
+    'All Company',
+    'USAG Cyber Users',
+    'DIB Security Team',
+    'Tenant Owner',
+    'XDR-SecAdmin-Full',
+    'XDR-SecAnalystT1-ReadOnly',
+    'SG-Sentinel-ContentDevelopers',
+    'Tier 0 Operators',
+    'Domain Users',
+    'Domain Admins',
+    'Service Accounts',
+    'Entra Connect Operators',
+    'Privileged Access Workstations',
+    'MDE Device Administrators',
+    'Finance Operations',
+    'Identity Engineering',
+    'Cloud Platform Engineering',
+    'Break Glass Accounts'
+)
+$azureRbacAssignedRoles = @(
+    'Owner',
+    'Contributor',
+    'Reader',
+    'User Access Administrator',
+    'Security Reader',
+    'Security Admin',
+    'Virtual Machine Contributor',
+    'Key Vault Administrator',
+    'Key Vault Reader',
+    'Storage Blob Data Reader',
+    'Storage Blob Data Contributor',
+    'Monitoring Reader',
+    'Log Analytics Reader',
+    'Automation Contributor',
+    'Managed Identity Operator'
+)
+$entraAssignedRoles = @(
+    'Global Administrator',
+    'Global Reader',
+    'Compliance Administrator',
+    'Security Administrator',
+    'Privileged Authentication Administrator',
+    'Azure AD Joined Device Local Administrator',
+    'Application Administrator',
+    'Cloud Application Administrator',
+    'Directory Readers',
+    'Helpdesk Administrator'
+)
+
 function Get-WorkshopIdentityGroups {
     param([Parameter(Mandatory)]$Identity)
 
     $groups = @(
-        (New-StableGuid 'group|Domain Users'),
-        (New-StableGuid ("group|department|{0}" -f ($Identity.Rid % 12)))
+        'All Company',
+        $identityGroupCatalog[$Identity.Rid % $identityGroupCatalog.Count]
     )
     if ($Identity.IsServiceAccount) {
-        $groups += New-StableGuid 'group|Service Accounts'
+        $groups += 'Service Accounts'
     }
     if ($Identity.IsPrivileged) {
-        $groups += New-StableGuid 'group|Tier 0 Operators'
+        $groups += 'Tenant Owner'
+        $groups += 'Tier 0 Operators'
+        $groups += 'XDR-SecAdmin-Full'
+    }
+    elseif (($Identity.Rid % 7) -eq 0) {
+        $groups += 'XDR-SecAnalystT1-ReadOnly'
+    }
+    if ($Identity.Name -eq 'svc_azureadconnect') {
+        $groups += 'Entra Connect Operators'
     }
 
-    return @($groups)
+    return @($groups | Select-Object -Unique)
 }
 
 function Get-WorkshopIdentityAssignedRoles {
@@ -641,14 +695,36 @@ function Get-WorkshopIdentityAssignedRoles {
 
     $roles = @()
     if ($Identity.IsPrivileged) {
-        $roles += New-StableGuid 'role|Global Reader'
-        $roles += New-StableGuid 'role|Privileged Authentication Administrator'
+        $roles += 'Global Administrator'
+        $roles += 'Privileged Authentication Administrator'
+        $roles += 'Owner'
+        $roles += 'User Access Administrator'
     }
-    elseif ($Identity.IsServiceAccount -or (($Identity.Rid % 9) -lt 4)) {
-        $roles += New-StableGuid ("role|workload|{0}" -f ($Identity.Rid % 8))
+    elseif ($Identity.IsServiceAccount) {
+        $roles += $azureRbacAssignedRoles[$Identity.Rid % $azureRbacAssignedRoles.Count]
+        if (($Identity.Rid % 3) -eq 0) {
+            $roles += 'Managed Identity Operator'
+        }
+    }
+    elseif (($Identity.Rid % 9) -lt 4) {
+        $roles += $entraAssignedRoles[$Identity.Rid % $entraAssignedRoles.Count]
+        $roles += $azureRbacAssignedRoles[$Identity.Rid % $azureRbacAssignedRoles.Count]
     }
 
-    return @($roles)
+    return @($roles | Select-Object -Unique)
+}
+
+function Get-WorkshopIdentityEligibleRoles {
+    param([Parameter(Mandatory)]$Identity)
+
+    if ($Identity.IsPrivileged) {
+        return @('Security Administrator', 'Key Vault Administrator')
+    }
+    if (($Identity.Rid % 13) -eq 0) {
+        return @('Reader')
+    }
+
+    return @()
 }
 
 function Get-WorkshopIdentityTags {
@@ -1097,6 +1173,7 @@ foreach ($user in $users) {
     $sourceProvider = Get-WorkshopIdentitySourceProvider -Identity $user
     $identityGroups = @(Get-WorkshopIdentityGroups -Identity $user)
     $assignedRoles = @(Get-WorkshopIdentityAssignedRoles -Identity $user)
+    $eligibleRoles = @(Get-WorkshopIdentityEligibleRoles -Identity $user)
     $identityTags = @(Get-WorkshopIdentityTags -Identity $user)
     $createdTime = $script:TelemetryEndTime.AddDays(-1 * (30 + ($user.Rid % 1800))).AddMinutes(-1 * ($user.Rid % 1440))
     $passwordTime = $script:TelemetryEndTime.AddDays(-1 * (7 + ($user.Rid % 120))).AddMinutes(-1 * ($user.Rid % 240))
@@ -1109,18 +1186,13 @@ foreach ($user in $users) {
     $criticality = if ($blastRadius -eq 'High') { 2 } elseif ($blastRadius -eq 'Medium') { 1 } else { 0 }
     $riskLevel = if ($user.Name -eq 'victor.alvarez') { 'High' } elseif (($user.Rid % 37) -eq 0) { 'Medium' } else { 'None' }
     $riskStatus = if ($riskLevel -eq 'High') { 'AtRisk' } elseif ($riskLevel -eq 'Medium') { 'Remediated' } else { 'None' }
-    $accountId = New-StableGuid "identity-account|$sourceProvider|$($user.Name)"
-    $identityId = New-StableGuid "identity-link|$($user.Name)"
-    $sourceProviderAccountId = if ($sourceProvider -eq 'ActiveDirectory') { $user.Sid } else { $user.ObjectId }
-    $emailAddress = if ($user.IsServiceAccount) { '' } else { $user.Upn -replace "@$tenantDomain$", '@usag-cyber.example' }
-    $sparseDisplayName = if (($user.Rid % 3) -ne 0) { $user.DisplayName } else { '' }
-    $sparseUpn = if (($user.Rid % 10) -lt 7) { $user.Upn } else { '' }
-    $sparseEmail = if (-not $user.IsServiceAccount -and (($user.Rid % 4) -eq 0)) { $emailAddress } else { '' }
-    $sparseGivenName = if (-not $user.IsServiceAccount -and (($user.Rid % 12) -lt 5)) { $nameParts.GivenName } else { '' }
-    $sparseSurname = if (-not $user.IsServiceAccount -and (($user.Rid % 8) -lt 3)) { $nameParts.Surname } else { '' }
-    $sparseAddress = if (($user.Rid % 67) -eq 0) { $identityAddresses[$user.Rid % $identityAddresses.Count] } else { '' }
-    $sparseCountry = if ($sparseAddress) { 'Germany' } else { '' }
-    $sparsePhone = if (($user.Rid % 20) -eq 0) { '+49-611-143-{0:D4}' -f ($user.Rid % 10000) } else { '' }
+    $sourceProviderAccountId = if ($sourceProvider -eq 'ActiveDirectory') { New-StableGuid "ad-source-account|$($user.Name)" } else { $user.ObjectId }
+    $accountIdPrefix = if ($sourceProvider -eq 'ActiveDirectory') { 'AdAccount' } else { 'AadAccount' }
+    $accountId = '{0}_{1}_{2}' -f $accountIdPrefix, $tenantId, $sourceProviderAccountId
+    $identityId = 'User_{0}_{1}' -f $tenantId, (New-StableGuid "identity-link|$($user.Name)")
+    $emailAddress = $user.Upn
+    $address = $identityAddresses[$user.Rid % $identityAddresses.Count]
+    $phone = '+49-611-143-{0:D4}' -f ($user.Rid % 10000)
     $sourceProviderRisk = if (($user.Rid % 30) -eq 0) { 'None' } else { $null }
     $accountTags = if ($identityTags.Count -gt 0) { $identityTags } else { @() }
 
@@ -1161,7 +1233,7 @@ foreach ($user in $users) {
         State = 'Hesse'
         Tags = $identityTags
         AssignedRoles = $assignedRoles
-        PrivilegedEntraPimRoles = if ($user.IsPrivileged) { @(New-StableGuid 'pim|eligible|privileged-auth-admin') } else { @() }
+        PrivilegedEntraPimRoles = $eligibleRoles
         TenantId = $tenantId
         SourceSystem = 'AzureAD'
         OnPremObjectId = New-StableGuid "onprem|$($user.Name)"
@@ -1184,41 +1256,45 @@ foreach ($user in $users) {
         IdentityLinkReason = ''
         IdentityLinkTime = Format-WorkshopTime $createdTime.AddDays(1)
         IdentityLinkBy = ''
-        DisplayName = $sparseDisplayName
-        AccountUpn = $sparseUpn
-        EmailAddress = $sparseEmail
-        CriticalityLevel = $null
-        DefenderRiskLevel = $null
+        DisplayName = $user.DisplayName
+        AccountUpn = $user.Upn
+        EmailAddress = $emailAddress
+        CriticalityLevel = $criticality
+        DefenderRiskLevel = if ($riskLevel -eq 'High') { 2 } elseif ($riskLevel -eq 'Medium') { 1 } else { 0 }
         DefenderRiskUpdateTime = Format-WorkshopTime $identityTime
         Type = if ($user.IsServiceAccount) { 'ServiceAccount' } else { 'User' }
-        GivenName = $sparseGivenName
-        Surname = $sparseSurname
-        EmployeeId = ''
-        Department = ''
-        JobTitle = ''
-        Address = $sparseAddress
-        City = ''
-        Country = $sparseCountry
-        Phone = $sparsePhone
-        Manager = ''
+        GivenName = $nameParts.GivenName
+        Surname = $nameParts.Surname
+        EmployeeId = $employeeId
+        Department = $department
+        JobTitle = $jobTitle
+        Address = $address
+        City = 'Wiesbaden'
+        Country = 'Germany'
+        Phone = $phone
+        Manager = $manager
         Sid = $user.Sid
         AccountStatus = $accountStatus
         SourceProvider = $sourceProvider
-        SourceProviderInstanceId = ''
-        SourceProviderInstanceDisplayName = ''
-        AuthenticationMethod = ''
-        AuthenticationSourceAcccountId = ''
-        EnrolledMfas = $null
+        SourceProviderInstanceId = $tenantId
+        SourceProviderInstanceDisplayName = if ($sourceProvider -eq 'ActiveDirectory') { 'USAG-CYBER Active Directory' } else { 'USAG Cyber Microsoft Entra ID' }
+        AuthenticationMethod = if ($sourceProvider -eq 'ActiveDirectory') { 'Hybrid' } else { 'Credentials' }
+        AuthenticationSourceAcccountId = if ($sourceProvider -eq 'ActiveDirectory') { $sourceProviderAccountId } else { '' }
+        EnrolledMfas = if ($user.IsServiceAccount) { @() } else { @('Temporary Access Pass', 'SMS') }
         LastPasswordChangeTime = Format-WorkshopTime $passwordTime
         GroupMembership = $identityGroups
-        AssignedRoles = if ($assignedRoles.Count -gt 0) { $assignedRoles } else { $null }
-        EligibleRoles = $null
-        TenantMembershipType = ''
+        AssignedRoles = $assignedRoles
+        EligibleRoles = $eligibleRoles
+        TenantMembershipType = 'Member'
         CreatedDateTime = Format-WorkshopTime $createdTime
         DeletedDateTime = Format-WorkshopTime $deletedTime
         Tags = $accountTags
         SourceProvderRiskLevel = $sourceProviderRisk
-        AdditionalFields = $null
+        AdditionalFields = @{
+            SourceSample = 'IdentityAccountInfo-RealTelemetry.csv'
+            IdentityEnvironment = if ($sourceProvider -eq 'ActiveDirectory') { 'Hybrid' } else { 'CloudOnly' }
+            AccountIdFormat = $accountIdPrefix
+        }
         TenantId = $tenantId
     }
 }
