@@ -55,6 +55,25 @@ function Format-WorkshopTime {
     $Time.ToUniversalTime().ToString('o')
 }
 
+function ConvertFrom-WorkshopSampleUtcTime {
+    param([Parameter(Mandatory)][string]$Value)
+
+    return [datetime]::Parse(
+        $Value,
+        [System.Globalization.CultureInfo]::InvariantCulture,
+        [System.Globalization.DateTimeStyles]::AssumeUniversal -bor [System.Globalization.DateTimeStyles]::AdjustToUniversal)
+}
+
+function ConvertFrom-WorkshopSampleJson {
+    param([AllowEmptyString()][string]$Value)
+
+    if ([string]::IsNullOrWhiteSpace($Value)) {
+        return [ordered]@{}
+    }
+
+    return ($Value | ConvertFrom-Json)
+}
+
 function New-DefaultValue {
     param([Parameter(Mandatory)][string]$Type, [Parameter(Mandatory)][datetime]$Time)
 
@@ -916,6 +935,49 @@ function Add-Record {
     $record = New-WorkshopRecordObject -Table $Table -Values $Values -Time $Time
     if ($null -ne $record) {
         $script:Records[$Table].Add($record) | Out-Null
+    }
+}
+
+function Add-WorkshopAadUserRiskEventsFromSample {
+    param([Parameter(Mandatory)][string]$Path)
+
+    if (-not (Test-Path -Path $Path)) {
+        throw "AADUserRiskEvents sample CSV not found: $Path"
+    }
+
+    foreach ($row in (Import-Csv -Path $Path)) {
+        $activityTime = ConvertFrom-WorkshopSampleUtcTime ([string]$row.'ActivityDateTime [UTC]')
+        $detectedTime = ConvertFrom-WorkshopSampleUtcTime ([string]$row.'DetectedDateTime [UTC]')
+        $lastUpdatedTime = ConvertFrom-WorkshopSampleUtcTime ([string]$row.'LastUpdatedDateTime [UTC]')
+        $timeGenerated = ConvertFrom-WorkshopSampleUtcTime ([string]$row.'TimeGenerated [UTC]')
+
+        Add-Record -Table 'AADUserRiskEvents' -Time $timeGenerated -Values @{
+            TenantId = [string]$row.TenantId
+            Activity = [string]$row.Activity
+            ActivityDateTime = Format-WorkshopTime $activityTime
+            AdditionalInfo = ConvertFrom-WorkshopSampleJson ([string]$row.AdditionalInfo)
+            CorrelationId = [string]$row.CorrelationId
+            DetectedDateTime = Format-WorkshopTime $detectedTime
+            DetectionTimingType = [string]$row.DetectionTimingType
+            Id = [string]$row.Id
+            IpAddress = [string]$row.IpAddress
+            LastUpdatedDateTime = Format-WorkshopTime $lastUpdatedTime
+            Location = ConvertFrom-WorkshopSampleJson ([string]$row.Location)
+            RequestId = [string]$row.RequestId
+            RiskDetail = [string]$row.RiskDetail
+            RiskEventType = [string]$row.RiskEventType
+            RiskLevel = [string]$row.RiskLevel
+            RiskState = [string]$row.RiskState
+            Source = [string]$row.Source
+            TokenIssuerType = [string]$row.TokenIssuerType
+            UserDisplayName = [string]$row.UserDisplayName
+            UserId = [string]$row.UserId
+            UserPrincipalName = [string]$row.UserPrincipalName
+            TimeGenerated = Format-WorkshopTime $timeGenerated
+            OperationName = [string]$row.OperationName
+            SourceSystem = [string]$row.SourceSystem
+            Type = [string]$row.Type
+        }
     }
 }
 
@@ -2795,6 +2857,9 @@ function Get-WorkshopTargetRowCount {
     param([Parameter(Mandatory)][string]$Table)
 
     $existingCount = $script:Records[$Table].Count
+    if ($Table -eq 'AADUserRiskEvents') {
+        return $existingCount
+    }
     if ($NormalRowsPerTable -eq 0) {
         return $existingCount
     }
@@ -4190,29 +4255,8 @@ Add-WorkshopScenarioSecurityIncident `
     -Entities @{ user = $alice.Upn; sourceDevice = $linux03.Name; targetDevice = $linuxDb.Name; database = 'Oracle ORCL'; sourceIp = '10.42.30.10' } `
     -TvmTables @('DeviceTvmSoftwareVulnerabilities', 'DeviceTvmSoftwareInventory', 'DeviceTvmHardwareFirmware', 'DeviceTvmSoftwareEvidenceBeta', 'DeviceTvmSoftwareVulnerabilitiesKB', 'DeviceTvmCertificateInfo', 'DeviceTvmSecureConfigurationAssessment')
 
-Add-Record -Table 'AADRiskyUsers' -Time $StartTime.AddMinutes(2) -Values @{
-    TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(2)
-    AADTenantId = $tenantId
-    Id = $victor.ObjectId
-    UserPrincipalName = $victor.Upn
-    RiskLevel = 'high'
-    RiskState = 'atRisk'
-    RiskDetail = 'none'
-    Type = 'AADRiskyUsers'
-}
-Add-Record -Table 'AADUserRiskEvents' -Time $StartTime.AddMinutes(2) -Values @{
-    TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(2)
-    AADTenantId = $tenantId
-    Id = New-StableGuid 'risk-event-victor'
-    UserPrincipalName = $victor.Upn
-    UserId = $victor.ObjectId
-    RiskEventType = 'unfamiliarFeatures'
-    RiskLevel = 'high'
-    RiskState = 'atRisk'
-    IpAddress = $externalIp
-    Location = 'DE'
-    Type = 'AADUserRiskEvents'
-}
+$aadUserRiskEventsSamplePath = Join-Path $PSScriptRoot '..\sample\AADRiskUserEvents.csv'
+Add-WorkshopAadUserRiskEventsFromSample -Path $aadUserRiskEventsSamplePath
 
 foreach ($table in $script:Schemas.Keys) {
     if ($script:Records[$table].Count -gt 0) {

@@ -47,6 +47,14 @@ if (-not $schemaFiles) {
     throw 'No schema files selected.'
 }
 
+if ($ForceRecreate) {
+    foreach ($deprecatedTable in @('AADRiskyUsers')) {
+        $deprecatedTableIdentifier = ConvertTo-WorkshopKustoIdentifier -Name $deprecatedTable
+        Write-Host "Dropping deprecated table $deprecatedTable if it exists"
+        Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".drop table $deprecatedTableIdentifier ifexists" | Out-Null
+    }
+}
+
 $expectedTableNames = New-Object System.Collections.Generic.List[string]
 foreach ($schemaFile in $schemaFiles) {
     $schema = Get-Content -Path $schemaFile.FullName -Raw | ConvertFrom-Json

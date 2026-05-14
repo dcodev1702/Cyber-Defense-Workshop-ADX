@@ -54,12 +54,6 @@
     "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadprovisioninglogs"
   },
   {
-    "name": "AADRiskyUsers",
-    "categories": ["EntraId", "IdentityProtection", "AzureMonitor"],
-    "sourceProduct": "Microsoft Entra ID Protection",
-    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadriskyusers"
-  },
-  {
     "name": "AADServicePrincipalSignInLogs",
     "categories": ["EntraId", "SignIn", "AzureMonitor"],
     "sourceProduct": "Microsoft Entra ID",

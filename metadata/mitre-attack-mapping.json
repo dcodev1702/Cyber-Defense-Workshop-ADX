@@ -8,7 +8,7 @@
       "tactic": "Initial Access",
       "techniqueId": "T1078.004",
       "techniqueName": "Valid Accounts: Cloud Accounts",
-      "primaryTables": ["SigninLogs", "EntraIdSignInEvents", "AADSignInEventsBeta", "AADUserRiskEvents", "AADRiskyUsers"]
+      "primaryTables": ["SigninLogs", "EntraIdSignInEvents", "AADSignInEventsBeta", "AADUserRiskEvents"]
     },
     {
       "scenarioMinute": 0,

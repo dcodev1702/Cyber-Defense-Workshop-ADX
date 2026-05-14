@@ -368,6 +368,11 @@ else {
             Description = 'risky Victor Alvarez Entra sign-in'
         },
         @{
+            FileName = 'AADUserRiskEvents.json'
+            Needles = @('AADUserRiskEvents', '7e9298ab-22e6-4a82-a53e-c5ed7faee977', '212.15.80.70', 'Lorenzo Ireland', 'lireland@DibSecurity.onmicrosoft.com', '9bf50b3d24dc5060ac15625135dc909b679aa1c55e0d133b2dd1d589b2470ec4', 'T1090.003,T1078', 'aiConfirmedSigninSafe')
+            Description = 'CSV-backed Identity Protection user risk event detections'
+        },
+        @{
             FileName = 'CloudAppEvents.json'
             Needles = @('OAuthAppConsentGranted', 'USAG Cyber Sync Helper', 'ServicePrincipalCredentialAdded', 'MIDNIGHT BLIZZARD')
             Description = 'OAuth consent and service-principal credential abuse'

@@ -205,7 +205,7 @@ The recommended two-hour flow is documented in [`docs\workshop_design.md`](docs/
 
 ## Key tables
 
-The package creates 48 tables from Microsoft Learn-derived schema JSON. The 21 tables below carry the bulk of the investigation work, grouped by the Microsoft platform that produces them:
+The package creates 47 tables from Microsoft Learn-derived schema JSON. The 21 tables below carry the bulk of the investigation work, grouped by the Microsoft platform that produces them:
 
 ![Key tables by Microsoft platform](images/key-tables.svg)
 
@@ -214,6 +214,7 @@ The package creates 48 tables from Microsoft Learn-derived schema JSON. The 21 t
 - Use workshop-only identities; do not use real employee accounts for student access.
 - Treat generated student roster CSV files as sensitive because they may contain initial passwords or TAP values.
 - Keep the scenario synthetic and isolated to ADX telemetry; no real attack execution is required.
+- `AADUserRiskEvents` is generated directly from [`sample\AADRiskUserEvents.csv`](sample/AADRiskUserEvents.csv) so the ADX table mirrors the sample export details instead of generic baseline rows.
 - Delete or disable workshop users after the event.
 - If reusing the ADX database for another class, rerun setup with `-ForceRecreateTables`.
 
