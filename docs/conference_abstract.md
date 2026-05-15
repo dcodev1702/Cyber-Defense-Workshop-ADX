@@ -1,4 +1,7 @@
-# Cyber Defense KQL Workshop: Investigating a Hybrid Identity Intrusion with Azure Data Explorer
+# Cyber Defense KQL Workshop: Investigating a Hybrid Identity Intrusion with XDR Telemetry
+
+**Author:** Lorenzo J. Ireland
+**Date:** May 14, 2026
 
 ## Abstract
 
