@@ -39,6 +39,8 @@ param(
     [int]$RandomSeed = 1702,
     [int]$SyntheticUserCount = 6000,
     [int]$SyntheticServiceAccountCount = 4000,
+    [ValidateRange(5000, 6000)]
+    [int]$AadUserRiskEventCount = 5500,
     [string[]]$TableName
 )
 
@@ -53,25 +55,6 @@ $StartTime = $script:TelemetryEndTime.AddMinutes(-90)
 function Format-WorkshopTime {
     param([Parameter(Mandatory)][datetime]$Time)
     $Time.ToUniversalTime().ToString('o')
-}
-
-function ConvertFrom-WorkshopSampleUtcTime {
-    param([Parameter(Mandatory)][string]$Value)
-
-    return [datetime]::Parse(
-        $Value,
-        [System.Globalization.CultureInfo]::InvariantCulture,
-        [System.Globalization.DateTimeStyles]::AssumeUniversal -bor [System.Globalization.DateTimeStyles]::AdjustToUniversal)
-}
-
-function ConvertFrom-WorkshopSampleJson {
-    param([AllowEmptyString()][string]$Value)
-
-    if ([string]::IsNullOrWhiteSpace($Value)) {
-        return [ordered]@{}
-    }
-
-    return ($Value | ConvertFrom-Json)
 }
 
 function New-DefaultValue {
@@ -938,46 +921,169 @@ function Add-Record {
     }
 }
 
-function Add-WorkshopAadUserRiskEventsFromSample {
-    param([Parameter(Mandatory)][string]$Path)
+function New-WorkshopRiskIpAddress {
+    param(
+        [Parameter(Mandatory)]$Location,
+        [Parameter(Mandatory)][int]$Index
+    )
 
-    if (-not (Test-Path -Path $Path)) {
-        throw "AADUserRiskEvents sample CSV not found: $Path"
+    $thirdOctet = 1 + (($Index * 37) % 223)
+    $fourthOctet = 1 + (($Index * 91) % 253)
+    return '{0}.{1}.{2}' -f $Location.IpPrefix, $thirdOctet, $fourthOctet
+}
+
+function Add-WorkshopAadUserRiskEvent {
+    param(
+        [Parameter(Mandatory)]$Identity,
+        [Parameter(Mandatory)][datetime]$ActivityTime,
+        [Parameter(Mandatory)]$Location,
+        [Parameter(Mandatory)][string]$IpAddress,
+        [Parameter(Mandatory)][string]$UserAgent,
+        [Parameter(Mandatory)][string]$RiskEventType,
+        [Parameter(Mandatory)][ValidateSet('Low', 'Medium', 'High')][string]$RiskLevel,
+        [Parameter(Mandatory)][string]$RiskState,
+        [Parameter(Mandatory)][string]$RiskDetail,
+        [Parameter(Mandatory)][string]$Seed,
+        [string]$CorrelationId,
+        [string]$MitreTechniques = 'T1078.004',
+        [string]$Scenario = 'Synthetic global user risk detection'
+    )
+
+    $detectedTime = $ActivityTime.AddSeconds((Get-WorkshopRandomInt -Minimum 0 -Maximum 45))
+    $lastUpdatedTime = $detectedTime.AddSeconds((Get-WorkshopRandomInt -Minimum 35 -Maximum 260))
+    if ([string]::IsNullOrWhiteSpace($CorrelationId)) {
+        $CorrelationId = New-StableGuid "aad-risk-correlation|$Seed"
     }
 
-    foreach ($row in (Import-Csv -Path $Path)) {
-        $activityTime = ConvertFrom-WorkshopSampleUtcTime ([string]$row.'ActivityDateTime [UTC]')
-        $detectedTime = ConvertFrom-WorkshopSampleUtcTime ([string]$row.'DetectedDateTime [UTC]')
-        $lastUpdatedTime = ConvertFrom-WorkshopSampleUtcTime ([string]$row.'LastUpdatedDateTime [UTC]')
-        $timeGenerated = ConvertFrom-WorkshopSampleUtcTime ([string]$row.'TimeGenerated [UTC]')
-
-        Add-Record -Table 'AADUserRiskEvents' -Time $timeGenerated -Values @{
-            TenantId = [string]$row.TenantId
-            Activity = [string]$row.Activity
-            ActivityDateTime = Format-WorkshopTime $activityTime
-            AdditionalInfo = ConvertFrom-WorkshopSampleJson ([string]$row.AdditionalInfo)
-            CorrelationId = [string]$row.CorrelationId
-            DetectedDateTime = Format-WorkshopTime $detectedTime
-            DetectionTimingType = [string]$row.DetectionTimingType
-            Id = [string]$row.Id
-            IpAddress = [string]$row.IpAddress
-            LastUpdatedDateTime = Format-WorkshopTime $lastUpdatedTime
-            Location = ConvertFrom-WorkshopSampleJson ([string]$row.Location)
-            RequestId = [string]$row.RequestId
-            RiskDetail = [string]$row.RiskDetail
-            RiskEventType = [string]$row.RiskEventType
-            RiskLevel = [string]$row.RiskLevel
-            RiskState = [string]$row.RiskState
-            Source = [string]$row.Source
-            TokenIssuerType = [string]$row.TokenIssuerType
-            UserDisplayName = [string]$row.UserDisplayName
-            UserId = [string]$row.UserId
-            UserPrincipalName = [string]$row.UserPrincipalName
-            TimeGenerated = Format-WorkshopTime $timeGenerated
-            OperationName = [string]$row.OperationName
-            SourceSystem = [string]$row.SourceSystem
-            Type = [string]$row.Type
+    Add-Record -Table 'AADUserRiskEvents' -Time $lastUpdatedTime -Values @{
+        TenantId = $tenantId
+        Activity = 'signin'
+        ActivityDateTime = Format-WorkshopTime $ActivityTime
+        AdditionalInfo = @(
+            @{ Key = 'userAgent'; Value = $UserAgent },
+            @{ Key = 'mitreTechniques'; Value = $MitreTechniques },
+            @{ Key = 'scenario'; Value = $Scenario }
+        )
+        CorrelationId = $CorrelationId
+        DetectedDateTime = Format-WorkshopTime $detectedTime
+        DetectionTimingType = 'realtime'
+        Id = New-StableHex "aad-user-risk-event|$Seed" 64
+        IpAddress = $IpAddress
+        LastUpdatedDateTime = Format-WorkshopTime $lastUpdatedTime
+        Location = @{
+            city = $Location.City
+            state = $Location.State
+            countryOrRegion = $Location.CountryOrRegion
+            geoCoordinates = @{ altitude = 0; latitude = $Location.Latitude; longitude = $Location.Longitude }
         }
+        OperationName = 'User Risk Detection'
+        RequestId = New-StableGuid "aad-risk-request|$Seed"
+        RiskDetail = $RiskDetail
+        RiskEventType = $RiskEventType
+        RiskLevel = $RiskLevel
+        RiskState = $RiskState
+        Source = 'IdentityProtection'
+        SourceSystem = ''
+        TimeGenerated = Format-WorkshopTime $lastUpdatedTime
+        TokenIssuerType = 'AzureAD'
+        Type = 'AADUserRiskEvents'
+        UserDisplayName = $Identity.DisplayName
+        UserId = $Identity.ObjectId
+        UserPrincipalName = $Identity.Upn
+    }
+}
+
+function Add-WorkshopAadUserRiskEvents {
+    param(
+        [Parameter(Mandatory)][object[]]$Identities,
+        [Parameter(Mandatory)][datetime]$ScenarioSignInTime,
+        [ValidateRange(5000, 6000)][int]$Count = 5500
+    )
+
+    $riskLocations = @(
+        [pscustomobject]@{ City = 'New York'; State = 'New York'; CountryOrRegion = 'US'; Latitude = 40.75891; Longitude = -73.97902; IpPrefix = '23.129' },
+        [pscustomobject]@{ City = 'Frankfurt am Main'; State = 'Hesse'; CountryOrRegion = 'DE'; Latitude = 50.1109; Longitude = 8.6821; IpPrefix = '185.225' },
+        [pscustomobject]@{ City = 'London'; State = 'England'; CountryOrRegion = 'GB'; Latitude = 51.5074; Longitude = -0.1278; IpPrefix = '51.52' },
+        [pscustomobject]@{ City = 'Paris'; State = 'Ile-de-France'; CountryOrRegion = 'FR'; Latitude = 48.8566; Longitude = 2.3522; IpPrefix = '51.158' },
+        [pscustomobject]@{ City = 'Amsterdam'; State = 'North Holland'; CountryOrRegion = 'NL'; Latitude = 52.3676; Longitude = 4.9041; IpPrefix = '89.248' },
+        [pscustomobject]@{ City = 'Madrid'; State = 'Madrid'; CountryOrRegion = 'ES'; Latitude = 40.4168; Longitude = -3.7038; IpPrefix = '83.97' },
+        [pscustomobject]@{ City = 'Stockholm'; State = 'Stockholm County'; CountryOrRegion = 'SE'; Latitude = 59.3293; Longitude = 18.0686; IpPrefix = '46.246' },
+        [pscustomobject]@{ City = 'Warsaw'; State = 'Masovian'; CountryOrRegion = 'PL'; Latitude = 52.2297; Longitude = 21.0122; IpPrefix = '77.79' },
+        [pscustomobject]@{ City = 'Toronto'; State = 'Ontario'; CountryOrRegion = 'CA'; Latitude = 43.6532; Longitude = -79.3832; IpPrefix = '142.44' },
+        [pscustomobject]@{ City = 'Sao Paulo'; State = 'Sao Paulo'; CountryOrRegion = 'BR'; Latitude = -23.5558; Longitude = -46.6396; IpPrefix = '177.54' },
+        [pscustomobject]@{ City = 'Mexico City'; State = 'Ciudad de Mexico'; CountryOrRegion = 'MX'; Latitude = 19.4326; Longitude = -99.1332; IpPrefix = '201.150' },
+        [pscustomobject]@{ City = 'Buenos Aires'; State = 'Buenos Aires'; CountryOrRegion = 'AR'; Latitude = -34.6037; Longitude = -58.3816; IpPrefix = '181.30' },
+        [pscustomobject]@{ City = 'Cape Town'; State = 'Western Cape'; CountryOrRegion = 'ZA'; Latitude = -33.9249; Longitude = 18.4241; IpPrefix = '196.25' },
+        [pscustomobject]@{ City = 'Lagos'; State = 'Lagos'; CountryOrRegion = 'NG'; Latitude = 6.5244; Longitude = 3.3792; IpPrefix = '102.89' },
+        [pscustomobject]@{ City = 'Nairobi'; State = 'Nairobi County'; CountryOrRegion = 'KE'; Latitude = -1.2921; Longitude = 36.8219; IpPrefix = '41.90' },
+        [pscustomobject]@{ City = 'Dubai'; State = 'Dubai'; CountryOrRegion = 'AE'; Latitude = 25.2048; Longitude = 55.2708; IpPrefix = '94.200' },
+        [pscustomobject]@{ City = 'Tel Aviv'; State = 'Tel Aviv District'; CountryOrRegion = 'IL'; Latitude = 32.0853; Longitude = 34.7818; IpPrefix = '80.179' },
+        [pscustomobject]@{ City = 'Mumbai'; State = 'Maharashtra'; CountryOrRegion = 'IN'; Latitude = 19.0760; Longitude = 72.8777; IpPrefix = '103.21' },
+        [pscustomobject]@{ City = 'Bengaluru'; State = 'Karnataka'; CountryOrRegion = 'IN'; Latitude = 12.9716; Longitude = 77.5946; IpPrefix = '103.22' },
+        [pscustomobject]@{ City = 'Singapore'; State = 'Central Region'; CountryOrRegion = 'SG'; Latitude = 1.3521; Longitude = 103.8198; IpPrefix = '103.9' },
+        [pscustomobject]@{ City = 'Tokyo'; State = 'Tokyo'; CountryOrRegion = 'JP'; Latitude = 35.6762; Longitude = 139.6503; IpPrefix = '133.242' },
+        [pscustomobject]@{ City = 'Seoul'; State = 'Seoul'; CountryOrRegion = 'KR'; Latitude = 37.5665; Longitude = 126.9780; IpPrefix = '121.78' },
+        [pscustomobject]@{ City = 'Sydney'; State = 'New South Wales'; CountryOrRegion = 'AU'; Latitude = -33.8688; Longitude = 151.2093; IpPrefix = '203.12' },
+        [pscustomobject]@{ City = 'Auckland'; State = 'Auckland'; CountryOrRegion = 'NZ'; Latitude = -36.8509; Longitude = 174.7645; IpPrefix = '202.89' },
+        [pscustomobject]@{ City = 'Hong Kong'; State = 'Hong Kong'; CountryOrRegion = 'HK'; Latitude = 22.3193; Longitude = 114.1694; IpPrefix = '103.15' },
+        [pscustomobject]@{ City = 'Jakarta'; State = 'DKI Jakarta'; CountryOrRegion = 'ID'; Latitude = -6.2088; Longitude = 106.8456; IpPrefix = '103.28' },
+        [pscustomobject]@{ City = 'Bangkok'; State = 'Bangkok'; CountryOrRegion = 'TH'; Latitude = 13.7563; Longitude = 100.5018; IpPrefix = '103.13' },
+        [pscustomobject]@{ City = 'Istanbul'; State = 'Istanbul'; CountryOrRegion = 'TR'; Latitude = 41.0082; Longitude = 28.9784; IpPrefix = '185.106' },
+        [pscustomobject]@{ City = 'Zurich'; State = 'Zurich'; CountryOrRegion = 'CH'; Latitude = 47.3769; Longitude = 8.5417; IpPrefix = '80.74' },
+        [pscustomobject]@{ City = 'Dublin'; State = 'Leinster'; CountryOrRegion = 'IE'; Latitude = 53.3498; Longitude = -6.2603; IpPrefix = '78.153' }
+    )
+    $riskUserAgents = @(
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1',
+        'Mozilla/5.0 (iPad; CPU OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1',
+        'Mozilla/5.0 (Linux; Android 14; Pixel 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 14; SM-S928B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/25.0 Chrome/121.0.0.0 Mobile Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edg/125.0.0.0 Safari/537.36'
+    )
+    $riskEventTypes = @('anonymizedIPAddress', 'unfamiliarFeatures', 'unlikelyTravel', 'maliciousIPAddress', 'passwordSpray', 'suspiciousBrowser', 'leakedCredentials')
+    $riskLevels = @('Low', 'Medium', 'High')
+    $riskDetailsByState = @{
+        atRisk = @('none', 'adminConfirmedSigninCompromised')
+        remediated = @('userPassedMFADrivenByRiskBasedPolicy', 'userPerformedSecuredPasswordReset')
+        dismissed = @('aiConfirmedSigninSafe', 'adminDismissedAllRiskForUser')
+        confirmedSafe = @('adminConfirmedSigninSafe', 'aiConfirmedSigninSafe')
+        confirmedCompromised = @('adminConfirmedSigninCompromised', 'adminConfirmedUserCompromised')
+    }
+    $riskStatesByLevel = @{
+        Low = @('remediated', 'dismissed', 'confirmedSafe')
+        Medium = @('atRisk', 'remediated', 'dismissed')
+        High = @('atRisk', 'confirmedCompromised', 'remediated')
+    }
+
+    $frankfurt = $riskLocations | Where-Object { $_.City -eq 'Frankfurt am Main' } | Select-Object -First 1
+    Add-WorkshopAadUserRiskEvent -Identity $victor -ActivityTime $ScenarioSignInTime -Location $frankfurt -IpAddress $externalIp -UserAgent $browserUserAgent -RiskEventType 'unfamiliarFeatures' -RiskLevel 'High' -RiskState 'atRisk' -RiskDetail 'none' -Seed 'scenario-victor-unfamiliar' -CorrelationId (New-StableGuid 'signin-correlation') -MitreTechniques 'T1078.004,T1090.002' -Scenario 'Compromised user risky sign-in from unfamiliar infrastructure'
+    Add-WorkshopAadUserRiskEvent -Identity $victor -ActivityTime $ScenarioSignInTime.AddSeconds(19) -Location $frankfurt -IpAddress $externalIp -UserAgent $browserUserAgent -RiskEventType 'anonymizedIPAddress' -RiskLevel 'High' -RiskState 'atRisk' -RiskDetail 'none' -Seed 'scenario-victor-anonymized-ip' -CorrelationId (New-StableGuid 'signin-correlation') -MitreTechniques 'T1078.004,T1090.002' -Scenario 'Compromised user risky sign-in from unfamiliar infrastructure'
+
+    $normalIdentities = @($Identities | Where-Object { -not $_.IsServiceAccount })
+    for ($index = $script:Records['AADUserRiskEvents'].Count; $index -lt $Count; $index++) {
+        $identity = $normalIdentities[$index % $normalIdentities.Count]
+        $location = Get-WorkshopRandomItem $riskLocations
+        $riskLevel = Get-WorkshopRandomItem $riskLevels
+        $riskState = Get-WorkshopRandomItem $riskStatesByLevel[$riskLevel]
+        $riskDetail = Get-WorkshopRandomItem $riskDetailsByState[$riskState]
+        $activityTime = $script:TelemetryEndTime.AddDays(-1 * (Get-WorkshopRandomInt -Minimum 0 -Maximum $NormalLookbackDays)).AddMinutes(-1 * (Get-WorkshopRandomInt -Minimum 0 -Maximum 1440)).AddSeconds((Get-WorkshopRandomInt -Minimum 0 -Maximum 60))
+
+        Add-WorkshopAadUserRiskEvent `
+            -Identity $identity `
+            -ActivityTime $activityTime `
+            -Location $location `
+            -IpAddress (New-WorkshopRiskIpAddress -Location $location -Index $index) `
+            -UserAgent (Get-WorkshopRandomItem $riskUserAgents) `
+            -RiskEventType (Get-WorkshopRandomItem $riskEventTypes) `
+            -RiskLevel $riskLevel `
+            -RiskState $riskState `
+            -RiskDetail $riskDetail `
+            -Seed "synthetic|$index|$($identity.ObjectId)|$($location.City)" `
+            -MitreTechniques (Get-WorkshopRandomItem @('T1078.004', 'T1090.002,T1078.004', 'T1110.003,T1078.004'))
     }
 }
 
@@ -4255,8 +4361,7 @@ Add-WorkshopScenarioSecurityIncident `
     -Entities @{ user = $alice.Upn; sourceDevice = $linux03.Name; targetDevice = $linuxDb.Name; database = 'Oracle ORCL'; sourceIp = '10.42.30.10' } `
     -TvmTables @('DeviceTvmSoftwareVulnerabilities', 'DeviceTvmSoftwareInventory', 'DeviceTvmHardwareFirmware', 'DeviceTvmSoftwareEvidenceBeta', 'DeviceTvmSoftwareVulnerabilitiesKB', 'DeviceTvmCertificateInfo', 'DeviceTvmSecureConfigurationAssessment')
 
-$aadUserRiskEventsSamplePath = Join-Path $PSScriptRoot '..\sample\AADRiskUserEvents.csv'
-Add-WorkshopAadUserRiskEventsFromSample -Path $aadUserRiskEventsSamplePath
+Add-WorkshopAadUserRiskEvents -Identities $users -ScenarioSignInTime $signinTime -Count $AadUserRiskEventCount
 
 foreach ($table in $script:Schemas.Keys) {
     if ($script:Records[$table].Count -gt 0) {

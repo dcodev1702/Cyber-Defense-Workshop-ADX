@@ -361,6 +361,103 @@ else {
         }
     }
 
+    $aadUserRiskEventsPath = Join-Path $DataDirectory 'AADUserRiskEvents.json'
+    if (-not (Test-Path $aadUserRiskEventsPath)) {
+        Add-TestError 'Scenario validation expected AADUserRiskEvents.json for Identity Protection user risk detections.'
+    }
+    else {
+        $riskCount = 0
+        $riskIds = @{}
+        $riskCountries = @{}
+        $riskUsers = @{}
+        $riskUserAgents = @{}
+        $victorRiskSigninRows = 0
+        foreach ($line in (Get-Content -Path $aadUserRiskEventsPath)) {
+            if ([string]::IsNullOrWhiteSpace($line)) {
+                continue
+            }
+
+            $riskCount++
+            try {
+                $record = $line | ConvertFrom-Json
+            }
+            catch {
+                Add-TestError "Invalid JSON in AADUserRiskEvents.json line $riskCount`: $($_.Exception.Message)"
+                continue
+            }
+
+            if ([string]::IsNullOrWhiteSpace([string]$record.Id)) {
+                Add-TestError "AADUserRiskEvents.json line $riskCount has an empty Id."
+            }
+            elseif ($riskIds.ContainsKey([string]$record.Id)) {
+                Add-TestError "AADUserRiskEvents.json line $riskCount has duplicate Id $($record.Id)."
+            }
+            else {
+                $riskIds[[string]$record.Id] = $true
+            }
+
+            if ([string]$record.Source -ne 'IdentityProtection') {
+                Add-TestError "AADUserRiskEvents.json line $riskCount Source is not IdentityProtection."
+            }
+            if ([string]$record.TokenIssuerType -ne 'AzureAD') {
+                Add-TestError "AADUserRiskEvents.json line $riskCount TokenIssuerType is not AzureAD."
+            }
+            if ([string]$record.Type -ne 'AADUserRiskEvents') {
+                Add-TestError "AADUserRiskEvents.json line $riskCount Type is not AADUserRiskEvents."
+            }
+            if ([string]$record.DetectionTimingType -ne 'realtime') {
+                Add-TestError "AADUserRiskEvents.json line $riskCount DetectionTimingType is not realtime."
+            }
+            if ([string]$record.RiskLevel -notin @('Low', 'Medium', 'High')) {
+                Add-TestError "AADUserRiskEvents.json line $riskCount has invalid RiskLevel $($record.RiskLevel)."
+            }
+
+            if (-not $record.Location -or [string]::IsNullOrWhiteSpace([string]$record.Location.city) -or [string]::IsNullOrWhiteSpace([string]$record.Location.countryOrRegion)) {
+                Add-TestError "AADUserRiskEvents.json line $riskCount has incomplete Location details."
+            }
+            else {
+                $riskCountries[[string]$record.Location.countryOrRegion] = $true
+            }
+            if (-not $record.Location.geoCoordinates -or $null -eq $record.Location.geoCoordinates.latitude -or $null -eq $record.Location.geoCoordinates.longitude) {
+                Add-TestError "AADUserRiskEvents.json line $riskCount has incomplete geoCoordinates."
+            }
+            elseif ([double]$record.Location.geoCoordinates.latitude -lt -90 -or [double]$record.Location.geoCoordinates.latitude -gt 90 -or [double]$record.Location.geoCoordinates.longitude -lt -180 -or [double]$record.Location.geoCoordinates.longitude -gt 180) {
+                Add-TestError "AADUserRiskEvents.json line $riskCount has out-of-range geoCoordinates."
+            }
+
+            if (-not [string]::IsNullOrWhiteSpace([string]$record.UserPrincipalName)) {
+                $riskUsers[[string]$record.UserPrincipalName] = $true
+            }
+            if ($record.AdditionalInfo -and @($record.AdditionalInfo).Count -gt 0) {
+                foreach ($info in @($record.AdditionalInfo)) {
+                    if ([string]$info.Key -eq 'userAgent' -and -not [string]::IsNullOrWhiteSpace([string]$info.Value)) {
+                        $riskUserAgents[[string]$info.Value] = $true
+                    }
+                }
+            }
+
+            if ([string]$record.UserPrincipalName -eq 'victor.alvarez@usag-cyber.local' -and [string]$record.IpAddress -eq '185.225.73.18' -and [string]$record.RiskLevel -eq 'High') {
+                $victorRiskSigninRows++
+            }
+        }
+
+        if ($riskCount -lt 5000 -or $riskCount -gt 6000) {
+            Add-TestError "AADUserRiskEvents.json expected between 5000 and 6000 rows, found $riskCount."
+        }
+        if ($riskCountries.Count -lt 20) {
+            Add-TestError "AADUserRiskEvents.json expected at least 20 countries, found $($riskCountries.Count)."
+        }
+        if ($riskUsers.Count -lt 20) {
+            Add-TestError "AADUserRiskEvents.json expected at least 20 distinct users, found $($riskUsers.Count)."
+        }
+        if ($riskUserAgents.Count -lt 5) {
+            Add-TestError "AADUserRiskEvents.json expected at least 5 browser user-agent strings, found $($riskUserAgents.Count)."
+        }
+        if ($victorRiskSigninRows -lt 2) {
+            Add-TestError 'AADUserRiskEvents.json expected at least two high-risk Victor Alvarez rows tied to the scenario sign-in IP.'
+        }
+    }
+
     $scenarioChecks = @(
         @{
             FileName = 'SigninLogs.json'
@@ -369,8 +466,8 @@ else {
         },
         @{
             FileName = 'AADUserRiskEvents.json'
-            Needles = @('AADUserRiskEvents', '7e9298ab-22e6-4a82-a53e-c5ed7faee977', '212.15.80.70', 'Lorenzo Ireland', 'lireland@DibSecurity.onmicrosoft.com', '9bf50b3d24dc5060ac15625135dc909b679aa1c55e0d133b2dd1d589b2470ec4', 'T1090.003,T1078', 'aiConfirmedSigninSafe')
-            Description = 'CSV-backed Identity Protection user risk event detections'
+            Needles = @('AADUserRiskEvents', 'IdentityProtection', 'AzureAD', 'victor.alvarez@usag-cyber.local', '185.225.73.18', 'Compromised user risky sign-in from unfamiliar infrastructure', 'unfamiliarFeatures', 'anonymizedIPAddress')
+            Description = 'synthetic Identity Protection user risk event detections'
         },
         @{
             FileName = 'CloudAppEvents.json'

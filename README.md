@@ -214,7 +214,7 @@ The package creates 47 tables from Microsoft Learn-derived schema JSON. The 21 t
 - Use workshop-only identities; do not use real employee accounts for student access.
 - Treat generated student roster CSV files as sensitive because they may contain initial passwords or TAP values.
 - Keep the scenario synthetic and isolated to ADX telemetry; no real attack execution is required.
-- `AADUserRiskEvents` is generated directly from [`sample\AADRiskUserEvents.csv`](sample/AADRiskUserEvents.csv) so the ADX table mirrors the sample export details instead of generic baseline rows.
+- `AADUserRiskEvents` generates 5,500 synthetic global Identity Protection risk detections, including scenario-aligned high-risk rows for Victor Alvarez's compromised sign-in.
 - Delete or disable workshop users after the event.
 - If reusing the ADX database for another class, rerun setup with `-ForceRecreateTables`.
 
