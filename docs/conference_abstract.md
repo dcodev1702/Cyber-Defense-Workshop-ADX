@@ -1,6 +1,7 @@
 # Cyber Defense KQL Workshop: Investigating a Hybrid Identity Intrusion with XDR Telemetry
 
 **Author:** Lorenzo J. Ireland
+
 **Date:** May 14, 2026
 
 ## Abstract
@@ -40,3 +41,7 @@ By the end of this session, participants will be able to:
 - Microsoft Security
 - KQL
 - Purple Team / Training Lab
+
+## Workshop Topology
+
+![Cyber Defense Workshop ADX topology](../images/cyber-defense-workshop-adx-topology-enhanced-v7.png)
