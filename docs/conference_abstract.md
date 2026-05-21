@@ -45,3 +45,7 @@ By the end of this session, participants will be able to:
 ## Workshop Topology
 
 ![Cyber Defense Workshop ADX topology](../images/cyber-defense-workshop-adx-topology-enhanced-v7.png)
+
+This SOC dashboard is useful because it gives analysts a shared operational view of the same hybrid identity intrusion they investigate in the workshop, bringing alert volume, affected users, risky sign-ins, endpoint evidence, cloud activity, and timeline pivots into one place. For SOCs, that matters because cyber defense depends on quickly moving from isolated signals to correlated decisions: which identity is compromised, which device or service principal matters, what evidence confirms the scope, and where responders should hunt next. By grounding those decisions in Azure and XDR backed telemetry and KQL-driven views, the dashboard helps teams triage faster, preserve investigative context, and practice the same detection, correlation, and response habits they need during real incidents.
+
+![ADX SOC overview dashboard](../images/adx-soc-overview-dashboard.png)
