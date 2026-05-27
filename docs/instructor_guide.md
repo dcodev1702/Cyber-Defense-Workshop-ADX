@@ -4,10 +4,11 @@
 
 1. Confirm the ADX cluster exists.
 2. Run `scripts\Initialize-Workshop.ps1` to create the database, tables, mappings, generated data, and ingestion.
-3. Create or stage the 20 student accounts using `scripts\New-WorkshopStudents.ps1`.
-4. Grant the student group ADX database viewer access using `scripts\Grant-StudentAdxAccess.ps1`.
-5. Open the ADX Web UI URL and confirm the database is visible.
-6. Load `workshop\student_lab.kql` in the query editor.
+3. Create or confirm the participant security group and B2B access package described in `user_creation\README.md`.
+4. Grant the participant group ADX database viewer access using `scripts\Grant-StudentAdxAccess.ps1` or an equivalent Kusto management command.
+5. Share the ADX dashboard with the participant group using dashboard `Can view` permission.
+6. Open the ADX Web UI URL with a pilot participant account and confirm the database, dashboard, and query results are visible.
+7. Load `workshop\student_lab.kql` in the query editor.
 
 ## Instructor storyline
 

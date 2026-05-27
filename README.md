@@ -4,7 +4,7 @@
 
 This repository contains a complete two-hour cyber defense workshop package for teaching KQL-driven investigation in Azure Data Explorer (ADX). The workshop uses synthetic Microsoft security telemetry loaded into an ADX database so students can investigate a realistic hybrid identity and endpoint intrusion without needing live production infrastructure.
 
-The lab is designed for **20 students** using the **ADX Web UI** with username/password sign-in and TAP or SMS MFA. Students query Microsoft Defender XDR-style, Microsoft Defender for Endpoint (MDE), Microsoft Defender for Identity (MDI), Microsoft Entra ID, Microsoft Graph, sign-in, cloud app, and alert telemetry.
+The lab is designed for **20 students** using the **ADX Web UI**. For conference delivery, students should be provisioned as Microsoft Entra B2B guests through an access package, protected with MFA, and authorized through a participant security group. Students query Microsoft Defender XDR-style, Microsoft Defender for Endpoint (MDE), Microsoft Defender for Identity (MDI), Microsoft Entra ID, Microsoft Graph, sign-in, cloud app, and alert telemetry.
 
 ## Purpose
 
@@ -23,7 +23,7 @@ To deploy and run the workshop, you need:
 - ☁️ An existing ADX cluster
 - 🔐 Azure permissions to create or manage an ADX database
 - 🧭 ADX database admin permissions for table creation and ingestion
-- 👥 Entra permissions for student user/group/TAP creation if using the identity helper script
+- 👥 Entra permissions for B2B guest onboarding, access packages, security groups, and Conditional Access
 - 🖥️ PowerShell 7 with the Azure, Kusto, and Microsoft Graph modules installed
 - ⚙️ Azure CLI installed for fallback token acquisition and operational troubleshooting
 
@@ -87,7 +87,7 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | ADX backup | Creates secured ADLS Gen2 backup storage, exports schema records, exports table data as Parquet, and restores from the backup manifest | [`adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1`](adx_db_backupNrestore/Initialize-AdxBackupStorage.ps1), [`adx_db_backupNrestore\Backup-AdxDatabase.ps1`](adx_db_backupNrestore/Backup-AdxDatabase.ps1), [`adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1`](adx_db_backupNrestore/Restore-AdxDatabaseBackup.ps1), [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md) |
 | Schemas | Holds one Microsoft Learn-derived JSON schema file per ADX table | [`schemas\`](schemas/), [`metadata\tables.manifest.json`](metadata/tables.manifest.json), [`tools\Build-SchemasFromMicrosoftLearn.ps1`](tools/Build-SchemasFromMicrosoftLearn.ps1) |
 | Synthetic data | Holds generated schema-aligned NDJSON telemetry files | [`data\generated\`](data/generated/), [`data\scenario-summary.json`](data/scenario-summary.json), [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1) |
-| Student access | Creates or stages student users, TAP values, group access, and ADX viewer permissions | [`scripts\New-WorkshopStudents.ps1`](scripts/New-WorkshopStudents.ps1), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1), [`docs\student_access.md`](docs/student_access.md) |
+| Participant access | Documents SFI-aligned B2B guest provisioning, MFA, access-package lifecycle, participant group access, ADX database viewer permissions, and dashboard sharing | [`user_creation\README.md`](user_creation/README.md), [`docs\student_access.md`](docs/student_access.md), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1) |
 | Scenario and MITRE | Documents the threat actor framing, infrastructure, and attack-vector to ATT&CK mapping | [`docs\threat-actor-midnight-blizzard.md`](docs/threat-actor-midnight-blizzard.md), [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json), [`data\scenario-summary.json`](data/scenario-summary.json), [`docs\workshop_design.md`](docs/workshop_design.md) |
 | Workshop content | Provides the student lab, instructor guide, design notes, and diagrams | [`workshop\student_lab.kql`](workshop/student_lab.kql), [`docs\instructor_guide.md`](docs/instructor_guide.md), [`docs\workshop_design.md`](docs/workshop_design.md), [`docs\diagrams.md`](docs/diagrams.md) |
 | Slides | Provides an instructor-led slide outline and a PowerPoint generator for Windows systems with PowerPoint installed | [`workshop\slide_deck_outline.md`](workshop/slide_deck_outline.md), [`scripts\New-WorkshopDeck.ps1`](scripts/New-WorkshopDeck.ps1) |
@@ -162,27 +162,11 @@ Restore later from the generated local manifest and schema file:
 
 For operational details and the security model, see [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md).
 
-### 3. Create or stage student identities
+### 3. Provision participant access
 
-Create the CSV roster only:
+For SFI-aligned conference delivery, provision students as Microsoft Entra B2B guests through an entitlement management access package. The access package should add approved participants to a resource-tenant security group, enforce MFA through Conditional Access, and expire access after the event.
 
-```powershell
-.\scripts\New-WorkshopStudents.ps1 `
-  -TenantDomain '<tenant-domain>' `
-  -InitialPassword '<temporary-password>'
-```
-
-Create cloud-only users, a student security group, and Temporary Access Pass values:
-
-```powershell
-.\scripts\New-WorkshopStudents.ps1 `
-  -TenantDomain '<tenant-domain>' `
-  -InitialPassword '<temporary-password>' `
-  -CreateUsers `
-  -CreateTemporaryAccessPass
-```
-
-Grant ADX database viewer access to the student group:
+Grant ADX database viewer access to the participant security group:
 
 ```powershell
 .\scripts\Grant-StudentAdxAccess.ps1 `
@@ -197,7 +181,7 @@ Grant ADX database viewer access to the student group:
 https://dataexplorer.azure.com/clusters/<cluster>.<region>.kusto.windows.net/databases/CyberDefenseKqlWorkshop
 ```
 
-Students should sign in with their workshop username/password and complete MFA using TAP or SMS.
+Students sign in with their home organization identity, redeem the guest invitation when prompted, and complete MFA according to the resource tenant policy.
 
 After login, students should see the ADX database, workshop tables, and query results in the web UI. The screenshot below shows the expected query experience using `SecurityIncident` telemetry:
 
@@ -223,6 +207,8 @@ If you already imported an older copy, open that dashboard and use **File** > **
 
 If dashboard import is unavailable, use `dashboards\cyber-defense-workshop-dashboard.kql` to run and pin the same KQL tiles manually.
 
+Share the dashboard with the participant security group using dashboard `Can view` permission, then distribute the dashboard link. Dashboard access still requires underlying ADX database viewer access.
+
 After import, the **SOC Overview** page should provide a threat-protection landing view with alert, sign-in, identity, Graph, egress, MITRE, and scenario timeline tiles:
 
 ![ADX SOC Overview dashboard for the cyber defense workshop](images/adx-soc-overview-dashboard.png)
@@ -247,13 +233,13 @@ The package creates 47 tables from Microsoft Learn-derived schema JSON. The 21 t
 
 ## Security and operations notes
 
-- Use workshop-only identities; do not use real employee accounts for student access.
-- Treat generated student roster CSV files as sensitive because they may contain initial passwords or TAP values.
+- Use B2B guest access for external conference participants; do not use shared accounts or unmanaged temporary passwords.
+- Treat generated student roster CSV files as sensitive if using the internal-only identity helper scripts because they may contain initial passwords or TAP values.
 - Treat ADX backup manifests and local `schema.csl` files as sensitive operational artifacts. Local backups are written under `data\backups\`, which is git-ignored.
 - ADX backups use ADLS Gen2, a user-assigned managed identity, RBAC, disabled shared-key access, and disabled anonymous blob access. Prefer the default managed-private-endpoint mode for nonpublic storage.
 - Keep the scenario synthetic and isolated to ADX telemetry; no real attack execution is required.
 - `AADUserRiskEvents` generates 5,500 synthetic global Identity Protection risk detections, including scenario-aligned high-risk rows for Victor Alvarez's compromised sign-in.
-- Delete or disable workshop users after the event.
+- Expire or remove participant access package assignments after the event and confirm the participant security group is empty.
 - If reusing the ADX database for another class, rerun setup with `-ForceRecreateTables`.
 
 ## Main entry points
@@ -264,6 +250,7 @@ The package creates 47 tables from Microsoft Learn-derived schema JSON. The 21 t
 - Diagrams: [`docs\diagrams.md`](docs/diagrams.md)
 - ADX backup guide: [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md)
 - Threat actor profile: [`docs\threat-actor-midnight-blizzard.md`](docs/threat-actor-midnight-blizzard.md)
+- B2B user provisioning guide: [`user_creation\README.md`](user_creation/README.md)
 - Student access guide: [`docs\student_access.md`](docs/student_access.md)
 - MITRE mapping: [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json)
 - Scenario summary: [`data\scenario-summary.json`](data/scenario-summary.json)
