@@ -84,7 +84,7 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | Area | Purpose | Primary files |
 | --- | --- | --- |
 | ADX setup | Creates the ADX database tables, JSON ingestion mappings, generated telemetry, and ingestion flow | [`scripts\Initialize-Workshop.ps1`](scripts/Initialize-Workshop.ps1), [`scripts\Initialize-AdxTables.ps1`](scripts/Initialize-AdxTables.ps1), [`scripts\Import-SyntheticTelemetry.ps1`](scripts/Import-SyntheticTelemetry.ps1), [`scripts\AdxWorkshop.Common.psm1`](scripts/AdxWorkshop.Common.psm1) |
-| ADX backup | Creates secured ADLS Gen2 backup storage, exports schema records, exports table data as Parquet, and restores from the backup manifest | [`scripts\Initialize-AdxBackupStorage.ps1`](scripts/Initialize-AdxBackupStorage.ps1), [`scripts\Backup-AdxDatabase.ps1`](scripts/Backup-AdxDatabase.ps1), [`scripts\Restore-AdxDatabaseBackup.ps1`](scripts/Restore-AdxDatabaseBackup.ps1), [`docs\adx_backup.md`](docs/adx_backup.md) |
+| ADX backup | Creates secured ADLS Gen2 backup storage, exports schema records, exports table data as Parquet, and restores from the backup manifest | [`adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1`](adx_db_backupNrestore/Initialize-AdxBackupStorage.ps1), [`adx_db_backupNrestore\Backup-AdxDatabase.ps1`](adx_db_backupNrestore/Backup-AdxDatabase.ps1), [`adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1`](adx_db_backupNrestore/Restore-AdxDatabaseBackup.ps1), [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md) |
 | Schemas | Holds one Microsoft Learn-derived JSON schema file per ADX table | [`schemas\`](schemas/), [`metadata\tables.manifest.json`](metadata/tables.manifest.json), [`tools\Build-SchemasFromMicrosoftLearn.ps1`](tools/Build-SchemasFromMicrosoftLearn.ps1) |
 | Synthetic data | Holds generated schema-aligned NDJSON telemetry files | [`data\generated\`](data/generated/), [`data\scenario-summary.json`](data/scenario-summary.json), [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1) |
 | Student access | Creates or stages student users, TAP values, group access, and ADX viewer permissions | [`scripts\New-WorkshopStudents.ps1`](scripts/New-WorkshopStudents.ps1), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1), [`docs\student_access.md`](docs/student_access.md) |
@@ -132,7 +132,7 @@ If the database already exists and you only need to create tables and load data:
 The backup flow uses a user-assigned managed identity, RBAC, no shared keys, and no anonymous blob access. The default storage mode disables public network access and creates ADX managed private endpoints to the storage account.
 
 ```powershell
-.\scripts\Initialize-AdxBackupStorage.ps1 `
+.\adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1 `
   -SubscriptionName 'Security' `
   -ResourceGroupName 'ADX' `
   -ClusterName 'dibsecadx' `
@@ -143,7 +143,7 @@ The backup flow uses a user-assigned managed identity, RBAC, no shared keys, and
 Use the `backupCommand` from that script's JSON output, or run the backup directly:
 
 ```powershell
-.\scripts\Backup-AdxDatabase.ps1 `
+.\adx_db_backupNrestore\Backup-AdxDatabase.ps1 `
   -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' `
   -DatabaseName 'cyber-defend-q0xxzc' `
   -StorageAccountName '<storage-account-name>' `
@@ -154,13 +154,13 @@ Use the `backupCommand` from that script's JSON output, or run the backup direct
 Restore later from the generated local manifest and schema file:
 
 ```powershell
-.\scripts\Restore-AdxDatabaseBackup.ps1 `
+.\adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1 `
   -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' `
   -DatabaseName '<restore-database-name>' `
   -ManifestPath '.\data\backups\<backup-name>\backup-manifest.json'
 ```
 
-For operational details and the security model, see [`docs\adx_backup.md`](docs/adx_backup.md).
+For operational details and the security model, see [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md).
 
 ### 3. Create or stage student identities
 
@@ -262,7 +262,7 @@ The package creates 47 tables from Microsoft Learn-derived schema JSON. The 21 t
 - Instructor guide: [`docs\instructor_guide.md`](docs/instructor_guide.md)
 - Workshop design: [`docs\workshop_design.md`](docs/workshop_design.md)
 - Diagrams: [`docs\diagrams.md`](docs/diagrams.md)
-- ADX backup guide: [`docs\adx_backup.md`](docs/adx_backup.md)
+- ADX backup guide: [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md)
 - Threat actor profile: [`docs\threat-actor-midnight-blizzard.md`](docs/threat-actor-midnight-blizzard.md)
 - Student access guide: [`docs\student_access.md`](docs/student_access.md)
 - MITRE mapping: [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json)

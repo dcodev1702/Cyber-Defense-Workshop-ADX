@@ -9,10 +9,10 @@ tables. Storage reads use the user-assigned managed identity in each Kusto
 storage connection string; no storage keys or SAS tokens are used.
 
 .EXAMPLE
-.\scripts\Restore-AdxDatabaseBackup.ps1 -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName 'cyber-defend-restore' -ManifestPath '.\data\backups\cyber-defend-q0xxzc-20260527T120000Z\backup-manifest.json'
+.\adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1 -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName 'cyber-defend-restore' -ManifestPath '.\data\backups\cyber-defend-q0xxzc-20260527T120000Z\backup-manifest.json'
 
 .EXAMPLE
-.\scripts\Restore-AdxDatabaseBackup.ps1 -ManifestPath '.\data\backups\backup-manifest.json' -DatabaseName 'cyber-defend-restore' -ClearExistingData -TableName DeviceInfo,SecurityIncident
+.\adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1 -ManifestPath '.\data\backups\backup-manifest.json' -DatabaseName 'cyber-defend-restore' -ClearExistingData -TableName DeviceInfo,SecurityIncident
 
 .NOTES
 Name: Restore-AdxDatabaseBackup.ps1
@@ -40,7 +40,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-Import-Module (Join-Path $PSScriptRoot 'AdxWorkshop.Common.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot '..\scripts\AdxWorkshop.Common.psm1') -Force
 
 function ConvertTo-KustoObfuscatedVerbatimStringLiteral {
     param([AllowEmptyString()][string]$Value = '')

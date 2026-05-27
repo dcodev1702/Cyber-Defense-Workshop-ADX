@@ -13,10 +13,10 @@ anonymous blob access, denies public network access, and creates ADX managed
 private endpoints to the storage account blob and dfs subresources.
 
 .EXAMPLE
-.\scripts\Initialize-AdxBackupStorage.ps1 -SubscriptionName 'Security' -ResourceGroupName ADX -ClusterName dibsecadx -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName 'cyber-defend-q0xxzc'
+.\adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1 -SubscriptionName 'Security' -ResourceGroupName ADX -ClusterName dibsecadx -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName 'cyber-defend-q0xxzc'
 
 .EXAMPLE
-.\scripts\Initialize-AdxBackupStorage.ps1 -StorageAccountName dibsecadxbackup1234 -UserAssignedIdentityName uami-dibsecadx-backup -StorageNetworkMode TrustedServices
+.\adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1 -StorageAccountName dibsecadxbackup1234 -UserAssignedIdentityName uami-dibsecadx-backup -StorageNetworkMode TrustedServices
 
 .NOTES
 Name: Initialize-AdxBackupStorage.ps1
@@ -47,7 +47,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-Import-Module (Join-Path $PSScriptRoot 'AdxWorkshop.Common.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot '..\scripts\AdxWorkshop.Common.psm1') -Force
 
 function Invoke-WorkshopAzCli {
     [CmdletBinding()]
@@ -533,7 +533,7 @@ $result = [ordered]@{
     userAssignedIdentityObjectId = $identityPrincipalId
     managedIdentityPolicyScope = $policyScope
     managedIdentityAllowedUsages = $allowedUsages
-    backupCommand = ".\scripts\Backup-AdxDatabase.ps1 -ClusterUri '$ClusterUri' -DatabaseName '$DatabaseName' -StorageAccountName '$StorageAccountName' -FileSystemName '$FileSystemName' -ManagedIdentityObjectId '$identityPrincipalId'"
+    backupCommand = ".\adx_db_backupNrestore\Backup-AdxDatabase.ps1 -ClusterUri '$ClusterUri' -DatabaseName '$DatabaseName' -StorageAccountName '$StorageAccountName' -FileSystemName '$FileSystemName' -ManagedIdentityObjectId '$identityPrincipalId'"
 }
 
 $result | ConvertTo-Json -Depth 10

@@ -3,7 +3,7 @@
 Validates the workshop package, schemas, scripts, and generated telemetry.
 
 .DESCRIPTION
-Runs PowerShell parser checks across scripts/modules, verifies schema and manifest
+Runs PowerShell parser checks across scripts/modules and the ADX backup folder, verifies schema and manifest
 consistency, validates generated NDJSON files against table schemas, and enforces
 Linux telemetry realism checks such as Linux paths, .so image loads, SSH/sudo
 evidence, TVM CVEs, and Oracle branch evidence.
@@ -81,7 +81,10 @@ function Test-GeneratedFileDoesNotContainText {
     }
 }
 
-$scriptFiles = Get-ChildItem -Path (Join-Path $Root 'scripts') -Include '*.ps1', '*.psm1' -Recurse
+$scriptFiles = @(
+    Get-ChildItem -Path (Join-Path $Root 'scripts') -Include '*.ps1', '*.psm1' -Recurse
+    Get-ChildItem -Path (Join-Path $Root 'adx_db_backupNrestore') -Include '*.ps1', '*.psm1' -Recurse -ErrorAction SilentlyContinue
+)
 foreach ($scriptFile in $scriptFiles) {
     $tokens = $null
     $parseErrors = $null

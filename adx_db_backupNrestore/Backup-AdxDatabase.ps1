@@ -15,10 +15,10 @@ with operation IDs and exported artifact paths. No storage keys or SAS tokens ar
 used.
 
 .EXAMPLE
-.\scripts\Backup-AdxDatabase.ps1 -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName 'cyber-defend-q0xxzc' -StorageAccountName '<storage-account>' -ManagedIdentityObjectId '<uami-object-id>'
+.\adx_db_backupNrestore\Backup-AdxDatabase.ps1 -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName 'cyber-defend-q0xxzc' -StorageAccountName '<storage-account>' -ManagedIdentityObjectId '<uami-object-id>'
 
 .EXAMPLE
-.\scripts\Backup-AdxDatabase.ps1 -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName CyberDefenseKqlWorkshop -StorageAccountName '<storage-account>' -ManagedIdentityObjectId '<uami-object-id>' -TableName DeviceInfo,SecurityIncident
+.\adx_db_backupNrestore\Backup-AdxDatabase.ps1 -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' -DatabaseName CyberDefenseKqlWorkshop -StorageAccountName '<storage-account>' -ManagedIdentityObjectId '<uami-object-id>' -TableName DeviceInfo,SecurityIncident
 
 .NOTES
 Name: Backup-AdxDatabase.ps1
@@ -51,7 +51,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-Import-Module (Join-Path $PSScriptRoot 'AdxWorkshop.Common.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot '..\scripts\AdxWorkshop.Common.psm1') -Force
 
 function Invoke-BackupAzCliJson {
     [CmdletBinding()]

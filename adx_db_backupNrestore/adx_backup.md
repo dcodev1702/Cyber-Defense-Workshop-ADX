@@ -29,7 +29,7 @@ If managed private endpoint approval is not available in your role, rerun with `
 ## Provision Backup Storage
 
 ```powershell
-.\scripts\Initialize-AdxBackupStorage.ps1 `
+.\adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1 `
   -SubscriptionName 'Security' `
   -ResourceGroupName 'ADX' `
   -ClusterName 'dibsecadx' `
@@ -42,7 +42,7 @@ The script emits JSON with the storage account, filesystem, UAMI object ID, and 
 ## Run a Backup
 
 ```powershell
-.\scripts\Backup-AdxDatabase.ps1 `
+.\adx_db_backupNrestore\Backup-AdxDatabase.ps1 `
   -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' `
   -DatabaseName 'cyber-defend-q0xxzc' `
   -StorageAccountName '<storage-account-name>' `
@@ -59,7 +59,7 @@ The backup writes:
 To back up a subset of tables:
 
 ```powershell
-.\scripts\Backup-AdxDatabase.ps1 `
+.\adx_db_backupNrestore\Backup-AdxDatabase.ps1 `
   -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' `
   -DatabaseName 'cyber-defend-q0xxzc' `
   -StorageAccountName '<storage-account-name>' `
@@ -72,7 +72,7 @@ To back up a subset of tables:
 Create the target database first, then run:
 
 ```powershell
-.\scripts\Restore-AdxDatabaseBackup.ps1 `
+.\adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1 `
   -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' `
   -DatabaseName '<restore-database-name>' `
   -ManifestPath '.\data\backups\<backup-name>\backup-manifest.json'
