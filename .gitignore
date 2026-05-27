@@ -6,6 +6,7 @@ samples/*.csv
 # Local environment and logs.
 .env
 *.log
+data/backups/
 
 # OS/editor noise.
 .DS_Store
