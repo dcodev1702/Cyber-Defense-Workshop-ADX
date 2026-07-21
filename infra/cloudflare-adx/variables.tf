@@ -28,6 +28,28 @@ variable "local_service" {
   default     = "tcp://kusto-readonly-gateway:8081"
 }
 
+variable "kusto_cpu_limit" {
+  description = "CPU limit applied to the local Kustainer container."
+  type        = number
+  default     = 4
+
+  validation {
+    condition     = var.kusto_cpu_limit > 0
+    error_message = "kusto_cpu_limit must be greater than zero."
+  }
+}
+
+variable "kusto_memory_limit" {
+  description = "Memory and swap limit applied to the local Kustainer container. Defaults to 24 GiB."
+  type        = string
+  default     = "24g"
+
+  validation {
+    condition     = can(regex("^[1-9][0-9]*[bkmg]$", lower(trimspace(var.kusto_memory_limit))))
+    error_message = "kusto_memory_limit must be a positive whole-number Docker memory value such as 24g."
+  }
+}
+
 variable "student_service_token_duration" {
   description = "Lifetime of the shared workshop Service Auth credential. Rotate or delete it after the class."
   type        = string

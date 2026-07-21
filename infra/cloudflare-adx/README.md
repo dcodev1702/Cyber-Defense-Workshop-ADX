@@ -35,6 +35,8 @@ Remove-Item Env:CLOUDFLARE_API_TOKEN
 
 The launcher starts the Compose `kusto` service, waits for its management-query health check on `http://127.0.0.1:8080`, applies the shared Service Auth route, writes `cloudflared.env` when the connector needs a token, writes `student-access.env` with the class credential, and starts the Compose `cloudflared` service. The connector forwards the public hostname to `tcp://kusto-readonly-gateway:8081` over the private `cyber-conf-wiesbaden-adx` Docker network. Only Kusto has a host port, and that mapping is limited to `127.0.0.1:8080`.
 
+Terraform persists the local Kustainer profile by generating the ignored repository-root `compose.override.yaml`. Its default is 4 CPUs with 24 GiB for memory and swap; set `kusto_cpu_limit` or `kusto_memory_limit` in `terraform.tfvars` to override it. On an `-Apply` run, the launcher uses `docker update` to synchronize an existing Kustainer container without replacing the snapshot-holding container.
+
 For a one-time migration from the previous manually created containers, run:
 
 ```powershell

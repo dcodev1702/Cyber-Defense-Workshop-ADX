@@ -10,6 +10,14 @@ output "public_hostname" {
   value = local.public_hostname
 }
 
+output "kusto_runtime_limits" {
+  description = "Terraform-managed resource limits for the local Kustainer container."
+  value = {
+    cpu_limit    = var.kusto_cpu_limit
+    memory_limit = var.kusto_memory_limit
+  }
+}
+
 output "student_service_token_id" {
   value     = cloudflare_zero_trust_access_service_token.workshop.client_id
   sensitive = true

@@ -5,6 +5,7 @@ samples/*.csv
 
 # Local environment and logs.
 .env
+compose.override.yaml
 .cf-config
 *.log
 data/backups/

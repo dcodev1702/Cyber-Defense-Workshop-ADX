@@ -12,6 +12,6 @@
 - Added a dedicated gateway reference describing its read-only policy, browser support, cleaner lifecycle, configuration, and security boundary.
 - Configured Kustainer for a graceful `SIGINT` shutdown so the mounted Student snapshot remains available across normal Compose stop/start cycles.
 - Added a source-of-truth workflow that copies the live Student ADX database into a persistent local Kusto emulator and verifies table row counts.
-- Updated the Cloudflare/Terraform runbook for the 4-vCPU, 4-GiB default Compose profile and removed plaintext credential material.
+- Increased the Terraform-managed Kustainer profile from 16 GiB to 24 GiB of memory and swap while retaining 4 vCPUs, with a Terraform-generated Compose override and in-place runtime synchronization that preserves the Student snapshot.
 - Added a Cloudflare provider v5 Terraform module and secure environment-driven connector launcher for `adx.tier1-cyberdefense.ai`.
 - Added browser-authorized Cloudflared DNS routing for restricted API tokens and made tunnel launcher reruns preserve a healthy connector.

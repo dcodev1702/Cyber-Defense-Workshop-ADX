@@ -25,10 +25,12 @@ param(
     [string]$TerraformDirectory = (Join-Path $PSScriptRoot '..\infra\cloudflare-adx'),
     [string]$SecretConfigPath = (Join-Path $PSScriptRoot '..\.cf-config'),
     [string]$ComposeFile = (Join-Path $PSScriptRoot '..\compose.yaml'),
+    [string]$ComposeOverrideFile = (Join-Path $PSScriptRoot '..\compose.override.yaml'),
     [string]$CloudflaredEnvironmentFile = (Join-Path $PSScriptRoot '..\infra\cloudflare-adx\cloudflared.env'),
     [string]$StudentAccessEnvironmentFile = (Join-Path $PSScriptRoot '..\infra\cloudflare-adx\student-access.env'),
     [string]$ZoneName = 'tier1-cyberdefense.ai',
     [string]$CloudflaredContainerName = 'cyber-conf-wiesbaden-cloudflared',
+    [string]$KustoContainerName = 'cyber-conf-wiesbaden-kusto',
     [switch]$Apply,
     [switch]$ManageDnsWithApi,
     [switch]$ReplaceExistingConnector,
@@ -55,6 +57,7 @@ function Invoke-DockerCompose {
     param(
         [Parameter(Mandatory)][string]$ProjectDirectory,
         [Parameter(Mandatory)][string]$ComposeFilePath,
+        [string]$ComposeOverrideFilePath,
         [Parameter(Mandatory)][string[]]$Arguments
     )
 
@@ -62,8 +65,92 @@ function Invoke-DockerCompose {
         'compose',
         '--project-directory', $ProjectDirectory,
         '--file', $ComposeFilePath
-    ) + $Arguments
+    )
+    if (-not [string]::IsNullOrWhiteSpace($ComposeOverrideFilePath) -and (Test-Path -LiteralPath $ComposeOverrideFilePath -PathType Leaf)) {
+        $composeArguments += @('--file', $ComposeOverrideFilePath)
+    }
+    $composeArguments += $Arguments
     Invoke-NativeCommand -FilePath 'docker' -Arguments $composeArguments
+}
+
+function Set-KustoContainerRuntimeLimits {
+    param(
+        [Parameter(Mandatory)][string]$ContainerName,
+        [Parameter(Mandatory)][string]$CpuLimit,
+        [Parameter(Mandatory)][string]$MemoryLimit
+    )
+
+    try {
+        $cpuLimitValue = [double]::Parse($CpuLimit, [Globalization.CultureInfo]::InvariantCulture)
+    }
+    catch {
+        throw "Kusto CPU limit '$CpuLimit' is not a valid number."
+    }
+    if ($cpuLimitValue -le 0) {
+        throw "Kusto CPU limit '$CpuLimit' must be greater than zero."
+    }
+
+    $memoryMatch = [regex]::Match($MemoryLimit.Trim(), '^(?<value>[1-9][0-9]*)(?<unit>[bBkKmMgG])$')
+    if (-not $memoryMatch.Success) {
+        throw "Kusto memory limit '$MemoryLimit' must be a positive Docker memory value such as 24g."
+    }
+
+    [uint64]$unitMultiplier = switch ($memoryMatch.Groups['unit'].Value.ToLowerInvariant()) {
+        'b' { 1 }
+        'k' { 1KB }
+        'm' { 1MB }
+        'g' { 1GB }
+    }
+    [uint64]$expectedMemoryBytes = [uint64]$memoryMatch.Groups['value'].Value * $unitMultiplier
+    [int64]$expectedNanoCpus = [math]::Round($cpuLimitValue * 1e9, [MidpointRounding]::AwayFromZero)
+
+    $containerId = ([string](& docker ps --all --quiet --filter "name=^/$ContainerName$")).Trim()
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($containerId)) {
+        throw "Kusto container '$ContainerName' was not found for runtime limit synchronization."
+    }
+
+    Invoke-NativeCommand -FilePath 'docker' -Arguments @(
+        'update',
+        '--cpus', $CpuLimit,
+        '--memory', $MemoryLimit,
+        '--memory-swap', $MemoryLimit,
+        $ContainerName
+    ) | Out-Host
+
+    $configuredLimits = ([string](& docker inspect $ContainerName --format '{{.HostConfig.NanoCpus}}|{{.HostConfig.Memory}}|{{.HostConfig.MemorySwap}}')).Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw "Unable to read runtime limits for Kusto container '$ContainerName'."
+    }
+
+    $configuredLimitParts = $configuredLimits -split '\|'
+    if ($configuredLimitParts.Count -ne 3 -or
+        [int64]$configuredLimitParts[0] -ne $expectedNanoCpus -or
+        [uint64]$configuredLimitParts[1] -ne $expectedMemoryBytes -or
+        [uint64]$configuredLimitParts[2] -ne $expectedMemoryBytes) {
+        throw "Kusto container '$ContainerName' did not retain the requested CPU and memory limits."
+    }
+
+    Write-Host "Kusto runtime limits verified: $CpuLimit CPUs and $MemoryLimit memory/swap."
+}
+
+function Get-KustoRuntimeLimitsFromComposeOverride {
+    param([Parameter(Mandatory)][string]$Path)
+
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+        throw "Terraform did not generate the Kusto Compose override at '$Path'."
+    }
+
+    $overrideContent = [System.IO.File]::ReadAllText($Path)
+    $cpuMatch = [regex]::Match($overrideContent, '(?m)^\s*cpus:\s*"?(?<value>[0-9]+(?:\.[0-9]+)?)"?\s*$')
+    $memoryMatch = [regex]::Match($overrideContent, '(?im)^\s*mem_limit:\s*"?(?<value>[1-9][0-9]*[bkmg])"?\s*$')
+    if (-not $cpuMatch.Success -or -not $memoryMatch.Success) {
+        throw "Terraform-generated Kusto Compose override '$Path' does not define valid CPU and memory limits."
+    }
+
+    return [pscustomobject]@{
+        CpuLimit    = $cpuMatch.Groups['value'].Value
+        MemoryLimit = $memoryMatch.Groups['value'].Value
+    }
 }
 
 function Get-ContainerComposeProject {
@@ -244,12 +331,12 @@ try {
     }
 
     $legacyKustoMigrated = $false
-    foreach ($containerName in @($CloudflaredContainerName, 'cyber-conf-wiesbaden-kusto')) {
+    foreach ($containerName in @($CloudflaredContainerName, $KustoContainerName)) {
         $wasMigrated = Prepare-ComposeContainerMigration `
             -ContainerName $containerName `
             -ExpectedProjectName 'cyber-conf-wiesbaden' `
             -MigrateLegacyContainers $MigrateLegacyContainers.IsPresent
-        if ($containerName -eq 'cyber-conf-wiesbaden-kusto' -and $wasMigrated) {
+        if ($containerName -eq $KustoContainerName -and $wasMigrated) {
             $legacyKustoMigrated = $true
         }
     }
@@ -257,7 +344,8 @@ try {
     Invoke-DockerCompose `
         -ProjectDirectory $repositoryRoot `
         -ComposeFilePath $ComposeFile `
-        -Arguments @('up', '--detach', '--wait', '--wait-timeout', '300', 'kusto')
+        -ComposeOverrideFilePath $ComposeOverrideFile `
+        -Arguments @('up', '--detach', '--no-recreate', '--wait', '--wait-timeout', '300', 'kusto')
 
     if ($legacyKustoMigrated) {
         Write-Warning 'Kusto was migrated to a new Compose container. Rebuild the mounted Student snapshot with .\scripts\Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate.'
@@ -338,6 +426,12 @@ try {
             throw 'Terraform did not return the shared workshop Service Auth credential.'
         }
 
+        $kustoRuntimeLimits = Get-KustoRuntimeLimitsFromComposeOverride -Path $ComposeOverrideFile
+        Set-KustoContainerRuntimeLimits `
+            -ContainerName $KustoContainerName `
+            -CpuLimit ([string]$kustoRuntimeLimits.CpuLimit) `
+            -MemoryLimit ([string]$kustoRuntimeLimits.MemoryLimit)
+
         if ($ReplaceExistingConnector -or -not (Test-Path -LiteralPath $CloudflaredEnvironmentFile -PathType Leaf)) {
             $tokenResponse = Invoke-RestMethod `
                 -Method Get `
@@ -361,6 +455,7 @@ try {
         Invoke-DockerCompose `
             -ProjectDirectory $repositoryRoot `
             -ComposeFilePath $ComposeFile `
+            -ComposeOverrideFilePath $ComposeOverrideFile `
             -Arguments $cloudflaredComposeArguments
 
         $publicHostname = (& terraform output -raw public_hostname).Trim()

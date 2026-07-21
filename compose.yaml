@@ -7,9 +7,10 @@ services:
     restart: unless-stopped
     stop_signal: SIGINT
     stop_grace_period: 2m
+    # Terraform persists this 4 CPU / 24 GiB default in compose.override.yaml.
     cpus: ${KUSTO_CPU_LIMIT:-4.0}
-    mem_limit: ${KUSTO_MEMORY_LIMIT:-4g}
-    memswap_limit: ${KUSTO_MEMORY_LIMIT:-4g}
+    mem_limit: ${KUSTO_MEMORY_LIMIT:-24g}
+    memswap_limit: ${KUSTO_MEMORY_LIMIT:-24g}
     pids_limit: ${KUSTO_PIDS_LIMIT:-2048}
     environment:
       ACCEPT_EULA: "Y"

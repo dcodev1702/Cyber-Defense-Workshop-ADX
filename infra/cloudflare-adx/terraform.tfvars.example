@@ -5,5 +5,10 @@ cloudflare_zone_id = "<CLOUDFLARE_ZONE_ID>"
 # For a cloudflared connector running directly on the host, point it to the gateway's TCP listener.
 # local_service = "tcp://127.0.0.1:8081"
 
+# Terraform writes these limits to the ignored repository-root compose.override.yaml file.
+# The defaults are 4 CPUs and 24 GiB; set them here only when this host needs a different profile.
+# kusto_cpu_limit = 4
+# kusto_memory_limit = "24g"
+
 # The shared class credential must be at least 48h and should be rotated or removed after the lab.
 # student_service_token_duration = "72h"
