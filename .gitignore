@@ -20,6 +20,7 @@ infra/cloudflare-adx/terraform.tfvars
 infra/cloudflare-adx/allowed-emails.txt
 infra/cloudflare-adx/allowed-emails.auto.tfvars.json
 infra/cloudflare-adx/cloudflared.env
+infra/cloudflare-adx/student-access.env
 
 # OS/editor noise.
 .DS_Store

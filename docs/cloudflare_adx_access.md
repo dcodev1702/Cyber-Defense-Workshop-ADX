@@ -1,196 +1,215 @@
-# Cloudflare Access Guide for the Containerized ADX Lab
+# Shared Class Credential Guide for the Containerized ADX Lab
 
 ## Purpose
 
-Use this guide for the containerized Azure Data Explorer (ADX) lab that is exposed through Cloudflare Tunnel and protected by Cloudflare Access One-time PIN (OTP) email authentication.
+Use this guide for the containerized Azure Data Explorer (ADX) lab at `adx.tier1-cyberdefense.ai`. Students share one short-lived Cloudflare Service Auth credential, run a local Cloudflared TCP proxy, and connect ADX to that local proxy.
 
-This is a separate access model from the managed Azure ADX cluster and its Microsoft Entra B2B access described in [student_access.md](student_access.md).
+This is separate from the managed Azure ADX deployment and its Microsoft Entra B2B access described in [student_access.md](student_access.md).
 
-## Working connection details
+## What This Solves
+
+- One shared class credential works for 20-35 attendees.
+- Students do not need Cloudflare accounts, One-Time PIN email, or individual Cloudflare Access seats.
+- The shared credential is valid for at least 48 hours.
+- A private gateway allows read-only KQL and blocks data-changing management commands before they reach Kustainer.
+
+## Architecture
+
+```text
+Student device
+    -> cloudflared access tcp with shared Service Token
+    -> Cloudflare Access Service Auth
+    -> Cloudflare Tunnel
+    -> read-only Kusto gateway
+    -> Kustainer
+```
 
 | Item | Value |
 | --- | --- |
-| Cloudflare Tunnel | `cyber-conf-wiesbaden-kusto` |
-| Protected hostname | `adx.tier1-cyberdefense.ai` |
-| Participant local listener | `127.0.0.1:8080` |
-| Tunnel origin | `tcp://kusto:8080` on the private Compose network |
-| ADX client protocol | HTTP through the client-side Cloudflare TCP proxy |
-| Database | `CyberDefendStudentSnapshot` |
+| Tunnel hostname | `adx.tier1-cyberdefense.ai` |
+| Tunnel origin | `tcp://kusto-readonly-gateway:8081` |
+| Student Kusto connection URI | `http://127.0.0.1:8080;Fed=false` |
+| Local database | `CyberDefendStudentSnapshot` |
+| Credential lifetime | `72h` default, `48h` enforced minimum |
+| Credential type | Shared Cloudflare Service Token Client ID and Client Secret |
 
-Connection flow:
+## Read-Only Boundary
 
-```text
-Participant browser and cloudflared
-    -> Cloudflare Access OTP policy
-   -> Cloudflare Tunnel connector
-   -> Private Compose network
-   -> Kusto container
+The Kusto emulator has no native authentication or authorization. The read-only gateway is therefore the enforcement point for tunnel traffic.
+
+| Request type | Gateway behavior |
+| --- | --- |
+| Query endpoint | Allows KQL queries, including `let` statements. |
+| Management endpoint | Allows one read-only `.show` command. |
+| Data/control commands | Rejects `.drop`, `.add`, `.create`, `.alter`, `.delete`, `.ingest`, `.set`, and every other management command with HTTP `403`. |
+
+> ⚠️ The restriction applies to traffic through the Cloudflare tunnel. The instructor can still administer Kustainer locally through `http://127.0.0.1:8080`.
+
+For the gateway's complete request policy, CORS behavior, cleaner lifecycle, and security boundary, see [tools/kusto-readonly-gateway/README.md](../tools/kusto-readonly-gateway/README.md).
+
+## Instructor Setup
+
+Apply the Cloudflare route, Service Auth application, shared credential, read-only gateway, and connector from the repository root:
+
+```powershell
+.\scripts\Start-CloudflareAdxTunnel.ps1 -Apply
 ```
 
-## Credential boundary: administrators versus participants
+The launcher writes two ignored files beneath `infra\cloudflare-adx`:
 
-The two Cloudflare authentication flows have different purposes and must not be mixed.
+| File | Purpose |
+| --- | --- |
+| `cloudflared.env` | Tunnel connector token for the Docker host only. |
+| `student-access.env` | Shared class Service Token and hostname. Distribute this only through the temporary class channel. |
 
-| Role | Command or credential | What it grants | Who receives it |
-| --- | --- | --- | --- |
-| Tunnel administrator | `cloudflared tunnel login` creates `%USERPROFILE%\.cloudflared\cert.pem` | Named-tunnel administration, including listing, creating, and routing locally managed tunnels | Only the Cloudflare tunnel administrator |
-| Tunnel connector | Tunnel token or tunnel credentials file | Permission for the connector host to run the specific tunnel | Only the managed tunnel origin or connector host |
-| ADX participant | `cloudflared access tcp` plus email One-time PIN | A temporary Cloudflare Access session to the protected ADX hostname | Each participant whose email matches the Access Allow policy |
+Do not commit either file. The Service Token is a shared lab password in two parts: a Client ID and Client Secret.
 
-Participants do **not** run `cloudflared tunnel login`, do **not** receive `cert.pem`, and do **not** receive a tunnel token or credentials file. After they enter an approved email address and a valid One-time PIN, Cloudflare gives their local `cloudflared` process a temporary Access session for `adx.tier1-cyberdefense.ai`. That session does not grant any tunnel-management capability and expires according to the Access application session duration.
+### Verify the host
 
-> 🔐 Keep the administrator certificate, connector token, and participant Access session separate. Each has a different scope and holder.
+Run the fast local Kusto probe:
 
-## Administrator: configure the origin and tunnel
+```powershell
+curl.exe -fsS http://127.0.0.1:8080/v1/rest/ping
+```
 
-Complete these steps once for the lab host. Participants do not need Cloudflare account access or a tunnel token.
+Expected output includes `"ApplicationHealthState":"Healthy"`.
 
-1. In the Cloudflare dashboard, go to **Zero Trust** > **Networking** > **Tunnels**.
-2. Open `cyber-conf-wiesbaden-kusto` and confirm that at least one connector is **Healthy**.
-3. On the tunnel's **Routes** tab, confirm the published application route has:
-   - Hostname: `adx.tier1-cyberdefense.ai`
-   - Service: `tcp://kusto:8080`, where `kusto` resolves only on the private `cyber-conf-wiesbaden-adx` Compose network.
-4. On the tunnel origin, verify that the container answers before troubleshooting Cloudflare:
+Confirm the gateway is running:
+
+```powershell
+docker compose ps
+```
+
+The `kusto-readonly-gateway` service must report `healthy` before students connect.
+
+The Compose `kusto-defaultdb-cleaner` service keeps the database list clean: after `CyberDefendStudentSnapshot` exists, it removes `NetDefaultDB` and its persistent state directory. This does not affect the Student snapshot.
+
+## Student Setup
+
+Give each attendee these two files through your temporary class channel:
+
+1. [scripts/Start-StudentAdxProxy.ps1](../scripts/Start-StudentAdxProxy.ps1)
+2. The generated, untracked `student-access.env` file.
+
+On each student device:
+
+1. Install Cloudflared:
 
    ```powershell
-   $body = @{ csl = '.show cluster' } | ConvertTo-Json -Compress
-   Invoke-WebRequest -UseBasicParsing -Method Post `
-     -ContentType 'application/json' `
-     -Body $body `
-     -Uri 'http://127.0.0.1:8080/v1/rest/mgmt'
+   winget install --id Cloudflare.cloudflared --exact
    ```
 
-5. Keep the tunnel connector running as a service or other managed process. Do not expose the container's port directly to the Internet.
+2. Open PowerShell in the folder containing both files and start the local proxy:
 
-Expected result: the tunnel shows a healthy connector and the route points to a responding ADX container.
+   ```powershell
+   .\Start-StudentAdxProxy.ps1 -CredentialFile .\student-access.env
+   ```
 
-For the Compose lifecycle and local Student snapshot recovery procedure, see [infra/cloudflare-adx/README.md](../infra/cloudflare-adx/README.md).
+   Leave this terminal open for the lab.
 
-## Administrator: enable OTP and authorize email addresses
+3. Sign in to the Azure Data Explorer web UI with Microsoft Entra ID.
 
-### Enable the One-time PIN identity provider
-
-1. In the Cloudflare dashboard, go to **Zero Trust** > **Integrations** > **Identity providers**.
-2. Under **Your identity providers**, select **Add new identity provider**.
-3. Select **One-time PIN** and save it. If it already exists, confirm that it remains enabled.
-4. Open **Zero Trust** > **Access controls** > **Applications**, then open the Access application for `adx.tier1-cyberdefense.ai`.
-5. Confirm that **One-time PIN** is available as an identity provider for this application.
-
-### Add individual participant email addresses
-
-There is no separate Cloudflare OTP user roster. An address is allowed only when an **Allow** policy for this application matches it.
-
-1. Go to **Zero Trust** > **Access controls** > **Policies**.
-2. Select **Add a policy**.
-3. Set a clear name, such as `Cyber Conference ADX participants`.
-4. Set **Action** to **Allow**.
-5. Keep the Terraform-managed session duration at `168h` (one week), or change `access_session_duration` in the Cloudflare module before applying it.
-6. Add an **Include** rule with selector **Emails**.
-7. Enter each approved participant email address and save the policy.
-8. Open the `adx.tier1-cyberdefense.ai` Access application and attach the policy.
-
-For a small roster, keeping the email addresses directly in this policy is simplest.
-
-### Use a reusable rule group for a larger roster
-
-For multiple workshops or a changing participant list, use a Cloudflare **Rule group**:
-
-1. Go to **Zero Trust** > **Access controls** > **Policies** > **Rule groups**.
-2. Select **Add a group** and name it, for example, `Cyber Conference ADX participants`.
-3. Add an **Include** rule with selector **Emails**, then enter the approved addresses.
-4. Save the rule group.
-5. In the ADX application's Allow policy, add an **Include** rule with selector **Rule groups** and select the new group.
-
-Update the rule group to add or remove participants without editing every application policy.
-
-### Important policy guardrails
-
-- Cloudflare Access is deny by default. A participant must match an **Allow** policy.
-- Use **Emails** for a curated event roster. Use **Emails ending in** only when every address in that email domain should have access.
-- Do not use **Include** > **Login Methods** > **One-time PIN** as the only Allow rule. That permits every user who can authenticate with OTP, not just invited participants.
-- If a mail security gateway scans participant mail, allow `noreply@notify.cloudflare.com` so the OTP arrives and is not consumed by link scanning.
-- Use the application's **Policies** > **Policy tester** with a participant address before distributing the instructions.
-
-Expected result: the Policy tester reports the participant as allowed, while an unlisted test address is denied.
-
-## Participant: connect to the ADX lab
-
-### 1. Install cloudflared
-
-On Windows, open PowerShell and run:
-
-```powershell
-winget install --id Cloudflare.cloudflared --exact
-```
-
-Open a new terminal after installation. Participants do not run `cloudflared tunnel login`; that command is for tunnel administrators.
-
-### 2. Start the local Cloudflare Access proxy
-
-Run this command and leave the terminal open for the entire ADX session:
-
-```powershell
-cloudflared access tcp --hostname adx.tier1-cyberdefense.ai --url 127.0.0.1:8080
-```
-
-On the first connection, or after the Access session expires, `cloudflared` opens a browser window. If it prints a URL instead, open that URL in a browser.
-
-### 3. Authenticate with the email One-time PIN
-
-1. Enter the same email address that the workshop administrator added to the Access Allow policy.
-2. Select **Send login code**.
-3. Check the inbox for a message from `noreply@notify.cloudflare.com`.
-4. Enter the PIN and select **Sign in**.
-
-Expected result: the browser confirms the login and the terminal remains running with a local listener on `127.0.0.1:8080`.
-
-The PIN expires after 10 minutes, can be used only once, and requesting a new PIN invalidates the previous one.
-
-### 4. Open ADX and run a query
-
-1. Open Azure Data Explorer Web UI.
-2. Add or select the cluster endpoint:
+4. Add or select this cluster connection URI:
 
    ```text
-   http://127.0.0.1:8080
+   http://127.0.0.1:8080;Fed=false
    ```
 
-3. Select the `CyberDefendStudentSnapshot` database.
-4. Run this validation query:
+   `Fed=false` is required because Kustainer does not perform Microsoft Entra authentication. The Cloudflare shared credential has already been handled by the local proxy.
+
+5. Select `CyberDefendStudentSnapshot` and run a query:
 
    ```kusto
-   .show tables | project TableName
-   ```
-
-5. Run a workshop query, for example:
-
-   ```kusto
-   DeviceEvents
+   SecurityIncident
    | take 10
    ```
 
-Expected result: the database and tables are visible, and KQL returns results. A Microsoft sign-in prompt from the Azure Data Explorer web site, if shown, is separate from the Cloudflare OTP prompt.
+The Microsoft Entra sign-in authenticates the ADX web UI. Cloudflare Service Auth gates the tunnel connection with the shared lab credential.
+
+## Browser Connection Compatibility
+
+The Azure Data Explorer web UI runs at `https://dataexplorer.azure.com` and connects from the browser to the local student proxy. The read-only gateway is configured to allow that origin, the ADX web UI's `x-ms-*` headers, and the browser private-network preflight required for loopback access.
+
+If the ADX **Add connection** dialog shows a failure while the proxy terminal says it is listening:
+
+1. Keep the proxy terminal open.
+2. Verify the proxy on the student device:
+
+    ```powershell
+    $body = @{ csl = '.show cluster' } | ConvertTo-Json -Compress
+    Invoke-WebRequest -UseBasicParsing -Method Post `
+       -ContentType 'application/json' `
+       -Body $body `
+       -Uri 'http://127.0.0.1:8080/v1/rest/mgmt'
+    ```
+
+    This must return HTTP `200`.
+
+3. Use the complete URI `http://127.0.0.1:8080;Fed=false`.
+4. Hard-refresh the ADX web UI with `Ctrl+F5`, close the failed dialog, and add the connection again.
+
+The CORS/private-network fix is hosted in the read-only gateway. Students do not need a new Cloudflare account or an individual credential for this browser step.
+
+To diagnose browser preflight from the student device, run this while the proxy is listening:
+
+```powershell
+$requestedHeaders = 'authorization,content-type,x-ms-activity-id,x-ms-client-request-id,x-ms-app,x-ms-client-version,x-ms-user-id,x-ms-user-authentication'
+$preflight = Invoke-WebRequest -UseBasicParsing -Method Options `
+   -Headers @{
+      Origin = 'https://dataexplorer.azure.com'
+      'Access-Control-Request-Method' = 'POST'
+      'Access-Control-Request-Headers' = $requestedHeaders
+      'Access-Control-Request-Private-Network' = 'true'
+   } `
+   -Uri 'http://127.0.0.1:8080/v1/rest/query'
+
+[pscustomobject]@{
+   Status = $preflight.StatusCode
+   AllowedOrigin = $preflight.Headers['Access-Control-Allow-Origin']
+   PrivateNetworkAllowed = $preflight.Headers['Access-Control-Allow-Private-Network']
+} | Format-List
+```
+
+Expected values are HTTP `204`, `AllowedOrigin=https://dataexplorer.azure.com`, and `PrivateNetworkAllowed=true`.
+
+## Validate the Student Path
+
+With the student proxy running, this should return HTTP `200`:
+
+```powershell
+$body = @{ csl = '.show cluster' } | ConvertTo-Json -Compress
+Invoke-WebRequest -UseBasicParsing -Method Post `
+  -ContentType 'application/json' `
+  -Body $body `
+  -Uri 'http://127.0.0.1:8080/v1/rest/mgmt'
+```
+
+The direct public hostname does not accept requests without the shared Service Token. A request without the local proxy should return HTTP `403`.
+
+## Rotate After Class
+
+Run this immediately after the class, or before the next class, to replace the shared credential. The previous Client ID and Client Secret become invalid after Terraform replaces the Service Token.
+
+```powershell
+.\scripts\Start-CloudflareAdxTunnel.ps1 -Apply -RotateStudentCredential
+```
+
+The launcher overwrites the ignored `student-access.env` file with the new pair. Do not distribute the replacement unless another class needs access.
 
 ## Troubleshooting
 
-| Symptom | Likely cause and action |
+| Symptom | Action |
 | --- | --- |
-| The browser says that a code was emailed, but no message arrives | Cloudflare intentionally shows this generic response for blocked users. Confirm the exact address is in the application's Allow policy or rule group, then check spam and mail filtering. |
-| `That account does not have access` | The address did not match an Allow policy, an exclusion applied, or the user entered a different address. Use the application's Policy tester. |
-| `This One-Time PIN has already been used` | Request a fresh code. Mail security software may have followed the link or scanned the message. Allowlist `noreply@notify.cloudflare.com`. |
-| `cloudflared` cannot listen on port 8080 | Another process already uses the local port. Check with `Get-NetTCPConnection -LocalPort 8080`. Stop that process or choose an unused local port and use the same port in the ADX endpoint. |
-| ADX cannot connect after OTP succeeds | Keep the `cloudflared access tcp` terminal open. Verify the local endpoint is `http://127.0.0.1:8080`, then ask the administrator to check connector health, the published `tcp://kusto:8080` route, and the Kusto management health query. |
-| Access worked earlier but now redirects to login | The Access session expired. Rerun the `cloudflared access tcp` command and complete OTP again. |
-
-## End-of-event steps
-
-1. Remove participant addresses from the Allow policy or rule group.
-2. The deployed session duration is one week (`168h`). For a shorter event window, change Terraform's `access_session_duration` and apply the module.
-3. Review Access authentication logs for unexpected activity.
-4. Stop the client-side `cloudflared` process on participant devices when the session ends.
+| `curl.exe -fsS http://127.0.0.1:8080/v1/rest/ping` fails on the instructor host | Kusto is not healthy. Run `docker compose ps` and `docker compose logs kusto`. |
+| Student proxy cannot bind port `8080` | Another local service owns the port. Start the proxy with `-LocalPort 18080` and use `http://127.0.0.1:18080;Fed=false` in ADX. |
+| Student sees HTTP `403` through the local proxy | The shared credential was rotated, expired, malformed, or not passed to Cloudflared. Obtain the current `student-access.env` from the instructor. |
+| Student can query but `.drop` or `.create` returns HTTP `403` | Expected. The read-only gateway is blocking mutable Kusto management commands. |
+| ADX says it cannot connect while the local proxy is listening | Use the complete connection URI `http://127.0.0.1:8080;Fed=false`, not the bare local URL. |
+| ADX still says it cannot connect after adding `Fed=false` | Run the local management test in **Browser Connection Compatibility**. If it returns `200`, hard-refresh ADX with `Ctrl+F5`; the gateway already allows ADX CORS headers and private-network preflight. |
+| Database is absent | The instructor should start the existing Kusto container with `docker compose start kusto`. If it was replaced, rebuild the mounted snapshot with `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate`. |
 
 ## References
 
-- [Cloudflare One-time PIN login](https://developers.cloudflare.com/cloudflare-one/integrations/identity-providers/one-time-pin/)
-- [Cloudflare Access policies](https://developers.cloudflare.com/cloudflare-one/access-controls/policies/)
-- [Cloudflare client-side cloudflared](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/non-http/cloudflared-authentication/)
+- [Cloudflare Service Tokens](https://developers.cloudflare.com/cloudflare-one/access-controls/service-credentials/service-tokens/)
+- [Cloudflare arbitrary TCP access](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/non-http/cloudflared-authentication/arbitrary-tcp/)
+- [Azure Data Explorer web UI](https://dataexplorer.azure.com/)

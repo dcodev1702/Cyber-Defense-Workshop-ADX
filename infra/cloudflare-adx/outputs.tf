@@ -10,6 +10,12 @@ output "public_hostname" {
   value = local.public_hostname
 }
 
-output "access_application_aud" {
-  value = cloudflare_zero_trust_access_application.adx.aud
+output "student_service_token_id" {
+  value     = cloudflare_zero_trust_access_service_token.workshop.client_id
+  sensitive = true
+}
+
+output "student_service_token_secret" {
+  value     = cloudflare_zero_trust_access_service_token.workshop.client_secret
+  sensitive = true
 }

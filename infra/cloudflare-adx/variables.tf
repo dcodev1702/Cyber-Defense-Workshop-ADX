@@ -22,21 +22,27 @@ variable "hostname" {
   default     = "adx"
 }
 
-variable "allowed_emails" {
-  description = "Email addresses allowed through Cloudflare Access."
-  type        = set(string)
-}
-
-variable "access_session_duration" {
-  description = "Cloudflare Access session duration for the protected hostname."
-  type        = string
-  default     = "168h"
-}
-
 variable "local_service" {
-  description = "Service URL reached by the cloudflared Compose service."
+  description = "TCP endpoint for the private read-only Kusto gateway reached by Cloudflared."
   type        = string
-  default     = "tcp://kusto:8080"
+  default     = "tcp://kusto-readonly-gateway:8081"
+}
+
+variable "student_service_token_duration" {
+  description = "Lifetime of the shared workshop Service Auth credential. Rotate or delete it after the class."
+  type        = string
+  default     = "72h"
+
+  validation {
+    condition     = try(tonumber(regex("^([0-9]+)h$", var.student_service_token_duration)[0]) >= 48, false)
+    error_message = "student_service_token_duration must be expressed in whole hours and be at least 48h."
+  }
+}
+
+variable "student_service_token_name" {
+  description = "Display name of the shared workshop Service Auth credential."
+  type        = string
+  default     = "Cyber Defense Workshop shared lab credential"
 }
 
 variable "tunnel_name" {

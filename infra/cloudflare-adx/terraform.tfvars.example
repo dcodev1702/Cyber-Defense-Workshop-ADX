@@ -1,10 +1,9 @@
 # This file contains no secrets. Copy it to terraform.tfvars and replace the values.
 cloudflare_zone_id = "<CLOUDFLARE_ZONE_ID>"
-allowed_emails = [
-	"dcodev1702@gmail.com",
-	"collaborator@example.com"
-]
 
-# The default route targets the Kusto TCP service through the internal Docker Compose network.
-# For a cloudflared connector running directly on the host, use tcp://127.0.0.1:8080.
-# local_service = "tcp://127.0.0.1:8080"
+# The default route targets the read-only gateway through the internal Docker Compose network.
+# For a cloudflared connector running directly on the host, point it to the gateway's TCP listener.
+# local_service = "tcp://127.0.0.1:8081"
+
+# The shared class credential must be at least 48h and should be rotated or removed after the lab.
+# student_service_token_duration = "72h"

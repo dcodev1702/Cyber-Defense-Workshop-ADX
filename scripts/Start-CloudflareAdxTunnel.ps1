@@ -1,20 +1,20 @@
 <#
 .SYNOPSIS
-Provisions the Cloudflare Tunnel and starts the local Compose runtime for Kusto.
+Provisions a shared-credential Cloudflare Tunnel and starts the local Compose runtime for Kusto.
 
 .DESCRIPTION
-Uses Terraform to create a remotely managed Cloudflare Tunnel and a Cloudflare
-Access application restricted to an explicit email allow-list. Docker Compose
-owns the local Kusto and cloudflared containers. The Cloudflare API token is
-read only from the CLOUDFLARE_API_TOKEN process environment variable; it is
-never written to the workspace or command output. The connector token is
-written only to an ignored local Compose environment file. When the token does
-not have Zone DNS permission, use Add-CloudflareAdxDnsRoute.ps1 after this
-script.
+Uses Terraform to create a remotely managed Cloudflare Tunnel protected by a
+single shared Cloudflare Service Auth credential. Docker Compose routes tunnel
+traffic through a read-only Kusto gateway before it reaches the local emulator.
+The Cloudflare API token is read only from the CLOUDFLARE_API_TOKEN process
+environment variable; it is never written to the workspace or command output.
+The connector token and shared student credential are written only to ignored
+local environment files. When the token does not have Zone DNS permission, use
+Add-CloudflareAdxDnsRoute.ps1 after this script.
 
 .EXAMPLE
-# The script starts the Compose Kusto service, applies the Cloudflare resources,
-# and creates the ignored cloudflared.env connector-token file when required.
+# The script starts the Compose Kusto service, applies the shared Service Auth
+# tunnel configuration, and creates ignored connector and student credential files.
 .\scripts\Start-CloudflareAdxTunnel.ps1 -Apply
 
 .NOTES
@@ -22,18 +22,18 @@ Requires Docker Desktop, Terraform, and outbound connectivity to Cloudflare.
 #>
 [CmdletBinding()]
 param(
-    [string[]]$AllowedEmail = @(),
-    [string]$AllowedEmailFile = (Join-Path $PSScriptRoot '..\infra\cloudflare-adx\allowed-emails.txt'),
     [string]$TerraformDirectory = (Join-Path $PSScriptRoot '..\infra\cloudflare-adx'),
     [string]$SecretConfigPath = (Join-Path $PSScriptRoot '..\.cf-config'),
     [string]$ComposeFile = (Join-Path $PSScriptRoot '..\compose.yaml'),
     [string]$CloudflaredEnvironmentFile = (Join-Path $PSScriptRoot '..\infra\cloudflare-adx\cloudflared.env'),
+    [string]$StudentAccessEnvironmentFile = (Join-Path $PSScriptRoot '..\infra\cloudflare-adx\student-access.env'),
     [string]$ZoneName = 'tier1-cyberdefense.ai',
     [string]$CloudflaredContainerName = 'cyber-conf-wiesbaden-cloudflared',
     [switch]$Apply,
     [switch]$ManageDnsWithApi,
     [switch]$ReplaceExistingConnector,
-    [switch]$MigrateLegacyContainers
+    [switch]$MigrateLegacyContainers,
+    [switch]$RotateStudentCredential
 )
 
 Set-StrictMode -Version Latest
@@ -153,6 +153,29 @@ function Write-CloudflaredEnvironmentFile {
     [System.IO.File]::WriteAllText($Path, "TUNNEL_TOKEN=$TunnelToken`n", $utf8WithoutBom)
 }
 
+function Write-StudentAccessEnvironmentFile {
+    param(
+        [Parameter(Mandatory)][string]$Path,
+        [Parameter(Mandatory)][string]$Hostname,
+        [Parameter(Mandatory)][string]$ServiceTokenId,
+        [Parameter(Mandatory)][string]$ServiceTokenSecret
+    )
+
+    $directory = Split-Path -Parent $Path
+    if (-not (Test-Path -LiteralPath $directory)) {
+        New-Item -ItemType Directory -Path $directory -Force | Out-Null
+    }
+
+    $content = @(
+        "TUNNEL_SERVICE_HOSTNAME=$Hostname"
+        "TUNNEL_SERVICE_TOKEN_ID=$ServiceTokenId"
+        "TUNNEL_SERVICE_TOKEN_SECRET=$ServiceTokenSecret"
+        ''
+    ) -join "`n"
+    $utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText($Path, $content, $utf8WithoutBom)
+}
+
 function Get-CloudflareApiError {
     param([Parameter(Mandatory)]$Response)
 
@@ -186,56 +209,6 @@ function Get-CloudflareApiToken {
     return $match.Value
 }
 
-function Get-AllowedEmailAddresses {
-    param(
-        [string[]]$EmailAddress,
-        [string]$EmailFilePath
-    )
-
-    $candidates = New-Object System.Collections.Generic.List[string]
-    foreach ($value in @($EmailAddress)) {
-        if (-not [string]::IsNullOrWhiteSpace($value)) {
-            $candidates.Add($value) | Out-Null
-        }
-    }
-
-    if (-not [string]::IsNullOrWhiteSpace($EmailFilePath) -and (Test-Path -LiteralPath $EmailFilePath -PathType Leaf)) {
-        foreach ($line in [System.IO.File]::ReadAllLines($EmailFilePath)) {
-            $withoutComment = ($line -replace '\s*#.*$', '').Trim()
-            if ([string]::IsNullOrWhiteSpace($withoutComment)) {
-                continue
-            }
-
-            foreach ($value in $withoutComment -split '[,;]') {
-                if (-not [string]::IsNullOrWhiteSpace($value)) {
-                    $candidates.Add($value.Trim()) | Out-Null
-                }
-            }
-        }
-    }
-
-    $allowedEmailAddresses = @(
-        $candidates |
-            ForEach-Object { $_.Trim().ToLowerInvariant() } |
-            Where-Object { $_ -match '^[^@\s]+@[^@\s]+\.[^@\s]+$' } |
-            Sort-Object -Unique
-    )
-    if ($allowedEmailAddresses.Count -eq 0) {
-        throw "Supply -AllowedEmail or add at least one valid email address to '$EmailFilePath'."
-    }
-
-    $invalidEmailAddresses = @(
-        $candidates |
-            ForEach-Object { $_.Trim() } |
-            Where-Object { $_ -and $_ -notmatch '^[^@\s]+@[^@\s]+\.[^@\s]+$' }
-    )
-    if ($invalidEmailAddresses.Count -gt 0) {
-        throw "The Access allow-list includes invalid email address(es): $($invalidEmailAddresses -join ', ')."
-    }
-
-    return $allowedEmailAddresses
-}
-
 foreach ($commandName in @('docker', 'terraform')) {
     if (-not (Get-Command $commandName -ErrorAction SilentlyContinue)) {
         throw "Required command '$commandName' was not found in PATH."
@@ -249,17 +222,25 @@ if (-not (Test-Path -LiteralPath $ComposeFile -PathType Leaf)) {
 if ($MigrateLegacyContainers -and -not $Apply) {
     throw '-MigrateLegacyContainers requires -Apply because it replaces containers.'
 }
+if ($RotateStudentCredential -and -not $Apply) {
+    throw '-RotateStudentCredential requires -Apply because it replaces the shared Service Auth credential.'
+}
 
 Invoke-NativeCommand -FilePath 'docker' -Arguments @('compose', 'version')
 
 $cloudflareApiToken = Get-CloudflareApiToken -ConfigPath $SecretConfigPath
-$allowedEmailAddresses = @(Get-AllowedEmailAddresses -EmailAddress $AllowedEmail -EmailFilePath $AllowedEmailFile)
 $previousCloudflareApiToken = $env:CLOUDFLARE_API_TOKEN
 $env:CLOUDFLARE_API_TOKEN = $cloudflareApiToken
 
 try {
     if (-not (Test-Path $TerraformDirectory)) {
         throw "Terraform directory not found: $TerraformDirectory"
+    }
+
+    $legacyAllowListVariablesPath = Join-Path $TerraformDirectory 'allowed-emails.auto.tfvars.json'
+    if (Test-Path -LiteralPath $legacyAllowListVariablesPath -PathType Leaf) {
+        Remove-Item -LiteralPath $legacyAllowListVariablesPath -Force
+        Write-Host 'Removed obsolete Cloudflare Access email-roster input.'
     }
 
     $legacyKustoMigrated = $false
@@ -281,17 +262,6 @@ try {
     if ($legacyKustoMigrated) {
         Write-Warning 'Kusto was migrated to a new Compose container. Rebuild the mounted Student snapshot with .\scripts\Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate.'
     }
-
-    $allowListVariablesPath = Join-Path $TerraformDirectory 'allowed-emails.auto.tfvars.json'
-    $allowListVariables = [ordered]@{
-        allowed_emails = [string[]]$allowedEmailAddresses
-    }
-    $utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
-    [System.IO.File]::WriteAllText(
-        $allowListVariablesPath,
-        ($allowListVariables | ConvertTo-Json -Depth 5),
-        $utf8WithoutBom
-    )
 
     $terraformVariables = @(
         '-var', "manage_dns_with_api=$($ManageDnsWithApi.IsPresent.ToString().ToLowerInvariant())"
@@ -346,15 +316,26 @@ try {
         $planArguments = @('plan') + $terraformVariables
         if (-not $Apply) {
             Invoke-NativeCommand -FilePath 'terraform' -Arguments $planArguments
-            Write-Host 'Terraform plan completed. Re-run with -Apply to create the Cloudflare resources and start the connector.'
+            Write-Host 'Terraform plan completed. Re-run with -Apply to update the shared-credential Cloudflare Tunnel and start the connector.'
             return
         }
 
-        Invoke-NativeCommand -FilePath 'terraform' -Arguments (@('apply', '-auto-approve') + $terraformVariables)
+        $applyArguments = @('apply', '-auto-approve')
+        if ($RotateStudentCredential) {
+            $applyArguments += '-replace=cloudflare_zero_trust_access_service_token.workshop'
+        }
+        $applyArguments += $terraformVariables
+        Invoke-NativeCommand -FilePath 'terraform' -Arguments $applyArguments
         $accountId = (& terraform output -raw cloudflare_account_id).Trim()
         $tunnelId = (& terraform output -raw tunnel_id).Trim()
         if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($accountId) -or [string]::IsNullOrWhiteSpace($tunnelId)) {
             throw 'Terraform did not return the Cloudflare account ID and tunnel ID required to start the connector.'
+        }
+
+        $studentServiceTokenId = (& terraform output -raw student_service_token_id).Trim()
+        $studentServiceTokenSecret = (& terraform output -raw student_service_token_secret).Trim()
+        if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($studentServiceTokenId) -or [string]::IsNullOrWhiteSpace($studentServiceTokenSecret)) {
+            throw 'Terraform did not return the shared workshop Service Auth credential.'
         }
 
         if ($ReplaceExistingConnector -or -not (Test-Path -LiteralPath $CloudflaredEnvironmentFile -PathType Leaf)) {
@@ -387,7 +368,13 @@ try {
             throw 'Terraform did not return the public hostname.'
         }
 
-        Write-Host "Cloudflare Tunnel connector is ready. Access the protected endpoint at https://$publicHostname"
+        Write-StudentAccessEnvironmentFile `
+            -Path $StudentAccessEnvironmentFile `
+            -Hostname $publicHostname `
+            -ServiceTokenId $studentServiceTokenId `
+            -ServiceTokenSecret $studentServiceTokenSecret
+
+        Write-Host "Cloudflare Tunnel connector is ready. The shared student credential is stored in '$StudentAccessEnvironmentFile'."
     }
     finally {
         Set-Location $previousLocation

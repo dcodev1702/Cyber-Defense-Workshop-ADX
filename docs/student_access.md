@@ -1,6 +1,6 @@
 # Student access model
 
-> This guide applies to the managed Azure ADX deployment protected by Microsoft Entra B2B. For the containerized ADX lab protected by Cloudflare Access email One-time PIN, use [cloudflare_adx_access.md](cloudflare_adx_access.md).
+> This guide applies only to the managed Azure ADX deployment protected by Microsoft Entra B2B. For the containerized class lab, use [cloudflare_adx_access.md](cloudflare_adx_access.md): it uses a shared 72-hour Cloudflare Service Token, the local student proxy, `http://127.0.0.1:8080;Fed=false`, and the read-only gateway instead of B2B database roles.
 
 For conference delivery, use the SFI-aligned B2B provisioning model in [`..\user_creation\README.md`](../user_creation/README.md). Participants should authenticate with their own home organization identities, redeem Microsoft Entra B2B guest access in the resource tenant, satisfy MFA, and receive access through a participant security group.
 

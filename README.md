@@ -88,7 +88,8 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | Schemas | Holds one Microsoft Learn-derived JSON schema file per ADX table | [`schemas\`](schemas/), [`metadata\tables.manifest.json`](metadata/tables.manifest.json), [`tools\Build-SchemasFromMicrosoftLearn.ps1`](tools/Build-SchemasFromMicrosoftLearn.ps1) |
 | Synthetic data | Holds generated schema-aligned NDJSON telemetry files | [`data\generated\`](data/generated/), [`data\scenario-summary.json`](data/scenario-summary.json), [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1) |
 | Participant access | Documents SFI-aligned B2B guest provisioning, MFA, access-package lifecycle, participant group access, ADX database viewer permissions, and dashboard sharing | [`user_creation\README.md`](user_creation/README.md), [`docs\student_access.md`](docs/student_access.md), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1) |
-| Cloudflare ADX access | Documents the containerized ADX lab's Cloudflare Tunnel route, One-time PIN email authorization policy, participant TCP proxy command, ADX Web UI connection, and troubleshooting | [`docs\cloudflare_adx_access.md`](docs/cloudflare_adx_access.md) |
+| Cloudflare ADX class access | Documents the shared Service Auth credential, student TCP proxy, read-only KQL gateway, rotation, and troubleshooting | [`docs\cloudflare_adx_access.md`](docs/cloudflare_adx_access.md) |
+| Kustainer gateway | Documents the read-only request policy, browser CORS/private-network support, default-database cleaner, configuration, and security boundary | [`tools\kusto-readonly-gateway\README.md`](tools/kusto-readonly-gateway/README.md) |
 | Scenario and MITRE | Documents the threat actor framing, infrastructure, and attack-vector to ATT&CK mapping | [`docs\threat-actor-midnight-blizzard.md`](docs/threat-actor-midnight-blizzard.md), [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json), [`data\scenario-summary.json`](data/scenario-summary.json), [`docs\workshop_design.md`](docs/workshop_design.md) |
 | Workshop content | Provides the student lab, instructor guide, design notes, and diagrams | [`workshop\student_lab.kql`](workshop/student_lab.kql), [`docs\instructor_guide.md`](docs/instructor_guide.md), [`docs\workshop_design.md`](docs/workshop_design.md), [`docs\diagrams.md`](docs/diagrams.md) |
 | Slides | Provides an instructor-led slide outline and a PowerPoint generator for Windows systems with PowerPoint installed | [`workshop\slide_deck_outline.md`](workshop/slide_deck_outline.md), [`scripts\New-WorkshopDeck.ps1`](scripts/New-WorkshopDeck.ps1) |
@@ -184,11 +185,13 @@ The script defaults to `usag-wiesbaden-cys26.northeurope.kusto.windows.net`, dat
 
 > ⚠️ **Preserve the Kustainer container.** The mounted files and Kustainer's database registration work together. Use `docker compose stop kusto` and `docker compose start kusto` for routine shutdown and startup. Do not use `docker compose down`, `docker compose rm`, or `--force-recreate` for `kusto` while retaining the local snapshot. If a Kusto container replacement is required, rerun `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` after the replacement to rebuild and verify the mounted Student database.
 
-### Publish local Kusto through Cloudflare Access
+`kusto-defaultdb-cleaner` runs continuously in Compose. Once `CyberDefendStudentSnapshot` exists, it drops `NetDefaultDB` and removes its residual directory under `data\local-kusto\dbs`. On a fresh emulator, it leaves the default database in place until the Student import has created the retained snapshot database.
 
-The same [compose.yaml](compose.yaml) runs the `cloudflared` connector after the Kusto health check succeeds. The connector has no host port; it reaches Kusto over the private Compose network at `tcp://kusto:8080` while Kusto remains locally bound to `127.0.0.1:8080`.
+### Publish read-only local Kusto through Cloudflare
 
-Provision the Cloudflare Tunnel, Access policy, and local connector token once from the repository root:
+The same [compose.yaml](compose.yaml) runs a private read-only Kusto gateway and the `cloudflared` connector. The connector has no host port; it reaches the gateway over the private Compose network at `tcp://kusto-readonly-gateway:8081`. The gateway forwards read-only requests to Kusto while Kusto remains locally bound to `127.0.0.1:8080`.
+
+Provision the shared class credential, read-only gateway route, and connector token once from the repository root:
 
 ```powershell
 .\scripts\Start-CloudflareAdxTunnel.ps1 -Apply
@@ -201,7 +204,9 @@ For this repository's previous manually started containers, use the explicit one
 .\scripts\Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate
 ```
 
-The launcher writes the connector token to the ignored `infra\cloudflare-adx\cloudflared.env` file. After provisioning, use this normal runtime lifecycle:
+The launcher writes the connector token to the ignored `infra\cloudflare-adx\cloudflared.env` file and the shared student credential to the ignored `infra\cloudflare-adx\student-access.env` file. The student credential is a Cloudflare Service Token Client ID and Client Secret pair. It defaults to 72 hours, Terraform rejects a duration below 48 hours, consumes no per-student Cloudflare seats, and must be treated like a shared lab password.
+
+After provisioning, use this normal runtime lifecycle:
 
 ```powershell
 docker compose stop
@@ -211,7 +216,25 @@ docker compose logs --follow cloudflared
 
 Kustainer can use the full two-minute graceful-stop period before it exits. Docker Desktop restarts the running services automatically through `restart: unless-stopped`.
 
-See [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md) for the Cloudflare Access setup, DNS routing, secret handling, and remote client connection instructions.
+For each student, distribute the ignored `student-access.env` file and [scripts/Start-StudentAdxProxy.ps1](scripts/Start-StudentAdxProxy.ps1) through your temporary class channel. The student starts a local proxy with:
+
+```powershell
+.\Start-StudentAdxProxy.ps1 -CredentialFile .\student-access.env
+```
+
+They then sign in to the Azure Data Explorer web UI with Microsoft Entra ID and add `http://127.0.0.1:8080;Fed=false` as the cluster connection URI. `Fed=false` disables Microsoft Entra authentication for the local Kustainer connection; Cloudflare Service Auth is already handled by the local proxy. Users do not need a Cloudflare account, One-Time PIN, or individual Cloudflare Access seat.
+
+The gateway permits queries and read-only `.show` metadata commands only. It rejects all other management commands, including `.drop`, `.add`, `.create`, `.alter`, `.delete`, `.ingest`, and `.set`.
+
+The gateway also permits the Azure Data Explorer web UI browser origin, its `x-ms-*` request headers, and browser private-network preflight traffic to the student proxy. If a browser previously showed a connection failure, restart the student proxy, hard-refresh the ADX web UI with `Ctrl+F5`, and add the complete `;Fed=false` connection URI again.
+
+Rotate the class credential after the workshop to invalidate the distributed pair and write a new unshared local pair:
+
+```powershell
+.\scripts\Start-CloudflareAdxTunnel.ps1 -Apply -RotateStudentCredential
+```
+
+See [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md) for the Service Auth setup, DNS routing, secret handling, and connection validation steps.
 
 ### 3. Provision participant access
 

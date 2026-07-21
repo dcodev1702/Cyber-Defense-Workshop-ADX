@@ -1,4 +1,0 @@
-# One email per line. Copy this file to allowed-emails.txt before adding users.
-# The deployed policy allows every valid, non-comment email in that local file.
-dcodev1702@gmail.com
-analyst@example.com

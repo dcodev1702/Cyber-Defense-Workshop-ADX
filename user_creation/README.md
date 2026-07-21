@@ -1,5 +1,7 @@
 # Cyber Range user provisioning
 
+> **Scope:** This guide applies to the managed Azure ADX cluster. It does not configure the containerized class lab's local Kustainer route. For that path, use [docs/cloudflare_adx_access.md](../docs/cloudflare_adx_access.md), which uses a shared Cloudflare Service Token, a local student proxy, `Fed=false`, and a read-only KQL gateway.
+
 This guide describes how exercise participants are provisioned to access the Cyber Range Azure Data Explorer (ADX) database and dashboard. For conference delivery, participants should use Microsoft Entra B2B guest access rather than shared accounts, local throwaway passwords, or unmanaged tenant users.
 
 The access model aligns to Microsoft's [Secure Future Initiative](https://www.microsoft.com/en-us/security/blog/2024/05/03/security-above-all-else-expanding-microsofts-secure-future-initiative/) emphasis on protected identities, least privilege, tenant isolation, and MFA. In particular, the exercise should enforce MFA for guest access and avoid password-based workshop-only accounts where external identities can be governed through B2B.

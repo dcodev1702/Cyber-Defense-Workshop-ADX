@@ -38,12 +38,59 @@ services:
       retries: 12
       start_period: 60s
 
+  kusto-defaultdb-cleaner:
+    build:
+      context: ./tools/kusto-readonly-gateway
+    container_name: cyber-conf-wiesbaden-kusto-defaultdb-cleaner
+    restart: unless-stopped
+    command:
+      - node
+      - remove-netdefaultdb.mjs
+    depends_on:
+      kusto:
+        condition: service_healthy
+    environment:
+      KUSTO_DEFAULT_DATABASE_NAME: NetDefaultDB
+      KUSTO_RETAINED_DATABASE_NAME: CyberDefendStudentSnapshot
+      KUSTO_STATE_ROOT: /kustodata
+      KUSTO_UPSTREAM_URL: http://kusto:8080
+    volumes:
+      - type: bind
+        source: ./data/local-kusto
+        target: /kustodata
+    networks:
+      - adx-internal
+
+  kusto-readonly-gateway:
+    build:
+      context: ./tools/kusto-readonly-gateway
+    container_name: cyber-conf-wiesbaden-kusto-readonly-gateway
+    restart: unless-stopped
+    depends_on:
+      kusto:
+        condition: service_healthy
+    environment:
+      KUSTO_ALLOWED_ORIGINS: https://dataexplorer.azure.com
+      KUSTO_UPSTREAM_URL: http://kusto:8080
+    networks:
+      - adx-internal
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:8081/healthz').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
   cloudflared:
     image: cloudflare/cloudflared:2026.7.2
     container_name: cyber-conf-wiesbaden-cloudflared
     restart: unless-stopped
     depends_on:
-      kusto:
+      kusto-readonly-gateway:
         condition: service_healthy
     env_file:
       - path: ./infra/cloudflare-adx/cloudflared.env

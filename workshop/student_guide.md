@@ -1,5 +1,7 @@
 # Student Guide — Cyber Defense KQL Workshop
 
+> **Connection setup:** For the containerized class lab, follow [Shared Class Credential Guide](../docs/cloudflare_adx_access.md) before starting this guide. Keep the local proxy running and select `CyberDefendStudentSnapshot` through `http://127.0.0.1:8080;Fed=false`. For the managed Azure ADX lab, use the assigned B2B database connection instead.
+
 Welcome. Over the next two hours you're going to investigate a credential-access intrusion against a notional organization called **USAG Cyber**. You'll do it the way a real Defender XDR analyst would — by writing KQL queries against telemetry already loaded into Azure Data Explorer (ADX). No live attack, no production systems, just you, the data, and a story to uncover.
 
 This guide walks alongside [`student_lab.kql`](student_lab.kql). Every query in this guide is in that file too — the `.kql` file is your scratchpad, and this guide is your story. Read a section, run the query, look at what comes back, then read the next section.
@@ -47,7 +49,7 @@ Your job is to find every step. Let's go.
 
 ## Act 0 — Are we connected?
 
-Before anything else, confirm you can see the data. Open the ADX Web UI, make sure the database `CyberDefenseKqlWorkshop` is selected in the left panel, and run this:
+Before anything else, confirm you can see the data. Open the ADX Web UI and select `CyberDefendStudentSnapshot` for the containerized class lab, or `CyberDefenseKqlWorkshop` for the managed Azure ADX lab. Then run this:
 
 ```kql
 union withsource=TableName

@@ -1,5 +1,7 @@
 # Instructor guide
 
+> **Delivery paths:** For the managed Azure ADX delivery, use the B2B participant setup below. For the containerized class lab, use [Shared Class Credential Guide](cloudflare_adx_access.md): distribute the temporary shared credential and student proxy script, have students connect through `http://127.0.0.1:8080;Fed=false`, and verify the `kusto-readonly-gateway` service is healthy.
+
 ## Setup checklist
 
 1. Confirm the ADX cluster exists.

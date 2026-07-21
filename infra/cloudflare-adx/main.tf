@@ -30,6 +30,40 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "adx" {
   }
 }
 
+resource "cloudflare_zero_trust_access_service_token" "workshop" {
+  account_id = var.cloudflare_account_id
+  name       = var.student_service_token_name
+  duration   = var.student_service_token_duration
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "cloudflare_zero_trust_access_application" "adx" {
+  account_id                = var.cloudflare_account_id
+  app_launcher_visible      = false
+  domain                    = local.public_hostname
+  name                      = "Cyber Defense Workshop ADX Shared Credential"
+  service_auth_401_redirect = false
+  type                      = "self_hosted"
+
+  policies = [
+    {
+      decision = "non_identity"
+      include = [
+        {
+          service_token = {
+            token_id = cloudflare_zero_trust_access_service_token.workshop.id
+          }
+        }
+      ]
+      name       = "Allow workshop shared service token"
+      precedence = 1
+    }
+  ]
+}
+
 resource "cloudflare_dns_record" "adx" {
   count = var.manage_dns_with_api ? 1 : 0
 
@@ -40,36 +74,4 @@ resource "cloudflare_dns_record" "adx" {
   ttl     = 1
   proxied = true
   comment = "Cyber Defense Workshop ADX Cloudflare Tunnel"
-}
-
-resource "cloudflare_zero_trust_access_identity_provider" "one_time_pin" {
-  account_id = var.cloudflare_account_id
-  name       = "Workshop one-time PIN"
-  type       = "onetimepin"
-  config     = {}
-}
-
-resource "cloudflare_zero_trust_access_application" "adx" {
-  account_id           = var.cloudflare_account_id
-  name                 = "Cyber Defense Workshop ADX"
-  domain               = local.public_hostname
-  type                 = "self_hosted"
-  session_duration     = var.access_session_duration
-  app_launcher_visible = false
-  depends_on           = [cloudflare_zero_trust_access_identity_provider.one_time_pin]
-
-  policies = [
-    {
-      name       = "Allow designated ADX users"
-      precedence = 1
-      decision   = "allow"
-      include = [
-        for allowed_email in var.allowed_emails : {
-          email = {
-            email = allowed_email
-          }
-        }
-      ]
-    }
-  ]
 }
