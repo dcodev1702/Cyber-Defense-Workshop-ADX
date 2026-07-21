@@ -163,6 +163,56 @@ Restore later from the generated local manifest and schema file:
 
 For operational details and the security model, see [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md).
 
+### Run an exact Student ADX copy locally
+
+The Student database is the source of truth for the local workflow. The copy script reads its live schema and rows directly from ADX, writes an ignored local NDJSON snapshot, loads the same rows into the official Kusto emulator, and verifies every table's row count.
+
+Start the local runtime with Docker Compose. The `data` mount provides the exported files to Kusto, and `data\local-kusto` holds the persistent Student database files. Kusto is bound only to `127.0.0.1:8080`:
+
+```powershell
+docker compose up --detach --wait kusto
+docker compose ps
+```
+
+Then copy the current Student database. `-ForceRecreate` replaces the previous local database and its persistent files before importing the fresh source snapshot:
+
+```powershell
+.\scripts\Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate
+```
+
+The script defaults to `usag-wiesbaden-cys26.northeurope.kusto.windows.net`, database `cyber-defend-usagwsbdn-cys26`, and local database `CyberDefendStudentSnapshot`. It writes the verification manifest beneath `data\local-export\`, which is intentionally ignored by Git because it contains the copied telemetry.
+
+> ⚠️ **Preserve the Kustainer container.** The mounted files and Kustainer's database registration work together. Use `docker compose stop kusto` and `docker compose start kusto` for routine shutdown and startup. Do not use `docker compose down`, `docker compose rm`, or `--force-recreate` for `kusto` while retaining the local snapshot. If a Kusto container replacement is required, rerun `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` after the replacement to rebuild and verify the mounted Student database.
+
+### Publish local Kusto through Cloudflare Access
+
+The same [compose.yaml](compose.yaml) runs the `cloudflared` connector after the Kusto health check succeeds. The connector has no host port; it reaches Kusto over the private Compose network at `tcp://kusto:8080` while Kusto remains locally bound to `127.0.0.1:8080`.
+
+Provision the Cloudflare Tunnel, Access policy, and local connector token once from the repository root:
+
+```powershell
+.\scripts\Start-CloudflareAdxTunnel.ps1 -Apply
+```
+
+For this repository's previous manually started containers, use the explicit one-time migration instead. It preserves the bind-mounted recovery files, then requires a fresh Student snapshot import because the Kustainer container is replaced:
+
+```powershell
+.\scripts\Start-CloudflareAdxTunnel.ps1 -Apply -MigrateLegacyContainers
+.\scripts\Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate
+```
+
+The launcher writes the connector token to the ignored `infra\cloudflare-adx\cloudflared.env` file. After provisioning, use this normal runtime lifecycle:
+
+```powershell
+docker compose stop
+docker compose start
+docker compose logs --follow cloudflared
+```
+
+Kustainer can use the full two-minute graceful-stop period before it exits. Docker Desktop restarts the running services automatically through `restart: unless-stopped`.
+
+See [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md) for the Cloudflare Access setup, DNS routing, secret handling, and remote client connection instructions.
+
 ### 3. Provision participant access
 
 For SFI-aligned conference delivery, provision students as Microsoft Entra B2B guests through an entitlement management access package. The access package should add approved participants to a resource-tenant security group, enforce MFA through Conditional Access, and expire access after the event.

@@ -13,7 +13,8 @@ This is a separate access model from the managed Azure ADX cluster and its Micro
 | Cloudflare Tunnel | `cyber-conf-wiesbaden-kusto` |
 | Protected hostname | `adx.tier1-cyberdefense.ai` |
 | Participant local listener | `127.0.0.1:8080` |
-| ADX endpoint protocol | HTTP |
+| Tunnel origin | `tcp://kusto:8080` on the private Compose network |
+| ADX client protocol | HTTP through the client-side Cloudflare TCP proxy |
 | Database | `CyberDefendStudentSnapshot` |
 
 Connection flow:
@@ -21,8 +22,9 @@ Connection flow:
 ```text
 Participant browser and cloudflared
     -> Cloudflare Access OTP policy
-    -> Cloudflare Tunnel
-    -> ADX container on the tunnel origin
+   -> Cloudflare Tunnel connector
+   -> Private Compose network
+   -> Kusto container
 ```
 
 ## Credential boundary: administrators versus participants
@@ -37,6 +39,8 @@ The two Cloudflare authentication flows have different purposes and must not be 
 
 Participants do **not** run `cloudflared tunnel login`, do **not** receive `cert.pem`, and do **not** receive a tunnel token or credentials file. After they enter an approved email address and a valid One-time PIN, Cloudflare gives their local `cloudflared` process a temporary Access session for `adx.tier1-cyberdefense.ai`. That session does not grant any tunnel-management capability and expires according to the Access application session duration.
 
+> 🔐 Keep the administrator certificate, connector token, and participant Access session separate. Each has a different scope and holder.
+
 ## Administrator: configure the origin and tunnel
 
 Complete these steps once for the lab host. Participants do not need Cloudflare account access or a tunnel token.
@@ -45,17 +49,22 @@ Complete these steps once for the lab host. Participants do not need Cloudflare 
 2. Open `cyber-conf-wiesbaden-kusto` and confirm that at least one connector is **Healthy**.
 3. On the tunnel's **Routes** tab, confirm the published application route has:
    - Hostname: `adx.tier1-cyberdefense.ai`
-   - Service: the ADX container HTTP endpoint, normally `http://127.0.0.1:8080` when the container and connector run on the same host.
+   - Service: `tcp://kusto:8080`, where `kusto` resolves only on the private `cyber-conf-wiesbaden-adx` Compose network.
 4. On the tunnel origin, verify that the container answers before troubleshooting Cloudflare:
 
    ```powershell
-   curl.exe -fsS http://127.0.0.1:8080/v1/rest/ping
+   $body = @{ csl = '.show cluster' } | ConvertTo-Json -Compress
+   Invoke-WebRequest -UseBasicParsing -Method Post `
+     -ContentType 'application/json' `
+     -Body $body `
+     -Uri 'http://127.0.0.1:8080/v1/rest/mgmt'
    ```
 
-   If the connector and container run on different machines, replace `127.0.0.1` with the container host's private address in the tunnel route.
 5. Keep the tunnel connector running as a service or other managed process. Do not expose the container's port directly to the Internet.
 
 Expected result: the tunnel shows a healthy connector and the route points to a responding ADX container.
+
+For the Compose lifecycle and local Student snapshot recovery procedure, see [infra/cloudflare-adx/README.md](../infra/cloudflare-adx/README.md).
 
 ## Administrator: enable OTP and authorize email addresses
 
@@ -75,7 +84,7 @@ There is no separate Cloudflare OTP user roster. An address is allowed only when
 2. Select **Add a policy**.
 3. Set a clear name, such as `Cyber Conference ADX participants`.
 4. Set **Action** to **Allow**.
-5. Set a session duration appropriate for the workshop. A short event-scoped duration limits access after the session ends.
+5. Keep the Terraform-managed session duration at `168h` (one week), or change `access_session_duration` in the Cloudflare module before applying it.
 6. Add an **Include** rule with selector **Emails**.
 7. Enter each approved participant email address and save the policy.
 8. Open the `adx.tier1-cyberdefense.ai` Access application and attach the policy.
@@ -170,13 +179,13 @@ Expected result: the database and tables are visible, and KQL returns results. A
 | `That account does not have access` | The address did not match an Allow policy, an exclusion applied, or the user entered a different address. Use the application's Policy tester. |
 | `This One-Time PIN has already been used` | Request a fresh code. Mail security software may have followed the link or scanned the message. Allowlist `noreply@notify.cloudflare.com`. |
 | `cloudflared` cannot listen on port 8080 | Another process already uses the local port. Check with `Get-NetTCPConnection -LocalPort 8080`. Stop that process or choose an unused local port and use the same port in the ADX endpoint. |
-| ADX cannot connect after OTP succeeds | Keep the `cloudflared access tcp` terminal open. Verify the local endpoint is `http://127.0.0.1:8080`, then ask the administrator to check connector health, the published route, and the container health endpoint. |
+| ADX cannot connect after OTP succeeds | Keep the `cloudflared access tcp` terminal open. Verify the local endpoint is `http://127.0.0.1:8080`, then ask the administrator to check connector health, the published `tcp://kusto:8080` route, and the Kusto management health query. |
 | Access worked earlier but now redirects to login | The Access session expired. Rerun the `cloudflared access tcp` command and complete OTP again. |
 
 ## End-of-event steps
 
 1. Remove participant addresses from the Allow policy or rule group.
-2. Keep the Access session duration short for event access.
+2. The deployed session duration is one week (`168h`). For a shorter event window, change Terraform's `access_session_duration` and apply the module.
 3. Review Access authentication logs for unexpected activity.
 4. Stop the client-side `cloudflared` process on participant devices when the session ends.
 

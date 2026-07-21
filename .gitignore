@@ -5,8 +5,21 @@ samples/*.csv
 
 # Local environment and logs.
 .env
+.cf-config
 *.log
 data/backups/
+data/local-export/
+data/local-kusto/
+
+# Cloudflare Terraform state and local deployment values.
+infra/cloudflare-adx/.terraform/
+infra/cloudflare-adx/*.tfstate
+infra/cloudflare-adx/*.tfstate.*
+infra/cloudflare-adx/*.tfplan
+infra/cloudflare-adx/terraform.tfvars
+infra/cloudflare-adx/allowed-emails.txt
+infra/cloudflare-adx/allowed-emails.auto.tfvars.json
+infra/cloudflare-adx/cloudflared.env
 
 # OS/editor noise.
 .DS_Store

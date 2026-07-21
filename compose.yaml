@@ -1,0 +1,62 @@
+name: cyber-conf-wiesbaden
+
+services:
+  kusto:
+    image: mcr.microsoft.com/azuredataexplorer/kustainer-linux:latest
+    container_name: cyber-conf-wiesbaden-kusto
+    restart: unless-stopped
+    stop_signal: SIGINT
+    stop_grace_period: 2m
+    cpus: ${KUSTO_CPU_LIMIT:-4.0}
+    mem_limit: ${KUSTO_MEMORY_LIMIT:-4g}
+    memswap_limit: ${KUSTO_MEMORY_LIMIT:-4g}
+    pids_limit: ${KUSTO_PIDS_LIMIT:-2048}
+    environment:
+      ACCEPT_EULA: "Y"
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - type: bind
+        source: ./data/local-kusto
+        target: /kustodata
+      - type: bind
+        source: ./data
+        target: /workshop-data
+        read_only: true
+    networks:
+      - adx-internal
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          curl --fail --silent --show-error --request POST
+          --header 'Content-Type: application/json'
+          --data '{"csl":".show cluster"}'
+          http://127.0.0.1:8080/v1/rest/mgmt > /dev/null
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.7.2
+    container_name: cyber-conf-wiesbaden-cloudflared
+    restart: unless-stopped
+    depends_on:
+      kusto:
+        condition: service_healthy
+    env_file:
+      - path: ./infra/cloudflare-adx/cloudflared.env
+        required: false
+    command:
+      - tunnel
+      - --no-autoupdate
+      - --metrics
+      - 127.0.0.1:0
+      - run
+    networks:
+      - adx-internal
+
+networks:
+  adx-internal:
+    name: cyber-conf-wiesbaden-adx
