@@ -164,3 +164,62 @@ Select **Run**. Seeing rows of results confirms that you are connected and ready
 - Use `http://127.0.0.1:8080` exactly when Azure Data Explorer asks for the connection URI.
 - Select `CyberDefendStudentSnapshot` before you run a query.
 - Ask a workshop instructor for help if the tunnel check fails or the database does not appear.
+
+## Defender Dashboard
+
+Use the Defender Dashboard after completing the connection steps above. It brings together the alert, identity, network, Graph API, and device inventory views needed to move from an initial signal to an evidence-based triage decision.
+
+### Connect the dashboard to the lab data source
+
+The dashboard depends on the same local Cloudflare tunnel as the query experience. Open **Data sources** in the dashboard and confirm that the data source connection URI is:
+
+```text
+http://127.0.0.1:8080
+```
+
+Azure Data Explorer may display the URI with a trailing `/`; that is expected. Do not replace the local address with the public tunnel hostname, use `https`, or add a path after the port. The local address routes dashboard queries through the tunnel running on your computer.
+
+Before you begin triage:
+
+1. Start the Cloudflare tunnel and leave that terminal window open.
+1. Verify the tunnel in a second terminal with `curl.exe -fsS http://127.0.0.1:8080/v1/rest/ping`.
+1. Complete the **Trust** and browser **Allow** prompts for the local endpoint.
+1. Confirm that `CyberDefendStudentSnapshot` is selected as the active database, then select **Refresh** in the dashboard.
+
+If every dashboard tile fails or stays blank, validate the tunnel first and then recheck the dashboard data source URI. If the tunnel test succeeds but only one tile has no rows, the connection is usually healthy; adjust the global time range and investigate that specific data source or query instead. The workshop uses historical snapshot data, so use the selected time range and event timestamps to sequence activity rather than treating the tile's **As of** label as live telemetry.
+
+### ADX dashboards
+
+The four views below form a practical SOC triage sequence. Set the dashboard-wide time range before comparing tiles, and keep the same window while pivoting between pages.
+
+#### SOC Overview
+
+![SOC Overview dashboard](../images/defender-dashboard/soc-overview.png)
+
+**Triage callout:** Start with **High alerts**, **Alerts by severity and category**, and the **MITRE ATT&CK** techniques to establish priority and an initial attack hypothesis. Compare failed and successful sign-in trends, then use **Top failed principals**, **Public egress destinations**, **Graph API requests**, and the **Scenario signal timeline** to connect an alert to an identity, device, destination, or application. A large count alone is not proof of compromise; look for a spike, an unusual combination of signals, or activity that does not match the selected time window's baseline.
+
+#### Identity and Sign-ins
+
+![Identity and Sign-ins dashboard](../images/defender-dashboard/identity-and-sign-ins.png)
+
+**Triage callout:** Investigate a principal when failures concentrate on one user, application, or source and especially when that identity also appears in **Privileged / high-risk identities**. Check the account type and status, assigned roles, criticality, risk level, and related service-account activity before escalating. Treat **Consent to application** and **Add service principal credentials** events as high-value review points: validate the initiating identity, target application, permissions, and timing against the incident.
+
+#### Network and Graph
+
+![Network and Graph dashboard](../images/defender-dashboard/network-and-graph.png)
+
+**Triage callout:** Use **Top network destinations** and **Network connections by process** to identify a device process making unusual public connections. Prioritize rare destinations, unexpected process-to-destination pairs, uncommon ports or protocols, and activity across multiple devices. On the Graph side, review write operations such as `POST`, `PATCH`, and `DELETE`, failed requests, the application or AppId, principal, and client IP. Validate managed-identity sign-ins against the expected workload before deciding whether the activity is suspicious.
+
+#### Inventory and Posture
+
+![Inventory and Posture dashboard](../images/defender-dashboard/inventory-and-posture.png)
+
+**Triage callout:** Use this page to determine the affected estate and response coverage. Prioritize devices that are unsupported, not onboarded, missing a healthy sensor, exposed, or in an unexpected machine group. Use **Device inventory drilldown** to capture the device name, operating system, build, machine group, onboarding status, and public IP, then pivot back to the identity, network, and alert pages with that device as the investigation anchor.
+
+### Fast triage pattern
+
+1. Scope the event by setting a focused time range and identifying the highest-severity alert or unusual trend on **SOC Overview**.
+1. Validate the identity: identify the user, service principal, application, source IP, and whether the account is privileged or risky.
+1. Correlate the identity with public egress, Graph API activity, and the scenario timeline to determine what changed and when.
+1. Assess the device's onboarding and sensor posture before recommending containment or further collection.
+1. Record the time range, entity names, source data, and the evidence that supports or rules out the suspected behavior so another analyst can reproduce the triage path.
