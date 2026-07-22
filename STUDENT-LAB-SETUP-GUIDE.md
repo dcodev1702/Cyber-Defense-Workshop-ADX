@@ -29,7 +29,7 @@ winget install --id Cloudflare.cloudflared --exact
 1. Press **Enter** to start the local connection.
 1. Leave this terminal window open. Closing it disconnects the lab database.
 
-```bash
+```powershell
 cloudflared access tcp --hostname adx.tier1-cyberdefense.ai --url 127.0.0.1:8080 --service-token-id d693cceb2da12c0e608489dbb2ceac02.access --service-token-secret 81cd3a66ab62afab8193b39cdf432c8c4db6ae7a08534f0f3e3ddacdca7b8822
 ```
 
