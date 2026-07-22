@@ -73,15 +73,21 @@ When prompted, select the option to send the Azure Data Explorer authentication 
 
 1. Open the email message from Microsoft in a separate browser tab or mail application.
 1. Copy the authentication code.
-1. Return to the sign-in page, paste the code, and continue.
 
 ![Step 7: Copy the authentication code from email](images/student-walk-through/7-CMD-Copy-ADX-AuthCode-From-Email.png)
 
-### 8. Complete sign-in
+### 8A. Enter the authentication code
 
-Complete any remaining Microsoft prompts, such as whether to stay signed in. You should then return to Azure Data Explorer.
+1. Return to the Microsoft sign-in page.
+1. Enter the six-digit code from your email, then continue.
 
-![Step 8: Azure Data Explorer sign-in complete](images/student-walk-through/8-CMD-Successful-ADX-Login.png)
+![Step 8A: Enter the authentication code](images/student-walk-through/8A-CMD-Successful-ADX-Login.png)
+
+### 8B. Choose whether to stay signed in
+
+Microsoft may ask whether you want to stay signed in. Select **Yes** on your personal computer; select **No** on a shared or public computer. You should then return to Azure Data Explorer.
+
+![Step 8B: Choose whether to stay signed in](images/student-walk-through/8B-CMD-Successful-ADX-Login.png)
 
 ## Add the lab database
 
