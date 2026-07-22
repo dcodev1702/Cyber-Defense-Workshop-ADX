@@ -7,7 +7,7 @@
 - Added a shared 48-hour-minimum Cloudflare Service Auth credential and read-only KQL gateway for classroom access without per-student Cloudflare seats.
 - Documented `Fed=false` for student Kustainer connection URIs so ADX clients do not attempt Microsoft Entra authentication against the local emulator.
 - Added ADX web UI CORS and private-network preflight support to the read-only gateway for browser connections through the local student proxy.
-- Updated class, instructor, managed-access, and troubleshooting documentation for the shared 72-hour Service Token, `Fed=false` connection URI, read-only gateway, and ADX browser CORS/private-network recovery path.
+- Updated class, instructor, managed-access, and troubleshooting documentation for the shared 168-hour Service Token, `Fed=false` connection URI, read-only gateway, and ADX browser CORS/private-network recovery path.
 - Added a continuous Kustainer cleaner that removes `NetDefaultDB` and its persistent state after the Student snapshot database is available.
 - Added a dedicated gateway reference describing its read-only policy, browser support, cleaner lifecycle, configuration, and security boundary.
 - Configured Kustainer for a graceful `SIGINT` shutdown so the mounted Student snapshot remains available across normal Compose stop/start cycles.

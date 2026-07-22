@@ -30,7 +30,7 @@ Student device
 | Tunnel origin | `tcp://kusto-readonly-gateway:8081` |
 | Student Kusto connection URI | `http://127.0.0.1:8080;Fed=false` |
 | Local database | `CyberDefendStudentSnapshot` |
-| Credential lifetime | `72h` default, `48h` enforced minimum |
+| Credential lifetime | `168h` default, `48h` enforced minimum |
 | Credential type | Shared Cloudflare Service Token Client ID and Client Secret |
 
 ## Read-Only Boundary
@@ -212,4 +212,4 @@ The launcher overwrites the ignored `student-access.env` file with the new pair.
 
 - [Cloudflare Service Tokens](https://developers.cloudflare.com/cloudflare-one/access-controls/service-credentials/service-tokens/)
 - [Cloudflare arbitrary TCP access](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/non-http/cloudflared-authentication/arbitrary-tcp/)
-- [Azure Data Explorer web UI](https://dataexplorer.azure.com/)
+- [Azure Data Explorer web UI](https://dataexplorer.azure.com)

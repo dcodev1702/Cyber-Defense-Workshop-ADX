@@ -11,4 +11,4 @@ cloudflare_zone_id = "<CLOUDFLARE_ZONE_ID>"
 # kusto_memory_limit = "24g"
 
 # The shared class credential must be at least 48h and should be rotated or removed after the lab.
-# student_service_token_duration = "72h"
+# student_service_token_duration = "168h"

@@ -72,7 +72,7 @@ Subsequent calls to `Start-CloudflareAdxTunnel.ps1 -Apply` leave the existing co
 
 ## Student Connection
 
-The shared credential defaults to `72h`, and Terraform rejects a duration below `48h`. Distribute the ignored `student-access.env` file only for the class, together with [scripts/Start-StudentAdxProxy.ps1](../../scripts/Start-StudentAdxProxy.ps1).
+The shared credential defaults to `168h`, and Terraform rejects a duration below `48h`. Distribute the ignored `student-access.env` file only for the class, together with [scripts/Start-StudentAdxProxy.ps1](../../scripts/Start-StudentAdxProxy.ps1).
 
 On each student device, install Cloudflared and start the local TCP proxy:
 

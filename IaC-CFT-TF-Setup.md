@@ -1,6 +1,8 @@
 # Cyber Defense Workshop — ADX
-### End-to-End Walkthrough
-*Local ADX in Docker · Shared Cloudflare Service Auth · Terraform IaC*
+
+## End-to-End Walkthrough
+
+Local ADX in Docker, Shared Cloudflare Service Auth, and Terraform IaC.
 
 **Prepared for:** Lorenzo Ireland — Sr. Cloud Solution Architect, Microsoft
 **Version:** 1.1 · July 2026
@@ -11,10 +13,10 @@
 
 This walkthrough documents an end-to-end lab that spins up the **Cyber-Defense-Workshop-ADX** repository inside Docker on your Ubuntu 26.04 host, then publishes the local Azure Data Explorer instance through a Cloudflare Tunnel protected by one shared Service Auth credential. The Cloudflare resources are defined in **Terraform** so the route and short-lived class credential are version-controlled and reproducible.
 
-Reference repo: https://github.com/dcodev1702/Cyber-Defense-Workshop-ADX
+Reference repository: <https://github.com/dcodev1702/Cyber-Defense-Workshop-ADX>
 
 | Component | Purpose |
-|---|---|
+| --- | --- |
 | Ubuntu 26.04 host | Docker engine host running ADX + supporting services |
 | Cyber-Defense-Workshop-ADX | KQL / ADX workshop content packaged for local lab use |
 | Kusto emulator | Persistent local ADX-compatible query engine, capped at 4 vCPUs and 4 GiB RAM by default |
@@ -28,7 +30,7 @@ Reference repo: https://github.com/dcodev1702/Cyber-Defense-Workshop-ADX
 ### Placeholders used throughout
 
 | Placeholder | Example |
-|---|---|
+| --- | --- |
 | `<YOUR_DOMAIN>` | `example.com` (a zone you own in Cloudflare) |
 | `<HOSTNAME>` | `adx.example.com` |
 | `<CF_ACCOUNT_ID>` | From Cloudflare dashboard → Overview |
@@ -39,12 +41,14 @@ Reference repo: https://github.com/dcodev1702/Cyber-Defense-Workshop-ADX
 ## 2. Prepare the Ubuntu 26.04 Host
 
 ### 2.1 Base packages
+
 ```bash
 sudo apt update && sudo apt -y upgrade
 sudo apt -y install ca-certificates curl gnupg git jq unzip
 ```
 
 ### 2.2 Install Docker Engine
+
 ```bash
 sudo install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
@@ -69,12 +73,14 @@ docker version
 ## 3. Clone and Launch the ADX Workshop
 
 ### 3.1 Clone
+
 ```bash
 cd ~ && git clone https://github.com/dcodev1702/Cyber-Defense-Workshop-ADX.git
 cd Cyber-Defense-Workshop-ADX
 ```
 
 ### 3.2 Start the Compose runtime
+
 ```bash
 # Persist the Student database files outside the container.
 mkdir -p data/local-kusto
@@ -92,11 +98,12 @@ The Compose defaults give the emulator four vCPUs, a 4 GiB hard memory limit, no
 
 > **Bind to localhost only.** Keep the Kusto host port on `127.0.0.1`, not `0.0.0.0`. The Cloudflare connector does not need a host port because it uses the private Compose network.
 
-> ⚠️ **Keep the Kusto container.** The Student database survives a clean `docker compose stop kusto` followed by `docker compose start kusto`. Do not use `docker compose down`, `docker compose rm`, or `--force-recreate` for Kusto while relying on its local persistent database. After an intentional container replacement, restore the Student snapshot with `./scripts/Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate`.
+⚠️ **Keep the Kusto container.** The Student database survives a clean `docker compose stop kusto` followed by `docker compose start kusto`. Do not use `docker compose down`, `docker compose rm`, or `--force-recreate` for Kusto while relying on its local persistent database. After an intentional container replacement, restore the Student snapshot with `./scripts/Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate`.
 
 `kusto-defaultdb-cleaner` runs automatically after Kustainer is healthy. When `CyberDefendStudentSnapshot` exists, it drops `NetDefaultDB` and deletes its persistent state directory. It waits during first-run bootstrap so the Student import can create the retained database before the default database is removed.
 
 ### 3.3 Verify the resource limits
+
 ```bash
 docker inspect cyber-conf-wiesbaden-kusto \
   --format 'CPUs={{.HostConfig.NanoCpus}} MemoryBytes={{.HostConfig.Memory}} MemorySwapBytes={{.HostConfig.MemorySwap}}'
@@ -122,12 +129,14 @@ The replacement removes Kustainer's database registration, so the final import i
 ## 4. Cloudflare Tunnel
 
 ### 4.1 Prereqs
+
 - Cloudflare account with your domain added (nameservers delegated).
 - API token scoped to: **Account →** Cloudflare Tunnel:Edit, Cloudflare One Connector:Edit, Access: Apps and Policies:Edit, and Access: Service Tokens:Edit; **Zone →** DNS:Edit when Terraform manages DNS.
 - Docker Compose v2 and Terraform.
 - A host-installed `cloudflared` client only when using the optional browser-authorized DNS helper below.
 
 ### 4.2 Optional: install Cloudflared for browser-authorized DNS routing
+
 ```bash
 curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | \
   sudo tee /usr/share/keyrings/cloudflare-main.gpg > /dev/null
@@ -145,7 +154,7 @@ The checked-in Compose runtime is the supported path. It routes Cloudflare traff
 
 ## 5. Shared Class Credential Model
 
-Terraform creates one Cloudflare Service Token and a Service Auth policy for `adx.tier1-cyberdefense.ai`. The token defaults to 72 hours and Terraform enforces a 48-hour minimum. It is not a Cloudflare user identity, so 20-35 students can share it without consuming individual Access seats.
+Terraform creates one Cloudflare Service Token and a Service Auth policy for `adx.tier1-cyberdefense.ai`. The token defaults to 168 hours and Terraform enforces a 48-hour minimum. It is not a Cloudflare user identity, so 20-35 students can share it without consuming individual Access seats.
 
 > ⚠️ The shared Client ID and Client Secret are a temporary class password. Distribute them only through the class channel and rotate the token after the workshop.
 
@@ -154,6 +163,7 @@ Terraform creates one Cloudflare Service Token and a Service Auth policy for `ad
 ## 6. Terraform — Version-Control the Cloudflare Resources
 
 ### 6.1 Install Terraform
+
 ```bash
 wget -O - https://apt.releases.hashicorp.com/gpg | \
   sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -164,6 +174,7 @@ sudo apt update && sudo apt -y install terraform
 ```
 
 ### 6.2 Validated module layout
+
 ```bash
 infra/cloudflare-adx/
 ├── main.tf
@@ -177,6 +188,7 @@ infra/cloudflare-adx/
 The repository module uses Cloudflare provider `5.22.x` resource names and is the canonical configuration. It creates a remotely managed tunnel that routes TCP traffic to the read-only Kusto gateway, a self-hosted Access application with a Service Auth policy, and one shared Service Token. If the API token has Zone DNS permission, Terraform can also manage the CNAME with `-ManageDnsWithApi`; otherwise the checked-in Cloudflared helper creates the `adx.tier1-cyberdefense.ai` CNAME through a browser-authorized Cloudflare session.
 
 ### 6.3 Apply
+
 ```bash
 # Run from the repository root after setting CLOUDFLARE_API_TOKEN in your shell.
 pwsh ./scripts/Start-CloudflareAdxTunnel.ps1 \
@@ -274,7 +286,7 @@ The checked-in Compose connector uses `tcp://kusto-readonly-gateway:8081` on its
 ## 9. Troubleshooting
 
 | Symptom | Likely cause / fix |
-|---|---|
+| --- | --- |
 | `curl.exe -fsS http://127.0.0.1:8080/v1/rest/ping` fails | Kusto is not healthy on the Docker host. Check `docker compose ps` and `docker compose logs kusto`. |
 | Student proxy returns `403` | The shared Service Token is expired, rotated, or missing. Distribute the current `student-access.env` file. |
 | Student can query but a `.drop` or `.create` command returns `403` | Expected. The read-only gateway is enforcing immutable workshop data. |
