@@ -33,7 +33,7 @@ winget install --id Cloudflare.cloudflared --exact
 cloudflared access tcp --hostname adx.tier1-cyberdefense.ai --url 127.0.0.1:8080 --service-token-id d693cceb2da12c0e608489dbb2ceac02.access --service-token-secret 81cd3a66ab62afab8193b39cdf432c8c4db6ae7a08534f0f3e3ddacdca7b8822
 ```
 
-![Step 2: Start the Cloudflare tunnel](images/student-walk-through/2-CMD-Establish-Cloudflare-Tunnel.jpg)
+![Step 2: Start the Cloudflare tunnel](../images/student-walk-through/2-CMD-Establish-Cloudflare-Tunnel.jpg)
 
 ### 3. Validate the tunnel
 
@@ -45,7 +45,7 @@ curl.exe -fsS http://127.0.0.1:8080/v1/rest/ping
 
 You should receive a successful response. If the command reports a connection error, make sure the first terminal is still open and ask a workshop instructor for help.
 
-![Step 3: Validate the Cloudflare tunnel](images/student-walk-through/3-CMD-Validate-Cloudflare-Tunnel.jpg)
+![Step 3: Validate the Cloudflare tunnel](../images/student-walk-through/3-CMD-Validate-Cloudflare-Tunnel.jpg)
 
 ## Sign in to Azure Data Explorer
 
@@ -55,39 +55,39 @@ You should receive a successful response. If the command reports a connection er
 1. If Azure Data Explorer offers to create a free cluster, do not create one.
 1. Select **Skip and sign in** in the lower-right corner of the page.
 
-![Step 4: Select Skip and sign in](images/student-walk-through/4-CMD-Log%20In%20to%20ADX.png)
+![Step 4: Select Skip and sign in](../images/student-walk-through/4-CMD-Log%20In%20to%20ADX.png)
 
 ### 5. Enter your personal email address
 
 Enter the email address for the personal Microsoft account you will use during the lab, then continue through the sign-in page.
 
-![Step 5: Enter your email address](images/student-walk-through/5-CMD-Log%20In%20With%20Your%20Email%20Address.png)
+![Step 5: Enter your email address](../images/student-walk-through/5-CMD-Log%20In%20With%20Your%20Email%20Address.png)
 
 ### 6. Request the sign-in code
 
 When prompted, select the option to send the Azure Data Explorer authentication code to your email address.
 
-![Step 6: Send the authentication code](images/student-walk-through/6-CMD-Send-ADX-AuthCode-To-Email-Address.png)
+![Step 6: Send the authentication code](../images/student-walk-through/6-CMD-Send-ADX-AuthCode-To-Email-Address.png)
 
 ### 7. Check your email and enter the code
 
 1. Open the email message from Microsoft in a separate browser tab or mail application.
 1. Copy the authentication code.
 
-![Step 7: Copy the authentication code from email](images/student-walk-through/7-CMD-Copy-ADX-AuthCode-From-Email.png)
+![Step 7: Copy the authentication code from email](../images/student-walk-through/7-CMD-Copy-ADX-AuthCode-From-Email.png)
 
 ### 8A. Enter the authentication code
 
 1. Return to the Microsoft sign-in page.
 1. Enter the six-digit code from your email, then continue.
 
-![Step 8A: Enter the authentication code](images/student-walk-through/8A-CMD-Successful-ADX-Login.png)
+![Step 8A: Enter the authentication code](../images/student-walk-through/8A-CMD-Successful-ADX-Login.png)
 
 ### 8B. Choose whether to stay signed in
 
 Microsoft may ask whether you want to stay signed in. Select **Yes** on your personal computer; select **No** on a shared or public computer. You should then return to Azure Data Explorer.
 
-![Step 8B: Choose whether to stay signed in](images/student-walk-through/8B-CMD-Successful-ADX-Login.png)
+![Step 8B: Choose whether to stay signed in](../images/student-walk-through/8B-CMD-Successful-ADX-Login.png)
 
 ## Add the lab database
 
@@ -96,7 +96,7 @@ Microsoft may ask whether you want to stay signed in. Select **Yes** on your per
 1. In Azure Data Explorer, select **Query** from the left navigation if it is not already selected.
 1. In the **Connections** pane, select **Add**.
 
-![Step 9: Open Add in the Connections pane](images/student-walk-through/9-CMD-Connect-To-ADX-DB-Via-Cloudflare-Tunnel.png)
+![Step 9: Open Add in the Connections pane](../images/student-walk-through/9-CMD-Connect-To-ADX-DB-Via-Cloudflare-Tunnel.png)
 
 ### 10. Enter the local connection details
 
@@ -109,13 +109,13 @@ In the **Add connection** window, enter:
 
 Select **Add** when both fields are complete.
 
-![Step 10: Add the local ADX connection](images/student-walk-through/10-CMD-Connect-To-ADX-DB-Via-Cloudflare-Tunnel.png)
+![Step 10: Add the local ADX connection](../images/student-walk-through/10-CMD-Connect-To-ADX-DB-Via-Cloudflare-Tunnel.png)
 
 ### 11. Trust the local lab endpoint
 
 Azure Data Explorer will warn that the local address is an untrusted host. This is expected for the workshop connection. Select **Trust**.
 
-![Step 11: Trust the local host](images/student-walk-through/11-CMD-Connect-To-ADX-DB-Via-Cloudflare-Tunnel.png)
+![Step 11: Trust the local host](../images/student-walk-through/11-CMD-Connect-To-ADX-DB-Via-Cloudflare-Tunnel.png)
 
 ### 12. Confirm the address
 
@@ -125,25 +125,25 @@ To confirm the choice, type the address below exactly as shown and select **Trus
 http://127.0.0.1:8080
 ```
 
-![Step 12: Confirm the trusted local address](images/student-walk-through/12-CMD-Connect-To-ADX-DB-Via-Cloudflare-Tunnel.png)
+![Step 12: Confirm the trusted local address](../images/student-walk-through/12-CMD-Connect-To-ADX-DB-Via-Cloudflare-Tunnel.png)
 
 ### 13. Finish adding the connection
 
 The **Add connection** dialog may appear again after the trust confirmation. Verify that the URI and display name are still correct, then select **Add**.
 
-![Step 13: Confirm the connection details](images/student-walk-through/13-CMD-Connect-To-ADX-DB-Via-Cloudflare-Tunnel.png)
+![Step 13: Confirm the connection details](../images/student-walk-through/13-CMD-Connect-To-ADX-DB-Via-Cloudflare-Tunnel.png)
 
 ### 14. Allow the browser prompt
 
 Your browser may ask whether Azure Data Explorer can access other apps and services on this device. Select **Allow** so the browser can use your local lab connection.
 
-![Step 14: Allow access to the local connection](images/student-walk-through/14-CMD-Connect-To-ADX-DB-Via-Cloudflare-Tunnel.png)
+![Step 14: Allow access to the local connection](../images/student-walk-through/14-CMD-Connect-To-ADX-DB-Via-Cloudflare-Tunnel.png)
 
 ### 15. Select a database before querying
 
 If you see an error such as **Query was executed without a database in context**, open a new query tab with the **+** beside the current tab. In the **Connections** pane, expand **Cyber Defense**, then select **CyberDefendStudentSnapshot** to make it the active database.
 
-![Step 15: Create a new tab if no database is selected](images/student-walk-through/15-CMD-Initialization-Error-CREATE-A-NEW-TAB-ADX.png)
+![Step 15: Create a new tab if no database is selected](../images/student-walk-through/15-CMD-Initialization-Error-CREATE-A-NEW-TAB-ADX.png)
 
 ### 16. Confirm the connection works
 
@@ -156,7 +156,7 @@ SigninLogs
 
 Select **Run**. Seeing rows of results confirms that you are connected and ready for the lab.
 
-![Step 16: Successfully connected to the lab database](images/student-walk-through/16-CMD-Successfully-Connected-To-ADX-DB-Via-Cloudflare-Tunnel.png)
+![Step 16: Successfully connected to the lab database](../images/student-walk-through/16-CMD-Successfully-Connected-To-ADX-DB-Via-Cloudflare-Tunnel.png)
 
 ## Quick checks
 
