@@ -21,7 +21,7 @@ winget install --id Cloudflare.cloudflared --exact
 
 1. Wait for the installation to finish. If Windows asks for permission, approve it.
 
-![Step 1: Install Cloudflare Tunnel](images/student-walk-through/1-CMD-Install-Cloudflare-Tunnel-Application.jpg)
+![Step 1: Install Cloudflare Tunnel](../images/student-walk-through/1-CMD-Install-Cloudflare-Tunnel-Application.jpg)
 
 ### 2. Start the Cloudflare tunnel
 
