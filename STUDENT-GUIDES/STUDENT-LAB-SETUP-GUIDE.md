@@ -192,6 +192,18 @@ If every dashboard tile fails or stays blank, validate the tunnel first and then
 
 The four views below form a practical SOC triage sequence. Set the dashboard-wide time range before comparing tiles, and keep the same window while pivoting between pages.
 
+#### Import the dashboard JSON
+
+In Azure Data Explorer, select **Dashboards** > **New dashboard** > **Import dashboard from file**, then choose [dashboard-CYBER-DEFEND-V4.json](dashboard-CYBER-DEFEND-V4.json). Importing this JSON creates the Defender Dashboard pages and tiles represented by the images below.
+
+The JSON was exported with its authoring cloud data source, so set the lab connection before relying on the tiles:
+
+1. In the imported dashboard, select **Data sources** and edit **Cyber Defense Workshop ADX**.
+1. Replace the cluster address with exactly `http://127.0.0.1:8080`.
+1. Set the database to `CyberDefendStudentSnapshot`, then save the data source and select **Refresh**.
+
+The address must be the local tunnel endpoint, not the cloud cluster address saved in the JSON. The Cloudflare tunnel must still be running, and the local endpoint must already be trusted in Azure Data Explorer. When the data source is set correctly, the imported dashboard renders the SOC Overview, Identity and Sign-ins, Network and Graph, and Inventory and Posture views shown below.
+
 #### SOC Overview
 
 ![SOC Overview dashboard](../images/defender-dashboard/soc-overview.png)
