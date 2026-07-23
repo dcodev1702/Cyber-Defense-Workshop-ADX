@@ -1,14 +1,14 @@
-# Cyber Range user provisioning
+# Cyber Range user provisioning (secondary managed Azure delivery)
 
-> **Scope:** This guide applies to the managed Azure ADX cluster. It does not configure the containerized class lab's local Kustainer route. For that path, use [docs/cloudflare_adx_access.md](../docs/cloudflare_adx_access.md), which uses a shared Cloudflare Service Token, a local student proxy, `Fed=false`, and a read-only KQL gateway.
+> **Scope:** This guide applies to the secondary managed Azure ADX cluster route. It does not configure the primary containerized class lab's local Kustainer route. For the primary conference path, use [docs/cloudflare_adx_access.md](../docs/cloudflare_adx_access.md), which uses a shared Cloudflare Service Token, a local student proxy, `Fed=false`, and a read-only KQL gateway.
 
-This guide describes how exercise participants are provisioned to access the Cyber Range Azure Data Explorer (ADX) database and dashboard. For conference delivery, participants should use Microsoft Entra B2B guest access rather than shared accounts, local throwaway passwords, or unmanaged tenant users.
+This guide describes how exercise participants are provisioned to access the Cyber Range Azure Data Explorer (ADX) database and dashboard when managed Azure ADX is required. For short security conferences with random participants, prefer the Docker-first route so attendees do not need B2B invitations, entitlement access-package approval, or resource-tenant membership.
 
 The access model aligns to Microsoft's [Secure Future Initiative](https://www.microsoft.com/en-us/security/blog/2024/05/03/security-above-all-else-expanding-microsofts-secure-future-initiative/) emphasis on protected identities, least privilege, tenant isolation, and MFA. In particular, the exercise should enforce MFA for guest access and avoid password-based workshop-only accounts where external identities can be governed through B2B.
 
-## Recommended model
+## Managed Azure model
 
-Use one Microsoft Entra security group as the control point for all participant access. Put that group in the resource tenant that owns the ADX cluster and database.
+When using the managed Azure path, use one Microsoft Entra security group as the control point for all participant access. Put that group in the resource tenant that owns the ADX cluster and database.
 
 Recommended flow:
 
@@ -81,7 +81,7 @@ Participants should receive:
 - The ADX dashboard link after dashboard permissions are assigned.
 - The workshop KQL instructions or lab file reference.
 
-Participants should not receive shared credentials or temporary passwords for a resource-tenant account. They sign in with their own home organization identity, redeem B2B access when prompted, complete MFA, and then access the Cyber Range resources through the resource tenant.
+For this managed Azure path, participants should not receive shared credentials or temporary passwords for a resource-tenant account. They sign in with their own home organization identity, redeem B2B access when prompted, complete MFA, and then access the Cyber Range resources through the resource tenant.
 
 ## Validation checklist
 

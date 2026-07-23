@@ -5,6 +5,12 @@ services:
     image: mcr.microsoft.com/azuredataexplorer/kustainer-linux:latest
     container_name: cyber-conf-wiesbaden-kusto
     restart: unless-stopped
+    entrypoint:
+      - /bin/bash
+      - -c
+      - >-
+        rm -rf /kusto/tmp/Kusto.Personal/NetDefaultDB &&
+        exec /start-kusto.sh
     stop_signal: SIGINT
     stop_grace_period: 2m
     # Terraform persists this 4 CPU / 24 GiB default in compose.override.yaml.
@@ -44,6 +50,8 @@ services:
       context: ./tools/kusto-readonly-gateway
     container_name: cyber-conf-wiesbaden-kusto-defaultdb-cleaner
     restart: unless-stopped
+    mem_limit: 1g
+    memswap_limit: 1g
     command:
       - node
       - remove-netdefaultdb.mjs
@@ -67,6 +75,8 @@ services:
       context: ./tools/kusto-readonly-gateway
     container_name: cyber-conf-wiesbaden-kusto-readonly-gateway
     restart: unless-stopped
+    mem_limit: 1g
+    memswap_limit: 1g
     depends_on:
       kusto:
         condition: service_healthy
@@ -90,6 +100,8 @@ services:
     image: cloudflare/cloudflared:2026.7.2
     container_name: cyber-conf-wiesbaden-cloudflared
     restart: unless-stopped
+    mem_limit: 1g
+    memswap_limit: 1g
     depends_on:
       kusto-readonly-gateway:
         condition: service_healthy

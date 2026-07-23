@@ -1,6 +1,6 @@
 # Shared Credential Cloudflare Tunnel for Local ADX
 
-This module publishes the local Kusto emulator through `adx.tier1-cyberdefense.ai` using a remotely managed Cloudflare Tunnel. Docker Compose owns the Kusto emulator, a read-only KQL gateway, and the tunnel connector. Cloudflare Access uses one shared Service Auth credential, so a class can connect without per-student Cloudflare identities or seats.
+This module publishes the local Kusto emulator through `adx.tier1-cyberdefense.ai` using a remotely managed Cloudflare Tunnel. It is the primary delivery path for short security conferences with random participants. Docker Compose owns the Kusto emulator, a read-only KQL gateway, and the tunnel connector. Cloudflare Access uses one shared Service Auth credential, so a class can connect without per-student Cloudflare identities or seats.
 
 ## Access Boundary
 
@@ -35,7 +35,7 @@ Remove-Item Env:CLOUDFLARE_API_TOKEN
 
 The launcher starts the Compose `kusto` service, waits for its management-query health check on `http://127.0.0.1:8080`, applies the shared Service Auth route, writes `cloudflared.env` when the connector needs a token, writes `student-access.env` with the class credential, and starts the Compose `cloudflared` service. The connector forwards the public hostname to `tcp://kusto-readonly-gateway:8081` over the private `cyber-conf-wiesbaden-adx` Docker network. Only Kusto has a host port, and that mapping is limited to `127.0.0.1:8080`.
 
-Terraform persists the local Kustainer profile by generating the ignored repository-root `compose.override.yaml`. Its default is 4 CPUs with 24 GiB for memory and swap; set `kusto_cpu_limit` or `kusto_memory_limit` in `terraform.tfvars` to override it. On an `-Apply` run, the launcher uses `docker update` to synchronize an existing Kustainer container without replacing the snapshot-holding container.
+Terraform persists the local Kustainer profile by generating the ignored repository-root `compose.override.yaml`. Its default is 4 CPUs with 24 GiB for memory and swap; set `kusto_cpu_limit` or `kusto_memory_limit` in `terraform.tfvars` to override it. The cleaner, read-only gateway, and Cloudflared connector are all pinned to 1 GiB memory and 1 GiB swap in both Compose and the generated override. On an `-Apply` run, the launcher uses `docker update` to synchronize an existing Kustainer container without replacing the snapshot-holding container.
 
 For a one-time migration from the previous manually created containers, run:
 
@@ -64,9 +64,17 @@ docker compose start
 docker compose logs --follow cloudflared
 ```
 
-> ⚠️ Keep the existing `kusto` container when the local Student snapshot matters. Kustainer's persistent-database registration is retained across a clean stop/start of that container, not a Compose container replacement. Do not use `docker compose down`, `docker compose rm`, or `docker compose up --force-recreate kusto`; rebuild with `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` after any intentional replacement.
+> ⚠️ Keep the existing `kusto` container when the local Student snapshot matters. Kustainer's persistent-database registration is retained across a clean stop/start of that container, not a Compose container replacement. Do not use `docker compose down`, `docker compose rm`, `docker compose up` after a Compose configuration change, or `docker compose up --force-recreate kusto`; rebuild with `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` after any intentional replacement.
 
 `kusto-defaultdb-cleaner` watches the local Kustainer endpoint. Once `CyberDefendStudentSnapshot` exists, it drops `NetDefaultDB` and removes the corresponding `data\local-kusto\dbs\NetDefaultDB` directory. The cleaner deliberately waits on a fresh emulator until the Student import has created the retained database.
+
+Before an intentional Kustainer replacement, create a portable local backup and copy the generated ZIP from `data\backups\local-kusto` to secure storage:
+
+```powershell
+docker compose stop kusto
+.\scripts\Backup-LocalKustoSnapshot.ps1
+docker compose start kusto
+```
 
 Subsequent calls to `Start-CloudflareAdxTunnel.ps1 -Apply` leave the existing connector token and healthy Compose connector in place. Use `-ReplaceExistingConnector` only when you intentionally need a new connector token and container.
 

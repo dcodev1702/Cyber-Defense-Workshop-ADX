@@ -1,8 +1,8 @@
-# Cyber Defense Workshop — ADX
+# Cyber Defense Workshop — ADX (Primary Docker Conference Delivery)
 
 ## End-to-End Walkthrough
 
-Local ADX in Docker, Shared Cloudflare Service Auth, and Terraform IaC.
+Primary local ADX in Docker, Shared Cloudflare Service Auth, and Terraform IaC.
 
 **Prepared for:** Lorenzo Ireland — Sr. Cloud Solution Architect, Microsoft
 **Version:** 1.1 · July 2026
@@ -11,7 +11,7 @@ Local ADX in Docker, Shared Cloudflare Service Auth, and Terraform IaC.
 
 ## 1. Overview
 
-This walkthrough documents an end-to-end lab that spins up the **Cyber-Defense-Workshop-ADX** repository inside Docker on your Ubuntu 26.04 host, then publishes the local Azure Data Explorer instance through a Cloudflare Tunnel protected by one shared Service Auth credential. The Cloudflare resources are defined in **Terraform** so the route and short-lived class credential are version-controlled and reproducible.
+This walkthrough documents the primary conference lab: it spins up the **Cyber-Defense-Workshop-ADX** repository inside Docker on your Ubuntu 26.04 host, then publishes the local Azure Data Explorer instance through a Cloudflare Tunnel protected by one shared Service Auth credential. The Cloudflare resources are defined in **Terraform** so the route and short-lived class credential are version-controlled and reproducible. Managed Azure ADX plus Microsoft Entra B2B remains a secondary delivery option for events that require governed individual identities.
 
 Reference repository: <https://github.com/dcodev1702/Cyber-Defense-Workshop-ADX>
 
@@ -19,7 +19,8 @@ Reference repository: <https://github.com/dcodev1702/Cyber-Defense-Workshop-ADX>
 | --- | --- |
 | Ubuntu 26.04 host | Docker engine host running ADX + supporting services |
 | Cyber-Defense-Workshop-ADX | KQL / ADX workshop content packaged for local lab use |
-| Kusto emulator | Persistent local ADX-compatible query engine, capped at 4 vCPUs and 4 GiB RAM by default |
+| Kusto emulator | Persistent local ADX-compatible query engine, capped at 4 vCPUs and 24 GiB RAM by default |
+| Cleaner, gateway, and Cloudflared | Supporting services, each pinned to 1 GiB memory and 1 GiB swap |
 | Cloudflare Tunnel (`cloudflared`) | Outbound-only tunnel from your host to Cloudflare's edge — no inbound ports |
 | Shared class credential | One 48-hour minimum Cloudflare Service Token used by all students without individual Access seats |
 | Read-only KQL gateway | Blocks mutable management commands before tunnel traffic reaches Kustainer |
@@ -94,7 +95,7 @@ curl -s http://127.0.0.1:8080/v1/rest/mgmt -X POST \
   -d '{"csl":".show cluster"}' | jq .
 ```
 
-The Compose defaults give the emulator four vCPUs, a 4 GiB hard memory limit, no additional swap, and a 2,048-process limit. The Compose file binds the Kusto HTTP port only to `127.0.0.1:8080`; the `cloudflared` service reaches the read-only gateway through the internal Docker network at `tcp://kusto-readonly-gateway:8081`.
+The Compose defaults give the emulator four vCPUs, a 24 GiB hard memory limit, no additional swap, and a 2,048-process limit. The default-database cleaner, read-only gateway, and `cloudflared` connector each have an independent 1 GiB memory and swap limit. The Compose file binds the Kusto HTTP port only to `127.0.0.1:8080`; the `cloudflared` service reaches the read-only gateway through the internal Docker network at `tcp://kusto-readonly-gateway:8081`.
 
 > **Bind to localhost only.** Keep the Kusto host port on `127.0.0.1`, not `0.0.0.0`. The Cloudflare connector does not need a host port because it uses the private Compose network.
 
@@ -108,9 +109,13 @@ The Compose defaults give the emulator four vCPUs, a 4 GiB hard memory limit, no
 docker inspect cyber-conf-wiesbaden-kusto \
   --format 'CPUs={{.HostConfig.NanoCpus}} MemoryBytes={{.HostConfig.Memory}} MemorySwapBytes={{.HostConfig.MemorySwap}}'
 docker stats cyber-conf-wiesbaden-kusto --no-stream
+
+for container in cyber-conf-wiesbaden-kusto-defaultdb-cleaner cyber-conf-wiesbaden-kusto-readonly-gateway cyber-conf-wiesbaden-cloudflared; do
+  docker inspect "$container" --format '{{.Name}} MemoryBytes={{.HostConfig.Memory}} MemorySwapBytes={{.HostConfig.MemorySwap}}'
+done
 ```
 
-The default inspect output should show `CPUs=4000000000`, `MemoryBytes=4294967296`, and `MemorySwapBytes=4294967296`.
+The Kusto inspect output should show `CPUs=4000000000`, `MemoryBytes=25769803776`, and `MemorySwapBytes=25769803776`. Each supporting-service inspect output should show `MemoryBytes=1073741824` and `MemorySwapBytes=1073741824`.
 
 ### 3.4 Change resource limits
 
@@ -123,6 +128,16 @@ pwsh ./scripts/Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate
 ```
 
 The replacement removes Kustainer's database registration, so the final import is required even though the persistent files remain under `data/local-kusto`.
+
+### 3.5 Back up the local Student snapshot
+
+Before an intentional replacement, stop only Kusto, create the archive, and start that same container again. The command prints the timestamped ZIP path and SHA-256 hash; copy the ZIP from `data\backups\local-kusto` to secure storage or Google Drive.
+
+```powershell
+docker compose stop kusto
+.\scripts\Backup-LocalKustoSnapshot.ps1
+docker compose start kusto
+```
 
 ---
 
@@ -185,7 +200,7 @@ infra/cloudflare-adx/
 └── versions.tf
 ```
 
-The repository module uses Cloudflare provider `5.22.x` resource names and is the canonical configuration. It creates a remotely managed tunnel that routes TCP traffic to the read-only Kusto gateway, a self-hosted Access application with a Service Auth policy, and one shared Service Token. If the API token has Zone DNS permission, Terraform can also manage the CNAME with `-ManageDnsWithApi`; otherwise the checked-in Cloudflared helper creates the `adx.tier1-cyberdefense.ai` CNAME through a browser-authorized Cloudflare session.
+The repository module uses Cloudflare provider `5.22.x` resource names and is the canonical configuration. It creates a remotely managed tunnel that routes TCP traffic to the read-only Kusto gateway, a self-hosted Access application with a Service Auth policy, and one shared Service Token. It also generates the Compose override: Kustainer defaults to 4 CPUs and 24 GiB memory and swap, while the cleaner, gateway, and Cloudflared connector are each pinned to 1 GiB memory and swap. If the API token has Zone DNS permission, Terraform can also manage the CNAME with `-ManageDnsWithApi`; otherwise the checked-in Cloudflared helper creates the `adx.tier1-cyberdefense.ai` CNAME through a browser-authorized Cloudflare session.
 
 ### 6.3 Apply
 

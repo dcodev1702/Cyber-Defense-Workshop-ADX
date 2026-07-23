@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This component is the policy boundary between classroom tunnel traffic and the Kustainer emulator.
+This component is the policy boundary for the primary Docker-first conference route between classroom tunnel traffic and the Kustainer emulator.
 
 Kustainer has no native authentication or authorization. Cloudflare Service Auth protects the public tunnel, while this gateway limits what an authenticated student can send to Kustainer. It is not a replacement for a managed Azure Data Explorer cluster or for host-level administrator controls.
 
@@ -60,6 +60,10 @@ The gateway is configured by `compose.yaml`.
 
 The gateway does not publish a host port. Only the Cloudflare connector can reach it through the private Compose network.
 
+## Container Limits
+
+Docker Compose and the Terraform-generated override pin this gateway, `kusto-defaultdb-cleaner`, and `cloudflared` to 1 GiB memory and 1 GiB swap each. Kustainer has its own independent capacity profile.
+
 ## Default Database Cleaner
 
 `remove-netdefaultdb.mjs` runs as the `kusto-defaultdb-cleaner` Compose service. Once `CyberDefendStudentSnapshot` is present, it:
@@ -68,6 +72,8 @@ The gateway does not publish a host port. Only the Cloudflare connector can reac
 2. Removes the residual `/kustodata/dbs/NetDefaultDB` persistent state directory.
 
 The cleaner waits on a fresh emulator until the Student import has created `CyberDefendStudentSnapshot`. This keeps the Kustainer bootstrap/import path working while ensuring the default database does not remain after the workshop snapshot is ready.
+
+Kustainer retains ephemeral default-database metadata beneath `/kusto/tmp`. The Compose startup wrapper removes only the stale `NetDefaultDB` metadata before invoking the image's original startup script, so the cleaner does not cause a restart loop after a normal `docker compose stop kusto` and `docker compose start kusto` cycle. It does not touch the Student snapshot under `/kustodata`.
 
 ## Operations
 

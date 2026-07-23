@@ -1,10 +1,10 @@
-# Shared Class Credential Guide for the Containerized ADX Lab
+# Primary Conference Delivery: Shared Class Credential for the Containerized ADX Lab
 
 ## Purpose
 
-Use this guide for the containerized Azure Data Explorer (ADX) lab at `adx.tier1-cyberdefense.ai`. Students share one short-lived Cloudflare Service Auth credential, run a local Cloudflared TCP proxy, and connect ADX to that local proxy.
+Use this guide for the primary conference delivery model: the containerized Azure Data Explorer (ADX) lab at `adx.tier1-cyberdefense.ai`. Students share one short-lived Cloudflare Service Auth credential, run a local Cloudflared TCP proxy, and connect ADX to that local proxy.
 
-This is separate from the managed Azure ADX deployment and its Microsoft Entra B2B access described in [student_access.md](student_access.md).
+This is the preferred route for time-boxed workshops with random or mixed-tenant attendees. The managed Azure ADX deployment and its Microsoft Entra B2B access described in [student_access.md](student_access.md) are the secondary route for programs that require governed per-person access.
 
 ## What This Solves
 
@@ -32,6 +32,7 @@ Student device
 | Local database | `CyberDefendStudentSnapshot` |
 | Credential lifetime | `168h` default, `48h` enforced minimum |
 | Credential type | Shared Cloudflare Service Token Client ID and Client Secret |
+| Supporting-service limit | Cleaner, gateway, and Cloudflared are each pinned to 1 GiB memory and 1 GiB swap |
 
 ## Read-Only Boundary
 
@@ -83,6 +84,18 @@ docker compose ps
 The `kusto-readonly-gateway` service must report `healthy` before students connect.
 
 The Compose `kusto-defaultdb-cleaner` service keeps the database list clean: after `CyberDefendStudentSnapshot` exists, it removes `NetDefaultDB` and its persistent state directory. This does not affect the Student snapshot.
+
+## Back Up Before Replacement
+
+Use the local backup command before an intentional Kustainer replacement or before copying the database off the host. Stop and start the existing container directly; do not use `docker compose up` to wait after a Compose change because that can replace Kustainer.
+
+```powershell
+docker compose stop kusto
+.\scripts\Backup-LocalKustoSnapshot.ps1
+docker compose start kusto
+```
+
+The command writes a timestamped ZIP and SHA-256 hash under `data\backups\local-kusto`. Copy that ZIP to the destination of your choice, such as Google Drive, and keep it out of source control.
 
 ## Student Setup
 
@@ -206,7 +219,7 @@ The launcher overwrites the ignored `student-access.env` file with the new pair.
 | Student can query but `.drop` or `.create` returns HTTP `403` | Expected. The read-only gateway is blocking mutable Kusto management commands. |
 | ADX says it cannot connect while the local proxy is listening | Use the complete connection URI `http://127.0.0.1:8080;Fed=false`, not the bare local URL. |
 | ADX still says it cannot connect after adding `Fed=false` | Run the local management test in **Browser Connection Compatibility**. If it returns `200`, hard-refresh ADX with `Ctrl+F5`; the gateway already allows ADX CORS headers and private-network preflight. |
-| Database is absent | The instructor should start the existing Kusto container with `docker compose start kusto`. If it was replaced, rebuild the mounted snapshot with `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate`. |
+| Database is absent | The instructor should start the existing Kusto container with `docker compose start kusto`. If Kustainer was replaced, retain the backup ZIP and rebuild the mounted snapshot with `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate`. |
 
 ## References
 

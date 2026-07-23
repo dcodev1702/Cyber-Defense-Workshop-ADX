@@ -1,12 +1,12 @@
-# Student access model
+# Managed Azure ADX participant access (secondary delivery)
 
-> This guide applies only to the managed Azure ADX deployment protected by Microsoft Entra B2B. For the containerized class lab, use [cloudflare_adx_access.md](cloudflare_adx_access.md): it uses a shared 168-hour Cloudflare Service Token, the local student proxy, `http://127.0.0.1:8080;Fed=false`, and the read-only gateway instead of B2B database roles.
+> This guide applies only to the secondary managed Azure ADX deployment protected by Microsoft Entra B2B. For the primary containerized conference lab, use [cloudflare_adx_access.md](cloudflare_adx_access.md): it uses a shared 168-hour Cloudflare Service Token, the local student proxy, `http://127.0.0.1:8080;Fed=false`, and the read-only gateway instead of B2B database roles.
 
-For conference delivery, use the SFI-aligned B2B provisioning model in [`..\user_creation\README.md`](../user_creation/README.md). Participants should authenticate with their own home organization identities, redeem Microsoft Entra B2B guest access in the resource tenant, satisfy MFA, and receive access through a participant security group.
+Use this model when a workshop needs managed Azure ADX, per-person authorization, and governed participant lifecycle. For short conference sessions with random attendees, use the Docker-first route instead.
 
 The helper scripts below are retained for internal-only rehearsals or isolated tenant builds where cloud-only workshop accounts are explicitly acceptable. Do not use shared accounts or unmanaged temporary passwords for external conference participants.
 
-## Recommended conference approach
+## Managed Azure delivery approach
 
 1. Create a resource-tenant security group for the workshop participants.
 2. Create an entitlement management access package that adds approved users to that group.
@@ -59,7 +59,7 @@ Grant ADX access to the group:
 
 ## Operational notes
 
-- Prefer governed B2B guest access for external participants.
+- Use governed B2B guest access when managed Azure ADX is required for external participants.
 - Set TAP lifetime to cover check-in, the two-hour workshop, and troubleshooting buffer.
 - If using internal-only SMS MFA, pre-stage phone numbers or have students register MFA before the lab starts.
 - Keep the roster CSV out of source control and delete it after the event.

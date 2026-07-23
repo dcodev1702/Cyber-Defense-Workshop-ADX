@@ -1,8 +1,21 @@
 # Instructor guide
 
-> **Delivery paths:** For the managed Azure ADX delivery, use the B2B participant setup below. For the containerized class lab, use [Shared Class Credential Guide](cloudflare_adx_access.md): distribute the temporary shared credential and student proxy script, have students connect through `http://127.0.0.1:8080;Fed=false`, and verify the `kusto-readonly-gateway` service is healthy.
+> **Primary delivery path:** Use the containerized class lab and [Shared Class Credential Guide](cloudflare_adx_access.md) for security conferences with mixed or random participants. Distribute the temporary shared credential and student proxy script, have students connect through `http://127.0.0.1:8080;Fed=false`, and verify the `kusto-readonly-gateway` service is healthy.
+>
+> **Secondary delivery path:** Use managed Azure ADX plus B2B participant setup only when the event requires per-person identity governance, tenant access policy, and managed ADX database authorization.
 
-## Setup checklist
+## Primary conference setup checklist
+
+1. Start the Docker host with `docker compose up --detach --wait kusto` for the initial setup.
+2. Run `scripts\Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` to build and validate the local Student snapshot.
+3. Run `scripts\Start-CloudflareAdxTunnel.ps1 -Apply` to create the temporary shared Service Auth route and start the connector.
+4. Confirm `kusto-readonly-gateway` is healthy with `docker compose ps` and validate a pilot student proxy connection.
+5. Distribute only `student-access.env`, `Start-StudentAdxProxy.ps1`, and the student lab instructions through the temporary class channel.
+6. Load `workshop\student_lab.kql` in the query editor.
+
+Before an intentional Kustainer replacement, run `docker compose stop kusto`, `scripts\Backup-LocalKustoSnapshot.ps1`, and `docker compose start kusto`; copy the resulting ZIP to secure storage.
+
+## Secondary managed Azure checklist
 
 1. Confirm the ADX cluster exists.
 2. Run `scripts\Initialize-Workshop.ps1` to create the database, tables, mappings, generated data, and ingestion.

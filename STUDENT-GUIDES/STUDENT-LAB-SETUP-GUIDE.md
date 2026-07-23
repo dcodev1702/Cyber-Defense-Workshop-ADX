@@ -6,7 +6,7 @@ Use this guide at the workshop to connect your Windows computer to the Cyber Def
 
 - Use a Windows computer with an internet connection.
 - Have access to a personal Microsoft account that you can use to sign in to Azure Data Explorer.
-- Keep the workshop-provided tunnel command available. It is specific to this in-person lab; paste it exactly as supplied by the workshop team and do not edit it.
+- Keep the workshop-provided `student-access.env` file and `Start-StudentAdxProxy.ps1` script together in one folder. They are specific to this in-person lab; do not share the credential file.
 
 ## Set up the local connection
 
@@ -23,14 +23,14 @@ winget install --id Cloudflare.cloudflared --exact
 
 ![Step 1: Install Cloudflare Tunnel](../images/student-walk-through/1-CMD-Install-Cloudflare-Tunnel-Application.jpg)
 
-### 2. Start the Cloudflare tunnel
+### 2. Start the local Cloudflare proxy
 
-1. In the same terminal, paste the workshop-provided Cloudflare tunnel command exactly as you received it.
+1. In the same terminal, change to the folder containing the workshop-provided files.
 1. Press **Enter** to start the local connection.
 1. Leave this terminal window open. Closing it disconnects the lab database.
 
 ```powershell
-cloudflared access tcp --hostname adx.tier1-cyberdefense.ai --url 127.0.0.1:8080 --service-token-id d693cceb2da12c0e608489dbb2ceac02.access --service-token-secret 81cd3a66ab62afab8193b39cdf432c8c4db6ae7a08534f0f3e3ddacdca7b8822
+.\Start-StudentAdxProxy.ps1 -CredentialFile .\student-access.env
 ```
 
 ![Step 2: Start the Cloudflare tunnel](../images/student-walk-through/2-CMD-Establish-Cloudflare-Tunnel.jpg)
@@ -104,7 +104,7 @@ In the **Add connection** window, enter:
 
 | Field | Value |
 | --- | --- |
-| Connection URI | `http://127.0.0.1:8080` |
+| Connection URI | `http://127.0.0.1:8080;Fed=false` |
 | Display name | `Cyber Defense` |
 
 Select **Add** when both fields are complete.
@@ -161,7 +161,7 @@ Select **Run**. Seeing rows of results confirms that you are connected and ready
 ## Quick checks
 
 - Keep the terminal running the Cloudflare tunnel open throughout the lab.
-- Use `http://127.0.0.1:8080` exactly when Azure Data Explorer asks for the connection URI.
+- Use `http://127.0.0.1:8080;Fed=false` exactly when Azure Data Explorer asks for the connection URI.
 - Select `CyberDefendStudentSnapshot` before you run a query.
 - Ask a workshop instructor for help if the tunnel check fails or the database does not appear.
 
@@ -174,7 +174,7 @@ Use the Defender Dashboard after completing the connection steps above. It bring
 The dashboard depends on the same local Cloudflare tunnel as the query experience. Open **Data sources** in the dashboard and confirm that the data source connection URI is:
 
 ```text
-http://127.0.0.1:8080
+http://127.0.0.1:8080;Fed=false
 ```
 
 Azure Data Explorer may display the URI with a trailing `/`; that is expected. Do not replace the local address with the public tunnel hostname, use `https`, or add a path after the port. The local address routes dashboard queries through the tunnel running on your computer.
@@ -199,7 +199,7 @@ In Azure Data Explorer, select **Dashboards** > **New dashboard** > **Import das
 The JSON was exported with its authoring cloud data source, so set the lab connection before relying on the tiles:
 
 1. In the imported dashboard, select **Data sources** and edit **Cyber Defense Workshop ADX**.
-1. Replace the cluster address with exactly `http://127.0.0.1:8080`.
+1. Replace the cluster address with exactly `http://127.0.0.1:8080;Fed=false`.
 1. Set the database to `CyberDefendStudentSnapshot`, then save the data source and select **Refresh**.
 
 The address must be the local tunnel endpoint, not the cloud cluster address saved in the JSON. The Cloudflare tunnel must still be running, and the local endpoint must already be trusted in Azure Data Explorer. When the data source is set correctly, the imported dashboard renders the SOC Overview, Identity and Sign-ins, Network and Graph, and Inventory and Posture views shown below.
