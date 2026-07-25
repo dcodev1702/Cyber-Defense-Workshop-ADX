@@ -1,4 +1,4 @@
-# Student Lab Setup Guide
+# 🚀 Student Lab Setup Guide
 
 Use this guide at the workshop to connect your Windows computer to the Cyber Defense lab database. Follow the steps in order and keep the terminal window that runs the local tunnel open until you finish the lab.
 
