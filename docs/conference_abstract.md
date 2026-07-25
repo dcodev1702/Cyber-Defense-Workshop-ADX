@@ -6,18 +6,18 @@
 
 ## Abstract
 
-Modern intrusions rarely stay inside a single telemetry source. A risky cloud sign-in can become an OAuth persistence problem, a Microsoft Graph collection path, an endpoint credential-access investigation, and eventually a hybrid identity lateral-movement case. This hands-on workshop teaches defenders how to investigate that full chain using Kusto Query Language (KQL) in Azure Data Explorer (ADX), backed by realistic synthetic Microsoft security telemetry rather than live production data.
+Modern intrusions rarely stay inside a single telemetry source. A phishing email that carries no malicious link at all can become a valid cloud token, an OAuth persistence problem, a Microsoft Graph collection path, an endpoint credential-access investigation, a hybrid identity lateral-movement case, and finally a data-exfiltration incident. This hands-on workshop teaches defenders how to investigate that full chain using Kusto Query Language (KQL) in Azure Data Explorer (ADX), backed by realistic synthetic Microsoft security telemetry rather than live production data.
 
-Participants investigate a MIDNIGHT BLIZZARD-inspired scenario against a notional hybrid AD and Microsoft Entra ID environment. The attack begins with a compromised user and risky Entra sign-in, then moves through suspicious OAuth consent, service-principal credential abuse, Microsoft Graph activity, endpoint credential harvesting, Kerberoasting, LSASS access, and service-account activity against an Entra Connect server. Optional Linux telemetry adds Ubuntu MDE, SSH, sudo, package vulnerability, and Oracle access pivots for teams that want broader endpoint realism.
+Participants investigate a MIDNIGHT BLIZZARD-inspired scenario against a notional hybrid AD and Microsoft Entra ID environment, structured as thirteen acts. It opens with delivery rather than mid-intrusion: a device-code phishing message whose lure points at the *genuine* `microsoft.com/devicelogin`, so URL reputation never fires and the victim completes real MFA against real Microsoft infrastructure. The attacker redeems the resulting token from unfamiliar infrastructure on an unmanaged device. A deliberately benign twin runs alongside it — a legitimate device-code sign-in from a compliant, corporate-joined device — so any detection keyed on the protocol alone flags the wrong user. From that foothold the intrusion moves through suspicious OAuth consent, service-principal credential abuse, Microsoft Graph collection, endpoint staging and credential harvesting, Kerberoasting, and a service-account pivot to an Entra Connect server. It then establishes impact and closes the loop: storage key listing and mailbox access that show data actually moving, a threat-intelligence join against the indicators students found by hand, and SOC incident grouping in Microsoft Defender XDR. Optional Linux telemetry adds Ubuntu MDE, SSH, sudo, package vulnerability, and Oracle access pivots for teams that want broader endpoint realism.
 
-The lab is built for repeatable delivery: schemas, synthetic NDJSON telemetry, ADX table creation, ingestion scripts, student access helpers, dashboards, instructor guidance, and student KQL content are included. Students work across Defender XDR-style device, identity, cloud app, Graph, sign-in, alert, and vulnerability-management tables, then correlate events into a defensible incident timeline mapped to MITRE ATT&CK.
+The lab is built for repeatable delivery: 79 Microsoft Learn-derived table schemas, synthetic NDJSON telemetry, ADX table creation, ingestion scripts, student access helpers, dashboards, instructor guidance, and a validated instructor answer key are included. Students work across Defender for Office 365 mail, Defender XDR device, identity, cloud app, Graph, sign-in, alert, threat-intelligence, and vulnerability-management tables, then correlate events into a defensible incident timeline mapped to MITRE ATT&CK.
 
-Attendees leave with practical KQL investigation patterns, a clearer understanding of which Microsoft telemetry sources answer which defender questions, and a reusable model for building safe, high-fidelity cyber defense training without exposing real environments or sensitive logs.
+Attendees leave with practical KQL investigation patterns, a clearer understanding of which Microsoft telemetry sources answer which defender questions, a worked example of separating malicious activity from legitimate activity that looks nearly identical, and a reusable model for building safe, high-fidelity cyber defense training without exposing real environments or sensitive logs.
 
 ## Session Details
 
 - Format: Hands-on workshop or instructor-led technical session
-- Length: 90 to 120 minutes
+- Length: 120 minutes
 - Audience: SOC analysts, detection engineers, incident responders, threat hunters, security architects, and instructors building cyber defense labs
 - Skill level: Intermediate; basic familiarity with Microsoft security portals, identity concepts, and query languages is helpful
 
@@ -25,11 +25,13 @@ Attendees leave with practical KQL investigation patterns, a clearer understandi
 
 By the end of this session, participants will be able to:
 
-1. Use KQL to orient across ADX tables modeled after Microsoft Defender, Microsoft Entra ID, Microsoft Graph, CloudAppEvents, and alert telemetry.
-2. Correlate sign-in, OAuth, Graph, endpoint, identity, vulnerability, and alert evidence into a single attack timeline.
-3. Recognize credential-access and hybrid identity tradecraft and map observed behaviors to MITRE ATT&CK.
-4. Explain which telemetry sources are most useful for investigating risky sign-ins, OAuth abuse, service-principal persistence, endpoint credential harvesting, Kerberos activity, and lateral movement.
-5. Reuse the lab design pattern to deliver safe, synthetic, repeatable cyber defense training in ADX.
+1. Use KQL to orient across ADX tables modeled after Microsoft Defender for Office 365, Microsoft Defender XDR, Microsoft Entra ID, Microsoft Graph, CloudAppEvents, threat intelligence, and alert telemetry.
+2. Reconstruct a device-code phishing chain from the delivered mail through the URL click to the resulting cloud sign-in.
+3. Separate a malicious device-code sign-in from a legitimate one that looks nearly identical, and explain why protocol-only detections fail.
+4. Correlate sign-in, OAuth, Graph, endpoint, identity, exfiltration, vulnerability, and alert evidence into a single attack timeline.
+5. Recognize credential-access and hybrid identity tradecraft and map observed behaviors to MITRE ATT&CK.
+6. Explain which telemetry sources are most useful for investigating phishing delivery, risky sign-ins, OAuth abuse, service-principal persistence, endpoint credential harvesting, Kerberos activity, lateral movement, and cloud data movement.
+7. Reuse the lab design pattern to deliver safe, synthetic, repeatable cyber defense training in ADX.
 
 ## Suggested Track Tags
 

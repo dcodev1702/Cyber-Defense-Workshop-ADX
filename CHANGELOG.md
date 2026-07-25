@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Rewrote the conference abstract for the current device-code phishing emulation: thirteen acts, the benign twin, cloud exfiltration, threat-intel correlation, XDR incident grouping, 79 tables, and a fixed 120-minute length.
 - Removed `;Fed=false` from every ADX connection instruction across the README, student guide, class guide, IaC setup, gateway, and infra docs; the student connection URI is now `http://127.0.0.1:8080`.
 - Added a collapsible GNU/Linux Debian install path to step 1 of the student lab setup guide, using Cloudflare's apt repository with a direct `.deb` fallback.
 - Made the MacOS install path in step 1 of the student lab setup guide a collapsible section, added `brew update` before the `cloudflared` install, and added sparing section emojis.
