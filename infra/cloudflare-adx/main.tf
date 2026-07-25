@@ -11,6 +11,15 @@ resource "local_file" "kusto_compose_override" {
         cpus: "${var.kusto_cpu_limit}"
         mem_limit: "${var.kusto_memory_limit}"
         memswap_limit: "${var.kusto_memory_limit}"
+      kusto-defaultdb-cleaner:
+        mem_limit: "1g"
+        memswap_limit: "1g"
+      kusto-readonly-gateway:
+        mem_limit: "1g"
+        memswap_limit: "1g"
+      cloudflared:
+        mem_limit: "1g"
+        memswap_limit: "1g"
   YAML
 }
 

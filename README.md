@@ -1,10 +1,21 @@
 # 🚀 Cyber Defense KQL Workshop for Azure Data Explorer (ADX)
 
-## Description
+## Docker-first conference delivery
+
+For security conferences with walk-up or mixed-tenant participants, the **Docker, Cloudflare Service Auth, and read-only gateway** route is the primary delivery model. It keeps the workshop database on the instructor-controlled host, requires no participant tenant provisioning or per-student Cloudflare seat, opens no inbound host port, and exposes only read-only KQL through the temporary shared credential.
+
+| Delivery model | Position | Best fit |
+| --- | --- | --- |
+| Docker Kustainer + Cloudflare Service Auth | **Primary** | Time-boxed security conferences, random participants, and fast classroom setup. |
+| Managed Azure ADX + Microsoft Entra B2B | Secondary | Governed, recurring, or long-running programs that require per-person identities, MFA policy, and lifecycle governance. |
+
+The shared Service Token is a temporary lab password, not an identity system: distribute it only for the event, restrict all public traffic through the read-only gateway, and rotate it immediately after class. See [docs/cloudflare_adx_access.md](docs/cloudflare_adx_access.md) for the full host and student flow.
+
+## Workshop description
 
 This repository contains a complete two-hour cyber defense workshop package for teaching KQL-driven investigation in Azure Data Explorer (ADX). The workshop uses synthetic Microsoft security telemetry loaded into an ADX database so students can investigate a realistic hybrid identity and endpoint intrusion without needing live production infrastructure.
 
-The lab is designed for **20 - 40 students** using the **ADX Web UI**. For conference delivery, students should be provisioned as Microsoft Entra B2B guests through an access package, protected with MFA, and authorized through a participant security group. Students query Microsoft Defender XDR-style, Microsoft Defender for Endpoint (MDE), Microsoft Defender for Identity (MDI), Microsoft Entra ID, Microsoft Graph, sign-in, cloud app, and alert telemetry.
+The lab is designed for **20 - 40 students** using the **ADX Web UI**. The primary conference path uses the local Kustainer snapshot through a Cloudflare TCP proxy; the managed Azure ADX and Microsoft Entra B2B path remains available when per-person tenant access is required. Students query Microsoft Defender XDR-style, Microsoft Defender for Endpoint (MDE), Microsoft Defender for Identity (MDI), Microsoft Entra ID, Microsoft Graph, sign-in, cloud app, and alert telemetry.
 
 ## Purpose
 
@@ -16,18 +27,26 @@ The purpose of this workshop is to help defenders learn how to:
 4. Map observed attack behavior to MITRE ATT&CK techniques.
 5. Understand which Microsoft telemetry tables illuminate specific credential-access behaviors.
 
-## Prerequisites
+## Primary prerequisites
 
-To deploy and run the workshop, you need:
+To run the Docker-first conference lab, you need:
 
-- ☁️ An existing ADX cluster
-- 🔐 Azure permissions to create or manage an ADX database
-- 🧭 ADX database admin permissions for table creation and ingestion
-- 👥 Entra permissions for B2B guest onboarding, access packages, security groups, and Conditional Access
-- 🖥️ PowerShell 7 with the Azure, Kusto, and Microsoft Graph modules installed
-- ⚙️ Azure CLI installed for fallback token acquisition and operational troubleshooting
+- Docker Desktop or Docker Engine with Docker Compose v2 on the instructor host
+- A Cloudflare account, a domain, and an API token for the tunnel, Service Auth policy, and optional DNS route
+- Terraform on the instructor host
+- PowerShell 7 and Azure CLI when refreshing the local snapshot from the source Student ADX database
+- Student devices with Cloudflared and an account that can sign in to the ADX Web UI
 
-### 🖥️ Terminal (CLI) install commands
+## Secondary prerequisites: managed Azure ADX and Entra B2B
+
+Use these only for the managed Azure delivery model:
+
+- An existing ADX cluster and permissions to create or manage the workshop database
+- ADX database admin permissions for table creation and ingestion
+- Entra permissions for B2B guest onboarding, access packages, security groups, and Conditional Access
+- PowerShell 7 with the Azure, Kusto, and Microsoft Graph modules installed
+
+### Managed Azure tooling install commands
 
 Install PowerShell 7 silently / non-interactively from Windows Terminal, Command Prompt, or an existing PowerShell session:
 
@@ -83,12 +102,14 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 
 | Area | Purpose | Primary files |
 | --- | --- | --- |
+| Local conference runtime | Runs the persistent Kustainer snapshot, read-only gateway, and outbound Cloudflare connector for the primary attendee route | [compose.yaml](compose.yaml), [scripts/Copy-StudentAdxToLocalKusto.ps1](scripts/Copy-StudentAdxToLocalKusto.ps1), [scripts/Start-CloudflareAdxTunnel.ps1](scripts/Start-CloudflareAdxTunnel.ps1) |
+| Local snapshot backup | Produces a portable archive of the local Kustainer state and latest verified NDJSON export | [scripts/Backup-LocalKustoSnapshot.ps1](scripts/Backup-LocalKustoSnapshot.ps1) |
 | ADX setup | Creates the ADX database tables, JSON ingestion mappings, generated telemetry, and ingestion flow | [`scripts\Initialize-Workshop.ps1`](scripts/Initialize-Workshop.ps1), [`scripts\Initialize-AdxTables.ps1`](scripts/Initialize-AdxTables.ps1), [`scripts\Import-SyntheticTelemetry.ps1`](scripts/Import-SyntheticTelemetry.ps1), [`scripts\AdxWorkshop.Common.psm1`](scripts/AdxWorkshop.Common.psm1) |
 | ADX backup | Creates secured ADLS Gen2 backup storage, exports schema records, exports table data as Parquet, and restores from the backup manifest | [`adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1`](adx_db_backupNrestore/Initialize-AdxBackupStorage.ps1), [`adx_db_backupNrestore\Backup-AdxDatabase.ps1`](adx_db_backupNrestore/Backup-AdxDatabase.ps1), [`adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1`](adx_db_backupNrestore/Restore-AdxDatabaseBackup.ps1), [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md) |
 | Schemas | Holds one Microsoft Learn-derived JSON schema file per ADX table | [`schemas\`](schemas/), [`metadata\tables.manifest.json`](metadata/tables.manifest.json), [`tools\Build-SchemasFromMicrosoftLearn.ps1`](tools/Build-SchemasFromMicrosoftLearn.ps1), [`tools\Build-SchemaFromLiveTable.ps1`](tools/Build-SchemaFromLiveTable.ps1) |
 | Tenant sampling | Exports real Log Analytics and Defender XDR advanced hunting rows plus per-column field profiles that ground synthetic generation | [`scripts\Export-TenantTelemetrySamples.ps1`](scripts/Export-TenantTelemetrySamples.ps1) |
 | Synthetic data | Holds generated schema-aligned NDJSON telemetry files | [`data\generated\`](data/generated/), [`data\scenario-summary.json`](data/scenario-summary.json), [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1), [`scripts\New-SyntheticTelemetryParallel.ps1`](scripts/New-SyntheticTelemetryParallel.ps1) |
-| Participant access | Documents SFI-aligned B2B guest provisioning, MFA, access-package lifecycle, participant group access, ADX database viewer permissions, and dashboard sharing | [`user_creation\README.md`](user_creation/README.md), [`docs\student_access.md`](docs/student_access.md), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1) |
+| Managed Azure access (secondary) | Documents SFI-aligned B2B guest provisioning, MFA, access-package lifecycle, participant group access, ADX database viewer permissions, and dashboard sharing | [`user_creation\README.md`](user_creation/README.md), [`docs\student_access.md`](docs/student_access.md), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1) |
 | Cloudflare ADX class access | Documents the shared Service Auth credential, student TCP proxy, read-only KQL gateway, rotation, and troubleshooting | [`docs\cloudflare_adx_access.md`](docs/cloudflare_adx_access.md) |
 | Kustainer gateway | Documents the read-only request policy, browser CORS/private-network support, default-database cleaner, configuration, and security boundary | [`tools\kusto-readonly-gateway\README.md`](tools/kusto-readonly-gateway/README.md) |
 | Scenario and MITRE | Documents the threat actor framing, infrastructure, and attack-vector to ATT&CK mapping | [`docs\threat-actor-midnight-blizzard.md`](docs/threat-actor-midnight-blizzard.md), [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json), [`data\scenario-summary.json`](data/scenario-summary.json), [`docs\workshop_design.md`](docs/workshop_design.md) |
@@ -96,7 +117,40 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | Slides | Provides an instructor-led slide outline and a PowerPoint generator for Windows systems with PowerPoint installed | [`workshop\slide_deck_outline.md`](workshop/slide_deck_outline.md), [`scripts\New-WorkshopDeck.ps1`](scripts/New-WorkshopDeck.ps1) |
 | Validation | Validates PowerShell syntax, schemas, and generated telemetry alignment | [`scripts\Test-WorkshopPackage.ps1`](scripts/Test-WorkshopPackage.ps1) |
 
-## Quick start
+## Primary quick start: Docker, Cloudflare, and shared Service Auth
+
+Run these commands from the repository root for the conference route.
+
+### 1. Start Kustainer and build the local Student snapshot
+
+Use `up --wait` only for an initial host setup or an intentional container replacement. Once the snapshot exists, use `docker compose stop kusto` and `docker compose start kusto` for its routine lifecycle.
+
+```powershell
+docker compose up --detach --wait kusto
+.\scripts\Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate
+```
+
+### 2. Publish the read-only class route
+
+```powershell
+.\scripts\Start-CloudflareAdxTunnel.ps1 -Apply
+```
+
+Distribute only the ignored `infra\cloudflare-adx\student-access.env` file and [scripts/Start-StudentAdxProxy.ps1](scripts/Start-StudentAdxProxy.ps1) through the temporary class channel. Students use `http://127.0.0.1:8080;Fed=false` in the ADX Web UI. The gateway permits queries and read-only `.show` metadata commands only.
+
+### 3. Back up the local snapshot
+
+Stop Kusto before taking a point-in-time file backup, then copy the generated ZIP to your secure storage or Google Drive. It contains synthetic workshop telemetry and should remain outside source control.
+
+```powershell
+docker compose stop kusto
+.\scripts\Backup-LocalKustoSnapshot.ps1
+docker compose start kusto
+```
+
+The command writes a timestamped ZIP under `data\backups\local-kusto` and reports its SHA-256 hash. See [docs/cloudflare_adx_access.md](docs/cloudflare_adx_access.md) for the full participant and recovery procedure.
+
+## Secondary: managed Azure ADX and Entra B2B
 
 Run these commands from the repository root.
 
@@ -115,7 +169,7 @@ For tables that Microsoft Learn does not document yet, or whose published schema
 .\tools\Build-SchemaFromLiveTable.ps1 -TableName SecurityEvent -Source LogAnalytics
 ```
 
-### 1a. Sample real telemetry to ground synthetic generation
+### Sample real telemetry to ground synthetic generation
 
 Synthetic realism is measured against real telemetry rather than guessed. This exports up to 1000 rows per table from the Log Analytics workspace and Microsoft Defender XDR advanced hunting, writes them as NDJSON under `sample\<DTG>\`, and writes a per-column field profile next to them.
 
@@ -127,7 +181,7 @@ The generator reads those profiles automatically and uses the observed distinct-
 
 Log Analytics access uses the Az context. Defender advanced hunting uses Microsoft Graph with the `ThreatHunting.Read.All` delegated scope through interactive browser sign-in. Advanced hunting retains 30 days regardless of the requested lookback.
 
-### 1b. Generate telemetry at workshop volume
+### Generate telemetry at workshop volume
 
 The single-process generator is fine for one table. For the full set, use the parallel driver, which partitions tables across worker processes. Output is identical either way because the generator reseeds per table from `RandomSeed` XOR the table seed.
 
@@ -143,7 +197,7 @@ Row counts are resolved per table. `DeviceProcessEvents` defaults to 32000 becau
 
 > ⚠️ **Generated telemetry is large.** The full 60-table set at 8000 rows per table is roughly 640 MB. It is reproducible from the generator, so treat it as a build artifact rather than something to commit. `Initialize-Workshop.ps1` regenerates it by default unless you pass `-SkipGenerateData`.
 
-### 2. Create the ADX database, tables, mappings, synthetic telemetry, and ingest data
+### Build the managed ADX database, tables, mappings, synthetic telemetry, and ingest data
 
 ```powershell
 .\scripts\Initialize-Workshop.ps1 `
@@ -200,7 +254,7 @@ Restore later from the generated local manifest and schema file:
 
 For operational details and the security model, see [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md).
 
-### Run an exact Student ADX copy locally
+## Primary host operations: exact Student ADX copy
 
 The Student database is the source of truth for the local workflow. The copy script reads its live schema and rows directly from ADX, writes an ignored local NDJSON snapshot, loads the same rows into the official Kusto emulator, and verifies every table's row count.
 
@@ -219,7 +273,7 @@ Then copy the current Student database. `-ForceRecreate` replaces the previous l
 
 The script defaults to `usag-wiesbaden-cys26.northeurope.kusto.windows.net`, database `cyber-defend-usagwsbdn-cys26`, and local database `CyberDefendStudentSnapshot`. It writes the verification manifest beneath `data\local-export\`, which is intentionally ignored by Git because it contains the copied telemetry.
 
-> ⚠️ **Preserve the Kustainer container.** The mounted files and Kustainer's database registration work together. Use `docker compose stop kusto` and `docker compose start kusto` for routine shutdown and startup. Do not use `docker compose down`, `docker compose rm`, or `--force-recreate` for `kusto` while retaining the local snapshot. If a Kusto container replacement is required, rerun `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` after the replacement to rebuild and verify the mounted Student database.
+> ⚠️ **Preserve the Kustainer container.** The mounted files and Kustainer's database registration work together. Use `docker compose stop kusto` and `docker compose start kusto` for routine shutdown and startup. Do not use `docker compose down`, `docker compose rm`, `docker compose up` after a Compose configuration change, or `--force-recreate` for `kusto` while retaining the local snapshot. If a Kusto container replacement is required, first run `Backup-LocalKustoSnapshot.ps1`, then rerun `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` after the replacement to rebuild and verify the mounted Student database.
 
 `kusto-defaultdb-cleaner` runs continuously in Compose. Once `CyberDefendStudentSnapshot` exists, it drops `NetDefaultDB` and removes its residual directory under `data\local-kusto\dbs`. On a fresh emulator, it leaves the default database in place until the Student import has created the retained snapshot database.
 
@@ -240,7 +294,7 @@ For this repository's previous manually started containers, use the explicit one
 .\scripts\Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate
 ```
 
-The launcher writes the connector token to the ignored `infra\cloudflare-adx\cloudflared.env` file and the shared student credential to the ignored `infra\cloudflare-adx\student-access.env` file. The student credential is a Cloudflare Service Token Client ID and Client Secret pair. It defaults to 72 hours, Terraform rejects a duration below 48 hours, consumes no per-student Cloudflare seats, and must be treated like a shared lab password.
+The launcher writes the connector token to the ignored `infra\cloudflare-adx\cloudflared.env` file and the shared student credential to the ignored `infra\cloudflare-adx\student-access.env` file. The student credential is a Cloudflare Service Token Client ID and Client Secret pair. It defaults to 168 hours, Terraform rejects a duration below 48 hours, consumes no per-student Cloudflare seats, and must be treated like a shared lab password.
 
 After provisioning, use this normal runtime lifecycle:
 
@@ -272,9 +326,9 @@ Rotate the class credential after the workshop to invalidate the distributed pai
 
 See [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md) for the Service Auth setup, DNS routing, secret handling, and connection validation steps.
 
-### 3. Provision participant access
+## Secondary: managed Entra B2B participant access
 
-For SFI-aligned conference delivery, provision students as Microsoft Entra B2B guests through an entitlement management access package. The access package should add approved participants to a resource-tenant security group, enforce MFA through Conditional Access, and expire access after the event.
+For managed Azure delivery, provision students as Microsoft Entra B2B guests through an entitlement management access package. The access package should add approved participants to a resource-tenant security group, enforce MFA through Conditional Access, and expire access after the event.
 
 Grant ADX database viewer access to the participant security group:
 
@@ -285,7 +339,7 @@ Grant ADX database viewer access to the participant security group:
   -GroupObjectId '<student-group-object-id>'
 ```
 
-### 4. Give students the ADX Web UI URL
+### Give managed Azure participants the ADX Web UI URL
 
 ```text
 https://dataexplorer.azure.com/clusters/<cluster>.<region>.kusto.windows.net/databases/CyberDefenseKqlWorkshop
@@ -343,7 +397,7 @@ The package creates 47 tables from Microsoft Learn-derived schema JSON. The 21 t
 
 ## Security and operations notes
 
-- Use B2B guest access for external conference participants; do not use shared accounts or unmanaged temporary passwords.
+- For external conference participants, use the primary Docker and Cloudflare Service Auth route with its temporary shared credential, read-only gateway, and post-class credential rotation. Use B2B guest access only for the secondary managed Azure ADX model.
 - Treat generated student roster CSV files as sensitive if using the internal-only identity helper scripts because they may contain initial passwords or TAP values.
 - Treat ADX backup manifests and local `schema.csl` files as sensitive operational artifacts. Local backups are written under `data\backups\`, which is git-ignored.
 - ADX backups use ADLS Gen2, a user-assigned managed identity, RBAC, disabled shared-key access, and disabled anonymous blob access. Prefer the default managed-private-endpoint mode for nonpublic storage.
