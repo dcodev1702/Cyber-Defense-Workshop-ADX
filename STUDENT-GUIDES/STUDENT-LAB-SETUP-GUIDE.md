@@ -245,6 +245,31 @@ Select **Run**. Seeing rows of results confirms that you are connected and ready
 
 ![Step 16: Successfully connected to the lab database](../images/student-walk-through/16-CMD-Successfully-Connected-To-ADX-DB-Via-Cloudflare-Tunnel.png)
 
+### 17. Verify the whole dataset loaded
+
+One last check confirms you have the complete workshop dataset, not just a partial copy. Copy the query below with the **copy button** in the top-right corner of the code block, paste it into your query tab, and select **Run**.
+
+```kusto
+union withsource=SourceTable *
+| summarize RowCount = count() by SourceTable
+| union (union withsource=T * | summarize SourceTable = "__TOTAL__", RowCount = count())
+| order by RowCount desc
+```
+
+You should get back **80 records** &mdash; the 79 workshop tables plus a `__TOTAL__` row of roughly **629,000 rows**. `DeviceProcessEvents` is the largest table by a wide margin at 32,000 rows, because process creation is the highest-volume endpoint telemetry.
+
+![Step 17: Verify the table row counts](../images/student-walk-through/17-CMD-Verify-Table-Row-Counts.png)
+
+> ℹ️ If `__TOTAL__` is much lower than 629,000, or you see far fewer than 80 records, tell an instructor before continuing &mdash; you may be connected to an older snapshot.
+
+---
+
+## 🎉 Setup complete &mdash; you are ready to begin the lab
+
+**That is the entire setup.** Your tunnel is running, Azure Data Explorer is connected to `CyberDefendStudentSnapshot`, and all 79 telemetry tables are loaded and queryable.
+
+🕵️ **You can now start the lab and begin hunting.** Your instructor will walk the class through the investigation, act by act.
+
 ## ✅ Quick checks
 
 - Keep the terminal running the Cloudflare tunnel open throughout the lab.
@@ -252,7 +277,24 @@ Select **Run**. Seeing rows of results confirms that you are connected and ready
 - Select `CyberDefendStudentSnapshot` before you run a query.
 - Ask a workshop instructor for help if the tunnel check fails or the database does not appear.
 
+## 🧭 Fast triage pattern
+
+Use this sequence while you work the scenario. It applies whether you query the tables directly or use the optional dashboard further down.
+
+1. Scope the event by setting a focused time range and identifying the highest-severity alert or unusual trend.
+1. Validate the identity: identify the user, service principal, application, source IP, and whether the account is privileged or risky.
+1. Correlate the identity with public egress, Graph API activity, and the scenario timeline to determine what changed and when.
+1. Assess the device's onboarding and sensor posture before recommending containment or further collection.
+1. Record the time range, entity names, source data, and the evidence that supports or rules out the suspected behavior so another analyst can reproduce the triage path.
+
+---
+
 ## 📊 Defender Dashboard
+
+<details>
+<summary><strong>📊 Optional extension</strong> &mdash; click to expand the Defender Dashboard walkthrough</summary>
+
+<br>
 
 Use the Defender Dashboard after completing the connection steps above. It brings together the alert, identity, network, Graph API, and device inventory views needed to move from an initial signal to an evidence-based triage decision.
 
@@ -315,10 +357,4 @@ The address must be the local tunnel endpoint, not the cloud cluster address sav
 
 **Triage callout:** Use this page to determine the affected estate and response coverage. Prioritize devices that are unsupported, not onboarded, missing a healthy sensor, exposed, or in an unexpected machine group. Use **Device inventory drilldown** to capture the device name, operating system, build, machine group, onboarding status, and public IP, then pivot back to the identity, network, and alert pages with that device as the investigation anchor.
 
-### Fast triage pattern
-
-1. Scope the event by setting a focused time range and identifying the highest-severity alert or unusual trend on **SOC Overview**.
-1. Validate the identity: identify the user, service principal, application, source IP, and whether the account is privileged or risky.
-1. Correlate the identity with public egress, Graph API activity, and the scenario timeline to determine what changed and when.
-1. Assess the device's onboarding and sensor posture before recommending containment or further collection.
-1. Record the time range, entity names, source data, and the evidence that supports or rules out the suspected behavior so another analyst can reproduce the triage path.
+</details>
