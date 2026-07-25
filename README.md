@@ -191,6 +191,11 @@ See [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md) for the Ser
 
 ## 📊 Import the ADX SOC threat protection dashboard
 
+<details>
+<summary><strong>📊 Dashboard import and sharing</strong> &mdash; click to expand</summary>
+
+<br>
+
 The repository includes an Azure Data Explorer dashboard template with a SOC-style landing page plus drilldown pages for identity/sign-ins, network/Graph activity, alert timeline review, and inventory/posture:
 
 ```powershell
@@ -214,6 +219,8 @@ On the managed Azure route, share the dashboard with the participant security gr
 After import, the **SOC Overview** page should provide a threat-protection landing view with alert, sign-in, identity, Graph, egress, MITRE, and scenario timeline tiles:
 
 ![ADX SOC Overview dashboard for the cyber defense workshop](images/adx-soc-overview-dashboard.png)
+
+</details>
 
 ## ✅ Validate the package
 
