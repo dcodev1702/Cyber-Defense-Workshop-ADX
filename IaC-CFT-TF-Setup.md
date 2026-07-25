@@ -22,7 +22,7 @@ Reference repository: <https://github.com/dcodev1702/Cyber-Defense-Workshop-ADX>
 | Kusto emulator | Persistent local ADX-compatible query engine, capped at 4 vCPUs and 24 GiB RAM by default |
 | Cleaner, gateway, and Cloudflared | Supporting services, each pinned to 1 GiB memory and 1 GiB swap |
 | Cloudflare Tunnel (`cloudflared`) | Outbound-only tunnel from your host to Cloudflare's edge — no inbound ports |
-| Shared class credential | One 48-hour minimum Cloudflare Service Token used by all students without individual Access seats |
+| Shared class credential | One Cloudflare Service Token, 720-hour default and 48-hour minimum, used by all students without individual Access seats |
 | Read-only KQL gateway | Blocks mutable management commands before tunnel traffic reaches Kustainer |
 | Terraform | Declarative, version-controlled Tunnel + Service Auth + DNS configuration |
 
@@ -169,7 +169,7 @@ The checked-in Compose runtime is the supported path. It routes Cloudflare traff
 
 ## 5. Shared Class Credential Model
 
-Terraform creates one Cloudflare Service Token and a Service Auth policy for `adx.tier1-cyberdefense.ai`. The token defaults to 168 hours and Terraform enforces a 48-hour minimum. It is not a Cloudflare user identity, so 20-35 students can share it without consuming individual Access seats.
+Terraform creates one Cloudflare Service Token and a Service Auth policy for `adx.tier1-cyberdefense.ai`. The token defaults to 720 hours (30 days) and Terraform enforces a 48-hour minimum. It is not a Cloudflare user identity, so a class of 5 to 100 students can share it without consuming individual Access seats.
 
 > ⚠️ The shared Client ID and Client Secret are a temporary class password. Distribute them only through the class channel and rotate the token after the workshop.
 

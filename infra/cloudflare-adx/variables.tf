@@ -53,7 +53,7 @@ variable "kusto_memory_limit" {
 variable "student_service_token_duration" {
   description = "Lifetime of the shared workshop Service Auth credential. Rotate or delete it after the class."
   type        = string
-  default     = "168h"
+  default     = "720h"
 
   validation {
     condition     = try(tonumber(regex("^([0-9]+)h$", var.student_service_token_duration)[0]) >= 48, false)

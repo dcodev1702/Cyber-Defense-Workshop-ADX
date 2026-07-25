@@ -1,6 +1,6 @@
 # Managed Azure ADX participant access (secondary delivery)
 
-> This guide applies only to the secondary managed Azure ADX deployment protected by Microsoft Entra B2B. For the primary containerized conference lab, use [cloudflare_adx_access.md](cloudflare_adx_access.md): it uses a shared 168-hour Cloudflare Service Token, the local student proxy, `http://127.0.0.1:8080`, and the read-only gateway instead of B2B database roles.
+> This guide applies only to the secondary managed Azure ADX deployment protected by Microsoft Entra B2B. For the primary containerized conference lab, use [cloudflare_adx_access.md](cloudflare_adx_access.md): it uses a shared 720-hour Cloudflare Service Token, the local student proxy, `http://127.0.0.1:8080`, and the read-only gateway instead of B2B database roles.
 
 Use this model when a workshop needs managed Azure ADX, per-person authorization, and governed participant lifecycle. For short conference sessions with random attendees, use the Docker-first route instead.
 

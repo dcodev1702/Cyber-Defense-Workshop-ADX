@@ -1,12 +1,13 @@
 # 🚀 Student Lab Setup Guide
 
-Use this guide at the workshop to connect your Windows computer to the Cyber Defense lab database. Follow the steps in order and keep the terminal window that runs the local tunnel open until you finish the lab.
+Use this guide at the workshop to connect your computer to the Cyber Defense lab database. Windows, MacOS, and GNU/Linux are all supported. Follow the steps in order and keep the terminal window that runs the local tunnel open until you finish the lab.
 
 ## 📋 Before you begin
 
-- Use a Windows computer with an internet connection.
+- Use a Windows, MacOS, or GNU/Linux computer with an internet connection.
 - Have access to a personal Microsoft account that you can use to sign in to Azure Data Explorer.
 - Keep the workshop-provided `student-access.env` file and `Start-StudentAdxProxy.ps1` script together in one folder. They are specific to this in-person lab; do not share the credential file.
+- On MacOS and GNU/Linux, `Start-StudentAdxProxy.ps1` needs [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/installing-powershell). You do not need it if you run the `cloudflared` command in step 2 directly, which is the simpler option.
 
 ## 🔌 Set up the local connection
 
@@ -106,7 +107,7 @@ cloudflared --version
 ### 2. Start the local Cloudflare proxy
 
 1. In the same terminal, change to the folder containing the workshop-provided files.
-1. Press **Enter** to start the local connection.
+1. Run the command below. It is identical on Windows, MacOS, and GNU/Linux.
 1. Leave this terminal window open. Closing it disconnects the lab database.
 
 ```powershell
@@ -117,10 +118,16 @@ cloudflared access tcp --hostname adx.tier1-cyberdefense.ai --url 127.0.0.1:8080
 
 ### 3. Validate the tunnel
 
-Open a **second** PowerShell or Windows Terminal window. Keep the first window running the tunnel. In the second window, run:
+Open a **second** terminal window — PowerShell or Windows Terminal on Windows, Terminal on MacOS or GNU/Linux. Keep the first window running the tunnel. In the second window, run:
 
 ```powershell
+# Windows
 curl.exe -fsS http://127.0.0.1:8080/v1/rest/ping
+```
+
+```bash
+# MacOS / GNU/Linux
+curl -fsS http://127.0.0.1:8080/v1/rest/ping
 ```
 
 You should receive a successful response. If the command reports a connection error, make sure the first terminal is still open and ask a workshop instructor for help.
@@ -262,7 +269,7 @@ Azure Data Explorer may display the URI with a trailing `/`; that is expected. D
 Before you begin triage:
 
 1. Start the Cloudflare tunnel and leave that terminal window open.
-1. Verify the tunnel in a second terminal with `curl.exe -fsS http://127.0.0.1:8080/v1/rest/ping`.
+1. Verify the tunnel in a second terminal with `curl -fsS http://127.0.0.1:8080/v1/rest/ping` (use `curl.exe` on Windows).
 1. Complete the **Trust** and browser **Allow** prompts for the local endpoint.
 1. Confirm that `CyberDefendStudentSnapshot` is selected as the active database, then select **Refresh** in the dashboard.
 

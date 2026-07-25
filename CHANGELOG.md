@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Rewrote the instructor storyline around Acts 0-12 so it opens on the device-code phish and the benign twin instead of the risky sign-in, and added the closing exfiltration, threat-intel, and XDR incident beats.
+- Made `STUDENT-GUIDES/dashboard-CYBER-DEFEND-V4.json` the single authoritative dashboard across the README and instructor guide; the older schema-20 export is marked superseded.
+- Refreshed `docs/diagrams.md` prose and re-sequenced all three diagrams for the current scenario: the attack storyline now opens on the device-code phish and closes on cloud exfiltration, the investigation pivots start at the phish and end on exfiltration plus the threat-intel join, and the hybrid topology gets the real `usag-cyber.local` domain, 79 tables, a 5-100 student range, and a student file that still exists.
+- Made the student lab setup guide cross-platform end to end: Windows, MacOS, and GNU/Linux in the intro and prerequisites, a `curl` variant for non-Windows, and a PowerShell 7 note for the proxy script.
+- Aligned the shared credential lifetime to `720h` (30 days) in Terraform and all documentation, matching the value applied to the live token.
+- Added the device-code phish, URL click, token redemption, and benign twin to the generated scenario summary, using the generator's real offsets.
+- Added phase and per-file progress output to `Test-WorkshopPackage.ps1`, which previously ran for minutes with no indication it was working.
+- Regenerated `docs/conference_abstract.pdf` from the updated abstract.
 - Rewrote the conference abstract for the current device-code phishing emulation: thirteen acts, the benign twin, cloud exfiltration, threat-intel correlation, XDR incident grouping, 79 tables, and a fixed 120-minute length.
 - Removed `;Fed=false` from every ADX connection instruction across the README, student guide, class guide, IaC setup, gateway, and infra docs; the student connection URI is now `http://127.0.0.1:8080`.
 - Added a collapsible GNU/Linux Debian install path to step 1 of the student lab setup guide, using Cloudflare's apt repository with a direct `.deb` fallback.

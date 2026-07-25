@@ -8,9 +8,9 @@ This is the preferred route for time-boxed workshops with random or mixed-tenant
 
 ## What This Solves
 
-- One shared class credential works for 20-35 attendees.
+- One shared class credential works for a class of 5 to 100 attendees.
 - Students do not need Cloudflare accounts, One-Time PIN email, or individual Cloudflare Access seats.
-- The shared credential is valid for at least 48 hours.
+- The shared credential is valid for 30 days by default, and for at least 48 hours.
 - A private gateway allows read-only KQL and blocks data-changing management commands before they reach Kustainer.
 
 ## Architecture
@@ -30,7 +30,7 @@ Student device
 | Tunnel origin | `tcp://kusto-readonly-gateway:8081` |
 | Student Kusto connection URI | `http://127.0.0.1:8080` |
 | Local database | `CyberDefendStudentSnapshot` |
-| Credential lifetime | `168h` default, `48h` enforced minimum |
+| Credential lifetime | `720h` default (30 days), `48h` enforced minimum |
 | Credential type | Shared Cloudflare Service Token Client ID and Client Secret |
 | Supporting-service limit | Cleaner, gateway, and Cloudflared are each pinned to 1 GiB memory and 1 GiB swap |
 

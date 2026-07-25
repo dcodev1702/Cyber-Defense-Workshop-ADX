@@ -11,7 +11,7 @@
 3. Run `scripts\Start-CloudflareAdxTunnel.ps1 -Apply` to create the temporary shared Service Auth route and start the connector.
 4. Confirm `kusto-readonly-gateway` is healthy with `docker compose ps` and validate a pilot student proxy connection.
 5. Distribute only `student-access.env`, `Start-StudentAdxProxy.ps1`, and the student lab instructions through the temporary class channel.
-6. Load `dashboards\cyber-defense-workshop-dashboard.kql` in the query editor, and keep `docs\instructor_answer_key.kql` open in a second tab for yourself.
+6. Have students import `STUDENT-GUIDES\dashboard-CYBER-DEFEND-V4.json` as their dashboard; keep `dashboards\cyber-defense-workshop-dashboard.kql` open in the query editor for pinning tiles manually, and `docs\instructor_answer_key.kql` in a second tab for yourself.
 
 Before an intentional Kustainer replacement, run `docker compose stop kusto`, `scripts\Backup-LocalKustoSnapshot.ps1`, and `docker compose start kusto`; copy the resulting ZIP to secure storage.
 
@@ -23,15 +23,31 @@ Before an intentional Kustainer replacement, run `docker compose stop kusto`, `s
 4. Grant the participant group ADX database viewer access using `scripts\Grant-StudentAdxAccess.ps1` or an equivalent Kusto management command.
 5. Share the ADX dashboard with the participant group using dashboard `Can view` permission.
 6. Open the ADX Web UI URL with a pilot participant account and confirm the database, dashboard, and query results are visible.
-7. Load `dashboards\cyber-defense-workshop-dashboard.kql` in the query editor, and keep `docs\instructor_answer_key.kql` open in a second tab for yourself.
+7. Have participants import `STUDENT-GUIDES\dashboard-CYBER-DEFEND-V4.json`; keep `dashboards\cyber-defense-workshop-dashboard.kql` open in the query editor for manual tile pinning, and `docs\instructor_answer_key.kql` in a second tab for yourself.
 
 ## Instructor storyline
 
-Start with the sign-in. Students should find a high-risk interactive sign-in for `victor.alvarez@usag-cyber.local` from `185.225.73.18`, followed by OAuth consent, service-principal credential creation, app-only Microsoft Graph access, and Graph enumeration/collection. The endpoint pivot is `WIN11-04.usag-cyber.local`. The credential-access chain begins with PowerShell staging and progresses through registry credential discovery, SAM hive save, browser database copy, Kerberoasting, LSASS dump, password-store harvesting, and Mimikatz-style credential dumping. Keep the tool names visible because they cover the required screenshot vectors, but frame them as follow-on credential expansion after the Midnight Blizzard-style identity/OAuth foothold. The identity pivot is the service account `svc_sql`, which is later used against `AADCONNECT01`. `SecurityIncident` should be introduced as the SOC incident queue: incident titles are generic and analyst-friendly, while `AlertIds` and `AdditionalData` tie the incidents back to the scenario evidence and supporting TVM tables.
+The intrusion runs as thirteen acts, numbered 0-12 to match the deck and [`docs\instructor_answer_key.kql`](instructor_answer_key.kql).
+
+**Do not start at the sign-in.** Acts 0 and 1 orient the room: confirm the connection, then walk the terrain so students already know why `AADCONNECT01` and the two domain controllers matter before anyone touches them.
+
+The intrusion opens at **Act 2** with delivery. A device-code phishing mail reaches `victor.alvarez@usag-cyber.local` from `secure-docs@usag-cyber-portal.example`, and its lure points at the *genuine* `microsoft.com/devicelogin`. Blocking the domain would not have helped, and ZAP quarantines the mail only after the token has already been issued. **Act 3** is the redemption from `185.225.73.18` on an unmanaged, non-compliant device using the `deviceCode` protocol and Microsoft Azure CLI. MFA was satisfied; make the point explicitly that MFA is not the control that failed here.
+
+**Act 4 is the strongest teaching beat in the deck. Do not skip it.** `alice.weber` performs a legitimate device-code sign-in from `198.51.100.50` on a compliant, Azure AD joined device, earlier in wall-clock time than the attack. Students who alert on `AuthenticationProtocol == deviceCode` alone will flag her instead of the attacker. That is the point.
+
+**Act 5** covers OAuth consent for `USAG Cyber Sync Helper` (unverified publisher, `Mail.Read` + `Files.Read.All` + `Directory.ReadWrite.All`), the service-principal credential add that survives a password reset, and the app-only Microsoft Graph enumeration and collection that follows. Ask the room what response action actually evicts the attacker.
+
+**Acts 6 and 7** are the endpoint. The pivot is `WIN11-04.usag-cyber.local`, staging under `C:\ProgramData\wrstage` with C2 to `cdn.update-check.example` (`203.0.113.77`). The credential-access chain runs registry credential discovery, SAM hive save, browser database copy, LSASS dump, password-store harvesting, and Mimikatz-style credential dumping. Keep the tool names visible because they cover the required screenshot vectors, but frame them as follow-on credential expansion after the Midnight Blizzard-style identity/OAuth foothold.
+
+**Act 8** is Kerberoasting: `servicePrincipalName` LDAP queries in `IdentityQueryEvents`, then 4769 service-ticket requests with RC4 in `SecurityEvent`. **Act 9** is the highest-impact pivot, the service account `svc_sql` reaching `AADCONNECT01` over WinRM.
+
+**Acts 10-12 close the case.** Act 10 establishes impact with storage account key listing, bulk blob read via `azcopy`, and `MailItemsAccessed`, so the class ends on data actually moving rather than on credential theft. Act 11 joins `ThreatIntelIndicators` against the attacker IP and C2 host the students already found by hand, teaching TI as a join rather than a separate silo. Act 12 lands in Defender XDR: introduce `SecurityIncident` as the SOC incident queue, where titles are generic and analyst-friendly while `AlertIds` and `AdditionalData` tie the incidents back to the scenario evidence and supporting TVM tables.
 
 Use the Ubuntu branch as an optional comparison pivot after the Windows path is understood. Students should see that `UBUNTU-03.usag-cyber.local` emits MDE device telemetry, not MDI telemetry: SSH/PAM logons in `DeviceLogonEvents`, `sudo` and shell execution in `DeviceProcessEvents`, audit artifacts in `DeviceEvents` and `DeviceFileEvents`, Linux `.so` image loads in `DeviceImageLoadEvents`, CUPS/IPP network context in `DeviceNetworkEvents`, and Linux package/CVE context in TVM tables. The additive Oracle branch stages a synthetic Python helper and Go binary on `UBUNTU-03`, connects to Oracle TNS on `UBUNTU-05:1521`, and creates a synthetic sensitive export under `/tmp/.oracle`.
 
 ## Pacing and scope control
+
+The workshop runs 120 minutes in seven segments: frame and access check (10), phish and device code including the benign twin (20), OAuth consent and Graph (20), endpoint credential access (30), Kerberoast and hybrid pivot (20), cloud exfil plus threat intel and XDR (15), debrief (5). The full agenda is in [`docs\workshop_design.md`](workshop_design.md).
 
 ![Pacing and scope control for the ADX workshop](../images/Pacing_Scope_Control_ADX_Modern_v2.svg)
 

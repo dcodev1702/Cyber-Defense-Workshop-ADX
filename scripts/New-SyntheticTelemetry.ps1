@@ -7027,6 +7027,10 @@ $summary = [ordered]@{
     compromisedUser = $victor.Upn
     initialDevice = $win04.Name
     identityAttackVectors = @(
+        [ordered]@{ Title = 'Benign device code sign-in from a compliant device (teaching twin)'; Technique = 'None'; Offset = -52; Command = 'EntraIdSignInEvents deviceCode sign-in for alice.weber from 198.51.100.50 on a compliant, Azure AD joined device' }
+        [ordered]@{ Title = 'Device code phishing mail delivered with a genuine microsoft.com/devicelogin lure'; Technique = 'T1566.002,T1078.004'; Offset = -45; Command = 'EmailEvents and EmailUrlInfo inbound mail from secure-docs@usag-cyber-portal.example to victor.alvarez' }
+        [ordered]@{ Title = 'Victim clicks the device code authorization link'; Technique = 'T1566.002'; Offset = -40; Command = 'UrlClickEvents click through to https://microsoft.com/devicelogin' }
+        [ordered]@{ Title = 'Attacker redeems the device code token from unmanaged infrastructure'; Technique = 'T1078.004,T1550.001'; Offset = -37; Command = 'SigninLogs and EntraIdSignInEvents deviceCode sign-in for victor.alvarez from 185.225.73.18 using Microsoft Azure CLI' }
         [ordered]@{ Title = 'Risky interactive Entra sign-in from unfamiliar infrastructure'; Technique = 'T1078.004,T1110.003,T1090.002'; Offset = 0; Command = 'SigninLogs high-risk interactive sign-in with MFA from 185.225.73.18' }
         [ordered]@{ Title = 'Suspicious OAuth consent grants mailbox and file scopes'; Technique = 'T1528,T1098.003,T1550.001'; Offset = 5; Command = 'CloudAppEvents OAuthAppConsentGranted for USAG Cyber Sync Helper with Mail.Read Files.Read.All offline_access' }
         [ordered]@{ Title = 'Service principal credential added for OAuth persistence'; Technique = 'T1098.001,T1550.001'; Offset = 6; Command = 'AuditLogs Add service principal credentials and AADServicePrincipalSignInLogs client-secret sign-in to Microsoft Graph' }

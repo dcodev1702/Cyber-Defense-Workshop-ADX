@@ -81,6 +81,13 @@ function Test-GeneratedFileDoesNotContainText {
     }
 }
 
+$stepWatch = [System.Diagnostics.Stopwatch]::StartNew()
+function Write-TestPhase {
+    param([Parameter(Mandatory)][string]$Message)
+    Write-Host ('[{0,6:N1}s] {1}' -f $stepWatch.Elapsed.TotalSeconds, $Message) -ForegroundColor Cyan
+}
+
+Write-TestPhase 'Parsing PowerShell scripts and modules...'
 $scriptFiles = @(
     Get-ChildItem -Path (Join-Path $Root 'scripts') -Include '*.ps1', '*.psm1' -Recurse
     Get-ChildItem -Path (Join-Path $Root 'adx_db_backupNrestore') -Include '*.ps1', '*.psm1' -Recurse -ErrorAction SilentlyContinue
@@ -93,7 +100,9 @@ foreach ($scriptFile in $scriptFiles) {
         Add-TestError "PowerShell parse error in $($scriptFile.FullName): $($parseError.Message)"
     }
 }
+Write-TestPhase ("Parsed {0} script files." -f $scriptFiles.Count)
 
+Write-TestPhase 'Validating table manifest and schemas...'
 $manifestPath = Join-Path $Root 'metadata\tables.manifest.json'
 if (-not (Test-Path $manifestPath)) {
     Add-TestError "Missing manifest: $manifestPath"
@@ -190,7 +199,12 @@ if (-not (Test-Path $DataDirectory)) {
     Add-TestError "Missing generated data directory: $DataDirectory"
 }
 else {
-    foreach ($dataFile in (Get-ChildItem -Path $DataDirectory -Filter '*.json')) {
+    $generatedFiles = @(Get-ChildItem -Path $DataDirectory -Filter '*.json')
+    Write-TestPhase ("Validating {0} generated NDJSON files against their schemas (this is the slow phase)..." -f $generatedFiles.Count)
+    $fileIndex = 0
+    foreach ($dataFile in $generatedFiles) {
+        $fileIndex++
+        Write-Progress -Activity 'Validating generated telemetry' -Status ("{0} ({1} of {2})" -f $dataFile.Name, $fileIndex, $generatedFiles.Count) -PercentComplete (($fileIndex / [Math]::Max($generatedFiles.Count, 1)) * 100)
         $table = $dataFile.BaseName
         $schemaPath = Join-Path $Root "schemas\$table.schema.json"
         if (-not (Test-Path $schemaPath)) {

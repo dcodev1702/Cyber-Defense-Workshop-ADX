@@ -24,12 +24,12 @@
     <!-- step number badge -->
     <circle cx="125" cy="145" r="14" fill="#f97316"/>
     <text x="125" y="150" text-anchor="middle" fill="#0b1220" font-size="13" font-weight="700">1</text>
-    <text x="150" y="150" fill="#fed7aa" font-size="14" font-weight="700">Risky sign-in</text>
-    <text x="115" y="174" fill="#fdba74" font-size="11">High-risk interactive auth from</text>
-    <text x="115" y="190" fill="#fdba74" font-size="11">unfamiliar IP / geography</text>
+    <text x="150" y="150" fill="#fed7aa" font-size="14" font-weight="700">Device-code phish</text>
+    <text x="115" y="174" fill="#fdba74" font-size="11">Lure to genuine devicelogin URL,</text>
+    <text x="115" y="190" fill="#fdba74" font-size="11">click, then token redeemed</text>
     <!-- table chip -->
     <rect x="115" y="200" width="200" height="16" rx="8" fill="#3a1d05" stroke="#f97316" stroke-width="1"/>
-    <text x="215" y="212" text-anchor="middle" fill="#fed7aa" font-size="10" font-weight="600">SigninLogs · EntraIdSignInEvents</text>
+    <text x="215" y="212" text-anchor="middle" fill="#fed7aa" font-size="10" font-weight="600">EmailEvents · UrlClickEvents · SigninLogs</text>
   </g>
 
   <!-- ================ STEP 2: OAuth consent (cloud) ================ -->
@@ -158,9 +158,9 @@
     <rect x="100" y="780" width="1000" height="64" rx="12" fill="#150829" stroke="#a855f7" stroke-width="2"/>
     <circle cx="125" cy="812" r="14" fill="#a855f7"/>
     <text x="125" y="817" text-anchor="middle" fill="#0b1220" font-size="13" font-weight="700">8</text>
-    <text x="150" y="811" fill="#e9d5ff" font-size="14" font-weight="700">Alert correlation + timeline</text>
+    <text x="150" y="811" fill="#e9d5ff" font-size="14" font-weight="700">Exfiltration, TI join + alert correlation</text>
     <text x="150" y="828" fill="#d8b4fe" font-size="11">Join AlertInfo with AlertEvidence on AlertId · stitch endpoint · identity · cloud evidence into one timeline · map to MITRE ATT&amp;CK</text>
     <rect x="845" y="800" width="245" height="16" rx="8" fill="#2a1252" stroke="#a855f7" stroke-width="1"/>
-    <text x="967" y="812" text-anchor="middle" fill="#e9d5ff" font-size="10" font-weight="600">AlertInfo · AlertEvidence · timeline join</text>
+    <text x="967" y="812" text-anchor="middle" fill="#e9d5ff" font-size="10" font-weight="600">AzureActivity · ThreatIntelIndicators · AlertEvidence</text>
   </g>
 </svg>

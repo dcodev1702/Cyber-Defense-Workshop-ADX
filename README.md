@@ -153,7 +153,7 @@ For this repository's previous manually started containers, use the explicit one
 .\scripts\Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate
 ```
 
-The launcher writes the connector token to the ignored `infra\cloudflare-adx\cloudflared.env` file and the shared student credential to the ignored `infra\cloudflare-adx\student-access.env` file. The student credential is a Cloudflare Service Token Client ID and Client Secret pair. It defaults to 168 hours, Terraform rejects a duration below 48 hours, consumes no per-student Cloudflare seats, and must be treated like a shared lab password.
+The launcher writes the connector token to the ignored `infra\cloudflare-adx\cloudflared.env` file and the shared student credential to the ignored `infra\cloudflare-adx\student-access.env` file. The student credential is a Cloudflare Service Token Client ID and Client Secret pair. It defaults to 720 hours (30 days), Terraform rejects a duration below 48 hours, consumes no per-student Cloudflare seats, and must be treated like a shared lab password.
 
 After provisioning, use this normal runtime lifecycle:
 
@@ -198,12 +198,12 @@ The repository includes an Azure Data Explorer dashboard template with a SOC-sty
 In the ADX Web UI, go to **Dashboards** > **New dashboard** > **Import dashboard from file**, and select:
 
 ```text
-dashboards\cyber-defense-workshop-dashboard.json
+STUDENT-GUIDES\dashboard-CYBER-DEFEND-V4.json
 ```
 
-If you already imported an older copy, open that dashboard and use **File** > **Replace dashboard with file** to update it in place.
+This is the dashboard students import, and the one the walkthrough screenshots in [`STUDENT-GUIDES\STUDENT-LAB-SETUP-GUIDE.md`](STUDENT-GUIDES/STUDENT-LAB-SETUP-GUIDE.md) match. If you already imported an older copy, open that dashboard and use **File** > **Replace dashboard with file** to update it in place.
 
-If dashboard import is unavailable, use `dashboards\cyber-defense-workshop-dashboard.kql` to run and pin the same KQL tiles manually.
+If dashboard import is unavailable, use `dashboards\cyber-defense-workshop-dashboard.kql` to run and pin the same KQL tiles manually. The older `dashboards\cyber-defense-workshop-dashboard.json` export is kept for reference only and is superseded by the V4 file above.
 
 On the managed Azure route, share the dashboard with the participant security group using dashboard `Can view` permission, then distribute the link. Dashboard access still requires underlying ADX database viewer access. See [docs/managed_azure_adx_setup.md](docs/managed_azure_adx_setup.md).
 
