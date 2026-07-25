@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 580" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 820" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
   <!-- Outer frame -->
-  <rect x="20" y="20" width="1060" height="540" rx="14" fill="#0b1220" stroke="#1f2937" stroke-width="1.5"/>
+  <rect x="20" y="20" width="1060" height="780" rx="14" fill="#0b1220" stroke="#1f2937" stroke-width="1.5"/>
 
   <!-- Title -->
   <text x="550" y="58" text-anchor="middle" fill="#f1f5f9" font-size="20" font-weight="700">Key Tables — by Microsoft Platform</text>
-  <text x="550" y="80" text-anchor="middle" fill="#94a3b8" font-size="12">21 of the 48 tables in CyberDefenseKqlWorkshop carry the bulk of the investigation · grouped by where the telemetry comes from</text>
+  <text x="550" y="80" text-anchor="middle" fill="#94a3b8" font-size="12">32 of the 79 tables in CyberDefenseKqlWorkshop carry the bulk of the investigation · grouped by where the telemetry comes from</text>
 
   <!-- ==================== ENTRA PANEL (Top Left) ==================== -->
   <g>
@@ -159,5 +159,84 @@
 
     <!-- Tip -->
     <text x="570" y="528" fill="#d8b4fe" font-size="10" font-style="italic">Receives signals from MDE, MDI, Entra ID Protection, and Defender for Cloud Apps.</text>
+  </g>
+
+  <!-- ==================== DEFENDER FOR OFFICE 365 PANEL (Bottom Left) ==================== -->
+  <g>
+    <rect x="50" y="565" width="492" height="210" rx="10" fill="#072f38" stroke="#06b6d4" stroke-width="2"/>
+    <rect x="50" y="565" width="6" height="210" fill="#06b6d4"/>
+
+    <!-- Envelope icon -->
+    <g transform="translate(70, 582)">
+      <rect x="2" y="4" width="20" height="15" rx="2" fill="none" stroke="#a5f3fc" stroke-width="2"/>
+      <path d="M 3 6 L 12 13 L 21 6" fill="none" stroke="#a5f3fc" stroke-width="2" stroke-linejoin="round"/>
+    </g>
+
+    <text x="100" y="600" fill="#a5f3fc" font-size="14" font-weight="700">Microsoft Defender for Office 365</text>
+    <text x="100" y="616" fill="#67e8f9" font-size="10" font-style="italic">Mail, URL, and click telemetry behind the device-code lure</text>
+
+    <!-- Count badge -->
+    <rect x="455" y="581" width="75" height="22" rx="11" fill="#04171c" stroke="#06b6d4" stroke-width="1"/>
+    <text x="492" y="597" text-anchor="middle" fill="#a5f3fc" font-size="10" font-weight="700">5 tables</text>
+
+    <!-- Chips: row 1 -->
+    <rect x="62" y="632" width="230" height="28" rx="6" fill="#04171c" stroke="#06b6d4" stroke-width="1"/>
+    <text x="74" y="650" fill="#a5f3fc" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">EmailEvents</text>
+    <rect x="300" y="632" width="230" height="28" rx="6" fill="#04171c" stroke="#06b6d4" stroke-width="1"/>
+    <text x="312" y="650" fill="#a5f3fc" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">EmailUrlInfo</text>
+
+    <!-- Chips: row 2 -->
+    <rect x="62" y="668" width="230" height="28" rx="6" fill="#04171c" stroke="#06b6d4" stroke-width="1"/>
+    <text x="74" y="686" fill="#a5f3fc" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">UrlClickEvents</text>
+    <rect x="300" y="668" width="230" height="28" rx="6" fill="#04171c" stroke="#06b6d4" stroke-width="1"/>
+    <text x="312" y="686" fill="#a5f3fc" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">EmailAttachmentInfo</text>
+
+    <!-- Chips: row 3 -->
+    <rect x="62" y="704" width="230" height="28" rx="6" fill="#04171c" stroke="#06b6d4" stroke-width="1"/>
+    <text x="74" y="722" fill="#a5f3fc" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">EmailPostDeliveryEvents</text>
+
+    <!-- Tip -->
+    <text x="62" y="758" fill="#67e8f9" font-size="10" font-style="italic">The lure URL is genuine microsoft.com/devicelogin — blocking the domain would not have helped.</text>
+  </g>
+
+  <!-- ==================== SENTINEL &amp; AZURE PANEL (Bottom Right) ==================== -->
+  <g>
+    <rect x="558" y="565" width="492" height="210" rx="10" fill="#3a0a18" stroke="#f43f5e" stroke-width="2"/>
+    <rect x="558" y="565" width="6" height="210" fill="#f43f5e"/>
+
+    <!-- Radar icon -->
+    <g transform="translate(578, 582)">
+      <circle cx="12" cy="12" r="10" fill="none" stroke="#fecdd3" stroke-width="2"/>
+      <circle cx="12" cy="12" r="4" fill="none" stroke="#fecdd3" stroke-width="2"/>
+      <path d="M 12 12 L 20 6" stroke="#fecdd3" stroke-width="2" stroke-linecap="round"/>
+    </g>
+
+    <text x="608" y="600" fill="#fecdd3" font-size="14" font-weight="700">Microsoft Sentinel &amp; Azure</text>
+    <text x="608" y="616" fill="#fda4af" font-size="10" font-style="italic">Windows auditing, threat intel, cases, and the cloud control plane</text>
+
+    <!-- Count badge -->
+    <rect x="963" y="581" width="75" height="22" rx="11" fill="#1a0309" stroke="#f43f5e" stroke-width="1"/>
+    <text x="1000" y="597" text-anchor="middle" fill="#fecdd3" font-size="10" font-weight="700">6 tables</text>
+
+    <!-- Chips: row 1 -->
+    <rect x="570" y="632" width="230" height="28" rx="6" fill="#1a0309" stroke="#f43f5e" stroke-width="1"/>
+    <text x="582" y="650" fill="#fecdd3" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">SecurityEvent</text>
+    <rect x="808" y="632" width="230" height="28" rx="6" fill="#1a0309" stroke="#f43f5e" stroke-width="1"/>
+    <text x="820" y="650" fill="#fecdd3" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">ThreatIntelIndicators</text>
+
+    <!-- Chips: row 2 -->
+    <rect x="570" y="668" width="230" height="28" rx="6" fill="#1a0309" stroke="#f43f5e" stroke-width="1"/>
+    <text x="582" y="686" fill="#fecdd3" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">SecurityIncident</text>
+    <rect x="808" y="668" width="230" height="28" rx="6" fill="#1a0309" stroke="#f43f5e" stroke-width="1"/>
+    <text x="820" y="686" fill="#fecdd3" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">BehaviorAnalytics</text>
+
+    <!-- Chips: row 3 -->
+    <rect x="570" y="704" width="230" height="28" rx="6" fill="#1a0309" stroke="#f43f5e" stroke-width="1"/>
+    <text x="582" y="722" fill="#fecdd3" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">AzureActivity</text>
+    <rect x="808" y="704" width="230" height="28" rx="6" fill="#1a0309" stroke="#f43f5e" stroke-width="1"/>
+    <text x="820" y="722" fill="#fecdd3" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">OfficeActivity</text>
+
+    <!-- Tip -->
+    <text x="570" y="758" fill="#fda4af" font-size="10" font-style="italic">Proves the exfiltration beat and turns hand-found IOCs into a threat-intel join.</text>
   </g>
 </svg>

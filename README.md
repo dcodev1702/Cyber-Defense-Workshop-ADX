@@ -225,7 +225,7 @@ The recommended two-hour flow is documented in [`docs\workshop_design.md`](docs/
 
 ## Key tables
 
-The package creates 47 tables from Microsoft Learn-derived schema JSON. The 21 tables below carry the bulk of the investigation work, grouped by the Microsoft platform that produces them:
+The package creates 79 tables from Microsoft Learn-derived schema JSON. The 32 tables below carry the bulk of the investigation work, grouped by the Microsoft platform that produces them:
 
 ![Key tables by Microsoft platform](images/key-tables.svg)
 

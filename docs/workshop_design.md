@@ -19,14 +19,14 @@ An additive Linux/Oracle branch gives students realistic Ubuntu/MDE pivots witho
 
 | Segment | Duration | Instructor flow | Student activity |
 | --- | ---: | --- | --- |
-| Access check and KQL warm-up | 10 min | Confirm ADX Web UI access and explain the table families | Run inventory queries |
-| Scenario and infrastructure | 15 min | Walk through hybrid topology and MIDNIGHT BLIZZARD objectives | Identify users, hosts, and high-value assets |
-| Entra and Graph investigation | 20 min | Start with risky sign-in and OAuth/Graph activity | Correlate SigninLogs, CloudAppEvents, AuditLogs, GraphAPIAuditEvents |
-| Endpoint credential access | 35 min | Pivot from compromised user to `WIN11-04` process/file/registry telemetry | Hunt the 11 screenshot attack vectors in MDE-style tables |
-| MDI and lateral movement | 20 min | Show SPN enumeration, Kerberos activity, and service-account use | Correlate IdentityQueryEvents, IdentityLogonEvents, DeviceLogonEvents |
+| Frame and access check | 10 min | Confirm ADX Web UI access, then set up the KQL mental model, the lab terrain, and the kill chain | Run inventory queries (Acts 0-1) |
+| Phish, device code, and the benign twin | 20 min | Open on the device-code lure and the legitimate sign-in that mimics it | Correlate `EmailEvents`, `EmailUrlInfo`, `UrlClickEvents`, and `SigninLogs` (Acts 2-4) |
+| OAuth consent, Graph, and persistence | 20 min | Follow the attacker IP into consent, service-principal credential add, and app-only Graph use | Correlate `OAuthAppInfo`, `CloudAppEvents`, `AuditLogs`, `GraphAPIAuditEvents` (Act 5) |
+| Endpoint credential access | 30 min | Pivot from compromised user to `WIN11-04` process/file/registry telemetry | Hunt the credential-access chain in MDE-style tables (Acts 6-7) |
+| Kerberoast and hybrid identity pivot | 20 min | Show SPN enumeration, RC4 service tickets, and the `AADCONNECT01` pivot | Correlate `IdentityQueryEvents`, `SecurityEvent`, `DeviceLogonEvents` (Acts 8-9) |
 | Linux MDE branch | Optional | Show Ubuntu SSH/sudo/auditd, Oracle TNS, and TVM pivots | Compare Linux paths, `.so` loads, SSH/sudo telemetry, and Oracle data-access evidence with Windows endpoint rows |
-| Alert correlation and timeline | 15 min | Join AlertInfo and AlertEvidence, summarize ATT&CK coverage | Build an incident timeline |
-| Debrief | 5 min | Discuss detections and prevention opportunities | Capture takeaways |
+| Cloud exfil, threat intel, and XDR | 15 min | Storage key listing and mailbox reads, the threat-intel join, then alert correlation | Correlate `AzureActivity`, `OfficeActivity`, `ThreatIntelIndicators`, `AlertInfo` + `AlertEvidence` (Acts 10-12) |
+| Debrief and next | 5 min | What was decisive, then SOAR, detection engineering, and enhanced defense | Capture takeaways |
 
 ## Included table families
 

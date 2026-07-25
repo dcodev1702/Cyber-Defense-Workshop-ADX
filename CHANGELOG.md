@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Re-cut the workshop flow diagram and the `workshop_design.md` agenda around the Act 0-12 scenario, keeping the two-hour total while rebalancing to 10/20/20/30/20/15/5 minutes so the device-code phish, benign twin, cloud exfiltration, and threat-intel beats are visible.
+- Added Microsoft Defender for Office 365 and Microsoft Sentinel + Azure panels to the key-tables diagram, and corrected the package table count from 47/48 to the actual 79.
 - Replaced the README lab topology diagram with the kill-chain ribbon variant `images/adx-lab-topology-A-ribbon.png`.
 - Made the Docker Kustainer, Cloudflare Service Auth, and read-only gateway route the primary conference delivery model; repositioned managed Azure ADX and Microsoft Entra B2B material as the secondary governed option.
 - Pinned `kusto-defaultdb-cleaner`, `kusto-readonly-gateway`, and `cloudflared` to 1 GiB memory and 1 GiB swap in Compose and the Terraform-generated override.
