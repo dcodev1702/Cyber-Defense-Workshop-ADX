@@ -184,7 +184,7 @@ In the **Add connection** window, enter:
 
 | Field | Value |
 | --- | --- |
-| Connection URI | `http://127.0.0.1:8080;Fed=false` |
+| Connection URI | `http://127.0.0.1:8080` |
 | Display name | `Cyber Defense` |
 
 Select **Add** when both fields are complete.
