@@ -25,7 +25,7 @@ The purpose of this workshop is to help defenders learn how to:
 2. Correlate endpoint, identity, cloud, Graph, sign-in, and alert evidence.
 3. Build an investigation timeline from multiple telemetry sources.
 4. Map observed attack behavior to MITRE ATT&CK techniques.
-5. Understand which Microsoft telemetry tables illuminate specific credential-access behaviors.
+5. Understand how Microsoft Security Solutions (telemetry via tables) illuminate specific adversarial credential-access behaviors along the Cyber Kill Chain.
 
 ## Primary prerequisites
 
