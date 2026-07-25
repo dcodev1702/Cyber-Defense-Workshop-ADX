@@ -359,6 +359,81 @@ $script:IdentityColumnPattern = '(Account|User|Upn|Sid|Principal|Device|Host|Mac
 $script:ValueSamplerCache = @{}
 $script:CurrentSampledColumns = @()
 
+# Microsoft Defender advanced hunting stores several sign-in attributes as numeric
+# enums rather than the display strings shown in the portal. The scenario code is
+# authored in readable terms, so the values are translated when a record is
+# materialised. Without this translation a string lands in an int column and ADX
+# silently ingests it as zero, destroying the value rather than failing the load.
+$script:DefenderEnumMap = @{
+    ConditionalAccessStatus = @{ 'success' = 0; 'failure' = 1; 'notApplied' = 2; 'unknownFutureValue' = 3 }
+    RiskLevelAggregated     = @{ 'unknown' = -1; 'none' = 0; 'hidden' = 1; 'low' = 10; 'medium' = 50; 'high' = 100 }
+    RiskLevelDuringSignIn   = @{ 'unknown' = -1; 'none' = 0; 'hidden' = 1; 'low' = 10; 'medium' = 50; 'high' = 100 }
+    RiskState               = @{ 'none' = 0; 'confirmedSafe' = 1; 'remediated' = 2; 'dismissed' = 3; 'atRisk' = 4; 'confirmedCompromised' = 5 }
+    TokenIssuerType         = @{ 'AzureAD' = 0; 'ADFederationServices' = 1; 'UnknownFutureValue' = 2 }
+}
+
+# Column type lookup per table, cached because the coercion runs for every column
+# of every generated row.
+$script:SchemaTypeCache = @{}
+
+function Get-WorkshopSchemaTypes {
+    param([Parameter(Mandatory)][string]$Table)
+
+    if ($script:SchemaTypeCache.ContainsKey($Table)) {
+        return $script:SchemaTypeCache[$Table]
+    }
+    $map = @{}
+    foreach ($column in $script:Schemas[$Table].columns) {
+        $map[[string]$column.name] = [string]$column.type
+    }
+    $script:SchemaTypeCache[$Table] = $map
+    return $map
+}
+
+function ConvertTo-WorkshopColumnValue {
+    <#
+        Coerces a generated value to the declared ADX column type. Returns $null when
+        a value cannot be represented, which leaves the schema default in place rather
+        than writing something the engine will silently zero.
+    #>
+    param(
+        [AllowNull()][object]$Value,
+        [Parameter(Mandatory)][string]$ColumnName,
+        [Parameter(Mandatory)][string]$DeclaredType
+    )
+
+    if ($null -eq $Value) { return $null }
+    if ($DeclaredType -eq 'string' -or $DeclaredType -eq 'dynamic') { return $Value }
+
+    switch ($DeclaredType) {
+        { $_ -in @('int', 'long') } {
+            if ($Value -is [int] -or $Value -is [long]) { return $Value }
+            if ($Value -is [bool]) { return [int]$Value }
+
+            $text = [string]$Value
+            if ($text -eq '') { return $null }
+
+            $parsed = [long]0
+            if ([long]::TryParse($text, [ref]$parsed)) { return $parsed }
+
+            $enum = $script:DefenderEnumMap[$ColumnName]
+            if ($enum -and $enum.ContainsKey($text)) { return $enum[$text] }
+
+            # Unmappable, for example a GUID assigned to a numeric column.
+            return $null
+        }
+        'bool' {
+            if ($Value -is [bool]) { return $Value }
+            $text = [string]$Value
+            if ($text -in @('True', 'true', '1')) { return $true }
+            if ($text -in @('False', 'false', '0')) { return $false }
+            return $null
+        }
+        default { return $Value }
+    }
+}
+
+
 function Get-WorkshopValueSampler {
     <#
         Builds, once per table and column, a cumulative weighted sampler over the real
@@ -1281,9 +1356,13 @@ function New-WorkshopRecordObject {
         }
     }
 
+    $columnTypes = Get-WorkshopSchemaTypes -Table $Table
     foreach ($key in $Values.Keys) {
         if ($record.Contains($key)) {
-            $record[$key] = $Values[$key]
+            $coerced = ConvertTo-WorkshopColumnValue -Value $Values[$key] -ColumnName $key -DeclaredType $columnTypes[$key]
+            if ($null -ne $coerced) {
+                $record[$key] = $coerced
+            }
         }
     }
 
