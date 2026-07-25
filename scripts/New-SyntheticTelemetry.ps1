@@ -9,6 +9,15 @@ MDI identity, Entra, Graph, alert, and grounded Ubuntu MDE telemetry, including 
 optional Linux SSH/sudo/Oracle branch. Synthetic identities and hashes are
 deterministic for repeatable reimports.
 
+Most tables get a random row count between -NormalMinRowsPerTable and
+-NormalMaxRowsPerTable. Tables listed in -TableRowOverride get a fixed count
+instead; DeviceProcessEvents defaults to 32000 because the credential-access act
+needs a deeper process history to hunt through. Passing -NormalRowsPerTable
+explicitly overrides every table, including those in -TableRowOverride.
+
+.EXAMPLE
+.\scripts\New-SyntheticTelemetry.ps1 -TableRowOverride @{ DeviceProcessEvents = 12000; DeviceFileEvents = 20000 }
+
 .EXAMPLE
 .\scripts\New-SyntheticTelemetry.ps1 -SchemaDirectory .\schemas -OutputDirectory .\data\generated -NormalRowsPerTable 0 -SyntheticUserCount 10 -SyntheticServiceAccountCount 5
 
@@ -35,6 +44,7 @@ param(
     [int]$NormalRowsPerTable = -1,
     [int]$NormalMinRowsPerTable = 5000,
     [int]$NormalMaxRowsPerTable = 10000,
+    [hashtable]$TableRowOverride = @{ DeviceProcessEvents = 32000 },
     [int]$NormalLookbackDays = 7,
     [int]$RandomSeed = 1702,
     [int]$SyntheticUserCount = 6000,
@@ -52,6 +62,10 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $script:Random = [System.Random]::new($RandomSeed)
 $script:TelemetryEndTime = $TelemetryEndTime.ToUniversalTime()
+
+# An explicit -NormalRowsPerTable applies to every table and outranks the per-table
+# defaults in -TableRowOverride, so small test runs stay small.
+$script:NormalRowsPerTableExplicit = $PSBoundParameters.ContainsKey('NormalRowsPerTable')
 
 # Keep default telemetry bounded to the seven-day lookback ending at script runtime.
 $StartTime = $script:TelemetryEndTime.AddMinutes(-90)
@@ -5119,6 +5133,20 @@ function Get-WorkshopTargetRowCount {
     if ($Table -eq 'AADUserRiskEvents') {
         return $existingCount
     }
+
+    # Per-table row targets, for example DeviceProcessEvents at 32000. Skipped when
+    # the caller passes -NormalRowsPerTable explicitly.
+    if (-not $script:NormalRowsPerTableExplicit -and $TableRowOverride -and $TableRowOverride.ContainsKey($Table)) {
+        $overrideRows = [int]$TableRowOverride[$Table]
+        if ($overrideRows -lt 0) {
+            throw "TableRowOverride['$Table'] cannot be negative."
+        }
+        if ($overrideRows -eq 0) {
+            return $existingCount
+        }
+        return [Math]::Max($existingCount, $overrideRows)
+    }
+
     if ($NormalRowsPerTable -eq 0) {
         return $existingCount
     }
