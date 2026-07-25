@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Corrected deck slide 3 from 60 to 120 minutes and rebalanced its five segments to 10/40/30/35/5, matching the flow diagram; its second segment now reads Acts 2-5 instead of double-counting the orientation acts.
+- Renumbered the acts in `docs/instructor_answer_key.kql` onto the deck's Act 0-12 scheme, with answer-key-only material continuing at Acts 13-16, so the key and the deck can be cross-referenced.
+- Refreshed the `workshop_design.md` scenario prose and table families for the device-code phish opening, the benign twin, cloud exfiltration, threat-intel correlation, and the 79-table package.
 - Re-cut the workshop flow diagram and the `workshop_design.md` agenda around the Act 0-12 scenario, keeping the two-hour total while rebalancing to 10/20/20/30/20/15/5 minutes so the device-code phish, benign twin, cloud exfiltration, and threat-intel beats are visible.
 - Added Microsoft Defender for Office 365 and Microsoft Sentinel + Azure panels to the key-tables diagram, and corrected the package table count from 47/48 to the actual 79.
 - Replaced the README lab topology diagram with the kill-chain ribbon variant `images/adx-lab-topology-A-ribbon.png`.

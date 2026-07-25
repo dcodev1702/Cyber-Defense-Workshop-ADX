@@ -58,29 +58,33 @@ print
 // The facilitation map. Decide what hint to give next without revealing the
 // static AlertIds too early.
 // Instructor note:
-// Acts 0 and 1 are the newest material. The intrusion no longer "starts mid
+// Act numbers match the deck (Acts 0-12). Deck Acts 0 and 1 are orientation and
+// terrain, so they carry no intrusion telemetry and do not appear below; the
+// intrusion itself opens at Act 2. Acts 13-16 are answer-key-only extensions
+// that have no deck slide of their own.
+// Acts 2 and 4 are the newest material. The intrusion no longer "starts mid
 // stream" with a risky sign-in; it starts with a device code phish that has a
-// deliberate benign twin. Do not skip Act 1b, it is the strongest teaching beat
+// deliberate benign twin. Do not skip Act 4, it is the strongest teaching beat
 // in the deck.
 // =============================================================================
 datatable(Act:int, Phase:string, PrimaryTables:string, ExpectedPivot:string, MITRE:string, InstructorNote:string)
 [
-    0,  'Benign device code twin', 'EntraIdSignInEvents, AADSignInEventsBeta', 'alice.weber from 198.51.100.50, compliant and Azure AD joined', 'None, benign', 'Runs BEFORE the attack. Students who alert on AuthenticationProtocol == deviceCode alone will flag this. That is the point.',
-    1,  'Device code phishing', 'EmailEvents, EmailUrlInfo, UrlClickEvents, EmailPostDeliveryEvents', 'secure-docs@usag-cyber-portal.example to victor.alvarez, lure contains the GENUINE microsoft.com/devicelogin', 'T1566, T1078.004', 'The lure URL is real Microsoft infrastructure. Blocking the domain would not have helped. ZAP quarantines the mail AFTER the token is already issued.',
-    2,  'Device code redemption', 'SigninLogs, EntraIdSignInEvents, BehaviorInfo', 'victor.alvarez, deviceCode protocol, Microsoft Azure CLI, 185.225.73.18, unmanaged and non compliant', 'T1078.004, T1550.001', 'MFA was satisfied. The user really did authenticate. Emphasise that MFA is not the control that failed here.',
-    3,  'OAuth consent and app persistence', 'OAuthAppInfo, CloudAppEvents, AuditLogs, AADServicePrincipalSignInLogs', 'USAG Cyber Sync Helper, unverified publisher, Mail.Read + Files.Read.All + Directory.ReadWrite.All', 'T1528, T1098.001, T1550.001', 'Survives a password reset. Ask students what response action actually evicts the attacker.',
-    4,  'Graph enumeration and collection', 'GraphAPIAuditEvents, MicrosoftGraphActivityLogs, AADGraphActivityLogs', 'App-only Graph calls using the malicious application id', 'T1087.004, T1114.002, T1213.002', 'Shows what the OAuth foothold reached after consent.',
-    5,  'Endpoint staging and C2', 'DeviceNetworkEvents, DeviceProcessEvents, DeviceFileEvents, ASimDnsActivityLogs', 'WIN11-04, cdn.update-check.example resolving to 203.0.113.77, C:\\ProgramData\\wrstage', 'T1105, T1059.001', 'Cloud identity compromise becomes endpoint execution. DNS corroborates the network beat.',
-    6,  'Windows credential access', 'DeviceProcessEvents, DeviceFileEvents, DeviceRegistryEvents, SecurityEvent', 'reg.exe, esentutl.exe, procdump, PwDump7, gsecdump, LaZagne, Mimikatz', 'T1552.002, T1003.001, T1003.002, T1555', 'Keep focus on technique, host, and account rather than tool branding.',
-    7,  'Kerberoasting', 'IdentityQueryEvents, IdentityLogonEvents, SecurityEvent', 'servicePrincipalName LDAP queries, then 4769 service ticket requests with RC4', 'T1558.003', 'SecurityEvent 4769 with TicketEncryptionType 0x17 is the provable artefact. MDI alone only infers it.',
-    8,  'Hybrid identity lateral movement', 'DeviceLogonEvents, IdentityLogonEvents', 'svc_sql to AADCONNECT01 from WIN11-04 over WinRM', 'T1078.002, T1021.006', 'Highest impact pivot: the Entra Connect sync tier.',
-    9,  'Cloud control plane and exfiltration', 'AzureActivity, CloudStorageAggregatedEvents, OfficeActivity', 'Storage account key listing, bulk blob read via azcopy, MailItemsAccessed', 'T1530, T1114.002', 'Ties the identity compromise to actual data movement.',
-    10, 'Threat intelligence correlation', 'ThreatIntelIndicators', 'Attacker IP and C2 host present as high confidence indicators', 'Enrichment', 'Teaches the TI to telemetry join rather than treating TI as a separate silo.',
-    11, 'Risk and behaviour analytics', 'BehaviorAnalytics, AADRiskyUsers, AADRiskyServicePrincipals, AADServicePrincipalRiskEvents', 'victor.alvarez at investigation priority 8, malicious app at high risk', 'UEBA', 'Shows how the platform scores the same activity students found manually.',
-    12, 'Attack path exposure', 'ExposureGraphNodes, ExposureGraphEdges', 'Malicious service principal as a graph target', 'Attack path', 'Pre breach context: how the attacker could reach what they reached.',
-    13, 'SOC incident grouping', 'SecurityIncident, AlertInfo, AlertEvidence, SecurityAlert', 'Four labelled incidents grouping eleven alerts', 'Multiple', 'Generic incident titles that still resolve to the full evidence path.',
-    14, 'Detection blind spots', 'SentinelHealth, Heartbeat, IntuneDeviceComplianceOrg', 'Rule failures, agent coverage gaps, non compliant devices', 'Defensive', 'Closing beat: why the SOC did not see it sooner.',
-    15, 'Linux and Oracle branch', 'DeviceLogonEvents, DeviceProcessEvents, DeviceFileEvents', 'UBUNTU-03 sudo chroot, Oracle TNS to UBUNTU-05:1521', 'T1548.003, T1059.006, T1005', 'Optional comparison path for Linux MDE telemetry.'
+    2,  'Device code phishing', 'EmailEvents, EmailUrlInfo, UrlClickEvents, EmailPostDeliveryEvents', 'secure-docs@usag-cyber-portal.example to victor.alvarez, lure contains the GENUINE microsoft.com/devicelogin', 'T1566, T1078.004', 'The lure URL is real Microsoft infrastructure. Blocking the domain would not have helped. ZAP quarantines the mail AFTER the token is already issued.',
+    3,  'Device code redemption', 'SigninLogs, EntraIdSignInEvents, BehaviorInfo', 'victor.alvarez, deviceCode protocol, Microsoft Azure CLI, 185.225.73.18, unmanaged and non compliant', 'T1078.004, T1550.001', 'MFA was satisfied. The user really did authenticate. Emphasise that MFA is not the control that failed here.',
+    4,  'Benign device code twin', 'EntraIdSignInEvents, AADSignInEventsBeta', 'alice.weber from 198.51.100.50, compliant and Azure AD joined', 'None, benign', 'Runs BEFORE the attack in wall-clock time. Students who alert on AuthenticationProtocol == deviceCode alone will flag this. That is the point.',
+    5,  'OAuth consent and app persistence', 'OAuthAppInfo, CloudAppEvents, AuditLogs, AADServicePrincipalSignInLogs', 'USAG Cyber Sync Helper, unverified publisher, Mail.Read + Files.Read.All + Directory.ReadWrite.All', 'T1528, T1098.001, T1550.001', 'Survives a password reset. Ask students what response action actually evicts the attacker.',
+    5,  'Graph enumeration and collection', 'GraphAPIAuditEvents, MicrosoftGraphActivityLogs, AADGraphActivityLogs', 'App-only Graph calls using the malicious application id', 'T1087.004, T1114.002, T1213.002', 'Second half of deck Act 5. Shows what the OAuth foothold reached after consent.',
+    6,  'Endpoint staging and C2', 'DeviceNetworkEvents, DeviceProcessEvents, DeviceFileEvents, ASimDnsActivityLogs', 'WIN11-04, cdn.update-check.example resolving to 203.0.113.77, C:\\ProgramData\\wrstage', 'T1105, T1059.001', 'Cloud identity compromise becomes endpoint execution. DNS corroborates the network beat.',
+    7,  'Windows credential access', 'DeviceProcessEvents, DeviceFileEvents, DeviceRegistryEvents, SecurityEvent', 'reg.exe, esentutl.exe, procdump, PwDump7, gsecdump, LaZagne, Mimikatz', 'T1552.002, T1003.001, T1003.002, T1555', 'Keep focus on technique, host, and account rather than tool branding.',
+    8,  'Kerberoasting', 'IdentityQueryEvents, IdentityLogonEvents, SecurityEvent', 'servicePrincipalName LDAP queries, then 4769 service ticket requests with RC4', 'T1558.003', 'SecurityEvent 4769 with TicketEncryptionType 0x17 is the provable artefact. MDI alone only infers it.',
+    9,  'Hybrid identity lateral movement', 'DeviceLogonEvents, IdentityLogonEvents', 'svc_sql to AADCONNECT01 from WIN11-04 over WinRM', 'T1078.002, T1021.006', 'Highest impact pivot: the Entra Connect sync tier.',
+    10, 'Cloud control plane and exfiltration', 'AzureActivity, CloudStorageAggregatedEvents, OfficeActivity', 'Storage account key listing, bulk blob read via azcopy, MailItemsAccessed', 'T1530, T1114.002', 'Ties the identity compromise to actual data movement.',
+    11, 'Threat intelligence correlation', 'ThreatIntelIndicators', 'Attacker IP and C2 host present as high confidence indicators', 'Enrichment', 'Teaches the TI to telemetry join rather than treating TI as a separate silo.',
+    12, 'SOC incident grouping', 'SecurityIncident, AlertInfo, AlertEvidence, SecurityAlert', 'Four labelled incidents grouping eleven alerts', 'Multiple', 'Generic incident titles that still resolve to the full evidence path. Deck Act 12, the final numbered act.',
+    13, 'Risk and behaviour analytics', 'BehaviorAnalytics, AADRiskyUsers, AADRiskyServicePrincipals, AADServicePrincipalRiskEvents', 'victor.alvarez at investigation priority 8, malicious app at high risk', 'UEBA', 'Beyond the deck. Shows how the platform scores the same activity students found manually.',
+    14, 'Attack path exposure', 'ExposureGraphNodes, ExposureGraphEdges', 'Malicious service principal as a graph target', 'Attack path', 'Beyond the deck. Pre breach context: how the attacker could reach what they reached.',
+    15, 'Detection blind spots', 'SentinelHealth, Heartbeat, IntuneDeviceComplianceOrg', 'Rule failures, agent coverage gaps, non compliant devices', 'Defensive', 'Beyond the deck. Closing beat: why the SOC did not see it sooner.',
+    16, 'Linux and Oracle branch', 'DeviceLogonEvents, DeviceProcessEvents, DeviceFileEvents', 'UBUNTU-03 sudo chroot, Oracle TNS to UBUNTU-05:1521', 'T1548.003, T1059.006, T1005', 'Beyond the deck. Optional comparison path for Linux MDE telemetry.'
 ]
 | order by Act asc
 
@@ -98,17 +102,17 @@ datatable(Act:int, Phase:string, PrimaryTables:string, ExpectedPivot:string, MIT
 // =============================================================================
 let AlertAnswerKey = datatable(Act:int, ScenarioSignal:string, AlertId:string, ExpectedTitle:string, ExpectedTechniques:string, InstructorNote:string)
 [
-    3,  'OAuth service principal persistence',   '09fb0e10-de44-00fd-6478-518affd9a260', 'Suspicious OAuth service principal persistence',                          'T1528,T1098.001,T1550.001',            'Anchor alert for the OAuth act.',
-    3,  'OAuth and Graph correlation',           '9b507934-0bc3-d4ff-32d2-1b2a64796429', 'OAuth application credential added and used for Graph access',            'T1528,T1098.001,T1550.001',            'Correlation alert joining credential add and Graph use.',
-    6,  'PowerShell credential discovery',       '621e484e-f436-6fbb-0a0c-7af49802e455', 'Suspicious PowerShell credential discovery',                              'T1552.002',                            'First endpoint credential signal after the cloud foothold.',
-    7,  'Kerberoasting',                         '1d5d47bd-113b-c938-6499-e01752a4d4db', 'Suspected Kerberoasting activity',                                        'T1558.003',                            'Connects SPN enumeration to service ticket requests.',
-    6,  'LSASS dump',                            '97185c44-fd9b-0dc3-ae32-ef6315b35a26', 'Credential dumping from LSASS',                                           'T1003.001',                            'High confidence endpoint credential dumping.',
-    6,  'Credential collection correlation',     '196bc75c-9d49-eb62-a9fe-79941b6507e0', 'Credential material collection on one endpoint',                          'T1003.001,T1552.002,T1555,T1558.003',  'Correlation alert across several credential artefacts on WIN11-04.',
-    6,  'Password store harvesting',             'df57168c-010c-a303-3edb-d05782c407a9', 'Password store harvesting tool observed',                                 'T1555',                                'Password store tooling and output under the staging directory.',
-    6,  'Credential dumping tool',               '710e468b-1a6f-1455-61d3-7bc4181de115', 'Mimikatz credential dumping',                                             'T1003.001',                            'Final credential dumping tool in the Windows path.',
-    8,  'Hybrid identity lateral movement',      '3d3bc433-e857-dc28-fec2-0131500cbf87', 'Service account interactive sign-in to identity synchronization server',  'T1078.002,T1021.006',                  'svc_sql against AADCONNECT01. The highest impact pivot.',
-    15, 'Linux privilege escalation',            '16f35dea-f474-2198-8d0c-3467e6da3f26', 'Suspicious sudo chroot usage on Linux server',                            'T1548.003,T1059.004',                  'Optional Linux branch.',
-    15, 'Linux Oracle collection',               'b28ccabf-2b63-fc49-2ef3-31864d151643', 'Linux privilege escalation followed by Oracle data access',               'T1548.003,T1059.006,T1005',            'Optional Linux and Oracle collection.'
+    5,  'OAuth service principal persistence',   '09fb0e10-de44-00fd-6478-518affd9a260', 'Suspicious OAuth service principal persistence',                          'T1528,T1098.001,T1550.001',            'Anchor alert for the OAuth act.',
+    5,  'OAuth and Graph correlation',           '9b507934-0bc3-d4ff-32d2-1b2a64796429', 'OAuth application credential added and used for Graph access',            'T1528,T1098.001,T1550.001',            'Correlation alert joining credential add and Graph use.',
+    7,  'PowerShell credential discovery',       '621e484e-f436-6fbb-0a0c-7af49802e455', 'Suspicious PowerShell credential discovery',                              'T1552.002',                            'First endpoint credential signal after the cloud foothold.',
+    8,  'Kerberoasting',                         '1d5d47bd-113b-c938-6499-e01752a4d4db', 'Suspected Kerberoasting activity',                                        'T1558.003',                            'Connects SPN enumeration to service ticket requests.',
+    7,  'LSASS dump',                            '97185c44-fd9b-0dc3-ae32-ef6315b35a26', 'Credential dumping from LSASS',                                           'T1003.001',                            'High confidence endpoint credential dumping.',
+    7,  'Credential collection correlation',     '196bc75c-9d49-eb62-a9fe-79941b6507e0', 'Credential material collection on one endpoint',                          'T1003.001,T1552.002,T1555,T1558.003',  'Correlation alert across several credential artefacts on WIN11-04.',
+    7,  'Password store harvesting',             'df57168c-010c-a303-3edb-d05782c407a9', 'Password store harvesting tool observed',                                 'T1555',                                'Password store tooling and output under the staging directory.',
+    7,  'Credential dumping tool',               '710e468b-1a6f-1455-61d3-7bc4181de115', 'Mimikatz credential dumping',                                             'T1003.001',                            'Final credential dumping tool in the Windows path.',
+    9,  'Hybrid identity lateral movement',      '3d3bc433-e857-dc28-fec2-0131500cbf87', 'Service account interactive sign-in to identity synchronization server',  'T1078.002,T1021.006',                  'svc_sql against AADCONNECT01. The highest impact pivot.',
+    16, 'Linux privilege escalation',            '16f35dea-f474-2198-8d0c-3467e6da3f26', 'Suspicious sudo chroot usage on Linux server',                            'T1548.003,T1059.004',                  'Optional Linux branch.',
+    16, 'Linux Oracle collection',               'b28ccabf-2b63-fc49-2ef3-31864d151643', 'Linux privilege escalation followed by Oracle data access',               'T1548.003,T1059.006,T1005',            'Optional Linux and Oracle collection.'
 ];
 AlertAnswerKey
 | join kind=leftouter (
@@ -121,7 +125,7 @@ AlertAnswerKey
 
 
 // =============================================================================
-// Query 03 - Act 1, the device code phish end to end
+// Query 03 - Act 2, the device code phish end to end
 // Why it matters:
 // This is the delivery mechanism. Before this act existed the scenario began
 // mid intrusion with an unexplained risky sign-in.
@@ -150,7 +154,7 @@ union
 
 
 // =============================================================================
-// Query 04 - Act 2, device code redemption and the benign twin
+// Query 04 - Acts 3 and 4, device code redemption and the benign twin
 // Why it matters:
 // THE teaching moment. Two device code authentications happen in the same
 // window. The technique is identical. Only the surrounding evidence differs.
@@ -187,7 +191,7 @@ EntraIdSignInEvents
 
 
 // =============================================================================
-// Query 05 - Act 3, the malicious OAuth application
+// Query 05 - Act 5, the malicious OAuth application
 // Why it matters:
 // Consent grants durable access that survives a password reset. This is the
 // persistence mechanism, and it is the reason the incident response answer is
@@ -211,7 +215,7 @@ OAuthAppInfo
 
 
 // =============================================================================
-// Query 06 - Acts 3 and 4, consent, credential add, and app-only Graph use
+// Query 06 - Act 5, consent, credential add, and app-only Graph use
 // Why it matters:
 // Shows the full identity persistence chain in one timeline.
 // Expected answer:
@@ -230,7 +234,7 @@ union
 
 
 // =============================================================================
-// Query 07 - Act 5, endpoint staging and C2, corroborated by DNS
+// Query 07 - Act 6, endpoint staging and C2, corroborated by DNS
 // Why it matters:
 // Joins three independent telemetry sources onto the same C2 host. Any one of
 // them alone is weak; together they are conclusive.
@@ -249,7 +253,7 @@ union
 
 
 // =============================================================================
-// Query 08 - Act 6, the Windows credential access chain
+// Query 08 - Act 7, the Windows credential access chain
 // Why it matters:
 // The core endpoint act. Every step is a distinct technique against a distinct
 // credential store.
@@ -267,7 +271,7 @@ DeviceProcessEvents
 
 
 // =============================================================================
-// Query 09 - Act 7, Kerberoasting across identity and Windows auditing
+// Query 09 - Act 8, Kerberoasting across identity and Windows auditing
 // Why it matters:
 // Before SecurityEvent existed this act rested on Defender for Identity
 // inference alone. Windows security auditing gives an independent second source
@@ -302,7 +306,7 @@ union
 
 
 // =============================================================================
-// Query 10 - Act 8, hybrid identity lateral movement
+// Query 10 - Act 9, hybrid identity lateral movement
 // Why it matters:
 // The Entra Connect synchronisation server is the crown jewel. Reaching it puts
 // the attacker adjacent to every synchronised identity.
@@ -318,7 +322,7 @@ union
 
 
 // =============================================================================
-// Query 11 - Act 9, cloud control plane and data movement
+// Query 11 - Act 10, cloud control plane and data movement
 // Why it matters:
 // Connects the identity compromise to actual data leaving. Students often stop
 // at credential access and never establish impact.
@@ -338,7 +342,7 @@ union
 
 
 // =============================================================================
-// Query 12 - Act 10, threat intelligence to telemetry join
+// Query 12 - Act 11, threat intelligence to telemetry join
 // Why it matters:
 // Teaches TI as something you JOIN, not something you read in a separate portal.
 // Expected answer:
@@ -358,7 +362,7 @@ union
 
 
 // =============================================================================
-// Query 13 - Act 11, how the platform scored the same activity
+// Query 13 - Act 13, how the platform scored the same activity
 // Why it matters:
 // Students hunted this manually. Show them the platform reached the same
 // conclusion, and discuss why an analyst still needed to look.
@@ -376,7 +380,7 @@ union
 
 
 // =============================================================================
-// Query 14 - Act 11 continued, service principal risk
+// Query 14 - Act 13 continued, service principal risk
 // Why it matters:
 // Identity Protection scores workload identities too. The malicious application
 // is the highest risk service principal in the tenant.
@@ -392,7 +396,7 @@ union
 
 
 // =============================================================================
-// Query 15 - Act 13, SOC incident grouping
+// Query 15 - Act 12, SOC incident grouping
 // Why it matters:
 // SecurityIncident is the queue an analyst actually works. Generic titles still
 // resolve to the complete evidence path.
@@ -438,7 +442,7 @@ AlertInfo
 
 
 // =============================================================================
-// Query 17 - Act 14, detection blind spots
+// Query 17 - Act 15, detection blind spots
 // Why it matters:
 // The closing beat. Explains why the SOC did not catch this sooner and turns
 // the exercise into a defensive improvement conversation.
@@ -461,7 +465,7 @@ union
 
 
 // =============================================================================
-// Query 18 - Act 15, the optional Linux and Oracle branch
+// Query 18 - Act 16, the optional Linux and Oracle branch
 // Why it matters:
 // Demonstrates that a Linux host emits MDE device telemetry, not MDI identity
 // telemetry, and that the same investigative pattern still applies.
