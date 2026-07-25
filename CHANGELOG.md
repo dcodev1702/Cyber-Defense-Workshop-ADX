@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Replaced the README lab topology diagram with the kill-chain ribbon variant `images/adx-lab-topology-A-ribbon.png`.
 - Made the Docker Kustainer, Cloudflare Service Auth, and read-only gateway route the primary conference delivery model; repositioned managed Azure ADX and Microsoft Entra B2B material as the secondary governed option.
 - Pinned `kusto-defaultdb-cleaner`, `kusto-readonly-gateway`, and `cloudflared` to 1 GiB memory and 1 GiB swap in Compose and the Terraform-generated override.
 - Added `Backup-LocalKustoSnapshot.ps1` to archive the local Kustainer state, recovery directories, and newest verified NDJSON export with a SHA-256 checksum.
