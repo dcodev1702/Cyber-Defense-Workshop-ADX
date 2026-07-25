@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Made the MacOS install path in step 1 of the student lab setup guide a collapsible section, added `brew update` before the `cloudflared` install, and added sparing section emojis.
 - Split step 1 of the student lab setup guide into Windows (`winget`) and macOS (Homebrew) installation paths, including how to install Homebrew for students who do not have it.
 - Corrected deck slide 3 from 60 to 120 minutes and rebalanced its five segments to 10/40/30/35/5, matching the flow diagram; its second segment now reads Acts 2-5 instead of double-counting the orientation acts.
 - Renumbered the acts in `docs/instructor_answer_key.kql` onto the deck's Act 0-12 scheme, with answer-key-only material continuing at Acts 13-16, so the key and the deck can be cross-referenced.

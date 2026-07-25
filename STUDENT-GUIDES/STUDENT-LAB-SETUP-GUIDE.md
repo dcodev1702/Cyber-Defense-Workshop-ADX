@@ -2,19 +2,19 @@
 
 Use this guide at the workshop to connect your Windows computer to the Cyber Defense lab database. Follow the steps in order and keep the terminal window that runs the local tunnel open until you finish the lab.
 
-## Before you begin
+## 📋 Before you begin
 
 - Use a Windows computer with an internet connection.
 - Have access to a personal Microsoft account that you can use to sign in to Azure Data Explorer.
 - Keep the workshop-provided `student-access.env` file and `Start-StudentAdxProxy.ps1` script together in one folder. They are specific to this in-person lab; do not share the credential file.
 
-## Set up the local connection
+## 🔌 Set up the local connection
 
 ### 1. Install Cloudflare Tunnel
 
-Follow the instructions for your operating system: **Windows** uses `winget`, **macOS** uses Homebrew (`brew`).
+Follow the instructions for your operating system: **Windows** uses `winget`, **MacOS** uses Homebrew (`brew`).
 
-#### Windows users
+#### 🪟 Windows Users
 
 1. Open **PowerShell** or **Windows Terminal**.
 1. Run this command:
@@ -27,38 +27,43 @@ winget install --id Cloudflare.cloudflared --exact
 
 ![Step 1: Install Cloudflare Tunnel](../images/student-walk-through/1-CMD-Install-Cloudflare-Tunnel-Application.jpg)
 
-#### macOS users
+<details>
+<summary><strong>💻 MacOS Users</strong> &mdash; click to expand the Homebrew steps</summary>
 
-macOS installs `cloudflared` with **Homebrew**. If you already have Homebrew, skip ahead to the install command.
+MacOS installs `cloudflared` with **Homebrew**. If you already have Homebrew, skip straight to part 2.
 
-**If you do not have Homebrew yet**, install it from [brew.sh](https://brew.sh) or run this in **Terminal**:
+**1. Install Homebrew** (skip if you already have it)
+
+Install it from [brew.sh](https://brew.sh), or run this in **Terminal**:
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-On Apple Silicon Macs the installer finishes by printing two `echo` commands that add Homebrew to your `PATH`. Run them, then close and reopen Terminal. Confirm Homebrew is ready:
+On Apple Silicon Macs the installer finishes by printing two `echo` commands that add Homebrew to your `PATH`. Run them, then close and reopen Terminal.
+
+Confirm Homebrew is ready:
 
 ```bash
 brew --version
 ```
 
-**Install `cloudflared`:**
-
-1. Open **Terminal**.
-1. Run this command:
+**2. Update Homebrew, then install `cloudflared`**
 
 ```bash
+brew update
 brew install cloudflared
 ```
 
-1. Wait for the installation to finish, then confirm it worked:
+**3. Confirm the installation worked**
 
 ```bash
 cloudflared --version
 ```
 
-> The remaining steps show PowerShell prompts because most of the class is on Windows. The `cloudflared` command in step 2 is identical on macOS — just run it in Terminal instead.
+> ℹ️ The remaining steps show PowerShell prompts because most of the class is on Windows. The `cloudflared` command in step 2 is identical on MacOS &mdash; just run it in Terminal instead.
+
+</details>
 
 ### 2. Start the local Cloudflare proxy
 
@@ -84,7 +89,7 @@ You should receive a successful response. If the command reports a connection er
 
 ![Step 3: Validate the Cloudflare tunnel](../images/student-walk-through/3-CMD-Validate-Cloudflare-Tunnel.jpg)
 
-## Sign in to Azure Data Explorer
+## 🔑 Sign in to Azure Data Explorer
 
 ### 4. Open Azure Data Explorer
 
@@ -126,7 +131,7 @@ Microsoft may ask whether you want to stay signed in. Select **Yes** on your per
 
 ![Step 8B: Choose whether to stay signed in](../images/student-walk-through/8B-CMD-Successful-ADX-Login.png)
 
-## Add the lab database
+## 🗄️ Add the lab database
 
 ### 9. Open the connection menu
 
@@ -195,14 +200,14 @@ Select **Run**. Seeing rows of results confirms that you are connected and ready
 
 ![Step 16: Successfully connected to the lab database](../images/student-walk-through/16-CMD-Successfully-Connected-To-ADX-DB-Via-Cloudflare-Tunnel.png)
 
-## Quick checks
+## ✅ Quick checks
 
 - Keep the terminal running the Cloudflare tunnel open throughout the lab.
 - Use `http://127.0.0.1:8080;Fed=false` exactly when Azure Data Explorer asks for the connection URI.
 - Select `CyberDefendStudentSnapshot` before you run a query.
 - Ask a workshop instructor for help if the tunnel check fails or the database does not appear.
 
-## Defender Dashboard
+## 📊 Defender Dashboard
 
 Use the Defender Dashboard after completing the connection steps above. It brings together the alert, identity, network, Graph API, and device inventory views needed to move from an initial signal to an evidence-based triage decision.
 
