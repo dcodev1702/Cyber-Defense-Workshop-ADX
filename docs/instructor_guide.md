@@ -11,7 +11,7 @@
 3. Run `scripts\Start-CloudflareAdxTunnel.ps1 -Apply` to create the temporary shared Service Auth route and start the connector.
 4. Confirm `kusto-readonly-gateway` is healthy with `docker compose ps` and validate a pilot student proxy connection.
 5. Distribute only `student-access.env`, `Start-StudentAdxProxy.ps1`, and the student lab instructions through the temporary class channel.
-6. Load `workshop\student_lab.kql` in the query editor.
+6. Load `dashboards\cyber-defense-workshop-dashboard.kql` in the query editor, and keep `docs\instructor_answer_key.kql` open in a second tab for yourself.
 
 Before an intentional Kustainer replacement, run `docker compose stop kusto`, `scripts\Backup-LocalKustoSnapshot.ps1`, and `docker compose start kusto`; copy the resulting ZIP to secure storage.
 
@@ -23,7 +23,7 @@ Before an intentional Kustainer replacement, run `docker compose stop kusto`, `s
 4. Grant the participant group ADX database viewer access using `scripts\Grant-StudentAdxAccess.ps1` or an equivalent Kusto management command.
 5. Share the ADX dashboard with the participant group using dashboard `Can view` permission.
 6. Open the ADX Web UI URL with a pilot participant account and confirm the database, dashboard, and query results are visible.
-7. Load `workshop\student_lab.kql` in the query editor.
+7. Load `dashboards\cyber-defense-workshop-dashboard.kql` in the query editor, and keep `docs\instructor_answer_key.kql` open in a second tab for yourself.
 
 ## Instructor storyline
 
@@ -43,7 +43,9 @@ Use the Ubuntu branch as an optional comparison pivot after the Windows path is 
 
 Do not put these IDs on the student slides. The generated `AlertId` values are intentionally opaque so students learn to hunt by behavior, title, timestamp, entity, MITRE technique, `SecurityIncident.AlertIds`, and `AlertEvidence`, not by actor-branded IDs.
 
-Use [`workshop\instructor_alert_answer_key.kql`](../workshop/instructor_alert_answer_key.kql) as the corresponding instructor-only query pack. It contains the static AlertId answer key plus the cloud, endpoint, identity, incident, TVM, Linux/Oracle, and full-timeline pivots needed to tell the scenario story.
+Use [`docs\instructor_answer_key.kql`](instructor_answer_key.kql) as the corresponding instructor-only query pack. It contains the static AlertId answer key plus the device-code phishing, cloud, endpoint, identity, incident, threat intelligence, exposure, and full-timeline pivots needed to tell the scenario story, along with a facilitation checklist of the questions students actually ask.
+
+Two things to know before you present from it. The AlertIds in that file are stable across regeneration, but the timestamps are not, because the generator anchors the scenario to the moment it runs. Query 00 derives the scenario window dynamically for exactly that reason, so run it first. Every query in the file has been executed against a live Kusto engine, and the ones whose tables are newer than the local snapshot were validated against their schemas.
 
 ![SOC alert timeline correlation for the ADX workshop](../images/SOC_Alert_Timeline_Correlation_ADX_Modern_v3.svg)
 

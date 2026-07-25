@@ -1,0 +1,521 @@
+// =============================================================================
+// Cyber Defense KQL Workshop - Instructor Answer Key
+// =============================================================================
+// Companion to docs\instructor_guide.md. Instructor use only; do not hand this
+// to students. It contains the static AlertIds, the expected entities, and the
+// facilitation notes for every act.
+//
+// Database: the workshop ADX database, or CyberDefendStudentSnapshot on the
+// local Kustainer route.
+//
+// -----------------------------------------------------------------------------
+// READ THIS BEFORE THE CLASS
+// -----------------------------------------------------------------------------
+// AlertIds are STABLE. They are derived deterministically from a fixed seed, so
+// every one of the identifiers in this file survives regeneration of the data.
+//
+// Timestamps are NOT stable. scripts\New-SyntheticTelemetry.ps1 anchors the
+// scenario to the moment it runs (TelemetryEndTime defaults to now, and the
+// scenario start is 90 minutes before that). Regenerating the data moves every
+// timestamp. That is why nothing in this file hard codes a date. Query 00
+// derives the window from a known AlertId instead, and every later query either
+// reuses that window or is time agnostic.
+//
+// If a query returns nothing, check in this order:
+//   1. Is the database the workshop database rather than NetDefaultDB?
+//   2. Was the data regenerated but not re-ingested?
+//   3. Is the table one of the newer ones? The 48 table local snapshot predates
+//      the email, SecurityEvent, cloud, and exposure tables.
+//
+// Run one numbered section at a time in the ADX Web UI.
+// =============================================================================
+
+
+// =============================================================================
+// Query 00 - Scenario anchor and window
+// Why it matters:
+// Establishes the scenario time window without hard coding a date, so the key
+// keeps working after the telemetry is regenerated.
+// Instructor note:
+// Run this first and keep the output visible. Use the printed window whenever a
+// student asks "what time range should I search?".
+// =============================================================================
+let ScenarioStart = toscalar(
+    AlertInfo
+    | where AlertId == "09fb0e10-de44-00fd-6478-518affd9a260"   // OAuth persistence, fires at start + 6m
+    | summarize min(Timestamp)
+) - 6m;
+print
+    ScenarioStart          = ScenarioStart,
+    DeviceCodePhishStart   = ScenarioStart - 49m,   // the phish lands before the intrusion "starts"
+    ScenarioEnd            = ScenarioStart + 90m,
+    SuggestedQueryWindow   = strcat(format_datetime(ScenarioStart - 60m, "yyyy-MM-dd HH:mm"), "  ..  ", format_datetime(ScenarioStart + 120m, "yyyy-MM-dd HH:mm"))
+
+
+// =============================================================================
+// Query 01 - Instructor storyboard
+// Why it matters:
+// The facilitation map. Decide what hint to give next without revealing the
+// static AlertIds too early.
+// Instructor note:
+// Acts 0 and 1 are the newest material. The intrusion no longer "starts mid
+// stream" with a risky sign-in; it starts with a device code phish that has a
+// deliberate benign twin. Do not skip Act 1b, it is the strongest teaching beat
+// in the deck.
+// =============================================================================
+datatable(Act:int, Phase:string, PrimaryTables:string, ExpectedPivot:string, MITRE:string, InstructorNote:string)
+[
+    0,  'Benign device code twin', 'EntraIdSignInEvents, AADSignInEventsBeta', 'alice.weber from 198.51.100.50, compliant and Azure AD joined', 'None, benign', 'Runs BEFORE the attack. Students who alert on AuthenticationProtocol == deviceCode alone will flag this. That is the point.',
+    1,  'Device code phishing', 'EmailEvents, EmailUrlInfo, UrlClickEvents, EmailPostDeliveryEvents', 'secure-docs@usag-cyber-portal.example to victor.alvarez, lure contains the GENUINE microsoft.com/devicelogin', 'T1566, T1078.004', 'The lure URL is real Microsoft infrastructure. Blocking the domain would not have helped. ZAP quarantines the mail AFTER the token is already issued.',
+    2,  'Device code redemption', 'SigninLogs, EntraIdSignInEvents, BehaviorInfo', 'victor.alvarez, deviceCode protocol, Microsoft Azure CLI, 185.225.73.18, unmanaged and non compliant', 'T1078.004, T1550.001', 'MFA was satisfied. The user really did authenticate. Emphasise that MFA is not the control that failed here.',
+    3,  'OAuth consent and app persistence', 'OAuthAppInfo, CloudAppEvents, AuditLogs, AADServicePrincipalSignInLogs', 'USAG Cyber Sync Helper, unverified publisher, Mail.Read + Files.Read.All + Directory.ReadWrite.All', 'T1528, T1098.001, T1550.001', 'Survives a password reset. Ask students what response action actually evicts the attacker.',
+    4,  'Graph enumeration and collection', 'GraphAPIAuditEvents, MicrosoftGraphActivityLogs, AADGraphActivityLogs', 'App-only Graph calls using the malicious application id', 'T1087.004, T1114.002, T1213.002', 'Shows what the OAuth foothold reached after consent.',
+    5,  'Endpoint staging and C2', 'DeviceNetworkEvents, DeviceProcessEvents, DeviceFileEvents, ASimDnsActivityLogs', 'WIN11-04, cdn.update-check.example resolving to 203.0.113.77, C:\\ProgramData\\wrstage', 'T1105, T1059.001', 'Cloud identity compromise becomes endpoint execution. DNS corroborates the network beat.',
+    6,  'Windows credential access', 'DeviceProcessEvents, DeviceFileEvents, DeviceRegistryEvents, SecurityEvent', 'reg.exe, esentutl.exe, procdump, PwDump7, gsecdump, LaZagne, Mimikatz', 'T1552.002, T1003.001, T1003.002, T1555', 'Keep focus on technique, host, and account rather than tool branding.',
+    7,  'Kerberoasting', 'IdentityQueryEvents, IdentityLogonEvents, SecurityEvent', 'servicePrincipalName LDAP queries, then 4769 service ticket requests with RC4', 'T1558.003', 'SecurityEvent 4769 with TicketEncryptionType 0x17 is the provable artefact. MDI alone only infers it.',
+    8,  'Hybrid identity lateral movement', 'DeviceLogonEvents, IdentityLogonEvents', 'svc_sql to AADCONNECT01 from WIN11-04 over WinRM', 'T1078.002, T1021.006', 'Highest impact pivot: the Entra Connect sync tier.',
+    9,  'Cloud control plane and exfiltration', 'AzureActivity, CloudStorageAggregatedEvents, OfficeActivity', 'Storage account key listing, bulk blob read via azcopy, MailItemsAccessed', 'T1530, T1114.002', 'Ties the identity compromise to actual data movement.',
+    10, 'Threat intelligence correlation', 'ThreatIntelIndicators', 'Attacker IP and C2 host present as high confidence indicators', 'Enrichment', 'Teaches the TI to telemetry join rather than treating TI as a separate silo.',
+    11, 'Risk and behaviour analytics', 'BehaviorAnalytics, AADRiskyUsers, AADRiskyServicePrincipals, AADServicePrincipalRiskEvents', 'victor.alvarez at investigation priority 8, malicious app at high risk', 'UEBA', 'Shows how the platform scores the same activity students found manually.',
+    12, 'Attack path exposure', 'ExposureGraphNodes, ExposureGraphEdges', 'Malicious service principal as a graph target', 'Attack path', 'Pre breach context: how the attacker could reach what they reached.',
+    13, 'SOC incident grouping', 'SecurityIncident, AlertInfo, AlertEvidence, SecurityAlert', 'Four labelled incidents grouping eleven alerts', 'Multiple', 'Generic incident titles that still resolve to the full evidence path.',
+    14, 'Detection blind spots', 'SentinelHealth, Heartbeat, IntuneDeviceComplianceOrg', 'Rule failures, agent coverage gaps, non compliant devices', 'Defensive', 'Closing beat: why the SOC did not see it sooner.',
+    15, 'Linux and Oracle branch', 'DeviceLogonEvents, DeviceProcessEvents, DeviceFileEvents', 'UBUNTU-03 sudo chroot, Oracle TNS to UBUNTU-05:1521', 'T1548.003, T1059.006, T1005', 'Optional comparison path for Linux MDE telemetry.'
+]
+| order by Act asc
+
+
+// =============================================================================
+// Query 02 - Static AlertId answer key, verified against AlertInfo
+// Why it matters:
+// Confirms the data loaded correctly and gives you the authoritative mapping
+// from scenario signal to opaque AlertId.
+// Instructor note:
+// Run this during setup. Every row must say Present. A Missing row means the
+// ingestion is incomplete, not that the student is wrong.
+// The AlertIds are intentionally opaque so students hunt by behaviour, entity,
+// technique, and time rather than by an actor branded identifier.
+// =============================================================================
+let AlertAnswerKey = datatable(Act:int, ScenarioSignal:string, AlertId:string, ExpectedTitle:string, ExpectedTechniques:string, InstructorNote:string)
+[
+    3,  'OAuth service principal persistence',   '09fb0e10-de44-00fd-6478-518affd9a260', 'Suspicious OAuth service principal persistence',                          'T1528,T1098.001,T1550.001',            'Anchor alert for the OAuth act.',
+    3,  'OAuth and Graph correlation',           '9b507934-0bc3-d4ff-32d2-1b2a64796429', 'OAuth application credential added and used for Graph access',            'T1528,T1098.001,T1550.001',            'Correlation alert joining credential add and Graph use.',
+    6,  'PowerShell credential discovery',       '621e484e-f436-6fbb-0a0c-7af49802e455', 'Suspicious PowerShell credential discovery',                              'T1552.002',                            'First endpoint credential signal after the cloud foothold.',
+    7,  'Kerberoasting',                         '1d5d47bd-113b-c938-6499-e01752a4d4db', 'Suspected Kerberoasting activity',                                        'T1558.003',                            'Connects SPN enumeration to service ticket requests.',
+    6,  'LSASS dump',                            '97185c44-fd9b-0dc3-ae32-ef6315b35a26', 'Credential dumping from LSASS',                                           'T1003.001',                            'High confidence endpoint credential dumping.',
+    6,  'Credential collection correlation',     '196bc75c-9d49-eb62-a9fe-79941b6507e0', 'Credential material collection on one endpoint',                          'T1003.001,T1552.002,T1555,T1558.003',  'Correlation alert across several credential artefacts on WIN11-04.',
+    6,  'Password store harvesting',             'df57168c-010c-a303-3edb-d05782c407a9', 'Password store harvesting tool observed',                                 'T1555',                                'Password store tooling and output under the staging directory.',
+    6,  'Credential dumping tool',               '710e468b-1a6f-1455-61d3-7bc4181de115', 'Mimikatz credential dumping',                                             'T1003.001',                            'Final credential dumping tool in the Windows path.',
+    8,  'Hybrid identity lateral movement',      '3d3bc433-e857-dc28-fec2-0131500cbf87', 'Service account interactive sign-in to identity synchronization server',  'T1078.002,T1021.006',                  'svc_sql against AADCONNECT01. The highest impact pivot.',
+    15, 'Linux privilege escalation',            '16f35dea-f474-2198-8d0c-3467e6da3f26', 'Suspicious sudo chroot usage on Linux server',                            'T1548.003,T1059.004',                  'Optional Linux branch.',
+    15, 'Linux Oracle collection',               'b28ccabf-2b63-fc49-2ef3-31864d151643', 'Linux privilege escalation followed by Oracle data access',               'T1548.003,T1059.006,T1005',            'Optional Linux and Oracle collection.'
+];
+AlertAnswerKey
+| join kind=leftouter (
+    AlertInfo
+    | project AlertId, ObservedTime = Timestamp, ObservedTitle = Title, Severity, Category, ServiceSource, DetectionSource, ObservedTechniques = AttackTechniques
+) on AlertId
+| extend Present = iff(isnotempty(ObservedTitle), "Present", "MISSING")
+| project Act, Present, ScenarioSignal, AlertId, ObservedTime, ExpectedTitle, ObservedTitle, Severity, Category, ServiceSource, ExpectedTechniques, ObservedTechniques, InstructorNote
+| order by ObservedTime asc
+
+
+// =============================================================================
+// Query 03 - Act 1, the device code phish end to end
+// Why it matters:
+// This is the delivery mechanism. Before this act existed the scenario began
+// mid intrusion with an unexplained risky sign-in.
+// Expected answer:
+// One inbound mail to victor.alvarez from secure-docs@usag-cyber-portal.example,
+// carrying two URLs. One is the attacker portal, the other is the GENUINE
+// https://microsoft.com/devicelogin.
+// Instructor note:
+// Ask "which URL would your mail filter block?". The Microsoft one cannot be
+// blocked, and the attacker relies on exactly that.
+// =============================================================================
+let PhishId = toscalar(
+    EmailEvents
+    | where RecipientEmailAddress startswith "victor.alvarez"
+        and Subject has "verify your device"
+    | top 1 by Timestamp asc
+    | project NetworkMessageId
+);
+union
+    (EmailEvents            | where NetworkMessageId == PhishId | extend Stage = "1. Delivered",   Detail = strcat(SenderFromAddress, " -> ", RecipientEmailAddress, "  [", DeliveryAction, " / ", DeliveryLocation, "]")),
+    (EmailUrlInfo           | where NetworkMessageId == PhishId | extend Stage = "2. URL in body", Detail = Url),
+    (UrlClickEvents         | where NetworkMessageId == PhishId | extend Stage = "3. Clicked",     Detail = strcat(Url, "  by ", AccountUpn, " from ", IPAddress, "  [", ActionType, ", clicked through: ", tostring(IsClickedThrough), "]")),
+    (EmailPostDeliveryEvents| where NetworkMessageId == PhishId | extend Stage = "4. Remediated",  Detail = strcat(ActionType, " -> ", Action, " (", ActionResult, ")"))
+| project Timestamp, Stage, Detail
+| order by Timestamp asc
+
+
+// =============================================================================
+// Query 04 - Act 2, device code redemption and the benign twin
+// Why it matters:
+// THE teaching moment. Two device code authentications happen in the same
+// window. The technique is identical. Only the surrounding evidence differs.
+// Expected answer:
+// alice.weber  - 198.51.100.50, Azure AD joined, compliant, risk none      -> benign
+// victor.alvarez - 185.225.73.18, Unmanaged, not compliant, risk high      -> malicious
+// Instructor note:
+// Ask for a detection rule BEFORE showing this. Most students propose
+// "alert on device code authentication", which fires on Alice too. Then ask what
+// they would add. The answer is device trust, compliance, network location, and
+// risk, not the protocol.
+// Column notes, and these matter:
+//   EntraIdSignInEvents records the protocol in LogonType. AuthenticationProtocol
+//   exists on SigninLogs, not here.
+//   Defender stores risk and compliance as NUMERIC enums, not display strings,
+//   exactly as the real advanced hunting schema does. Decoding them is part of
+//   the exercise. RiskLevelAggregated: 0 none, 10 low, 50 medium, 100 high.
+//   RiskState: 0 none, 1 confirmedSafe, 2 remediated, 3 dismissed, 4 atRisk.
+//   IsCompliant and IsManaged are 0 or 1.
+// =============================================================================
+EntraIdSignInEvents
+| where LogonType =~ "deviceCode"
+| extend
+    RiskLevel   = case(RiskLevelAggregated >= 100, "high", RiskLevelAggregated >= 50, "medium", RiskLevelAggregated >= 10, "low", "none"),
+    RiskStateName = case(RiskState == 4, "atRisk", RiskState == 3, "dismissed", RiskState == 2, "remediated", RiskState == 1, "confirmedSafe", "none"),
+    Compliant   = iff(IsCompliant == 1, "yes", "no"),
+    Managed     = iff(IsManaged == 1, "yes", "no")
+| extend Verdict = iff(RiskLevelAggregated >= 50 or IsCompliant != 1,
+    "SUSPICIOUS - unmanaged device, unfamiliar network, elevated risk",
+    "BENIGN - managed compliant device on corporate egress")
+| project Timestamp, AccountUpn, AccountDisplayName, IPAddress, Country, Application,
+          DeviceTrustType, Managed, Compliant, RiskLevel, RiskStateName, Verdict
+| order by Timestamp asc
+
+
+// =============================================================================
+// Query 05 - Act 3, the malicious OAuth application
+// Why it matters:
+// Consent grants durable access that survives a password reset. This is the
+// persistence mechanism, and it is the reason the incident response answer is
+// not "reset the password".
+// Expected answer:
+// USAG Cyber Sync Helper, unverified publisher, high privilege, holding
+// Mail.Read, Files.Read.All, Directory.ReadWrite.All and offline_access.
+// Instructor note:
+// offline_access is the one to highlight. It is what grants the refresh token
+// that keeps the foothold alive.
+// =============================================================================
+OAuthAppInfo
+| where AppName has "Sync Helper"
+| extend PublisherName = tostring(VerifiedPublisher.displayName)
+| extend RedFlags = strcat(
+    iff(isempty(PublisherName), "no verified publisher; ", ""),
+    iff(Permissions has "Directory.ReadWrite.All", "directory write; ", ""),
+    iff(Permissions has "offline_access", "refresh token persistence", ""))
+| project Timestamp, AppName, OAuthAppId, PrivilegeLevel, Permissions,
+          PublisherName, RedFlags, AddedOnTime, LastModifiedTime, LastUsedTime
+
+
+// =============================================================================
+// Query 06 - Acts 3 and 4, consent, credential add, and app-only Graph use
+// Why it matters:
+// Shows the full identity persistence chain in one timeline.
+// Expected answer:
+// Consent, then a service principal credential add, then app-only sign-ins and
+// Graph calls that use the same application id.
+// =============================================================================
+let ScenarioStart = toscalar(AlertInfo | where AlertId == "09fb0e10-de44-00fd-6478-518affd9a260" | summarize min(Timestamp)) - 6m;
+let AppId = toscalar(OAuthAppInfo | where AppName has "Sync Helper" | top 1 by Timestamp asc | project OAuthAppId);
+union
+    (CloudAppEvents                 | where Timestamp between (ScenarioStart .. ScenarioStart + 90m) | where ActionType has_any ("Consent", "Add service principal", "Add delegated") | extend Source = "CloudAppEvents",  Detail = strcat(ActionType, " | ", AccountDisplayName)),
+    (AuditLogs                      | where TimeGenerated between (ScenarioStart .. ScenarioStart + 90m) | where OperationName has_any ("Consent", "Add service principal credentials", "Add app role") | extend Timestamp = TimeGenerated, Source = "AuditLogs", Detail = OperationName),
+    (AADServicePrincipalSignInLogs  | where TimeGenerated between (ScenarioStart .. ScenarioStart + 90m) | extend Timestamp = TimeGenerated, Source = "SpnSignIn",   Detail = strcat(ServicePrincipalName, " -> ", ResourceDisplayName)),
+    (GraphAPIAuditEvents            | where TimeGenerated between (ScenarioStart .. ScenarioStart + 90m) | extend Timestamp = TimeGenerated, Source = "GraphAudit",  Detail = strcat(RequestMethod, " ", RequestUri))
+| project Timestamp, Source, Detail
+| order by Timestamp asc
+
+
+// =============================================================================
+// Query 07 - Act 5, endpoint staging and C2, corroborated by DNS
+// Why it matters:
+// Joins three independent telemetry sources onto the same C2 host. Any one of
+// them alone is weak; together they are conclusive.
+// Expected answer:
+// powershell.exe on WIN11-04 reaching cdn.update-check.example / 203.0.113.77,
+// with the matching DNS resolution from the domain controller.
+// Instructor note:
+// ASimDnsActivityLogs is domain controller sourced, so it proves the name was
+// resolved enterprise wide, not just that one host made a connection.
+// =============================================================================
+union
+    (DeviceNetworkEvents  | where RemoteUrl has "update-check" or RemoteIP == "203.0.113.77" | extend Source = "DeviceNetworkEvents", Detail = strcat(DeviceName, " | ", InitiatingProcessFileName, " -> ", RemoteUrl, ":", tostring(RemotePort))),
+    (ASimDnsActivityLogs  | where DnsQuery has "update-check" | extend Timestamp = TimeGenerated, Source = "ASimDnsActivityLogs", Detail = strcat(SrcIpAddr, " asked ", DvcHostname, " for ", DnsQuery, " -> ", tostring(DnsResponseName)))
+| project Timestamp, Source, Detail
+| order by Timestamp asc
+
+
+// =============================================================================
+// Query 08 - Act 6, the Windows credential access chain
+// Why it matters:
+// The core endpoint act. Every step is a distinct technique against a distinct
+// credential store.
+// Expected answer:
+// Ten process events on WIN11-04 under victor.alvarez, staging to
+// C:\ProgramData\wrstage.
+// Instructor note:
+// Ask students to name the credential STORE each tool targets, not the tool.
+// SAM hive, LSASS memory, browser login data, DPAPI, Kerberos tickets.
+// =============================================================================
+DeviceProcessEvents
+| where FolderPath has "wrstage" or ProcessCommandLine has "wrstage"
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName
+| order by Timestamp asc
+
+
+// =============================================================================
+// Query 09 - Act 7, Kerberoasting across identity and Windows auditing
+// Why it matters:
+// Before SecurityEvent existed this act rested on Defender for Identity
+// inference alone. Windows security auditing gives an independent second source
+// for the same behaviour.
+// Expected answer:
+// LDAP queries for servicePrincipalName in IdentityQueryEvents, then 4768 ticket
+// granting and 4769 service ticket requests in SecurityEvent naming the targeted
+// service principal names.
+// Instructor note:
+// Schema limitation worth stating out loud. The real Kerberoasting tell is a
+// 4769 requesting RC4 encryption, TicketEncryptionType 0x17, when the domain
+// otherwise issues AES. The SecurityEvent schema in this workshop is built from
+// the live source workspace, which never ingested TicketEncryptionType, so that
+// column does not exist here. Teach the pattern using event volume, the targeted
+// ServiceName values, and the burst timing instead, and tell students that in a
+// production workspace they should add the encryption type to the hunt.
+// If SecurityEvent returns nothing at all, the environment is the older 48 table
+// snapshot; fall back to IdentityQueryEvents and say so.
+// =============================================================================
+union
+    (IdentityQueryEvents | where QueryTarget has "servicePrincipalName" or Query has "servicePrincipalName" | extend Source = "IdentityQueryEvents", Detail = strcat(AccountName, " queried ", QueryTarget)),
+    (SecurityEvent       | where EventID in (4768, 4769) | extend Timestamp = TimeGenerated, Source = "SecurityEvent", Detail = strcat("EventID ", tostring(EventID), "  service=", ServiceName, "  account=", TargetUserName, "  status=", Status))
+| project Timestamp, Source, Detail
+| order by Timestamp asc
+// Burst detection: a single account requesting many distinct service tickets in a
+// short window is the behavioural signature, independent of encryption type.
+// SecurityEvent
+// | where EventID == 4769
+// | summarize DistinctServices = dcount(ServiceName), Requests = count() by TargetUserName, bin(TimeGenerated, 5m)
+// | where DistinctServices > 3
+// | order by DistinctServices desc
+
+
+// =============================================================================
+// Query 10 - Act 8, hybrid identity lateral movement
+// Why it matters:
+// The Entra Connect synchronisation server is the crown jewel. Reaching it puts
+// the attacker adjacent to every synchronised identity.
+// Expected answer:
+// svc_sql authenticating to AADCONNECT01 from WIN11-04 over WinRM port 5985.
+// =============================================================================
+union
+    (DeviceLogonEvents   | where AccountName has "svc_sql"    | extend Source = "DeviceLogonEvents",   Detail = strcat(AccountName, " -> ", DeviceName, " [", LogonType, "] from ", RemoteIP)),
+    (IdentityLogonEvents | where AccountName has "svc_sql"    | extend Source = "IdentityLogonEvents", Detail = strcat(AccountName, " -> ", DeviceName, " [", LogonType, "] from ", IPAddress)),
+    (DeviceNetworkEvents | where RemotePort == 5985           | extend Source = "DeviceNetworkEvents", Detail = strcat(DeviceName, " -> ", RemoteUrl, ":5985 via ", InitiatingProcessFileName))
+| project Timestamp, Source, Detail
+| order by Timestamp asc
+
+
+// =============================================================================
+// Query 11 - Act 9, cloud control plane and data movement
+// Why it matters:
+// Connects the identity compromise to actual data leaving. Students often stop
+// at credential access and never establish impact.
+// Expected answer:
+// Storage account key listing in AzureActivity, a bulk blob read burst in
+// CloudStorageAggregatedEvents using azcopy, and MailItemsAccessed in
+// OfficeActivity.
+// Instructor note:
+// Ask "what did they actually take?". This query is the answer.
+// =============================================================================
+union
+    (AzureActivity                | where OperationNameValue has "LISTKEYS"        | extend Timestamp = TimeGenerated, Source = "AzureActivity",                Detail = strcat(OperationNameValue, " by ", Caller, " from ", CallerIpAddress)),
+    (CloudStorageAggregatedEvents | where UserAgentHeader has "azcopy"             | extend Source = "CloudStorageAggregatedEvents", Detail = strcat(OperationNamesList, " x", tostring(OperationsCount), " on ", StorageAccount, "/", StorageContainer, " from ", IPAddress)),
+    (OfficeActivity               | where Operation == "MailItemsAccessed"         | extend Timestamp = TimeGenerated, Source = "OfficeActivity",               Detail = strcat(Operation, " by ", UserId, " from ", ClientIP))
+| project Timestamp, Source, Detail
+| order by Timestamp asc
+
+
+// =============================================================================
+// Query 12 - Act 10, threat intelligence to telemetry join
+// Why it matters:
+// Teaches TI as something you JOIN, not something you read in a separate portal.
+// Expected answer:
+// The attacker IP and the C2 host are both present as high confidence
+// indicators, and they match observed endpoint and identity telemetry.
+// =============================================================================
+let Indicators =
+    ThreatIntelIndicators
+    | where ObservableValue in ("185.225.73.18", "203.0.113.77", "cdn.update-check.example")
+    | summarize arg_max(TimeGenerated, Confidence, Tags, ObservableKey) by ObservableValue;
+union
+    (DeviceNetworkEvents | where RemoteIP in ("185.225.73.18", "203.0.113.77") or RemoteUrl has "update-check" | extend Observable = coalesce(RemoteUrl, RemoteIP), Source = "DeviceNetworkEvents"),
+    (SigninLogs          | where IPAddress == "185.225.73.18" | extend Timestamp = TimeGenerated, Observable = IPAddress, Source = "SigninLogs")
+| join kind=inner Indicators on $left.Observable == $right.ObservableValue
+| project Timestamp, Source, Observable, Confidence, Tags, ObservableKey
+| order by Timestamp asc
+
+
+// =============================================================================
+// Query 13 - Act 11, how the platform scored the same activity
+// Why it matters:
+// Students hunted this manually. Show them the platform reached the same
+// conclusion, and discuss why an analyst still needed to look.
+// Expected answer:
+// victor.alvarez at an elevated InvestigationPriority with first time country
+// and uncommon ISP insights, plus a matching risky user record.
+// =============================================================================
+union
+    (BehaviorAnalytics | where UserPrincipalName has "victor.alvarez" and InvestigationPriority > 0
+                       | extend Timestamp = TimeGenerated, Source = "BehaviorAnalytics", Detail = strcat("priority ", tostring(InvestigationPriority), " | ", ActivityType, " from ", SourceIPAddress, " (", SourceIPLocation, ")")),
+    (AADRiskyUsers     | where UserPrincipalName has "victor.alvarez"
+                       | extend Timestamp = TimeGenerated, Source = "AADRiskyUsers", Detail = strcat(RiskLevel, " / ", RiskState, " / ", RiskDetail))
+| project Timestamp, Source, Detail
+| order by Timestamp asc
+
+
+// =============================================================================
+// Query 14 - Act 11 continued, service principal risk
+// Why it matters:
+// Identity Protection scores workload identities too. The malicious application
+// is the highest risk service principal in the tenant.
+// Expected answer:
+// USAG Cyber Sync Helper at high risk and atRisk state, with detections sourced
+// from the attacker IP.
+// =============================================================================
+union
+    (AADRiskyServicePrincipals     | where DisplayName has "Sync Helper"                 | extend Timestamp = TimeGenerated, Source = "AADRiskyServicePrincipals", Detail = strcat(DisplayName, " | ", RiskLevel, " / ", RiskState)),
+    (AADServicePrincipalRiskEvents | where ServicePrincipalDisplayName has "Sync Helper" | extend Timestamp = TimeGenerated, Source = "AADServicePrincipalRiskEvents", Detail = strcat(RiskEventType, " | ", RiskLevel, " from ", IpAddress, " (", tostring(Location.countryOrRegion), ")"))
+| project Timestamp, Source, Detail
+| order by Timestamp asc
+
+
+// =============================================================================
+// Query 15 - Act 13, SOC incident grouping
+// Why it matters:
+// SecurityIncident is the queue an analyst actually works. Generic titles still
+// resolve to the complete evidence path.
+// Expected answer:
+// Four labelled incidents grouping the eleven scenario alerts.
+// =============================================================================
+SecurityIncident
+| where Labels has "WorkshopScenario"
+| mv-expand AlertIds
+| extend AlertId = tostring(AlertIds)
+| join kind=leftouter (
+    AlertInfo
+    | project AlertId, AlertTime = Timestamp, AlertTitle = Title, AlertSeverity = Severity, Category, ServiceSource, AttackTechniques
+) on AlertId
+| project IncidentNumber, IncidentTitle = Title, IncidentSeverity = Severity, Status,
+          AlertTime, AlertTitle, AlertSeverity, Category, ServiceSource, AttackTechniques
+| order by IncidentNumber asc, AlertTime asc
+
+
+// =============================================================================
+// Query 16 - Alert to evidence pivot
+// Why it matters:
+// AlertInfo is the headline. AlertEvidence is why it fired and which entity
+// supports it. This is the central instructor pivot.
+// Instructor note:
+// Use this whenever a student asks "what should I look at next?".
+// =============================================================================
+let ScenarioAlerts = dynamic([
+    "09fb0e10-de44-00fd-6478-518affd9a260", "9b507934-0bc3-d4ff-32d2-1b2a64796429",
+    "621e484e-f436-6fbb-0a0c-7af49802e455", "1d5d47bd-113b-c938-6499-e01752a4d4db",
+    "97185c44-fd9b-0dc3-ae32-ef6315b35a26", "196bc75c-9d49-eb62-a9fe-79941b6507e0",
+    "df57168c-010c-a303-3edb-d05782c407a9", "710e468b-1a6f-1455-61d3-7bc4181de115",
+    "3d3bc433-e857-dc28-fec2-0131500cbf87", "16f35dea-f474-2198-8d0c-3467e6da3f26",
+    "b28ccabf-2b63-fc49-2ef3-31864d151643"
+]);
+AlertInfo
+| where AlertId in (ScenarioAlerts)
+| join kind=leftouter (AlertEvidence | project AlertId, EntityType, EvidenceRole, DeviceName, AccountName, AccountUpn, FileName, FolderPath, ProcessCommandLine, RemoteIP, RemoteUrl, ApplicationId, OAuthApplicationId) on AlertId
+| project Timestamp, Title, Severity, AttackTechniques, EntityType, EvidenceRole,
+          DeviceName, AccountName = coalesce(AccountUpn, AccountName),
+          FileName, RemoteIP = coalesce(RemoteUrl, RemoteIP), ProcessCommandLine
+| order by Timestamp asc, EntityType asc
+
+
+// =============================================================================
+// Query 17 - Act 14, detection blind spots
+// Why it matters:
+// The closing beat. Explains why the SOC did not catch this sooner and turns
+// the exercise into a defensive improvement conversation.
+// Expected answer:
+// A small number of analytics rule failures against a large number of
+// successes, agent coverage that does not span the fleet, and non compliant
+// devices that still authenticated.
+// Instructor note:
+// The failure rate is deliberately tiny. That is realistic and is exactly why
+// nobody notices without looking.
+// =============================================================================
+union
+    (SentinelHealth            | where Status == "Failure"              | extend Timestamp = TimeGenerated, Source = "SentinelHealth",            Detail = strcat("rule failed: ", SentinelResourceName)),
+    (IntuneDeviceComplianceOrg | where ComplianceState != "Compliant"   | extend Timestamp = TimeGenerated, Source = "IntuneDeviceComplianceOrg", Detail = strcat(DeviceName, " | ", ComplianceState, " | owner ", OwnerType))
+| project Timestamp, Source, Detail
+| order by Timestamp asc
+// Agent coverage: compare monitored hosts against the known fleet.
+// Heartbeat | summarize Monitored = dcount(Computer);
+// DeviceInfo | summarize Fleet = dcount(DeviceName);
+
+
+// =============================================================================
+// Query 18 - Act 15, the optional Linux and Oracle branch
+// Why it matters:
+// Demonstrates that a Linux host emits MDE device telemetry, not MDI identity
+// telemetry, and that the same investigative pattern still applies.
+// Expected answer:
+// UBUNTU-03 sudo chroot escalation, then an Oracle TNS connection to
+// UBUNTU-05:1521 and a staged export under /tmp/.oracle.
+// =============================================================================
+union
+    (DeviceProcessEvents | where DeviceName has "UBUNTU" and (ProcessCommandLine has "chroot" or ProcessCommandLine has "sudo") | extend Source = "DeviceProcessEvents", Detail = ProcessCommandLine),
+    (DeviceNetworkEvents | where RemotePort == 1521                                   | extend Source = "DeviceNetworkEvents", Detail = strcat(DeviceName, " -> ", RemoteUrl, ":1521")),
+    (DeviceFileEvents    | where FolderPath has "/tmp/.oracle"                          | extend Source = "DeviceFileEvents",    Detail = FolderPath)
+| project Timestamp, Source, Detail
+| order by Timestamp asc
+
+
+// =============================================================================
+// Query 19 - Full scenario timeline
+// Why it matters:
+// The wrap up slide. One ordered narrative from phish to exfiltration.
+// Instructor note:
+// Run this last. Walk the rows top to bottom and let students narrate.
+// =============================================================================
+let ScenarioStart = toscalar(AlertInfo | where AlertId == "09fb0e10-de44-00fd-6478-518affd9a260" | summarize min(Timestamp)) - 6m;
+let WindowStart = ScenarioStart - 60m;
+let WindowEnd   = ScenarioStart + 100m;
+union
+    (EmailEvents         | where RecipientEmailAddress startswith "victor.alvarez" and Subject has "verify your device" | extend Stage = "01 phish delivered",     Detail = Subject),
+    (UrlClickEvents      | where AccountUpn startswith "victor.alvarez"                                                 | extend Stage = "02 lure clicked",        Detail = Url),
+    (SigninLogs          | where AuthenticationProtocol =~ "deviceCode"                | extend Timestamp = TimeGenerated, Stage = "03 device code redeemed", Detail = strcat(UserPrincipalName, " from ", IPAddress)),
+    (OAuthAppInfo        | where AppName has "Sync Helper"                              | extend Stage = "04 malicious app",       Detail = strcat(AppName, " | ", Permissions)),
+    (DeviceProcessEvents | where FolderPath has "wrstage"                               | extend Stage = "05 credential access",   Detail = FileName),
+    (DeviceLogonEvents   | where AccountName has "svc_sql"                              | extend Stage = "06 lateral movement",    Detail = strcat(AccountName, " -> ", DeviceName)),
+    (AzureActivity       | where OperationNameValue has "LISTKEYS"                      | extend Timestamp = TimeGenerated, Stage = "07 cloud collection",    Detail = OperationNameValue),
+    (AlertInfo           | where isnotempty(AttackTechniques)                           | extend Stage = "08 alert raised",        Detail = Title)
+| where Timestamp between (WindowStart .. WindowEnd)
+| project Timestamp, Stage, Detail
+| order by Timestamp asc
+
+
+// =============================================================================
+// Query 20 - Facilitation checklist and common student mistakes
+// Why it matters:
+// Pre briefed answers to the questions that actually come up.
+// =============================================================================
+datatable(Topic:string, StudentSays:string, InstructorResponse:string)
+[
+    'Device code detection', 'Alert whenever AuthenticationProtocol is deviceCode',                 'Run Query 04. Alice Weber trips that rule from a compliant corporate device. Ask what evidence separates the two: device trust, compliance, network, risk.',
+    'MFA',                   'MFA would have stopped this',                                        'It did not. The user completed genuine MFA. Device code phishing transfers an already authenticated token. The control that helps is conditional access requiring a compliant device.',
+    'Blocking the URL',      'Just block the phishing link',                                       'The lure points at the real https://microsoft.com/devicelogin. You cannot block it. That is why the technique works.',
+    'Response action',       'Reset the password',                                                 'Insufficient. The OAuth grant and refresh token survive. You must revoke the service principal and its consent. See Query 05, note offline_access.',
+    'ZAP saved us',          'Defender quarantined the mail, so we are fine',                      'Check the ordering in Query 03. ZAP fires AFTER the token was issued. It removed the mail, not the access.',
+    'Empty SecurityEvent',   'The Kerberoasting query returns nothing',                            'The 48 table local snapshot predates SecurityEvent. Use IdentityQueryEvents instead and say the environment is the older snapshot.',
+    'Timestamps differ',     'The times do not match the answer key',                              'Expected. Telemetry is anchored to generation time. AlertIds are stable, timestamps are not. Use Query 00 to derive the window.',
+    'Alert IDs look random', 'Why are the AlertIds not named after the actor',                     'Deliberate. Real SOCs get opaque identifiers. Students must hunt by behaviour, entity, technique and time.',
+    'Where do I start',      'I do not know which table to open',                                  'Give the pivot order: identity, then endpoint, then cloud. Or hand them one entity, victor.alvarez, and ask them to find every table that mentions it.',
+    'Too much data',         'There are thousands of rows',                                        'Correct, and intentional. Push project and summarize early. The scenario rows are a tiny fraction of ambient noise, exactly like production.'
+]
