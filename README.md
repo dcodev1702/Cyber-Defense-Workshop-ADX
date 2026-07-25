@@ -85,8 +85,9 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | --- | --- | --- |
 | ADX setup | Creates the ADX database tables, JSON ingestion mappings, generated telemetry, and ingestion flow | [`scripts\Initialize-Workshop.ps1`](scripts/Initialize-Workshop.ps1), [`scripts\Initialize-AdxTables.ps1`](scripts/Initialize-AdxTables.ps1), [`scripts\Import-SyntheticTelemetry.ps1`](scripts/Import-SyntheticTelemetry.ps1), [`scripts\AdxWorkshop.Common.psm1`](scripts/AdxWorkshop.Common.psm1) |
 | ADX backup | Creates secured ADLS Gen2 backup storage, exports schema records, exports table data as Parquet, and restores from the backup manifest | [`adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1`](adx_db_backupNrestore/Initialize-AdxBackupStorage.ps1), [`adx_db_backupNrestore\Backup-AdxDatabase.ps1`](adx_db_backupNrestore/Backup-AdxDatabase.ps1), [`adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1`](adx_db_backupNrestore/Restore-AdxDatabaseBackup.ps1), [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md) |
-| Schemas | Holds one Microsoft Learn-derived JSON schema file per ADX table | [`schemas\`](schemas/), [`metadata\tables.manifest.json`](metadata/tables.manifest.json), [`tools\Build-SchemasFromMicrosoftLearn.ps1`](tools/Build-SchemasFromMicrosoftLearn.ps1) |
-| Synthetic data | Holds generated schema-aligned NDJSON telemetry files | [`data\generated\`](data/generated/), [`data\scenario-summary.json`](data/scenario-summary.json), [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1) |
+| Schemas | Holds one Microsoft Learn-derived JSON schema file per ADX table | [`schemas\`](schemas/), [`metadata\tables.manifest.json`](metadata/tables.manifest.json), [`tools\Build-SchemasFromMicrosoftLearn.ps1`](tools/Build-SchemasFromMicrosoftLearn.ps1), [`tools\Build-SchemaFromLiveTable.ps1`](tools/Build-SchemaFromLiveTable.ps1) |
+| Tenant sampling | Exports real Log Analytics and Defender XDR advanced hunting rows plus per-column field profiles that ground synthetic generation | [`scripts\Export-TenantTelemetrySamples.ps1`](scripts/Export-TenantTelemetrySamples.ps1) |
+| Synthetic data | Holds generated schema-aligned NDJSON telemetry files | [`data\generated\`](data/generated/), [`data\scenario-summary.json`](data/scenario-summary.json), [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1), [`scripts\New-SyntheticTelemetryParallel.ps1`](scripts/New-SyntheticTelemetryParallel.ps1) |
 | Participant access | Documents SFI-aligned B2B guest provisioning, MFA, access-package lifecycle, participant group access, ADX database viewer permissions, and dashboard sharing | [`user_creation\README.md`](user_creation/README.md), [`docs\student_access.md`](docs/student_access.md), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1) |
 | Cloudflare ADX class access | Documents the shared Service Auth credential, student TCP proxy, read-only KQL gateway, rotation, and troubleshooting | [`docs\cloudflare_adx_access.md`](docs/cloudflare_adx_access.md) |
 | Kustainer gateway | Documents the read-only request policy, browser CORS/private-network support, default-database cleaner, configuration, and security boundary | [`tools\kusto-readonly-gateway\README.md`](tools/kusto-readonly-gateway/README.md) |
@@ -106,6 +107,41 @@ The repository already includes generated schemas. Use this command only when yo
 ```powershell
 .\tools\Build-SchemasFromMicrosoftLearn.ps1 -Force
 ```
+
+For tables that Microsoft Learn does not document yet, or whose published schema lags the live one, build the schema straight from the live table instead. This is how the `AgentsInfo`, `StorageBlobLogs`, `IntuneDevices`, `SecurityEvent`, and email tables were added.
+
+```powershell
+.\tools\Build-SchemaFromLiveTable.ps1 -TableName AgentsInfo, StorageBlobLogs, IntuneDevices
+.\tools\Build-SchemaFromLiveTable.ps1 -TableName SecurityEvent -Source LogAnalytics
+```
+
+### 1a. Sample real telemetry to ground synthetic generation
+
+Synthetic realism is measured against real telemetry rather than guessed. This exports up to 1000 rows per table from the Log Analytics workspace and Microsoft Defender XDR advanced hunting, writes them as NDJSON under `sample\<DTG>\`, and writes a per-column field profile next to them.
+
+The generator reads those profiles automatically and uses the observed distinct-value ratios, null rates, and enum distributions when it fills columns. Dated export folders are git-ignored because they contain real tenant identities.
+
+```powershell
+.\scripts\Export-TenantTelemetrySamples.ps1 -MaxRowsPerTable 1000 -LookbackDays 90
+```
+
+Log Analytics access uses the Az context. Defender advanced hunting uses Microsoft Graph with the `ThreatHunting.Read.All` delegated scope through interactive browser sign-in. Advanced hunting retains 30 days regardless of the requested lookback.
+
+### 1b. Generate telemetry at workshop volume
+
+The single-process generator is fine for one table. For the full set, use the parallel driver, which partitions tables across worker processes. Output is identical either way because the generator reseeds per table from `RandomSeed` XOR the table seed.
+
+```powershell
+.\scripts\New-SyntheticTelemetryParallel.ps1 -RowsPerTable 8000
+```
+
+Row counts are resolved per table. `DeviceProcessEvents` defaults to 32000 because process creation is by a wide margin the highest-volume endpoint table, and small reference tables are reduced. Override any table explicitly:
+
+```powershell
+.\scripts\New-SyntheticTelemetryParallel.ps1 -RowsPerTable 8000 -TableRowOverride @{ DeviceProcessEvents = 32000; DeviceNetworkEvents = 16000 }
+```
+
+> ⚠️ **Generated telemetry is large.** The full 60-table set at 8000 rows per table is roughly 640 MB. It is reproducible from the generator, so treat it as a build artifact rather than something to commit. `Initialize-Workshop.ps1` regenerates it by default unless you pass `-SkipGenerateData`.
 
 ### 2. Create the ADX database, tables, mappings, synthetic telemetry, and ingest data
 

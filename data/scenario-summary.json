@@ -43,7 +43,7 @@
       "Title": "Graph API mailbox, file, and directory collection",
       "Technique": "T1087.004,T1114.002,T1530",
       "Offset": 7,
-      "Command": "GraphApiAuditEvents and MicrosoftGraphActivityLogs read messages, OneDrive, users, and SharePoint content"
+      "Command": "GraphAPIAuditEvents and MicrosoftGraphActivityLogs read messages, OneDrive, users, and SharePoint content"
     }
   ],
   "attackVectors": [

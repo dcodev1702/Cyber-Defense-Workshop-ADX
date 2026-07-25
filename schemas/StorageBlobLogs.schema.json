@@ -1,0 +1,330 @@
+{
+  "tableName": "StorageBlobLogs",
+  "categories": [
+    "AzureStorage",
+    "CloudResource",
+    "AzureMonitor",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Azure Storage",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/storagebloblogs",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Azure Storage blob service diagnostic operations used to hunt cloud data access and exfiltration.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1000. Most common: 07/25/2026 01:15:35"
+    },
+    {
+      "name": "AccountName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 3. Most common: zolabworkerstbotprd"
+    },
+    {
+      "name": "Location",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1. Most common: eastus2"
+    },
+    {
+      "name": "Protocol",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1. Most common: HTTPS"
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 6. Most common: GetBlob"
+    },
+    {
+      "name": "AuthenticationType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 2. Most common: OAuth"
+    },
+    {
+      "name": "StatusCode",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 5. Most common: 403"
+    },
+    {
+      "name": "StatusText",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 5. Most common: Success"
+    },
+    {
+      "name": "DurationMs",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 76. Most common: 2"
+    },
+    {
+      "name": "ServerLatencyMs",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 74. Most common: 4"
+    },
+    {
+      "name": "Uri",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 15. Most common: https://zolabaifndrysa.blob.core.windows.net:443/?comp=list&maxresults=1"
+    },
+    {
+      "name": "CallerIpAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 183. Most common: 10.42.0.22:10001"
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1000. Most common: a6d52ad7-401e-00fb-6fd3-1b58b9000000"
+    },
+    {
+      "name": "SchemaVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1. Most common: 1.0"
+    },
+    {
+      "name": "OperationVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 5. Most common: 2025-11-05"
+    },
+    {
+      "name": "AuthenticationHash",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 99. Most common: system-1(EA8459F2DE77470F885D27CD1D0C0DF0E44B135C35E7F2FE7C38D5B31DFEF6B5)"
+    },
+    {
+      "name": "RequesterObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 6. Most common: e9a17b6f-74e3-44f4-ae3e-14dd48d5c251"
+    },
+    {
+      "name": "RequesterTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 2. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+    },
+    {
+      "name": "RequesterAppId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 6. Most common: 59bffc04-c429-4580-9833-8ce88c088877"
+    },
+    {
+      "name": "RequesterAudience",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 4. Most common: https://storage.azure.com"
+    },
+    {
+      "name": "RequesterTokenIssuer",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 2. Most common: https://sts.windows.net/b22dee98-83da-4207-b9ab-5ba931866f44/"
+    },
+    {
+      "name": "RequesterUpn",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 2."
+    },
+    {
+      "name": "AuthorizationDetails",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 11. Most common: [{\"action\":\"Microsoft.Storage/storageAccounts/blobServices/containers/read\",\"rol..."
+    },
+    {
+      "name": "UserAgentHeader",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 12. Most common: azsdk-net-Storage.Blobs/12.26.0 (.NET 8.0.28; Microsoft Azure Linux 3.0)"
+    },
+    {
+      "name": "ReferrerHeader",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ClientRequestId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 857."
+    },
+    {
+      "name": "Etag",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 57."
+    },
+    {
+      "name": "ServiceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1. Most common: blob"
+    },
+    {
+      "name": "OperationCount",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "ObjectKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 12. Most common: /zolabaifndrysa"
+    },
+    {
+      "name": "RequestHeaderSize",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 48. Most common: 2680"
+    },
+    {
+      "name": "RequestBodySize",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 4. Most common: 1210"
+    },
+    {
+      "name": "ResponseHeaderSize",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 8. Most common: 249"
+    },
+    {
+      "name": "ResponseBodySize",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 8. Most common: 279"
+    },
+    {
+      "name": "RequestMd5",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ResponseMd5",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 52."
+    },
+    {
+      "name": "LastModifiedTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 23. Most common: 07/03/2026 02:53:30"
+    },
+    {
+      "name": "ConditionsUsed",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ContentLengthHeader",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 4. Most common: 1210"
+    },
+    {
+      "name": "Category",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 2. Most common: StorageRead"
+    },
+    {
+      "name": "TlsVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 2. Most common: TLS 1.3"
+    },
+    {
+      "name": "SasExpiryStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "MetricResponseType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 3. Most common: Success"
+    },
+    {
+      "name": "SourceUri",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DestinationUri",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "AccessTier",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SourceAccessTier",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 2. Most common: Invalid"
+    },
+    {
+      "name": "RehydratePriority",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1. Most common: Azure"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1. Most common: StorageBlobLogs"
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live StorageBlobLogs column. Distinct values observed: 3. Most common: /subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourcegroups/zolab-worker-..."
+    }
+  ],
+  "adx": {
+    "mappingName": "StorageBlobLogs_JsonMapping"
+  }
+}

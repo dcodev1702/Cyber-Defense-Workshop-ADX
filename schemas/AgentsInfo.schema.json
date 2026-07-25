@@ -1,0 +1,251 @@
+{
+  "tableName": "AgentsInfo",
+  "categories": [
+    "Agent",
+    "AI",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-agentsinfo-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Inventory of AI agents discovered in the tenant, including owner, platform, and risk posture.",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AgentsInfo column. Distinct values observed: 694. Most common: 07/24/2026 08:10:07"
+    },
+    {
+      "name": "AgentId",
+      "type": "guid",
+      "sourceType": "guid",
+      "description": "Live AgentsInfo column. Distinct values observed: 253. Most common: 7b3f16ed-6fa8-4b7b-9675-2a6a8b85d2ff"
+    },
+    {
+      "name": "Name",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 253. Most common: TSIA Intelligence"
+    },
+    {
+      "name": "Platform",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 3. Most common: Other"
+    },
+    {
+      "name": "Description",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 236. Most common: Effortlessly search, summarize, and manage your NetDocuments content."
+    },
+    {
+      "name": "Version",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 142. Most common: 1.0.0"
+    },
+    {
+      "name": "SourceAgentId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 5."
+    },
+    {
+      "name": "EntraAgentID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 3."
+    },
+    {
+      "name": "EntraBlueprintID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 7."
+    },
+    {
+      "name": "ToolsAuthenticationType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 1."
+    },
+    {
+      "name": "Permissions",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 0."
+    },
+    {
+      "name": "PublishedStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 2. Most common: Published"
+    },
+    {
+      "name": "LifecycleStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 2."
+    },
+    {
+      "name": "Availability",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 1."
+    },
+    {
+      "name": "CreatedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AgentsInfo column. Distinct values observed: 246. Most common: 11/27/2025 15:01:11"
+    },
+    {
+      "name": "LastPublishedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AgentsInfo column. Distinct values observed: 0."
+    },
+    {
+      "name": "LastUpdatedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AgentsInfo column. Distinct values observed: 257. Most common: 11/19/2025 17:18:20"
+    },
+    {
+      "name": "Owners",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 1. Most common: 00000000-0000-0000-0000-000000000000"
+    },
+    {
+      "name": "SharedWith",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 0."
+    },
+    {
+      "name": "InstanceCount",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live AgentsInfo column. Distinct values observed: 0."
+    },
+    {
+      "name": "Instructions",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 127."
+    },
+    {
+      "name": "Model",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 1."
+    },
+    {
+      "name": "Channels",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 15. Most common: Copilot"
+    },
+    {
+      "name": "Capabilities",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 21. Most common: Public sites"
+    },
+    {
+      "name": "DeclaredDataSources",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 0."
+    },
+    {
+      "name": "DeclaredTools",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 158. Most common: {\"type\":\"OpenApi\",\"name\":\"workway\",\"endpoint\":null,\"description\":null,\"inputFill..."
+    },
+    {
+      "name": "McpServers",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 0."
+    },
+    {
+      "name": "Skills",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 0."
+    },
+    {
+      "name": "ConnectedAgents",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 0."
+    },
+    {
+      "name": "Memory",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 0."
+    },
+    {
+      "name": "Triggers",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 0."
+    },
+    {
+      "name": "Guardrails",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 0."
+    },
+    {
+      "name": "Endpoints",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 0."
+    },
+    {
+      "name": "ObservabilityID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 245."
+    },
+    {
+      "name": "RawAgentInfo",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AgentsInfo column. Distinct values observed: 255. Most common: {\"@odata.type\":\"#microsoft.graph.security.dynamicColumnValue\",\"elementTypes@odat..."
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 1."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 1. Most common: AgentsInfo"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AgentsInfo column. Distinct values observed: 1."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AgentsInfo column. Distinct values observed: 694. Most common: 07/24/2026 08:10:07"
+    }
+  ],
+  "adx": {
+    "mappingName": "AgentsInfo_JsonMapping"
+  }
+}

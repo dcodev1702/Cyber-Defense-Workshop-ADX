@@ -229,7 +229,7 @@ IdentityAccountInfo
 '@
 
 $oauthGraphSuspiciousActivityCardQuery = @'
-GraphApiAuditEvents
+GraphAPIAuditEvents
 | where TimeGenerated between (['_startTime'] .. ['_endTime'])
 | extend StatusCode=toint(ResponseStatusCode)
 | where StatusCode >= 400 or RequestMethod in~ ('POST', 'PATCH', 'DELETE')
@@ -321,7 +321,7 @@ let suspiciousIp =
     | where IsRisky == true
     | top 1 by TimeGenerated asc
     | project IPAddress;
-GraphApiAuditEvents
+GraphAPIAuditEvents
 | where TimeGenerated between (['_startTime'] .. ['_endTime'])
 | where IpAddress in (suspiciousIp)
 | project Timestamp=TimeGenerated, AccountObjectId, ApplicationId, RequestMethod, RequestUri, Scopes, ResponseStatusCode
@@ -433,7 +433,7 @@ let AppLookup = union isfuzzy=true
 (AADManagedIdentitySignInLogs | project ApplicationId=tostring(AppId), ApplicationName=ServicePrincipalName)
 | where isnotempty(ApplicationId) and isnotempty(ApplicationName)
 | summarize ApplicationName=any(ApplicationName) by ApplicationId;
-GraphApiAuditEvents
+GraphAPIAuditEvents
 | where TimeGenerated between (['_startTime'] .. ['_endTime'])
 | extend Api=strcat(RequestMethod, ' ', tostring(split(RequestUri, '?')[0])), AppId=tostring(ApplicationId), StatusCode=toint(ResponseStatusCode)
 | lookup kind=leftouter AppLookup on ApplicationId
@@ -443,7 +443,7 @@ GraphApiAuditEvents
 '@
 
 $graphStatusQuery = @'
-GraphApiAuditEvents
+GraphAPIAuditEvents
 | where TimeGenerated between (['_startTime'] .. ['_endTime'])
 | extend StatusClass=strcat(substring(ResponseStatusCode, 0, 1), 'xx')
 | summarize Requests=count() by RequestMethod, StatusClass
@@ -461,7 +461,7 @@ AADManagedIdentitySignInLogs
 $scenarioTimelineQuery = @'
 let AlertSignals = AlertInfo | where Timestamp between (['_startTime'] .. ['_endTime']) | project Timestamp, Signal='Alert', Entity=Title, Detail=strcat(Severity, ' | ', AttackTechniques);
 let NetworkSignals = DeviceNetworkEvents | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where RemoteIPType == 'Public' | extend Destination=iff(isempty(RemoteUrl), RemoteIP, RemoteUrl) | project Timestamp=TimeGenerated, Signal='Public network connection', Entity=DeviceName, Detail=strcat(InitiatingProcessFileName, ' -> ', Destination, ':', tostring(RemotePort));
-let GraphSignals = GraphApiAuditEvents | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where toint(ResponseStatusCode) >= 400 or RequestMethod in ('POST','PATCH','DELETE') | project Timestamp=TimeGenerated, Signal='Graph API activity', Entity=ApplicationId, Detail=strcat(RequestMethod, ' ', RequestUri, ' -> ', ResponseStatusCode);
+let GraphSignals = GraphAPIAuditEvents | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where toint(ResponseStatusCode) >= 400 or RequestMethod in ('POST','PATCH','DELETE') | project Timestamp=TimeGenerated, Signal='Graph API activity', Entity=ApplicationId, Detail=strcat(RequestMethod, ' ', RequestUri, ' -> ', ResponseStatusCode);
 union AlertSignals, NetworkSignals, GraphSignals
 | top 50 by Timestamp desc
 '@

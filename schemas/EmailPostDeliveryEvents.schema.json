@@ -1,0 +1,129 @@
+{
+  "tableName": "EmailPostDeliveryEvents",
+  "categories": [
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-emailpostdeliveryevents-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Live schema captured from the EmailPostDeliveryEvents table.",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "NetworkMessageId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "InternetMessageId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "Action",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "ActionType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "ActionTrigger",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "ActionResult",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "RecipientEmailAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "DeliveryLocation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "ThreatTypes",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "DetectionMethods",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "ReportId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "SenderFromAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "EmailDirection",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "SourceLocation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live EmailPostDeliveryEvents schema."
+    }
+  ],
+  "adx": {
+    "mappingName": "EmailPostDeliveryEvents_JsonMapping"
+  }
+}

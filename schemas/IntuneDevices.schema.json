@@ -1,0 +1,299 @@
+{
+  "tableName": "IntuneDevices",
+  "categories": [
+    "Intune",
+    "DeviceManagement",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Intune",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-intunedevices-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Microsoft Intune managed device inventory, enrollment state, ownership, and compliance posture.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live IntuneDevices column. Distinct values observed: 129. Most common: 07/01/2026 00:34:05"
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 1. Most common: Devices"
+    },
+    {
+      "name": "Result",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 2. Most common: None"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 1. Most common: Microsoft Intune"
+    },
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 5. Most common: aa02ffa2-4e41-4ee0-8fe3-435c8f8f31b6"
+    },
+    {
+      "name": "DeviceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 5. Most common: ZO-PC-2"
+    },
+    {
+      "name": "UPN",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 3. Most common: lireland@DibSecurity.onmicrosoft.com"
+    },
+    {
+      "name": "LastContact",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 37. Most common: 06/13/2026 05:40:00"
+    },
+    {
+      "name": "OSVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 6. Most common: 10.0.26200.8655"
+    },
+    {
+      "name": "OS",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 2. Most common: Windows"
+    },
+    {
+      "name": "CompliantState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 4. Most common: Compliant"
+    },
+    {
+      "name": "Ownership",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 4. Most common: Personal"
+    },
+    {
+      "name": "ManagedBy",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 3. Most common: Intune"
+    },
+    {
+      "name": "Model",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 4. Most common: Virtual Machine"
+    },
+    {
+      "name": "SerialNumber",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 4."
+    },
+    {
+      "name": "Manufacturer",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 4. Most common: Microsoft Corporation"
+    },
+    {
+      "name": "CreatedDate",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 5. Most common: 06/04/2026 19:20:07"
+    },
+    {
+      "name": "DeviceState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 2. Most common: Managed"
+    },
+    {
+      "name": "UserEmail",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 3. Most common: lireland@DibSecurity.onmicrosoft.com"
+    },
+    {
+      "name": "UserName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 3. Most common: Lorenzo Ireland"
+    },
+    {
+      "name": "IMEI",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 1."
+    },
+    {
+      "name": "PhoneNumber",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 1."
+    },
+    {
+      "name": "DeviceRegistrationState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 2. Most common: Registered"
+    },
+    {
+      "name": "ReferenceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 5. Most common: a37a3f0e-f903-4cff-97cc-9d207e062487"
+    },
+    {
+      "name": "ManagedDeviceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 5. Most common: lireland_Windows_6/4/2026_7:20 PM"
+    },
+    {
+      "name": "GraphDeviceIsManaged",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live IntuneDevices column. Distinct values observed: 1. Most common: True"
+    },
+    {
+      "name": "CategoryName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 1."
+    },
+    {
+      "name": "EncryptionStatusString",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 3. Most common: False"
+    },
+    {
+      "name": "SubscriberCarrierNetwork",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 1."
+    },
+    {
+      "name": "JoinType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 4. Most common: Azure AD joined"
+    },
+    {
+      "name": "SupervisedStatusString",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 2. Most common: False"
+    },
+    {
+      "name": "WifiMacAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 3."
+    },
+    {
+      "name": "StorageTotal",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live IntuneDevices column. Distinct values observed: 5. Most common: 952752"
+    },
+    {
+      "name": "StorageFree",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live IntuneDevices column. Distinct values observed: 35. Most common: 810446"
+    },
+    {
+      "name": "AndroidPatchLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 1."
+    },
+    {
+      "name": "MEID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 1."
+    },
+    {
+      "name": "InGracePeriodUntil",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 4. Most common: 12/31/9999 23:59:59"
+    },
+    {
+      "name": "JailBroken",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 2. Most common: Unknown"
+    },
+    {
+      "name": "SkuFamily",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 2. Most common: Enterprise"
+    },
+    {
+      "name": "EasID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 4."
+    },
+    {
+      "name": "PrimaryUser",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 4. Most common: 1821f16b-41ee-4008-914d-12334122753d"
+    },
+    {
+      "name": "BatchId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 73. Most common: 44cbb93e-5245-4077-badc-4cd2129287f4"
+    },
+    {
+      "name": "IntuneAccountId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 1. Most common: ae45df63-b097-434d-9668-f85de1cb2fcb"
+    },
+    {
+      "name": "AADTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 2. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+    },
+    {
+      "name": "Stats",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live IntuneDevices column. Distinct values observed: 2. Most common: {\"RecordCount\":3}"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDevices column. Distinct values observed: 1. Most common: IntuneDevices"
+    }
+  ],
+  "adx": {
+    "mappingName": "IntuneDevices_JsonMapping"
+  }
+}

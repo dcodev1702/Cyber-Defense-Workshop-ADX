@@ -47,7 +47,7 @@
 
     <rect x="611" y="142" width="148" height="68" rx="10" fill="#3a1d05" stroke="#f97316" stroke-width="2"/>
     <text x="685" y="166" text-anchor="middle" fill="#fed7aa" font-size="12" font-weight="700">Microsoft Graph</text>
-    <text x="685" y="183" text-anchor="middle" fill="#fdba74" font-size="10">GraphApiAuditEvents</text>
+    <text x="685" y="183" text-anchor="middle" fill="#fdba74" font-size="10">GraphAPIAuditEvents</text>
     <text x="685" y="197" text-anchor="middle" fill="#fdba74" font-size="10">MicrosoftGraphActivityLogs</text>
 
     <rect x="769" y="142" width="148" height="68" rx="10" fill="#3a1d05" stroke="#f97316" stroke-width="2"/>

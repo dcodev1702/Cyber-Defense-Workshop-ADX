@@ -26,7 +26,7 @@
   <g>
     <rect x="340" y="200" width="320" height="64" rx="10" fill="#3a1d05" stroke="#f97316" stroke-width="2"/>
     <text x="500" y="226" text-anchor="middle" fill="#fed7aa" font-size="14" font-weight="700">Microsoft Entra ID</text>
-    <text x="500" y="246" text-anchor="middle" fill="#fdba74" font-size="11">SigninLogs · CloudAppEvents · GraphApiAuditEvents</text>
+    <text x="500" y="246" text-anchor="middle" fill="#fdba74" font-size="11">SigninLogs · CloudAppEvents · GraphAPIAuditEvents</text>
   </g>
 
   <!-- Endpoint subgraph (dashed enclave) -->

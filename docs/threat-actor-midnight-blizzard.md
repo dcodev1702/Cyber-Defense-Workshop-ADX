@@ -111,7 +111,7 @@ The workshop's Act 5 covers a credential-access playbook with multiple tools per
 | --- | --- | --- |
 | T1021.006 (WinRM) | Remote PowerShell / WinRM lateral movement using cracked or stolen credentials | Act 8: `svc_sql` RemoteInteractive logon to `AADCONNECT01` |
 | T1087.002 (Domain Account Discovery) | LDAP queries to map the directory | Act 7: `IdentityQueryEvents` SPN searches |
-| T1087.004 (Cloud Account Discovery) | Microsoft Graph enumeration of users, groups, service principals, and applications | Act 3: `GraphApiAuditEvents` and `MicrosoftGraphActivityLogs` calls |
+| T1087.004 (Cloud Account Discovery) | Microsoft Graph enumeration of users, groups, service principals, and applications | Act 3: `GraphAPIAuditEvents` and `MicrosoftGraphActivityLogs` calls |
 
 ### Defense evasion
 

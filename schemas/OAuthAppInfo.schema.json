@@ -1,0 +1,135 @@
+{
+  "tableName": "OAuthAppInfo",
+  "categories": [
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-oauthappinfo-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Live schema captured from the OAuthAppInfo table.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "ReportId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "OAuthAppId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "ServicePrincipalId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "AppName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "AddedOnTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "LastModifiedTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "AppStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "VerifiedPublisher",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "PrivilegeLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "Permissions",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "ConsentedUsersCount",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "IsAdminConsented",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "AppOrigin",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "LastUsedTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "AppOwnerTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live OAuthAppInfo schema."
+    }
+  ],
+  "adx": {
+    "mappingName": "OAuthAppInfo_JsonMapping"
+  }
+}

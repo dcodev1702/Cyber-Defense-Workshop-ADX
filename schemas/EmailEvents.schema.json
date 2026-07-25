@@ -1,0 +1,333 @@
+{
+  "tableName": "EmailEvents",
+  "categories": [
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-emailevents-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Live schema captured from the EmailEvents table.",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "NetworkMessageId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "InternetMessageId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "SenderMailFromAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "SenderFromAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "SenderDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "SenderObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "SenderMailFromDomain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "SenderFromDomain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "SenderIPv4",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "SenderIPv6",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "RecipientEmailAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "RecipientObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "Subject",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "EmailClusterId",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "EmailDirection",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "DeliveryAction",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "DeliveryLocation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "ThreatTypes",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "ThreatNames",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "DetectionMethods",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "ConfidenceLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "BulkComplaintLevel",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "EmailAction",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "EmailActionPolicy",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "EmailActionPolicyGuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "AuthenticationDetails",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "AttachmentCount",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "UrlCount",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "EmailLanguage",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "Connectors",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "OrgLevelAction",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "OrgLevelPolicy",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "UserLevelAction",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "UserLevelPolicy",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "ReportId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "ExchangeTransportRule",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "DistributionList",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "ForwardingInformation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "Context",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "To",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "Cc",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "ThreatClassification",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "RecipientDomain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "EmailSize",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "IsFirstContact",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "LatestDeliveryLocation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "LatestDeliveryAction",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailEvents schema."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live EmailEvents schema."
+    }
+  ],
+  "adx": {
+    "mappingName": "EmailEvents_JsonMapping"
+  }
+}

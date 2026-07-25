@@ -1,0 +1,1420 @@
+{
+  "tableName": "SecurityEvent",
+  "categories": [
+    "WindowsSecurity",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Microsoft Sentinel",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/securityevent",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Windows Security event log records forwarded to Microsoft Sentinel. Supplies 4624/4625 logon and 4768/4769 Kerberos ticket evidence for the Kerberoasting and hybrid identity pivot acts.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Account",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AccountType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Computer",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "EventSourceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Channel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Task",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Level",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "EventData",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "EventID",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Activity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "PartitionKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "RowKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "StorageAccount",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AzureDeploymentID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AzureTableName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AccessList",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AccessMask",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AccessReason",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AccountDomain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AccountExpires",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AccountName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AccountSessionIdentifier",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AdditionalInfo",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AdditionalInfo2",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AllowedToDelegateTo",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Attributes",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AuditPolicyChanges",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AuditsDiscarded",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AuthenticationLevel",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AuthenticationPackageName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AuthenticationProvider",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AuthenticationServer",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AuthenticationService",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "AuthenticationType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "CACertificateHash",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "CalledStationID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "CallerProcessId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "CallerProcessName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "CallingStationID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "CAPublicKeyHash",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "CategoryId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "CertificateDatabaseHash",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ClassId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ClassName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ClientAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ClientIPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ClientName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "CommandLine",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "CompatibleIds",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "DCDNSName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "DeviceDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "DisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Disposition",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "DomainBehaviorVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "DomainName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "DomainPolicyChanged",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "DomainSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "EAPType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ElevatedToken",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ErrorCode",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ExtendedQuarantineState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "FailureReason",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "FileHash",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "FilePath",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "FilePathNoUser",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Filter",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ForceLogoff",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Fqbn",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "FullyQualifiedSubjectMachineName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "FullyQualifiedSubjectUserName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "GroupMembership",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "HandleId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "HardwareIds",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "HomeDirectory",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "HomePath",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ImpersonationLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "InterfaceUuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "IpAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "IpPort",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "KeyLength",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "LmPackageName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "LocationInformation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "LockoutDuration",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "LockoutObservationWindow",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "LockoutThreshold",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "LoggingResult",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "LogonGuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "LogonHours",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "LogonID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "LogonProcessName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "LogonType",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "LogonTypeName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "MachineAccountQuota",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "MachineInventory",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "MachineLogon",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "MandatoryLabel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "MaxPasswordAge",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "MemberName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "MemberSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "MinPasswordAge",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "MinPasswordLength",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "MixedDomainMode",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NASIdentifier",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NASIPv4Address",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NASIPv6Address",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NASPort",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NASPortType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NetworkPolicyName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NewDate",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NewMaxUsers",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NewProcessId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NewProcessName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NewRemark",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NewShareFlags",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NewTime",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NewUacValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NewValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "NewValueType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ObjectName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ObjectServer",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ObjectType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ObjectValueName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "OemInformation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "OldMaxUsers",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "OldRemark",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "OldShareFlags",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "OldUacValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "OldValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "OldValueType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "OperationType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "PackageName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ParentProcessName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "PasswordHistoryLength",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "PasswordLastSet",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "PasswordProperties",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "PreviousDate",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "PreviousTime",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "PrimaryGroupId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "PrivateKeyUsageCount",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "PrivilegeList",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Process",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ProcessId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ProcessName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Properties",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ProfilePath",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ProtocolSequence",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ProxyPolicyName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "QuarantineHelpURL",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "QuarantineSessionID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "QuarantineSessionIdentifier",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "QuarantineState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "QuarantineSystemHealthResult",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "RelativeTargetName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "RemoteIpAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "RemotePort",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Requester",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "RequestId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "RestrictedAdminMode",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "RowsDeleted",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SamAccountName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ScriptPath",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SecurityDescriptor",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ServiceAccount",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ServiceFileName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ServiceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ServiceStartType",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ServiceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SessionName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ShareLocalPath",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ShareName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SidHistory",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Status",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SubjectAccount",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SubcategoryGuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SubcategoryId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Subject",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SubjectDomainName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SubjectKeyIdentifier",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SubjectLogonId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SubjectMachineName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SubjectMachineSID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SubjectUserName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SubjectUserSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SubStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TableId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetAccount",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetDomainName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetInfo",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetLinkedLogonId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetLogonGuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetLogonId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetOutboundDomainName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetOutboundUserName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetServerName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetUser",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetUserName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TargetUserSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TemplateContent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TemplateDSObjectFQDN",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TemplateInternalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TemplateOID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TemplateSchemaVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TemplateVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TokenElevationType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TransmittedServices",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "UserAccountControl",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "UserParameters",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "UserPrincipalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "UserWorkstations",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "VirtualAccount",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "VendorIds",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Workstation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "WorkstationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "EventLevelName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SourceComputerId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "EventOriginId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "MG",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "TimeCollected",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "ManagementGroupName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SystemUserId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Version",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Opcode",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Keywords",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Correlation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SystemProcessId",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "SystemThreadId",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "EventRecordId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live SecurityEvent schema."
+    }
+  ],
+  "adx": {
+    "mappingName": "SecurityEvent_JsonMapping"
+  }
+}

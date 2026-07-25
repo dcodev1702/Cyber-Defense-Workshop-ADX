@@ -1,5 +1,5 @@
 {
-  "tableName": "GraphApiAuditEvents",
+  "tableName": "GraphAPIAuditEvents",
   "categories": [
     "Graph",
     "EntraId",
@@ -161,6 +161,6 @@
     }
   ],
   "adx": {
-    "mappingName": "GraphApiAuditEvents_JsonMapping"
+    "mappingName": "GraphAPIAuditEvents_JsonMapping"
   }
 }

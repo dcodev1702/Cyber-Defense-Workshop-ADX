@@ -37,7 +37,7 @@
 
     <!-- Chips: row 3 -->
     <rect x="62" y="244" width="230" height="28" rx="6" fill="#1a0f02" stroke="#f97316" stroke-width="1"/>
-    <text x="74" y="262" fill="#fed7aa" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">GraphApiAuditEvents</text>
+    <text x="74" y="262" fill="#fed7aa" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">GraphAPIAuditEvents</text>
     <rect x="300" y="244" width="230" height="28" rx="6" fill="#1a0f02" stroke="#f97316" stroke-width="1"/>
     <text x="312" y="262" fill="#fed7aa" font-size="11" font-family="ui-monospace, 'Cascadia Mono', Consolas, monospace">MicrosoftGraphActivityLogs</text>
 

@@ -1,0 +1,87 @@
+{
+  "tableName": "EmailUrlInfo",
+  "categories": [
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-emailurlinfo-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Live schema captured from the EmailUrlInfo table.",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live EmailUrlInfo schema."
+    },
+    {
+      "name": "NetworkMessageId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailUrlInfo schema."
+    },
+    {
+      "name": "Url",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailUrlInfo schema."
+    },
+    {
+      "name": "UrlDomain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailUrlInfo schema."
+    },
+    {
+      "name": "UrlLocation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailUrlInfo schema."
+    },
+    {
+      "name": "ReportId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailUrlInfo schema."
+    },
+    {
+      "name": "UrlChainId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailUrlInfo schema."
+    },
+    {
+      "name": "UrlChainPosition",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live EmailUrlInfo schema."
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailUrlInfo schema."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailUrlInfo schema."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailUrlInfo schema."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live EmailUrlInfo schema."
+    }
+  ],
+  "adx": {
+    "mappingName": "EmailUrlInfo_JsonMapping"
+  }
+}

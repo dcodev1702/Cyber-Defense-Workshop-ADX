@@ -87,7 +87,7 @@
 
   <!-- Telemetry: Graph -> ADX -->
   <line x1="420" y1="302" x2="1035" y2="302" stroke="#64748b" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#arrowSeqDashed)"/>
-  <text x="725" y="296" text-anchor="middle" fill="#64748b" font-size="10" font-style="italic">GraphApiAuditEvents · CloudAppEvents</text>
+  <text x="725" y="296" text-anchor="middle" fill="#64748b" font-size="10" font-style="italic">GraphAPIAuditEvents · CloudAppEvents</text>
 
   <!-- ============ MESSAGE 3: Attacker -> WIN11-04: PowerShell staging ============ -->
   <line x1="120" y1="350" x2="565" y2="350" stroke="#cbd5e1" stroke-width="1.8" marker-end="url(#arrowSeq)"/>

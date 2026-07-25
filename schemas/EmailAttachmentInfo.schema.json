@@ -1,0 +1,135 @@
+{
+  "tableName": "EmailAttachmentInfo",
+  "categories": [
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-emailattachmentinfo-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Live schema captured from the EmailAttachmentInfo table.",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "NetworkMessageId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "SenderFromAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "SenderDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "SenderObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "RecipientEmailAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "RecipientObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "FileName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "FileType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "SHA256",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "FileSize",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "ThreatTypes",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "ThreatNames",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "DetectionMethods",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "ReportId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "FileExtension",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live EmailAttachmentInfo schema."
+    }
+  ],
+  "adx": {
+    "mappingName": "EmailAttachmentInfo_JsonMapping"
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "tableName": "BehaviorInfo",
+  "categories": [
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-behaviorinfo-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Live schema captured from the BehaviorInfo table.",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "BehaviorId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "ActionType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "Description",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "Categories",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "AttackTechniques",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "ServiceSource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "DetectionSource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "DataSources",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "AccountUpn",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "AccountObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "StartTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "EndTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "MachineGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "Title",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "Insights",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "_IsBillable",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "_BilledSize",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "_TimeReceived",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "_ItemId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    },
+    {
+      "name": "_SubscriptionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorInfo schema."
+    }
+  ],
+  "adx": {
+    "mappingName": "BehaviorInfo_JsonMapping"
+  }
+}

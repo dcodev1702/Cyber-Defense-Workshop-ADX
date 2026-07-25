@@ -488,7 +488,7 @@ else {
             Description = 'malicious OAuth service-principal sign-in'
         },
         @{
-            FileName = 'GraphApiAuditEvents.json'
+            FileName = 'GraphAPIAuditEvents.json'
             Needles = @('addPassword', 'Mail.Read', 'Files.Read.All', 'Directory.ReadWrite.All', 'victor.alvarez@usag-cyber.local')
             Description = 'Graph API mailbox, file, directory, and service-principal operations'
         },

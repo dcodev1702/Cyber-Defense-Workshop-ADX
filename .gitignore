@@ -3,6 +3,10 @@ students/*.csv
 sample/*.csv
 samples/*.csv
 
+# Dated tenant telemetry exports (real DIBSecCom user, device, and IP data).
+# Produced by scripts/Export-TenantTelemetrySamples.ps1.
+sample/*Z/
+
 # Local environment and logs.
 .env
 compose.override.yaml
@@ -11,6 +15,11 @@ compose.override.yaml
 data/backups/
 data/local-export/
 data/local-kusto/
+
+# Python virtual environment.
+.venv/
+__pycache__/
+*.pyc
 
 # Cloudflare Terraform state and local deployment values.
 infra/cloudflare-adx/.terraform/

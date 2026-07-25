@@ -21,7 +21,7 @@ An additive Linux/Oracle branch gives students realistic Ubuntu/MDE pivots witho
 | --- | ---: | --- | --- |
 | Access check and KQL warm-up | 10 min | Confirm ADX Web UI access and explain the table families | Run inventory queries |
 | Scenario and infrastructure | 15 min | Walk through hybrid topology and MIDNIGHT BLIZZARD objectives | Identify users, hosts, and high-value assets |
-| Entra and Graph investigation | 20 min | Start with risky sign-in and OAuth/Graph activity | Correlate SigninLogs, CloudAppEvents, AuditLogs, GraphApiAuditEvents |
+| Entra and Graph investigation | 20 min | Start with risky sign-in and OAuth/Graph activity | Correlate SigninLogs, CloudAppEvents, AuditLogs, GraphAPIAuditEvents |
 | Endpoint credential access | 35 min | Pivot from compromised user to `WIN11-04` process/file/registry telemetry | Hunt the 11 screenshot attack vectors in MDE-style tables |
 | MDI and lateral movement | 20 min | Show SPN enumeration, Kerberos activity, and service-account use | Correlate IdentityQueryEvents, IdentityLogonEvents, DeviceLogonEvents |
 | Linux MDE branch | Optional | Show Ubuntu SSH/sudo/auditd, Oracle TNS, and TVM pivots | Compare Linux paths, `.so` loads, SSH/sudo telemetry, and Oracle data-access evidence with Windows endpoint rows |
@@ -33,7 +33,7 @@ An additive Linux/Oracle branch gives students realistic Ubuntu/MDE pivots witho
 - MDE-style Device tables from Microsoft Learn schema references, including Windows and Ubuntu Linux hosts
 - MDI-style Identity tables from Microsoft Learn schema references for Windows Server domain controllers and identity-role servers
 - Entra sign-in tables: current `EntraId*`, legacy `AAD*`, and Azure Monitor `SigninLogs`
-- Microsoft Graph tables: `GraphApiAuditEvents` and `MicrosoftGraphActivityLogs`
+- Microsoft Graph tables: `GraphAPIAuditEvents` and `MicrosoftGraphActivityLogs`
 - Cloud and alert tables: `CloudAppEvents`, `AlertInfo`, `AlertEvidence`
 
 ## Schema notes

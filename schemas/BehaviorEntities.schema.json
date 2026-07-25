@@ -1,0 +1,333 @@
+{
+  "tableName": "BehaviorEntities",
+  "categories": [
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-behaviorentities-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Live schema captured from the BehaviorEntities table.",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "BehaviorId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "ActionType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "Categories",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "ServiceSource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "DetectionSource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "DataSources",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "EntityType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "EntityRole",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "DetailedEntityRole",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "FileName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "FolderPath",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "SHA1",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "SHA256",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "FileSize",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "ThreatFamily",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "RemoteIP",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "RemoteUrl",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "AccountName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "AccountDomain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "AccountSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "AccountObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "AccountUpn",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "DeviceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "LocalIP",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "NetworkMessageId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "EmailSubject",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "EmailClusterId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "Application",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "ApplicationId",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "OAuthApplicationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "ProcessCommandLine",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "RegistryKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "RegistryValueName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "RegistryValueData",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "MachineGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "CloudResource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "CloudPlatform",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "CloudResourceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "CloudResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "CloudSubscriptionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "_IsBillable",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "_BilledSize",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "_TimeReceived",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "_ItemId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    },
+    {
+      "name": "_SubscriptionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live BehaviorEntities schema."
+    }
+  ],
+  "adx": {
+    "mappingName": "BehaviorEntities_JsonMapping"
+  }
+}

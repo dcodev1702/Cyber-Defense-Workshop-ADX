@@ -41,7 +41,7 @@ $slides = @(
     @{ Title = 'Lab environment'; Body = '2 DCs with MDI`n10 Windows 11 25H2 endpoints with MDE`n5 Ubuntu endpoints with MDE`nEntra Connect server`nHybrid Entra ID' },
     @{ Title = 'Threat actor framing'; Body = 'MIDNIGHT BLIZZARD credential-access intrusion`nCompromised user: Victor Alvarez`nInitial endpoint: WIN11-04`nHigh-value pivot: AADCONNECT01' },
     @{ Title = 'Scenario timeline'; Body = 'Risky sign-in -> OAuth consent -> Graph enumeration`nEndpoint staging -> credential access -> Kerberoasting`nService-account use -> alert correlation' },
-    @{ Title = 'Table families'; Body = 'MDE Device* tables`nMDI Identity* tables`nSigninLogs and EntraId* tables`nGraphApiAuditEvents and MicrosoftGraphActivityLogs`nCloudAppEvents, AlertInfo, AlertEvidence' },
+    @{ Title = 'Table families'; Body = 'MDE Device* tables`nMDI Identity* tables`nSigninLogs and EntraId* tables`nGraphAPIAuditEvents and MicrosoftGraphActivityLogs`nCloudAppEvents, AlertInfo, AlertEvidence' },
     @{ Title = 'MITRE coverage'; Body = 'T1552.002 Credentials in Registry`nT1003.002 SAM dumping`nT1555.003 Browser credentials`nT1558.003 Kerberoasting`nT1003.001 LSASS memory`nT1555 Password stores' },
     @{ Title = 'KQL investigation pattern'; Body = 'Start broad`nProject narrow`nSummarize`nJoin`nBuild timeline`nExplain evidence' },
     @{ Title = 'Student checkpoints'; Body = 'Find risky sign-in`nCorrelate OAuth and Graph activity`nHunt process/file/registry evidence`nConfirm Kerberoasting`nJoin alerts to evidence' },

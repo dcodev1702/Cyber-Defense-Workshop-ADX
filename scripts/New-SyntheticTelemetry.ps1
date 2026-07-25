@@ -39,9 +39,13 @@ param(
     [int]$RandomSeed = 1702,
     [int]$SyntheticUserCount = 6000,
     [int]$SyntheticServiceAccountCount = 4000,
+    [ValidateRange(18, 100000)]
+    [int]$SyntheticDeviceCount = 3000,
     [ValidateRange(5000, 6000)]
     [int]$AadUserRiskEventCount = 5500,
-    [string[]]$TableName
+    [string[]]$TableName,
+    [string]$FieldProfileDirectory,
+    [switch]$DisableProfileGrounding
 )
 
 Set-StrictMode -Version Latest
@@ -115,10 +119,366 @@ function New-WorkshopHashSet {
     }
 }
 
+# ---------------------------------------------------------------------------
+# Profile-grounded fidelity layer
+#
+# Real Microsoft security telemetry repeats file hashes heavily: the same binary
+# on many machines produces the same SHA256. Measured against a 1000-row sample of
+# real DeviceProcessEvents, SHA256 has only 134 distinct values (ratio 0.134) and
+# InitiatingProcessSHA256 only 69 (ratio 0.069).
+#
+# Seeding a hash from the row index produces a unique hash per row (ratio ~1.0),
+# which is both unrealistic and slow. Hashes are therefore content addressed and
+# cached: the same content key always yields the same hash triple. A bounded
+# variant suffix widens the distinct count to match the ratio observed in the real
+# field profile for that table and column.
+# ---------------------------------------------------------------------------
+$script:HashSetCache = [System.Collections.Generic.Dictionary[string, object]]::new()
+$script:FieldProfiles = @{}
+$script:CardinalityVariants = @{}
+$script:CurrentVariants = @{}
+
+function Get-WorkshopHashSet {
+    <#
+        Content-addressed hash triple. Same key in, same hashes out, computed once.
+    #>
+    param([Parameter(Mandatory)][string]$ContentKey)
+
+    $cached = $null
+    if ($script:HashSetCache.TryGetValue($ContentKey, [ref]$cached)) {
+        return $cached
+    }
+
+    $value = [pscustomobject]@{
+        SHA1 = New-StableHex "$ContentKey|sha1" 40
+        SHA256 = New-StableHex "$ContentKey|sha256" 64
+        MD5 = New-StableHex "$ContentKey|md5" 32
+    }
+    $script:HashSetCache[$ContentKey] = $value
+    return $value
+}
+
+function Import-WorkshopFieldProfiles {
+    <#
+        Loads the per-column field profiles produced by
+        scripts\Export-TenantTelemetrySamples.ps1. Missing profiles are not an error;
+        generation simply falls back to the built-in catalogs.
+    #>
+    param([string]$Path)
+
+    if ($DisableProfileGrounding) {
+        Write-Verbose 'Profile grounding disabled by switch.'
+        return
+    }
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        $sampleRoot = Join-Path $PSScriptRoot '..\sample'
+        if (-not (Test-Path $sampleRoot)) { return }
+        $latest = Get-ChildItem -Path $sampleRoot -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match '^\d{8}T\d{6}Z$' } |
+            Sort-Object Name -Descending |
+            Select-Object -First 1
+        if ($null -eq $latest) { return }
+        $Path = Join-Path $latest.FullName '_field-profiles'
+    }
+
+    if (-not (Test-Path $Path)) {
+        Write-Verbose "No field profiles found at $Path."
+        return
+    }
+
+    foreach ($profileFile in (Get-ChildItem -Path $Path -Filter '*.profile.json' -ErrorAction SilentlyContinue)) {
+        try {
+            $loaded = Get-Content -Path $profileFile.FullName -Raw | ConvertFrom-Json
+        }
+        catch {
+            Write-Warning "Skipping unreadable field profile $($profileFile.Name): $($_.Exception.Message)"
+            continue
+        }
+
+        $columnMap = @{}
+        foreach ($column in @($loaded.columns)) {
+            $columnMap[[string]$column.name] = $column
+        }
+        $script:FieldProfiles[[string]$loaded.tableName] = [pscustomobject]@{
+            TableName = [string]$loaded.tableName
+            RowCount = [int]$loaded.rowCount
+            Columns = $columnMap
+        }
+    }
+
+    Write-Host "Loaded $($script:FieldProfiles.Count) field profile(s) from $Path"
+}
+
+function Get-WorkshopObservedRatio {
+    <#
+        Distinct-value ratio for a column in the real telemetry sample, or $null when
+        the column was not observed.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$Table,
+        [Parameter(Mandatory)][string]$Column
+    )
+
+    if (-not $script:FieldProfiles.ContainsKey($Table)) { return $null }
+    $tableProfile = $script:FieldProfiles[$Table]
+    if (-not $tableProfile.Columns.ContainsKey($Column)) { return $null }
+
+    # Note: PowerShell variable names are case-insensitive, so this local must not be
+    # named $column or it would assign into the [string]$Column parameter and coerce
+    # the profile object to a string.
+    $columnProfile = $tableProfile.Columns[$Column]
+    if ([int]$columnProfile.rowCount -le 0) { return $null }
+    return ([double]$columnProfile.distinctCount / [double]$columnProfile.rowCount)
+}
+
+function Get-WorkshopCardinalityVariants {
+    <#
+        Number of hash variants to mint per catalog entry so the generated distinct
+        count approximates the ratio measured in the real telemetry sample.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$Table,
+        [Parameter(Mandatory)][string]$Column,
+        [Parameter(Mandatory)][int]$CatalogSize,
+        [Parameter(Mandatory)][int]$TargetRows,
+        [double]$FallbackRatio = 0.15
+    )
+
+    $cacheKey = "$Table|$Column|$CatalogSize|$TargetRows"
+    if ($script:CardinalityVariants.ContainsKey($cacheKey)) {
+        return $script:CardinalityVariants[$cacheKey]
+    }
+
+    $ratio = Get-WorkshopObservedRatio -Table $Table -Column $Column
+    if ($null -eq $ratio) { $ratio = $FallbackRatio }
+
+    $targetDistinct = [Math]::Max(1, [int][Math]::Round($ratio * $TargetRows))
+    $variants = [Math]::Max(1, [int][Math]::Ceiling($targetDistinct / [Math]::Max(1, $CatalogSize)))
+
+    # Keep the cache bounded; beyond this the distinct count is already realistic.
+    $variants = [Math]::Min($variants, 512)
+    $script:CardinalityVariants[$cacheKey] = $variants
+    return $variants
+}
+
+function Get-WorkshopContentHashSet {
+    <#
+        Hash triple for a piece of synthetic content, widened to the distinct
+        cardinality observed in real telemetry for the given table and column.
+
+        The variant count is resolved once per table by Set-WorkshopTableCardinality
+        and read from a precomputed lookup here, because this runs on every generated
+        row and nested function calls dominate the cost at scale.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$Slot,
+        [Parameter(Mandatory)][string]$ContentKey,
+        [Parameter(Mandatory)][int]$Index
+    )
+
+    $variants = $script:CurrentVariants[$Slot]
+    if ($null -eq $variants -or $variants -le 1) {
+        return Get-WorkshopHashSet -ContentKey $ContentKey
+    }
+    return Get-WorkshopHashSet -ContentKey ('{0}|v{1}' -f $ContentKey, ($Index % $variants))
+}
+
+function Set-WorkshopTableCardinality {
+    <#
+        Resolves the hash variant count for each content slot used by a table, once,
+        before its rows are generated.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$Table,
+        [Parameter(Mandatory)][int]$TargetRows
+    )
+
+    $slots = @(
+        [pscustomobject]@{ Slot = 'File'; Column = 'SHA256'; CatalogSize = $windowsFileTemplates.Count; Fallback = 0.20 }
+        [pscustomobject]@{ Slot = 'Binary'; Column = 'InitiatingProcessSHA256'; CatalogSize = $windowsProcessTemplates.Count; Fallback = 0.07 }
+        [pscustomobject]@{ Slot = 'Module'; Column = 'SHA256'; CatalogSize = $windowsDllTemplates.Count; Fallback = 0.51 }
+    )
+
+    $script:CurrentVariants = @{}
+    foreach ($slot in $slots) {
+        $script:CurrentVariants[$slot.Slot] = Get-WorkshopCardinalityVariants `
+            -Table $Table `
+            -Column $slot.Column `
+            -CatalogSize $slot.CatalogSize `
+            -TargetRows $TargetRows `
+            -FallbackRatio $slot.Fallback
+    }
+}
+
 function Get-WorkshopRandomItem {
     param([Parameter(Mandatory)][object[]]$Items)
 
     return $Items[$script:Random.Next(0, $Items.Count)]
+}
+
+# ---------------------------------------------------------------------------
+# Profile-driven value sampling
+#
+# Columns the scenario logic does not set explicitly used to be filled with a type
+# default, which meant empty strings. Real telemetry looks nothing like that: in a
+# 1000-row real DeviceProcessEvents sample, AccountName is empty 546 times, "system"
+# 262 times, and only a handful of human accounts appear.
+#
+# Unset columns are therefore sampled from the real observed distribution captured in
+# the field profiles, subject to a strict privacy rule:
+#
+#   * Enum-like, non-identifying columns (ActionType, LogonType, Protocol, OSPlatform)
+#     are sampled verbatim. These are Microsoft-defined vocabularies, not tenant data.
+#   * Identity-bearing columns (accounts, devices, addresses, URLs, hashes, GUIDs,
+#     free text) are never sampled verbatim. Only their empty rate is reproduced, and
+#     values come from the synthetic catalogs or the built-in principal list.
+#
+# This keeps real DIBSecCom identities out of the committed synthetic telemetry while
+# still matching the shape of production data.
+# ---------------------------------------------------------------------------
+
+# Generic operating system principals. These are Windows and Linux built-ins present in
+# every environment, so they carry no tenant information and are safe to emit.
+$script:BuiltInPrincipals = @(
+    [pscustomobject]@{ Name = 'system'; Weight = 300 }
+    [pscustomobject]@{ Name = 'local service'; Weight = 70 }
+    [pscustomobject]@{ Name = 'network service'; Weight = 25 }
+    [pscustomobject]@{ Name = 'dwm-1'; Weight = 9 }
+    [pscustomobject]@{ Name = 'umfd-0'; Weight = 7 }
+    [pscustomobject]@{ Name = 'umfd-1'; Weight = 7 }
+)
+$script:BuiltInPrincipalTotalWeight = ($script:BuiltInPrincipals | Measure-Object -Property Weight -Sum).Sum
+
+# Columns whose values are Microsoft-defined vocabularies rather than tenant data.
+$script:SafeVerbatimColumnPattern = '^(ActionType|LogonType|Protocol|OSPlatform|OSDistribution|OSArchitecture|DeviceType|DeviceCategory|Category|Categories|Severity|ServiceSource|DetectionSource|EvidenceRole|EvidenceDirection|EntityType|RegistryValueType|IsInitiatingProcessRemoteSession|InitiatingProcessIntegrityLevel|InitiatingProcessTokenElevation|ProcessIntegrityLevel|ProcessTokenElevation|LocalIPType|RemoteIPType|ClientAppUsed|ConditionalAccessStatus|AuthenticationRequirement|RiskLevel.*|RiskState|RiskDetail|ResultType|ResultDescription|TokenIssuerType|UserType|AppOwnerTenantId|Status|State|JoinType|SensorHealthState|OnboardingStatus|MachineGroup|EndOfSupportStatus|VulnerabilitySeverityLevel|CveSupportability|IsExploitAvailable|Type|SourceSystem|RequestMethod|ResponseStatusCode|ApiVersion|IdentityProvider|TargetWorkload)$'
+
+# Columns that identify a person, host, address, or secret. Never emitted verbatim.
+$script:IdentityColumnPattern = '(Account|User|Upn|Sid|Principal|Device|Host|Machine|Computer|IP|Address|Url|Domain|Email|Mail|Sha1|Sha256|Md5|Hash|Token|Key|Secret|Credential|Guid|Id$|Ids$|Name$|Path|CommandLine|Description|Title|Query|Location|City|State|Country|Latitude|Longitude|Isp|Tenant)'
+
+$script:ValueSamplerCache = @{}
+$script:CurrentSampledColumns = @()
+
+function Get-WorkshopValueSampler {
+    <#
+        Builds, once per table and column, a cumulative weighted sampler over the real
+        observed values. Returns $null when the column must not be sampled verbatim or
+        no profile exists.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$Table,
+        [Parameter(Mandatory)][string]$ColumnName
+    )
+
+    $cacheKey = "$Table|$ColumnName"
+    if ($script:ValueSamplerCache.ContainsKey($cacheKey)) {
+        return $script:ValueSamplerCache[$cacheKey]
+    }
+
+    $sampler = $null
+    if ($script:FieldProfiles.ContainsKey($Table)) {
+        $tableProfile = $script:FieldProfiles[$Table]
+        if ($tableProfile.Columns.ContainsKey($ColumnName)) {
+            $observed = $tableProfile.Columns[$ColumnName]
+            $isSafe = $ColumnName -match $script:SafeVerbatimColumnPattern -and $ColumnName -notmatch $script:IdentityColumnPattern
+            $isLowCardinality = [int]$observed.distinctCount -le 60
+
+            if ($isSafe -and $isLowCardinality) {
+                $values = [System.Collections.Generic.List[string]]::new()
+                $weights = [System.Collections.Generic.List[int]]::new()
+                $running = 0
+                foreach ($entry in @($observed.topValues)) {
+                    $text = [string]$entry.value
+                    if ($text.EndsWith('...')) { continue }
+                    $running += [int]$entry.count
+                    $values.Add($text)
+                    $weights.Add($running)
+                }
+                if ($values.Count -gt 0) {
+                    $sampler = [pscustomobject]@{
+                        Values      = $values.ToArray()
+                        Cumulative  = $weights.ToArray()
+                        TotalWeight = $running
+                    }
+                }
+            }
+        }
+    }
+
+    $script:ValueSamplerCache[$cacheKey] = $sampler
+    return $sampler
+}
+
+function Get-WorkshopEmptyRate {
+    <#
+        Fraction of rows where the real telemetry left this column null or empty.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$Table,
+        [Parameter(Mandatory)][string]$ColumnName
+    )
+
+    if (-not $script:FieldProfiles.ContainsKey($Table)) { return $null }
+    $tableProfile = $script:FieldProfiles[$Table]
+    if (-not $tableProfile.Columns.ContainsKey($ColumnName)) { return $null }
+    return [double]$tableProfile.Columns[$ColumnName].nullRate
+}
+
+function Get-WorkshopBuiltInPrincipal {
+    <#
+        Weighted pick from the generic OS principal list that dominates real endpoint
+        telemetry.
+    #>
+    $roll = $script:Random.Next(0, $script:BuiltInPrincipalTotalWeight)
+    $running = 0
+    foreach ($principal in $script:BuiltInPrincipals) {
+        $running += $principal.Weight
+        if ($roll -lt $running) { return $principal.Name }
+    }
+    return 'system'
+}
+
+function Set-WorkshopTableSamplers {
+    <#
+        Resolves, once per table, the subset of schema columns that can be sampled from
+        the real observed distribution. Ambient row building then touches only those
+        columns instead of testing every column on every row.
+    #>
+    param([Parameter(Mandatory)][string]$Table)
+
+    $sampled = [System.Collections.Generic.List[object]]::new()
+    if ($script:Schemas.ContainsKey($Table)) {
+        foreach ($column in $script:Schemas[$Table].columns) {
+            $columnName = [string]$column.name
+            $sampler = Get-WorkshopValueSampler -Table $Table -ColumnName $columnName
+            if ($null -ne $sampler) {
+                $sampled.Add([pscustomobject]@{ Name = $columnName; Sampler = $sampler })
+            }
+        }
+    }
+    $script:CurrentSampledColumns = $sampled.ToArray()
+}
+
+function Get-WorkshopProfileSampledValue {
+    <#
+        Value for a column the scenario logic did not set, drawn from the real observed
+        distribution. Returns $null when the column has no sampler.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$Table,
+        [Parameter(Mandatory)][string]$ColumnName
+    )
+
+    $sampler = Get-WorkshopValueSampler -Table $Table -ColumnName $ColumnName
+    if ($null -eq $sampler) { return $null }
+
+    $roll = $script:Random.Next(0, [Math]::Max(1, $sampler.TotalWeight))
+    for ($i = 0; $i -lt $sampler.Cumulative.Length; $i++) {
+        if ($roll -lt $sampler.Cumulative[$i]) {
+            return $sampler.Values[$i]
+        }
+    }
+    return $sampler.Values[$sampler.Values.Length - 1]
 }
 
 function Get-WorkshopRandomInt {
@@ -887,7 +1247,8 @@ function New-WorkshopRecordObject {
     param(
         [Parameter(Mandatory)][string]$Table,
         [Parameter(Mandatory)][hashtable]$Values,
-        [datetime]$Time = $script:StartTime
+        [datetime]$Time = $script:StartTime,
+        [switch]$Ambient
     )
 
     if (-not $script:Schemas.ContainsKey($Table)) {
@@ -899,6 +1260,27 @@ function New-WorkshopRecordObject {
     foreach ($column in $schema.columns) {
         $record[[string]$column.name] = New-DefaultValue -Type ([string]$column.type) -Time $Time
     }
+
+    if ($Ambient) {
+        # Ambient rows inherit the real observed distribution for enum-like columns
+        # instead of an empty type default. Scenario rows are left alone so
+        # hand-authored investigation evidence stays exact. The weighted pick is
+        # inlined because this runs for every generated row.
+        foreach ($sampled in $script:CurrentSampledColumns) {
+            $sampler = $sampled.Sampler
+            $roll = $script:Random.Next(0, $sampler.TotalWeight)
+            $cumulative = $sampler.Cumulative
+            $chosen = $sampler.Values[$sampler.Values.Length - 1]
+            for ($i = 0; $i -lt $cumulative.Length; $i++) {
+                if ($roll -lt $cumulative[$i]) {
+                    $chosen = $sampler.Values[$i]
+                    break
+                }
+            }
+            $record[$sampled.Name] = $chosen
+        }
+    }
+
     foreach ($key in $Values.Keys) {
         if ($record.Contains($key)) {
             $record[$key] = $Values[$key]
@@ -1297,6 +1679,8 @@ if (-not [string]::IsNullOrWhiteSpace($summaryDirectory)) {
 
 $script:Schemas = @{}
 $script:Records = @{}
+$script:CurrentTargetRows = 1000
+Import-WorkshopFieldProfiles -Path $FieldProfileDirectory
 foreach ($schemaFile in (Get-ChildItem -Path $SchemaDirectory -Filter '*.schema.json')) {
     $schema = Get-Content -Path $schemaFile.FullName -Raw | ConvertFrom-Json
     $table = [string]$schema.tableName
@@ -1304,7 +1688,19 @@ foreach ($schemaFile in (Get-ChildItem -Path $SchemaDirectory -Filter '*.schema.
     $script:Records[$table] = [System.Collections.Generic.List[object]]::new()
 }
 $tablesToWrite = if ($TableName -and $TableName.Count -gt 0) {
-    $selectedTables = foreach ($requestedTable in ($TableName | Select-Object -Unique)) {
+    # Accept both -TableName A,B and a single "A,B" string. pwsh -File passes arguments
+    # through literally, so a caller that joins names with commas would otherwise
+    # arrive here as one unmatched element.
+    $requestedTables = @(
+        foreach ($entry in $TableName) {
+            foreach ($part in ([string]$entry -split ',')) {
+                $trimmed = $part.Trim()
+                if (-not [string]::IsNullOrWhiteSpace($trimmed)) { $trimmed }
+            }
+        }
+    ) | Select-Object -Unique
+
+    $selectedTables = foreach ($requestedTable in $requestedTables) {
         $matchedTable = @($script:Schemas.Keys | Where-Object { $_ -ieq $requestedTable } | Select-Object -First 1)
         if ($matchedTable.Count -eq 0) {
             throw "Unknown table requested for generation: $requestedTable"
@@ -1344,6 +1740,7 @@ $scenarioAlertIds = @{
     CorrelationHybridIdentity = New-StableGuid 'scenario-correlation-alert|hybrid-identity'
     LinuxSudoChroot = New-StableGuid 'scenario-alert|linux-sudo-chroot'
     LinuxOracleCollection = New-StableGuid 'scenario-alert|linux-oracle-collection'
+    DeviceCodePhishing = New-StableGuid 'scenario-alert|device-code-phishing'
 }
 
 # Assemble tool strings at runtime so the generator itself is not signature-like.
@@ -1627,14 +2024,179 @@ for ($i = 1; $i -le 5; $i++) {
     }
 }
 
+# ---------------------------------------------------------------------------
+# Fleet expansion
+#
+# The 18 devices above are the named scenario hosts and must keep their exact
+# identifiers, because the investigation acts reference them directly. Everything
+# beyond that is ambient fleet so students hunt inside a realistic estate rather than
+# a lab of 18 machines.
+#
+# The archetype weights below come from the real DeviceInfo sample: Workstation 52%,
+# Server 25%, Unknown 8.5%, AudioAndVideo 7.9%, NetworkDevice 5.3%, with OSPlatform
+# split Windows11 44%, Linux 29%, WindowsServer2025 16%, Windows11WVD 7%.
+#
+# OS is restricted to the three values the rest of the generator branches on, while the
+# richer real-world attributes ride along as extra properties for DeviceInfo.
+# ---------------------------------------------------------------------------
+$deviceArchetypes = @(
+    [pscustomobject]@{ Weight = 44; Prefix = 'WKS'; OS = 'Windows11'; Type = 'Workstation'; Category = 'Endpoint'; Distribution = 'Windows11'; OSVersion = '10.0'; Architecture = '64-bit'; Join = 'Domain Joined'; Subnet = '10.42.11' }
+    [pscustomobject]@{ Weight = 8; Prefix = 'WVD'; OS = 'Windows11'; Type = 'Workstation'; Category = 'Endpoint'; Distribution = 'Windows11WVD'; OSVersion = '10.0'; Architecture = '64-bit'; Join = 'AAD Joined'; Subnet = '10.42.12' }
+    [pscustomobject]@{ Weight = 16; Prefix = 'SRV'; OS = 'WindowsServer2025'; Type = 'Server'; Category = 'Endpoint'; Distribution = 'WindowsServer2025'; OSVersion = '10.0'; Architecture = '64-bit'; Join = 'Domain Joined'; Subnet = '10.42.1' }
+    [pscustomobject]@{ Weight = 17; Prefix = 'LNX'; OS = 'Ubuntu'; Type = 'LinuxServer'; Category = 'Endpoint'; Distribution = 'Ubuntu'; OSVersion = '24.04'; Architecture = '64-bit'; Join = ''; Subnet = '10.42.21' }
+    [pscustomobject]@{ Weight = 6; Prefix = 'RHEL'; OS = 'Ubuntu'; Type = 'LinuxServer'; Category = 'Endpoint'; Distribution = 'RedHatEnterpriseLinux'; OSVersion = '9.4'; Architecture = '64-bit'; Join = ''; Subnet = '10.42.22' }
+    [pscustomobject]@{ Weight = 5; Prefix = 'NET'; OS = 'Ubuntu'; Type = 'NetworkDevice'; Category = 'NetworkDevice'; Distribution = 'OpenWRT'; OSVersion = '3.0'; Architecture = '32-bit'; Join = ''; Subnet = '10.42.40' }
+    [pscustomobject]@{ Weight = 4; Prefix = 'IOT'; OS = 'Ubuntu'; Type = 'SmartAppliance'; Category = 'IoT'; Distribution = 'WebOs'; OSVersion = '8.10'; Architecture = '32-bit'; Join = ''; Subnet = '10.42.41' }
+)
+$archetypeTotalWeight = ($deviceArchetypes | Measure-Object -Property Weight -Sum).Sum
+$machineGroups = @('EUROPE', 'EUROPE', 'EUROPE', 'KOREA', 'Discovered', 'UnassignedGroup')
+$sensorStates = @('Active', 'Active', 'Active', 'Active', 'Inactive')
+$onboardingStates = @('Onboarded', 'Onboarded', 'Onboarded', 'Can be onboarded', 'Unsupported')
+
+# Array append is O(n^2); a List keeps fleet construction linear at thousands of hosts.
+$deviceList = [System.Collections.Generic.List[object]]::new()
+foreach ($seedDevice in $devices) {
+    $seedDevice | Add-Member -NotePropertyName DeviceCategory -NotePropertyValue 'Endpoint' -Force
+    $seedDevice | Add-Member -NotePropertyName OSDistribution -NotePropertyValue $seedDevice.OS -Force
+    $seedDevice | Add-Member -NotePropertyName FleetMachineGroup -NotePropertyValue 'EUROPE' -Force
+    $seedDevice | Add-Member -NotePropertyName JoinType -NotePropertyValue 'Domain Joined' -Force
+    $seedDevice | Add-Member -NotePropertyName SensorHealthState -NotePropertyValue 'Active' -Force
+    $seedDevice | Add-Member -NotePropertyName OnboardingStatus -NotePropertyValue 'Onboarded' -Force
+    $seedDevice | Add-Member -NotePropertyName IsScenarioDevice -NotePropertyValue $true -Force
+    $deviceList.Add($seedDevice)
+}
+
+$fleetTarget = [Math]::Max(0, $SyntheticDeviceCount - $deviceList.Count)
+for ($i = 1; $i -le $fleetTarget; $i++) {
+    # Deterministic archetype selection keeps the fleet identical across worker
+    # processes without consuming the shared random stream.
+    $roll = ([Convert]::ToInt32((New-StableHex "fleet-archetype|$i" 6), 16)) % $archetypeTotalWeight
+    $running = 0
+    $archetype = $deviceArchetypes[0]
+    foreach ($candidate in $deviceArchetypes) {
+        $running += $candidate.Weight
+        if ($roll -lt $running) { $archetype = $candidate; break }
+    }
+
+    $shortName = '{0}-{1:D5}' -f $archetype.Prefix, $i
+    $deviceList.Add([pscustomobject]@{
+            Name = ('{0}.{1}' -f $shortName, $corpFqdn)
+            ShortName = $shortName
+            DeviceId = New-StableHex $shortName 40
+            IP = ('{0}.{1}' -f $archetype.Subnet, (1 + ($i % 254)))
+            PublicIP = ('198.51.100.{0}' -f (100 + ($i % 150)))
+            OS = $archetype.OS
+            Type = $archetype.Type
+            AssetValue = if (($i % 97) -eq 0) { 'High' } else { 'Normal' }
+            DeviceCategory = $archetype.Category
+            OSDistribution = $archetype.Distribution
+            FleetMachineGroup = $machineGroups[$i % $machineGroups.Count]
+            JoinType = $archetype.Join
+            SensorHealthState = $sensorStates[$i % $sensorStates.Count]
+            OnboardingStatus = $onboardingStates[$i % $onboardingStates.Count]
+            IsScenarioDevice = $false
+        })
+}
+$devices = $deviceList.ToArray()
+Write-Host "Device fleet: $($devices.Count) device(s), including $(@($devices | Where-Object IsScenarioDevice).Count) named scenario host(s)"
+
 $win04 = $devices | Where-Object ShortName -eq 'WIN11-04'
 $dc01 = $devices | Where-Object ShortName -eq 'DC01'
 $aadc = $devices | Where-Object ShortName -eq 'AADCONNECT01'
 $domainControllers = @($devices | Where-Object Type -eq 'DomainController')
-$windowsDevices = @($devices | Where-Object OS -ne 'Ubuntu')
-$linuxDevices = @($devices | Where-Object OS -eq 'Ubuntu')
+$windowsDevices = @($devices | Where-Object { $_.OS -like 'Windows*' })
+$linuxDevices = @($devices | Where-Object { $_.OS -eq 'Ubuntu' })
 $linux03 = $linuxDevices | Where-Object ShortName -eq 'UBUNTU-03'
 $linuxDb = $linuxDevices | Where-Object ShortName -eq 'UBUNTU-05'
+
+# Bind a small set of primary users to each device. Real endpoint telemetry shows one
+# or two human accounts per host, not a uniform draw across the whole directory: a
+# 1000-row real DeviceProcessEvents sample contains only 10 distinct account names.
+# The stable hash keeps the binding identical across worker processes.
+$script:DevicePrimaryUsers = @{}
+foreach ($boundDevice in $devices) {
+    $bindingSeed = [Convert]::ToInt32((New-StableHex "device-user|$($boundDevice.ShortName)" 7), 16)
+    $script:DevicePrimaryUsers[$boundDevice.ShortName] = @(
+        $users[$bindingSeed % $users.Count]
+        $users[(($bindingSeed * 7) + 13) % $users.Count]
+    )
+}
+
+# ---------------------------------------------------------------------------
+# Catalogs for the email, identity, OAuth, behavior, and Windows Security tables
+# added for the device-code phishing act.
+# ---------------------------------------------------------------------------
+$emailSubjectCatalog = @(
+    [pscustomobject]@{ Subject = 'Q3 budget review - action needed'; Sender = 'finance'; Domain = 'contoso-partners.example'; DisplayName = 'Contoso Finance' }
+    [pscustomobject]@{ Subject = 'Updated travel roster for Wiesbaden'; Sender = 'travel'; Domain = 'gsa-travel.example'; DisplayName = 'Travel Desk' }
+    [pscustomobject]@{ Subject = 'Your monthly security digest'; Sender = 'no-reply'; Domain = 'security-digest.example'; DisplayName = 'Security Digest' }
+    [pscustomobject]@{ Subject = 'Contract award notification'; Sender = 'contracts'; Domain = 'acquisition-portal.example'; DisplayName = 'Acquisition Portal' }
+    [pscustomobject]@{ Subject = 'Shared document: After Action Review'; Sender = 'sharepoint'; Domain = 'collab-notify.example'; DisplayName = 'SharePoint Online' }
+    [pscustomobject]@{ Subject = 'Password expiry reminder'; Sender = 'helpdesk'; Domain = 'it-servicedesk.example'; DisplayName = 'IT Service Desk' }
+    [pscustomobject]@{ Subject = 'Weekly maintenance window'; Sender = 'operations'; Domain = 'usag-ops.example'; DisplayName = 'Operations' }
+    [pscustomobject]@{ Subject = 'Invoice 48219 is ready'; Sender = 'billing'; Domain = 'vendor-invoices.example'; DisplayName = 'Vendor Billing' }
+)
+
+$emailUrlCatalog = @(
+    [pscustomobject]@{ Url = 'https://collab-notify.example/share/afteraction'; Domain = 'collab-notify.example' }
+    [pscustomobject]@{ Url = 'https://it-servicedesk.example/password/reset'; Domain = 'it-servicedesk.example' }
+    [pscustomobject]@{ Url = 'https://vendor-invoices.example/invoice/48219'; Domain = 'vendor-invoices.example' }
+    [pscustomobject]@{ Url = 'https://acquisition-portal.example/award/2026-114'; Domain = 'acquisition-portal.example' }
+    [pscustomobject]@{ Url = 'https://security-digest.example/monthly/2026-07'; Domain = 'security-digest.example' }
+    [pscustomobject]@{ Url = 'https://usag-ops.example/maintenance'; Domain = 'usag-ops.example' }
+    [pscustomobject]@{ Url = 'https://login.microsoftonline.com/common/oauth2/authorize'; Domain = 'login.microsoftonline.com' }
+    [pscustomobject]@{ Url = 'https://teams.microsoft.com/l/meetup-join/19%3ameeting'; Domain = 'teams.microsoft.com' }
+)
+
+$emailAttachmentCatalog = @(
+    [pscustomobject]@{ FileName = 'Q3_Budget_Review.xlsx'; FileType = 'xlsx'; Extension = 'xlsx'; Size = 184320 }
+    [pscustomobject]@{ FileName = 'Travel_Roster.pdf'; FileType = 'pdf'; Extension = 'pdf'; Size = 92160 }
+    [pscustomobject]@{ FileName = 'After_Action_Review.docx'; FileType = 'docx'; Extension = 'docx'; Size = 245760 }
+    [pscustomobject]@{ FileName = 'Contract_Award_2026-114.pdf'; FileType = 'pdf'; Extension = 'pdf'; Size = 133120 }
+    [pscustomobject]@{ FileName = 'Invoice_48219.pdf'; FileType = 'pdf'; Extension = 'pdf'; Size = 71680 }
+    [pscustomobject]@{ FileName = 'Maintenance_Window.ics'; FileType = 'ics'; Extension = 'ics'; Size = 4096 }
+)
+
+$oauthAppCatalog = @(
+    [pscustomobject]@{ Name = 'Microsoft Teams'; Publisher = 'Microsoft Corporation'; PublisherId = '00000000-0000-0000-0000-000000000001'; PrivilegeLevel = 'Low'; Permissions = @('User.Read', 'Files.Read'); ConsentedUsers = 4200; AdminConsented = $true; Origin = 'FirstParty' }
+    [pscustomobject]@{ Name = 'Azure CLI'; Publisher = 'Microsoft Corporation'; PublisherId = '00000000-0000-0000-0000-000000000001'; PrivilegeLevel = 'Medium'; Permissions = @('user_impersonation'); ConsentedUsers = 180; AdminConsented = $true; Origin = 'FirstParty' }
+    [pscustomobject]@{ Name = 'Visual Studio Code'; Publisher = 'Microsoft Corporation'; PublisherId = '00000000-0000-0000-0000-000000000001'; PrivilegeLevel = 'Medium'; Permissions = @('User.Read', 'offline_access'); ConsentedUsers = 320; AdminConsented = $true; Origin = 'FirstParty' }
+    [pscustomobject]@{ Name = 'Contoso Timesheet Connector'; Publisher = 'Contoso Ltd'; PublisherId = '9a1c1f4e-2b70-4d61-9f1a-77c1b2c0d3e5'; PrivilegeLevel = 'Medium'; Permissions = @('User.Read.All', 'Calendars.Read'); ConsentedUsers = 95; AdminConsented = $true; Origin = 'Gallery' }
+    [pscustomobject]@{ Name = 'Adobe Acrobat Sign'; Publisher = 'Adobe Inc.'; PublisherId = '3f2a8c19-4d5e-4b7a-9c8d-1e2f3a4b5c6d'; PrivilegeLevel = 'Low'; Permissions = @('User.Read', 'Files.ReadWrite'); ConsentedUsers = 240; AdminConsented = $true; Origin = 'Gallery' }
+    [pscustomobject]@{ Name = 'Legacy Reporting Add-in'; Publisher = ''; PublisherId = ''; PrivilegeLevel = 'High'; Permissions = @('Directory.Read.All', 'Mail.Read'); ConsentedUsers = 3; AdminConsented = $false; Origin = 'Custom' }
+)
+
+$behaviorCatalog = @(
+    [pscustomobject]@{ ActionType = 'SuspiciousSignInFollowedByMailboxAccess'; Title = 'Suspicious sign-in followed by mailbox access'; Description = 'A sign-in with unfamiliar properties was followed by mailbox activity.'; Category = 'InitialAccess'; Techniques = 'T1078.004'; ServiceSource = 'Microsoft Defender for Cloud Apps'; DetectionSource = 'Behavior analytics'; DataSources = 'CloudAppEvents'; EntityType = 'User'; Insights = 'Unfamiliar sign-in properties' }
+    [pscustomobject]@{ ActionType = 'AnomalousFileDownloadVolume'; Title = 'Anomalous file download volume'; Description = 'A user downloaded significantly more files than their baseline.'; Category = 'Collection'; Techniques = 'T1530'; ServiceSource = 'Microsoft Defender for Cloud Apps'; DetectionSource = 'Behavior analytics'; DataSources = 'CloudAppEvents'; EntityType = 'User'; Insights = 'Volume exceeds 30-day baseline' }
+    [pscustomobject]@{ ActionType = 'UncommonProcessExecution'; Title = 'Uncommon process executed on endpoint'; Description = 'A process rarely seen in the organization executed on this device.'; Category = 'Execution'; Techniques = 'T1059'; ServiceSource = 'Microsoft Defender for Endpoint'; DetectionSource = 'Behavior analytics'; DataSources = 'DeviceProcessEvents'; EntityType = 'Process'; Insights = 'Prevalence below organizational threshold' }
+    [pscustomobject]@{ ActionType = 'ImpossibleTravelActivity'; Title = 'Impossible travel activity'; Description = 'Sign-ins from geographically distant locations in a short window.'; Category = 'InitialAccess'; Techniques = 'T1078'; ServiceSource = 'Microsoft Defender for Cloud Apps'; DetectionSource = 'Behavior analytics'; DataSources = 'SigninLogs'; EntityType = 'User'; Insights = 'Travel speed exceeds feasible threshold' }
+    [pscustomobject]@{ ActionType = 'FirstTimeAdminActivity'; Title = 'First time administrative activity'; Description = 'An account performed an administrative operation for the first time.'; Category = 'PrivilegeEscalation'; Techniques = 'T1098'; ServiceSource = 'Microsoft Defender XDR'; DetectionSource = 'Behavior analytics'; DataSources = 'AuditLogs'; EntityType = 'User'; Insights = 'No prior admin operations observed' }
+)
+
+# Windows Security log events the workshop investigation depends on. Entries are
+# repeated so the generated EventID mix approximates the real sample, where 4624, 4672,
+# and 4634 together account for 937 of 1000 rows and 4674 for another 52. The
+# Kerberos and process creation events are rarer but are what the Kerberoasting and
+# credential access acts are hunted with.
+$securityEventCatalog = @(
+    [pscustomobject]@{ EventID = 4624; Activity = '4624 - An account was successfully logged on.'; Task = 12544; LogonType = 3; LogonTypeName = '3 - Network'; LogonProcessName = 'Kerberos'; AuthenticationPackage = 'Kerberos'; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4672; Activity = '4672 - Special privileges assigned to new logon.'; Task = 12548; LogonType = 0; LogonTypeName = ''; LogonProcessName = ''; AuthenticationPackage = ''; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4634; Activity = '4634 - An account was logged off.'; Task = 12545; LogonType = 3; LogonTypeName = '3 - Network'; LogonProcessName = ''; AuthenticationPackage = ''; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4624; Activity = '4624 - An account was successfully logged on.'; Task = 12544; LogonType = 3; LogonTypeName = '3 - Network'; LogonProcessName = 'Kerberos'; AuthenticationPackage = 'Kerberos'; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4672; Activity = '4672 - Special privileges assigned to new logon.'; Task = 12548; LogonType = 0; LogonTypeName = ''; LogonProcessName = ''; AuthenticationPackage = ''; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4634; Activity = '4634 - An account was logged off.'; Task = 12545; LogonType = 3; LogonTypeName = '3 - Network'; LogonProcessName = ''; AuthenticationPackage = ''; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4624; Activity = '4624 - An account was successfully logged on.'; Task = 12544; LogonType = 5; LogonTypeName = '5 - Service'; LogonProcessName = 'Advapi  '; AuthenticationPackage = 'Negotiate'; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4674; Activity = '4674 - An operation was attempted on a privileged object.'; Task = 13056; LogonType = 0; LogonTypeName = ''; LogonProcessName = ''; AuthenticationPackage = ''; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4672; Activity = '4672 - Special privileges assigned to new logon.'; Task = 12548; LogonType = 0; LogonTypeName = ''; LogonProcessName = ''; AuthenticationPackage = ''; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4634; Activity = '4634 - An account was logged off.'; Task = 12545; LogonType = 3; LogonTypeName = '3 - Network'; LogonProcessName = ''; AuthenticationPackage = ''; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4625; Activity = '4625 - An account failed to log on.'; Task = 12544; LogonType = 3; LogonTypeName = '3 - Network'; LogonProcessName = 'NtLmSsp '; AuthenticationPackage = 'NTLM'; Status = '0xc000006d'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4688; Activity = '4688 - A new process has been created.'; Task = 13312; LogonType = 0; LogonTypeName = ''; LogonProcessName = ''; AuthenticationPackage = ''; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4768; Activity = '4768 - A Kerberos authentication ticket (TGT) was requested.'; Task = 14339; LogonType = 0; LogonTypeName = ''; LogonProcessName = ''; AuthenticationPackage = 'Kerberos'; Status = '0x0'; TicketEncryptionType = '0x12'; ServiceName = 'krbtgt' }
+    [pscustomobject]@{ EventID = 4769; Activity = '4769 - A Kerberos service ticket was requested.'; Task = 14337; LogonType = 0; LogonTypeName = ''; LogonProcessName = ''; AuthenticationPackage = 'Kerberos'; Status = '0x0'; TicketEncryptionType = '0x12'; ServiceName = 'MSSQLSvc/sql01.usag-cyber.local:1433' }
+    [pscustomobject]@{ EventID = 4720; Activity = '4720 - A user account was created.'; Task = 13824; LogonType = 0; LogonTypeName = ''; LogonProcessName = ''; AuthenticationPackage = ''; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+    [pscustomobject]@{ EventID = 4732; Activity = '4732 - A member was added to a security-enabled local group.'; Task = 13826; LogonType = 0; LogonTypeName = ''; LogonProcessName = ''; AuthenticationPackage = ''; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
+)
 
 $windowsProcessTemplates = @(
     [pscustomobject]@{ File = 'svchost.exe'; Path = 'C:\Windows\System32\svchost.exe'; Parent = 'services.exe'; Command = 'C:\Windows\System32\svchost.exe -k netsvcs -p' },
@@ -2196,6 +2758,19 @@ function New-NormalTelemetryValues {
     $user = Get-WorkshopRandomItem $users
     $devicePool = if ($Table -eq 'DeviceRegistryEvents' -or $Table -like 'Identity*' -or $null -ne $deviceNetworkProfile) { $windowsDevices } else { $devices }
     $device = Get-WorkshopRandomItem $devicePool
+
+    # Device-scoped telemetry uses the host's bound primary users rather than a uniform
+    # draw across the directory, and is dominated by OS principals. Measured on real
+    # DeviceProcessEvents: system 262, local service 71, network service 17, and a
+    # single human account 65 out of 1000 rows. Identity, Entra, Graph, and cloud
+    # tables keep the full synthetic population because they really are tenant wide.
+    $isDeviceScopedTable = $Table -like 'Device*'
+    if ($isDeviceScopedTable) {
+        $boundUsers = $script:DevicePrimaryUsers[$device.ShortName]
+        if ($boundUsers) {
+            $user = $boundUsers[$Index % $boundUsers.Count]
+        }
+    }
     $isUbuntuDevice = $device.OS -eq 'Ubuntu'
     $process = Get-WorkshopRandomItem $(if ($isUbuntuDevice) { $linuxProcessTemplates } else { $windowsProcessTemplates })
     $file = Get-WorkshopRandomItem $(if ($isUbuntuDevice) { $linuxFileTemplates } else { $windowsFileTemplates })
@@ -2204,12 +2779,29 @@ function New-NormalTelemetryValues {
     $app = Get-WorkshopRandomItem $normalApplications
     $processPath = Resolve-WorkshopTemplatePath -Template $process -UserName $user.Name
     $filePath = Resolve-WorkshopTemplatePath -Template $file -UserName $user.Name
-    $hashes = New-WorkshopHashSet "$Table|$Index|$($file.Name)|$($device.ShortName)"
-    $processHashes = New-WorkshopHashSet "$Table|$Index|$($process.File)|process"
+    # Content-addressed hashing: the same file or binary always hashes the same way,
+    # widened to the distinct cardinality measured in real telemetry for this table.
+    $hashes = Get-WorkshopContentHashSet -Slot 'File' -ContentKey "file|$($file.Name)" -Index $Index
+    $processHashes = Get-WorkshopContentHashSet -Slot 'Binary' -ContentKey "binary|$($process.File)" -Index $Index
     $reportId = 700000 + $Index
     $timeText = Format-WorkshopTime $Time
     $accountDomain = if ($isUbuntuDevice) { $device.ShortName } else { $adDomain }
     $linuxLocalUser = if ($user.Name -like 'svc_*') { $user.Name } else { ($user.Name -replace '\.', '') }
+    $humanAccountName = if ($isUbuntuDevice) { $linuxLocalUser } else { $user.Name }
+
+    # Weighted account mix for device telemetry. Roughly matches the real observed
+    # split between OS principals and the host's human user.
+    $effectiveAccountName = $humanAccountName
+    $initiatingAccountName = $humanAccountName
+    if ($isDeviceScopedTable) {
+        if ($script:Random.Next(0, 100) -lt 55) {
+            $effectiveAccountName = if ($isUbuntuDevice) { 'root' } else { Get-WorkshopBuiltInPrincipal }
+        }
+        if ($script:Random.Next(0, 100) -lt 70) {
+            $initiatingAccountName = if ($isUbuntuDevice) { 'root' } else { Get-WorkshopBuiltInPrincipal }
+        }
+    }
+
     $processCommand = if ($process.Command -like '*{0}*') { $process.Command -f $linuxLocalUser } else { $process.Command }
     $software = $null
 
@@ -2223,13 +2815,13 @@ function New-NormalTelemetryValues {
         PublicIP = $device.PublicIP
         LocalIP = $device.IP
         AccountDomain = $accountDomain
-        AccountName = if ($isUbuntuDevice) { $linuxLocalUser } else { $user.Name }
+        AccountName = $effectiveAccountName
         AccountSid = $user.Sid
         AccountUpn = $user.Upn
         AccountObjectId = $user.ObjectId
         AccountDisplayName = $user.DisplayName
         InitiatingProcessAccountDomain = $accountDomain
-        InitiatingProcessAccountName = if ($isUbuntuDevice) { $linuxLocalUser } else { $user.Name }
+        InitiatingProcessAccountName = $initiatingAccountName
         InitiatingProcessAccountSid = $user.Sid
         InitiatingProcessAccountUpn = $user.Upn
         InitiatingProcessAccountObjectId = $user.ObjectId
@@ -2274,7 +2866,7 @@ function New-NormalTelemetryValues {
             $values.FileName = $dll.Name
             $values.FolderPath = $dll.Path
             $values.FileSize = $dll.Size
-            $dllHashes = New-WorkshopHashSet "$Table|$Index|$($dll.Name)"
+            $dllHashes = Get-WorkshopContentHashSet -Slot 'Module' -ContentKey "module|$($dll.Name)" -Index $Index
             $values.SHA1 = $dllHashes.SHA1
             $values.SHA256 = $dllHashes.SHA256
             $values.MD5 = $dllHashes.MD5
@@ -2293,7 +2885,7 @@ function New-NormalTelemetryValues {
         'DeviceNetworkEvents' {
             if ($null -ne $deviceNetworkProfile) {
                 $networkProcess = Resolve-WorkshopDeviceNetworkProcessProfile -FileName $deviceNetworkProfile.InitiatingProcessFileName -UserName $user.Name
-                $networkProcessHashes = New-WorkshopHashSet "$Table|$Index|$($networkProcess.File)|process"
+                $networkProcessHashes = Get-WorkshopContentHashSet -Slot 'Binary' -ContentKey "binary|$($networkProcess.File)" -Index $Index
 
                 $values.ActionType = $deviceNetworkProfile.ActionType
                 $values.RemoteUrl = $deviceNetworkProfile.RemoteUrl
@@ -2531,7 +3123,7 @@ function New-NormalTelemetryValues {
             $values.LoggedByService = 'Core Directory'
             $values.Id = New-StableGuid "$Table|audit|$Index"
         }
-        'GraphApiAuditEvents' {
+        'GraphAPIAuditEvents' {
             $bucket = $Index % 1000
             $isDelegatedUserCall = $bucket -lt 353
             $apiVersion = if ($bucket -lt 707) { 'v1.0' } elseif ($bucket -lt 995) { 'beta' } else { 'rp' }
@@ -2950,6 +3542,313 @@ function New-NormalTelemetryValues {
             $values.SourceSystem = 'Azure'
             $values.Type = 'SecurityIncident'
         }
+        'EmailEvents' {
+            # Shaped from the real EmailEvents sample: 30 of 53 columns carry data.
+            # DeliveryLocation is "Inbox/folder", AuthenticationDetails is a JSON
+            # document, ReportId and NetworkMessageId are GUIDs, SenderIPv6 is
+            # populated while SenderIPv4 is not, and EmailClusterId is a large long.
+            $emailTemplate = $emailSubjectCatalog[$Index % $emailSubjectCatalog.Count]
+            $sender = $users[($Index * 13) % $users.Count]
+            $recipient = $users[($Index * 29) % $users.Count]
+            $directionRoll = $Index % 100
+            $direction = if ($directionRoll -lt 96) { 'Inbound' } elseif ($directionRoll -lt 98) { 'Outbound' } else { 'Intra-org' }
+            $isThreat = ($Index % 23) -eq 0
+            $networkMessageId = New-StableGuid "email|$Index"
+            $isExternalRecipient = ($Index % 43) -eq 0
+
+            $values.NetworkMessageId = $networkMessageId
+            $values.InternetMessageId = '<{0}@{1}>' -f (New-StableHex "internet-message|$Index" 24).ToUpperInvariant(), $(if ($direction -eq 'Inbound') { $emailTemplate.Domain } else { $tenantDomain })
+            $values.SenderMailFromAddress = if ($direction -eq 'Inbound') { '{0}@{1}' -f $emailTemplate.Sender, $emailTemplate.Domain } else { $sender.Upn }
+            $values.SenderFromAddress = $values.SenderMailFromAddress
+            $values.SenderDisplayName = if ($direction -eq 'Inbound') { $emailTemplate.DisplayName } else { $sender.DisplayName }
+            $values.SenderObjectId = if ($direction -eq 'Inbound') { '' } else { $sender.ObjectId }
+            $values.SenderMailFromDomain = if ($direction -eq 'Inbound') { $emailTemplate.Domain } else { $tenantDomain }
+            $values.SenderFromDomain = $values.SenderMailFromDomain
+            $values.SenderIPv6 = '2a01:111:f403:c{0:d3}::{1}' -f ($Index % 200), (1 + ($Index % 9))
+            $values.RecipientEmailAddress = $recipient.Upn
+            $values.RecipientObjectId = $recipient.ObjectId
+            $values.RecipientDomain = $tenantDomain
+            $values.Subject = $emailTemplate.Subject
+            $values.EmailDirection = $direction
+            $values.DeliveryAction = if ($isThreat) { 'Blocked' } else { 'Delivered' }
+            $values.DeliveryLocation = if ($isThreat) { 'Quarantine' } elseif ($isExternalRecipient) { 'On-premises/external' } else { 'Inbox/folder' }
+            $values.LatestDeliveryAction = $values.DeliveryAction
+            $values.LatestDeliveryLocation = $values.DeliveryLocation
+            $values.ThreatTypes = if ($isThreat) { 'Phish' } else { '' }
+            $values.ThreatNames = if ($isThreat) { 'Phish.Credential' } else { '' }
+            $values.DetectionMethods = if ($isThreat) { 'Advanced filter' } else { '' }
+            $values.ConfidenceLevel = if ($isThreat) { 'High' } else { '' }
+            $values.EmailAction = if ($isThreat) { 'Quarantine' } else { 'None' }
+            $values.AuthenticationDetails = if (($Index % 31) -eq 0) {
+                '{"SPF":"softfail","DKIM":"pass","DMARC":"pass","CompAuth":"pass"}'
+            }
+            elseif (($Index % 29) -eq 0) {
+                '{"DKIM":"none","DMARC":"none"}'
+            }
+            else {
+                '{"SPF":"pass","DKIM":"pass","DMARC":"pass","CompAuth":"pass"}'
+            }
+            $values.AttachmentCount = @(0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 6, 10)[$Index % 12]
+            $values.UrlCount = @(4, 4, 4, 4, 4, 4, 3, 3, 11, 6, 2, 1)[$Index % 12]
+            $values.EmailLanguage = if (($Index % 500) -eq 0) { 'ja' } else { 'en' }
+            $values.EmailSize = 140000 + (($Index * 907) % 60000)
+            $values.IsFirstContact = ($Index % 55) -eq 0
+            $values.EmailClusterId = 2961079000 + ($Index % 9000)
+            $values.ReportId = New-StableGuid "email-report|$Index"
+            $values.To = @($recipient.Upn)
+            $values.OrgLevelAction = if ($isThreat) { 'Quarantine' } else { 'None' }
+            $values.OrgLevelPolicy = if ($isThreat) { 'Anti-phishing policy' } else { '' }
+            $values.UserLevelAction = 'None'
+            $values.BulkComplaintLevel = if ($direction -eq 'Inbound') { $Index % 5 } else { 0 }
+        }
+        'EmailUrlInfo' {
+            $urlTemplate = $emailUrlCatalog[$Index % $emailUrlCatalog.Count]
+            $values.NetworkMessageId = New-StableGuid "email|$Index"
+            $values.Url = $urlTemplate.Url
+            $values.UrlDomain = $urlTemplate.Domain
+            $values.UrlLocation = Get-WorkshopRandomItem @('Body', 'Attachment', 'QRCode', 'Header')
+            $values.UrlChainId = New-StableGuid "url-chain|$Index"
+            $values.UrlChainPosition = $Index % 3
+            $values.ReportId = [string]$reportId
+        }
+        'EmailAttachmentInfo' {
+            $attachment = $emailAttachmentCatalog[$Index % $emailAttachmentCatalog.Count]
+            $sender = $users[($Index * 13) % $users.Count]
+            $recipient = $users[($Index * 29) % $users.Count]
+            $attachmentHashes = Get-WorkshopHashSet -ContentKey "attachment|$($attachment.FileName)"
+            $values.NetworkMessageId = New-StableGuid "email|$Index"
+            $values.SenderFromAddress = $sender.Upn
+            $values.SenderDisplayName = $sender.DisplayName
+            $values.SenderObjectId = $sender.ObjectId
+            $values.RecipientEmailAddress = $recipient.Upn
+            $values.RecipientObjectId = $recipient.ObjectId
+            $values.FileName = $attachment.FileName
+            $values.FileType = $attachment.FileType
+            $values.FileExtension = $attachment.Extension
+            $values.SHA256 = $attachmentHashes.SHA256
+            $values.FileSize = $attachment.Size
+            $values.ThreatTypes = if (($Index % 37) -eq 0) { 'Malware' } else { '' }
+            $values.DetectionMethods = if (($Index % 37) -eq 0) { 'Safe Attachments' } else { '' }
+            $values.ReportId = [string]$reportId
+        }
+        'EmailPostDeliveryEvents' {
+            $values.NetworkMessageId = New-StableGuid "email|$Index"
+            $values.InternetMessageId = '<{0}@{1}>' -f (New-StableHex "internet-message|$Index" 24), $tenantDomain
+            $values.Action = Get-WorkshopRandomItem @('Quarantine', 'Move to junk', 'Soft delete', 'Move to inbox')
+            $values.ActionType = Get-WorkshopRandomItem @('Manual remediation', 'Phish ZAP', 'Malware ZAP')
+            $values.ActionTrigger = Get-WorkshopRandomItem @('ZAP', 'Administrative action', 'User reported')
+            $values.ActionResult = Get-WorkshopRandomItem @('Success', 'Success', 'Success', 'Failed')
+            $values.RecipientEmailAddress = $users[($Index * 29) % $users.Count].Upn
+            $values.SenderFromAddress = '{0}@{1}' -f $emailSubjectCatalog[$Index % $emailSubjectCatalog.Count].Sender, $emailSubjectCatalog[$Index % $emailSubjectCatalog.Count].Domain
+            $values.DeliveryLocation = 'Quarantine'
+            $values.SourceLocation = 'Inbox'
+            $values.EmailDirection = 'Inbound'
+            $values.ThreatTypes = 'Phish'
+            $values.DetectionMethods = 'Advanced filter'
+            $values.ReportId = [string]$reportId
+        }
+        'UrlClickEvents' {
+            $urlTemplate = $emailUrlCatalog[$Index % $emailUrlCatalog.Count]
+            $clickUser = $users[($Index * 29) % $users.Count]
+            $isBlocked = ($Index % 19) -eq 0
+            $values.Url = $urlTemplate.Url
+            $values.ActionType = if ($isBlocked) { 'ClickBlocked' } else { 'ClickAllowed' }
+            $values.AccountUpn = $clickUser.Upn
+            $values.Workload = Get-WorkshopRandomItem @('Email', 'Teams', 'Office')
+            $values.NetworkMessageId = New-StableGuid "email|$Index"
+            $values.ThreatTypes = if ($isBlocked) { 'Phish' } else { '' }
+            $values.DetectionMethods = if ($isBlocked) { 'Safe Links' } else { '' }
+            $values.IPAddress = '198.51.100.{0}' -f (50 + ($Index % 40))
+            $values.IsClickedThrough = -not $isBlocked
+            $values.UrlChain = $urlTemplate.Url
+            $values.AppName = Get-WorkshopRandomItem @('Outlook', 'Microsoft Teams', 'Edge')
+            $values.AppVersion = '16.0.17928.20114'
+            $values.SourceId = New-StableGuid "url-click|$Index"
+            $values.ReportId = [string]$reportId
+        }
+        'OAuthAppInfo' {
+            $oauthApp = $oauthAppCatalog[$Index % $oauthAppCatalog.Count]
+            $addedTime = $Time.AddDays(-(($Index % 900) + 30))
+            $values.OAuthAppId = New-StableGuid "oauth-app|$($oauthApp.Name)"
+            $values.ServicePrincipalId = New-StableGuid "oauth-sp|$($oauthApp.Name)"
+            $values.AppName = $oauthApp.Name
+            $values.AddedOnTime = Format-WorkshopTime $addedTime
+            $values.LastModifiedTime = Format-WorkshopTime $addedTime.AddDays($Index % 60)
+            $values.LastUsedTime = Format-WorkshopTime $Time.AddHours(-($Index % 72))
+            $values.AppStatus = if (($Index % 17) -eq 0) { 'Disabled' } else { 'Enabled' }
+            $values.VerifiedPublisher = @{ verifiedPublisherId = $oauthApp.PublisherId; displayName = $oauthApp.Publisher; addedDateTime = (Format-WorkshopTime $addedTime) }
+            $values.PrivilegeLevel = $oauthApp.PrivilegeLevel
+            $values.Permissions = [object[]]$oauthApp.Permissions
+            $values.ConsentedUsersCount = $oauthApp.ConsentedUsers
+            $values.IsAdminConsented = $oauthApp.AdminConsented
+            $values.AppOrigin = $oauthApp.Origin
+            $values.AppOwnerTenantId = $tenantId
+            $values.ReportId = [string]$reportId
+        }
+        { $_ -in @('BehaviorInfo', 'BehaviorEntities') } {
+            $behavior = $behaviorCatalog[$Index % $behaviorCatalog.Count]
+            $behaviorId = New-StableGuid "behavior|$Index"
+            $values.BehaviorId = $behaviorId
+            $values.ActionType = $behavior.ActionType
+            $values.Categories = $behavior.Category
+            $values.ServiceSource = $behavior.ServiceSource
+            $values.DetectionSource = $behavior.DetectionSource
+            $values.DataSources = $behavior.DataSources
+            $values.MachineGroup = if ($device.Type -eq 'DomainController') { 'Domain Controllers' } elseif ($isUbuntuDevice) { 'Linux Servers' } else { 'Workstations' }
+
+            if ($Table -eq 'BehaviorInfo') {
+                $values.Title = $behavior.Title
+                $values.Description = $behavior.Description
+                $values.AttackTechniques = $behavior.Techniques
+                $values.DeviceId = $device.DeviceId
+                $values.AccountUpn = $user.Upn
+                $values.AccountObjectId = $user.ObjectId
+                $values.StartTime = Format-WorkshopTime $Time.AddMinutes(-($Index % 30))
+                $values.EndTime = Format-WorkshopTime $Time
+                $values.Insights = $behavior.Insights
+            }
+            else {
+                $values.EntityType = $behavior.EntityType
+                $values.EntityRole = 'Impacted'
+                $values.DetailedEntityRole = $behavior.EntityType
+                $values.DeviceId = $device.DeviceId
+                $values.DeviceName = $device.Name
+                $values.LocalIP = $device.IP
+                $values.AccountName = $effectiveAccountName
+                $values.AccountDomain = $accountDomain
+                $values.AccountSid = $user.Sid
+                $values.AccountObjectId = $user.ObjectId
+                $values.AccountUpn = $user.Upn
+                $values.FileName = $process.File
+                $values.FolderPath = $processPath
+                $values.SHA1 = $processHashes.SHA1
+                $values.SHA256 = $processHashes.SHA256
+                $values.ProcessCommandLine = $processCommand
+            }
+        }
+        'SecurityEvent' {
+            # Shaped from the real SecurityEvent sample: 66 of 234 columns carry data,
+            # and AccountType is Machine on 997 of 1000 rows because computer accounts
+            # generate most Windows security auditing volume. Empty-but-present fields
+            # use the literal "-" and Windows message table codes such as %%1833, both
+            # of which appear throughout the real data.
+            $securityEventTemplate = $securityEventCatalog[$Index % $securityEventCatalog.Count]
+            $isMachineAccount = ($Index % 1000) -ge 3
+            $machineAccountName = '{0}$' -f $device.ShortName
+            $logonUser = if ($isDeviceScopedTable) { $user } else { $users[($Index * 17) % $users.Count] }
+            $principalName = if ($isMachineAccount) { $machineAccountName } else { $logonUser.Name }
+            $principalSid = if ($isMachineAccount) { 'S-1-5-18' } else { $logonUser.Sid }
+            $dnsDomain = $corpFqdn.ToUpperInvariant()
+            $useDnsDomain = ($Index % 2) -eq 0
+            $subjectDomain = if ($useDnsDomain) { $dnsDomain } else { $adDomain }
+            $hasSubject = ($Index % 100) -lt 69
+            $hasTarget = ($Index % 100) -lt 63
+            $hasLogonDetail = $securityEventTemplate.EventID -in @(4624, 4625)
+
+            $values.EventID = $securityEventTemplate.EventID
+            $values.Activity = $securityEventTemplate.Activity
+            $values.EventSourceName = 'Microsoft-Windows-Security-Auditing'
+            $values.Channel = 'Security'
+            $values.Task = $securityEventTemplate.Task
+            $values.Level = '0'
+            $values.EventLevelName = 'LogAlways'
+            $values.Opcode = '0'
+            $values.Version = if (($Index % 100) -lt 68) { '0' } else { '3' }
+            $values.Keywords = if (($Index % 100) -lt 95) { '0x8020000000000000' } else { '0x8010000000000000' }
+            $values.EventRecordId = [string](2100000 + $Index)
+            $values.SystemThreadId = [string]@(6424, 6424, 6424, 3248, 3248, 2080, 9332)[$Index % 7]
+            $values.SystemProcessId = if (($Index % 100) -lt 94) { '892' } else { '4' }
+            $values.SystemUserId = 'N/A'
+            $values.Computer = $device.Name
+            $values.SourceSystem = 'OpsManager'
+            $values.ManagementGroupName = "AOI-$tenantId"
+            $values.MG = '00000000-0000-0000-0000-000000000002'
+            $values.EventOriginId = New-StableGuid "security-event-origin|$($device.ShortName)"
+            $values.EventSourceId = New-StableGuid "security-event-source|$($device.ShortName)"
+            $values.SourceComputerId = New-StableGuid "source-computer|$($device.ShortName)"
+            $values.TimeCollected = $timeText
+            $values.Correlation = '{{{0}}}' -f (New-StableGuid "security-correlation|$Index")
+
+            $values.AccountType = if ($isMachineAccount) { 'Machine' } else { 'User' }
+            $values.Account = '{0}\{1}' -f $subjectDomain, $principalName
+            $values.AccountName = $principalName
+            $values.AccountDomain = $subjectDomain
+
+            if ($hasSubject) {
+                $values.SubjectAccount = '{0}\{1}' -f $adDomain, $principalName
+                $values.SubjectUserName = $principalName
+                $values.SubjectDomainName = $adDomain
+                $values.SubjectUserSid = $principalSid
+                $values.SubjectLogonId = '0x{0:x}' -f (0x3e5 + ($Index % 4000000))
+            }
+            else {
+                $values.SubjectAccount = '-\-'
+                $values.SubjectUserName = '-'
+                $values.SubjectDomainName = '-'
+                $values.SubjectUserSid = 'S-1-0-0'
+                $values.SubjectLogonId = '0x0'
+            }
+
+            if ($hasTarget) {
+                $values.TargetAccount = '{0}\{1}' -f $subjectDomain, $principalName
+                $values.TargetUserName = $principalName
+                $values.TargetDomainName = $subjectDomain
+                $values.TargetUserSid = $principalSid
+                $values.TargetLogonId = '0x{0:x}' -f (0x14000000 + ($Index % 8000000))
+                $values.LogonType = $securityEventTemplate.LogonType
+                $values.LogonTypeName = $securityEventTemplate.LogonTypeName
+            }
+
+            if ($hasLogonDetail) {
+                $values.LogonProcessName = $securityEventTemplate.LogonProcessName
+                $values.AuthenticationPackageName = $securityEventTemplate.AuthenticationPackage
+                $values.LogonGuid = New-StableGuid "logon-guid|$($Index % 40)"
+                $values.ElevatedToken = '%%1842'
+                $values.VirtualAccount = '%%1843'
+                $values.ImpersonationLevel = if (($Index % 5) -eq 0) { '%%1840' } else { '%%1833' }
+                $values.KeyLength = '0'
+                $values.LmPackageName = '-'
+                $values.RestrictedAdminMode = '-'
+                $values.WorkstationName = '-'
+                $values.TransmittedServices = '-'
+                $values.TargetOutboundUserName = '-'
+                $values.TargetOutboundDomainName = '-'
+                $values.TargetLinkedLogonId = '0x0'
+                $values.IpAddress = @('fe80::ca75:1fe1:437a:592c', '::1', '::1', $device.IP, '-')[$Index % 5]
+                $values.IpPort = if (($Index % 12) -eq 0) { '0' } else { [string](49152 + ($Index % 16000)) }
+                $values.Status = $securityEventTemplate.Status
+            }
+
+            if (($Index % 100) -lt 38) {
+                $values.ProcessName = if ($hasSubject) { 'C:\Windows\System32\lsass.exe' } else { '-' }
+                $values.Process = if ($hasSubject) { 'lsass.exe' } else { '-' }
+                $values.ProcessId = if ($hasSubject) { '0x37c' } else { '0x0' }
+            }
+
+            if ($securityEventTemplate.EventID -eq 4672) {
+                $values.PrivilegeList = 'SeSecurityPrivilege                   SeBackupPrivilege                   SeRestorePrivilege                   SeTakeOwnershipPrivilege                   SeDebugPrivilege'
+            }
+            elseif (($Index % 100) -lt 38) {
+                $values.PrivilegeList = 'SeSecurityPrivilege'
+            }
+
+            if ($securityEventTemplate.EventID -eq 4688) {
+                $values.NewProcessName = $processPath
+                $values.CommandLine = $processCommand
+            }
+            if ($securityEventTemplate.EventID -in @(4768, 4769)) {
+                $values.TicketEncryptionType = $securityEventTemplate.TicketEncryptionType
+                $values.ServiceName = $securityEventTemplate.ServiceName
+                $values.Status = '0x0'
+            }
+            if ($securityEventTemplate.EventID -eq 4674) {
+                $values.ObjectServer = 'LSA'
+                $values.ObjectType = '-'
+                $values.ObjectName = '-'
+                $values.HandleId = '0x0'
+                $values.AccessMask = '16777216'
+            }
+        }
         default {
             $values.ActionType = 'WorkshopNormalBaseline'
             $values.Application = 'WorkshopNormalBaseline'
@@ -2991,8 +3890,18 @@ function Write-WorkshopTableData {
     $existingCount = $script:Records[$Table].Count
     $rowsToAdd = [Math]::Max(0, $targetRows - $existingCount)
     $tableSeed = [Convert]::ToInt32((New-StableHex $Table 7), 16)
+    # Reseed per table so a table's ambient rows are identical whether the script
+    # generates every table or only this one. Without this, the shared random stream
+    # makes output depend on how many tables ran first, which breaks both -TableName
+    # regeneration and parallel generation across worker processes.
+    $script:Random = [System.Random]::new($RandomSeed -bxor $tableSeed)
+    # Cardinality targets are relative to the row count this table will actually write.
+    $script:CurrentTargetRows = [Math]::Max(1, $targetRows)
+    Set-WorkshopTableCardinality -Table $Table -TargetRows $script:CurrentTargetRows
+    Set-WorkshopTableSamplers -Table $Table
     $encoding = [System.Text.UTF8Encoding]::new($false)
-    $writer = [System.IO.StreamWriter]::new($path, $false, $encoding)
+    $stream = [System.IO.FileStream]::new($path, [System.IO.FileMode]::Create, [System.IO.FileAccess]::Write, [System.IO.FileShare]::None, 1048576)
+    $writer = [System.IO.StreamWriter]::new($stream, $encoding, 1048576)
     $written = 0
 
     try {
@@ -3005,7 +3914,7 @@ function Write-WorkshopTableData {
             $time = New-WorkshopNormalTime
             $index = $tableSeed + $i
             $values = New-NormalTelemetryValues -Table $Table -Time $time -Index $index
-            $record = New-WorkshopRecordObject -Table $Table -Values $values -Time $time
+            $record = New-WorkshopRecordObject -Table $Table -Values $values -Time $time -Ambient
             if ($null -ne $record) {
                 $writer.WriteLine(($record | ConvertTo-Json -Compress -Depth 20))
                 $written++
@@ -3222,6 +4131,436 @@ Add-Record -Table 'IdentityDirectoryEvents' -Time $StartTime.AddMinutes(86) -Val
     ReportId = 5701
     AdditionalFields = '{"Change":"Service account delegation settings read","Tier":"0"}'
 }
+
+# ===========================================================================
+# ACT 1 - Device code phishing (T1566 -> T1078.004 -> T1550.001)
+#
+# Closes the gap where the investigation previously began with an already
+# compromised account. Midnight Blizzard abused the OAuth 2.0 device authorization
+# grant in the campaign AWS disrupted in August 2025, and Microsoft reported signed
+# RDP file phishing in October 2024. Both are modeled here.
+#
+# The tradecraft detail that makes this hard to catch: the victim visits the genuine
+# microsoft.com/devicelogin page and satisfies real MFA, so no malicious domain and no
+# credential prompt ever appear. Only the device code grant itself gives it away.
+#
+# A benign twin is emitted alongside it. A platform engineer performs legitimate
+# device code authentication from a corporate address on a compliant device in the same
+# window, so students must discriminate on evidence rather than on the technique alone.
+# ===========================================================================
+$deviceCodeAppId = '04b07795-8ddb-461a-bbee-02f9e1bf7b46'   # Microsoft Azure CLI
+$deviceCodeAppName = 'Microsoft Azure CLI'
+$graphResourceId = '00000003-0000-0000-c000-000000000000'
+$phishSenderDomain = 'usag-cyber-portal.example'
+$phishSenderAddress = "secure-docs@$phishSenderDomain"
+$phishNetworkMessageId = New-StableGuid 'devicecode-phish-message'
+$phishSubject = 'Action required: verify your device for the USAG Cyber secure document portal'
+$deviceLoginUrl = 'https://microsoft.com/devicelogin'
+$phishLureUrl = "https://$phishSenderDomain/verify?ref=usagcyber"
+$deviceCodeUserCode = 'FKDNW7XHM'
+$phishTime = $StartTime.AddMinutes(-45)
+$clickTime = $StartTime.AddMinutes(-40)
+$deviceCodeAuthTime = $StartTime.AddMinutes(-38)
+$tokenRedeemTime = $StartTime.AddMinutes(-37)
+$deviceCodeAlertTime = $StartTime.AddMinutes(-35)
+
+Add-Record -Table 'EmailEvents' -Time $phishTime -Values @{
+    Timestamp = Format-WorkshopTime $phishTime
+    TimeGenerated = Format-WorkshopTime $phishTime
+    NetworkMessageId = $phishNetworkMessageId
+    InternetMessageId = "<$(New-StableHex 'devicecode-phish-internet' 24)@$phishSenderDomain>"
+    SenderMailFromAddress = $phishSenderAddress
+    SenderFromAddress = $phishSenderAddress
+    SenderDisplayName = 'USAG Cyber Document Portal'
+    SenderMailFromDomain = $phishSenderDomain
+    SenderFromDomain = $phishSenderDomain
+    SenderIPv4 = $c2Ip
+    RecipientEmailAddress = $victor.Upn
+    RecipientObjectId = $victor.ObjectId
+    RecipientDomain = $tenantDomain
+    Subject = $phishSubject
+    EmailDirection = 'Inbound'
+    DeliveryAction = 'Delivered'
+    DeliveryLocation = 'Inbox/folder'
+    LatestDeliveryAction = 'Delivered'
+    LatestDeliveryLocation = 'Inbox/folder'
+    ThreatTypes = ''
+    DetectionMethods = ''
+    ConfidenceLevel = ''
+    EmailAction = 'None'
+    AuthenticationDetails = '{"SPF":"pass","DKIM":"pass","DMARC":"pass","CompAuth":"pass"}'
+    AttachmentCount = 1
+    UrlCount = 2
+    EmailLanguage = 'en'
+    EmailSize = 38214
+    IsFirstContact = $true
+    EmailClusterId = 2961084011
+    ReportId = New-StableGuid 'devicecode-phish-report'
+    To = @($victor.Upn)
+    OrgLevelAction = 'None'
+    UserLevelAction = 'None'
+    AdditionalFields = '{"Technique":"T1566","Scenario":"Device code phishing lure","ThreatActor":"MIDNIGHT BLIZZARD","Note":"Authentication passed because the lure domain was newly registered and correctly configured"}'
+}
+
+foreach ($phishUrl in @(
+        [pscustomobject]@{ Url = $phishLureUrl; Domain = $phishSenderDomain; Position = 0 }
+        [pscustomobject]@{ Url = $deviceLoginUrl; Domain = 'microsoft.com'; Position = 1 }
+    )) {
+    Add-Record -Table 'EmailUrlInfo' -Time $phishTime -Values @{
+        Timestamp = Format-WorkshopTime $phishTime
+        TimeGenerated = Format-WorkshopTime $phishTime
+        NetworkMessageId = $phishNetworkMessageId
+        Url = $phishUrl.Url
+        UrlDomain = $phishUrl.Domain
+        UrlLocation = 'Body'
+        UrlChainId = New-StableGuid 'devicecode-phish-chain'
+        UrlChainPosition = $phishUrl.Position
+        ReportId = '6002'
+    }
+}
+
+Add-Record -Table 'EmailAttachmentInfo' -Time $phishTime -Values @{
+    Timestamp = Format-WorkshopTime $phishTime
+    TimeGenerated = Format-WorkshopTime $phishTime
+    NetworkMessageId = $phishNetworkMessageId
+    SenderFromAddress = $phishSenderAddress
+    SenderDisplayName = 'USAG Cyber Document Portal'
+    RecipientEmailAddress = $victor.Upn
+    RecipientObjectId = $victor.ObjectId
+    FileName = 'USAG_Cyber_Secure_Portal.rdp'
+    FileType = 'rdp'
+    FileExtension = 'rdp'
+    SHA256 = (Get-WorkshopHashSet -ContentKey 'devicecode-phish-rdp').SHA256
+    FileSize = 2874
+    ThreatTypes = ''
+    DetectionMethods = ''
+    ReportId = '6003'
+}
+
+Add-Record -Table 'UrlClickEvents' -Time $clickTime -Values @{
+    Timestamp = Format-WorkshopTime $clickTime
+    TimeGenerated = Format-WorkshopTime $clickTime
+    Url = $phishLureUrl
+    ActionType = 'ClickAllowed'
+    AccountUpn = $victor.Upn
+    Workload = 'Email'
+    NetworkMessageId = $phishNetworkMessageId
+    ThreatTypes = ''
+    DetectionMethods = ''
+    IPAddress = $externalIp
+    IsClickedThrough = $true
+    UrlChain = "$phishLureUrl,$deviceLoginUrl"
+    AppName = 'Outlook'
+    AppVersion = '16.0.17928.20114'
+    SourceId = New-StableGuid 'devicecode-phish-click'
+    ReportId = '6004'
+}
+
+# The genuine device code authentication. AuthenticationProtocol is the single field
+# that separates this from ordinary interactive sign-in noise.
+$deviceCodeSignIn = @{
+    Timestamp = Format-WorkshopTime $deviceCodeAuthTime
+    TimeGenerated = Format-WorkshopTime $deviceCodeAuthTime
+    CreatedDateTime = Format-WorkshopTime $deviceCodeAuthTime
+    AADTenantId = $tenantId
+    Application = $deviceCodeAppName
+    ApplicationId = $deviceCodeAppId
+    AppDisplayName = $deviceCodeAppName
+    AppId = $deviceCodeAppId
+    ResourceDisplayName = 'Microsoft Graph'
+    ResourceId = $graphResourceId
+    ResourceIdentity = $graphResourceId
+    AccountDisplayName = $victor.DisplayName
+    AccountObjectId = $victor.ObjectId
+    AccountUpn = $victor.Upn
+    UserPrincipalName = $victor.Upn
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+    Identity = $victor.DisplayName
+    IPAddress = $externalIp
+    Country = 'NL'
+    State = 'Noord-Holland'
+    City = 'Amsterdam'
+    Location = 'NL'
+    LogonType = 'deviceCode'
+    AuthenticationProtocol = 'deviceCode'
+    IncomingTokenType = 'none'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'success'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    DeviceTrustType = 'Unmanaged'
+    IsInteractive = $true
+    IsManaged = $false
+    IsCompliant = $false
+    ResultType = '0'
+    ResultDescription = 'Success'
+    ErrorCode = 0
+    RiskLevelDuringSignIn = 'high'
+    RiskLevelAggregated = 'high'
+    RiskState = 'atRisk'
+    RiskEventTypes = '["unfamiliarFeatures","anonymousIPAddress"]'
+    TokenIssuerType = 'AzureAD'
+    UserAgent = 'python-requests/2.32.3'
+    CorrelationId = New-StableGuid 'devicecode-correlation'
+    SessionId = New-StableGuid 'devicecode-session'
+    ReportId = 6101
+    AdditionalFields = '{"Technique":"T1566,T1078.004","Scenario":"Device code phishing token issuance","ThreatActor":"MIDNIGHT BLIZZARD","UserCode":"' + $deviceCodeUserCode + '"}'
+}
+Add-Record -Table 'EntraIdSignInEvents' -Time $deviceCodeAuthTime -Values $deviceCodeSignIn
+Add-Record -Table 'AADSignInEventsBeta' -Time $deviceCodeAuthTime -Values $deviceCodeSignIn
+
+Add-Record -Table 'SigninLogs' -Time $deviceCodeAuthTime -Values @{
+    TimeGenerated = Format-WorkshopTime $deviceCodeAuthTime
+    CreatedDateTime = Format-WorkshopTime $deviceCodeAuthTime
+    AADTenantId = $tenantId
+    AppDisplayName = $deviceCodeAppName
+    AppId = $deviceCodeAppId
+    AuthenticationMethodsUsed = 'Password,Microsoft Authenticator push'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    AuthenticationProtocol = 'deviceCode'
+    IncomingTokenType = 'none'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'devicecode-correlation'
+    DeviceDetail = @{ operatingSystem = 'Unknown'; browser = 'Other'; isCompliant = $false; trustType = 'Unmanaged' }
+    Id = New-StableGuid 'devicecode-signin-log'
+    Identity = $victor.DisplayName
+    IPAddress = $externalIp
+    IsInteractive = $true
+    IsRisky = $true
+    Location = 'NL'
+    LocationDetails = @{ city = 'Amsterdam'; state = 'Noord-Holland'; countryOrRegion = 'NL'; geoCoordinates = @{ latitude = 52.3676; longitude = 4.9041 } }
+    MfaDetail = '{"authMethod":"Microsoft Authenticator push","authDetail":"MFA completed by the victim on the genuine Microsoft device login page"}'
+    OperationName = 'Sign-in activity'
+    ResourceDisplayName = 'Microsoft Graph'
+    ResourceIdentity = $graphResourceId
+    ResultType = '0'
+    ResultDescription = 'Success'
+    RiskLevel = 'high'
+    RiskLevelDuringSignIn = 'high'
+    RiskState = 'atRisk'
+    RiskEventTypes = 'unfamiliarFeatures,anonymousIPAddress'
+    Status = @{ errorCode = 0; failureReason = 'Other'; additionalDetails = 'MFA requirement satisfied by claim in the token' }
+    Type = 'SigninLogs'
+    UserAgent = 'python-requests/2.32.3'
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+    UserPrincipalName = $victor.Upn
+    UserType = 'Member'
+}
+
+# Refresh token redemption against a second first-party client. This is the FOCI
+# cross-client pivot that makes a stolen device code token so valuable.
+Add-Record -Table 'AADNonInteractiveUserSignInLogs' -Time $tokenRedeemTime -Values @{
+    TimeGenerated = Format-WorkshopTime $tokenRedeemTime
+    CreatedDateTime = Format-WorkshopTime $tokenRedeemTime
+    AADTenantId = $tenantId
+    AppDisplayName = 'Microsoft Graph Command Line Tools'
+    AppId = '14d82eec-204b-4c2f-b7e8-296a70dab67e'
+    AuthenticationProtocol = 'none'
+    IncomingTokenType = 'primaryRefreshToken'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'notApplied'
+    CorrelationId = New-StableGuid 'devicecode-foci-correlation'
+    Id = New-StableGuid 'devicecode-foci-signin'
+    IPAddress = $externalIp
+    IsInteractive = $false
+    Location = 'NL'
+    ResourceDisplayName = 'Microsoft Graph'
+    ResourceIdentity = $graphResourceId
+    ResultType = '0'
+    ResultDescription = 'Success'
+    UserAgent = 'python-requests/2.32.3'
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+    UserPrincipalName = $victor.Upn
+    Type = 'AADNonInteractiveUserSignInLogs'
+}
+
+$deviceCodeBehaviorId = New-StableGuid 'devicecode-behavior'
+Add-Record -Table 'BehaviorInfo' -Time $deviceCodeAlertTime -Values @{
+    Timestamp = Format-WorkshopTime $deviceCodeAlertTime
+    TimeGenerated = Format-WorkshopTime $deviceCodeAlertTime
+    BehaviorId = $deviceCodeBehaviorId
+    ActionType = 'DeviceCodeAuthenticationFromUnfamiliarLocation'
+    Title = 'Device code authentication from an unfamiliar location'
+    Description = 'A device code grant completed for this user from an address and client never previously seen for them, shortly after a phishing message was delivered.'
+    Categories = 'InitialAccess'
+    AttackTechniques = 'T1566,T1078.004,T1550.001'
+    ServiceSource = 'Microsoft Defender XDR'
+    DetectionSource = 'Behavior analytics'
+    DataSources = 'SigninLogs,EmailEvents,UrlClickEvents'
+    AccountUpn = $victor.Upn
+    AccountObjectId = $victor.ObjectId
+    StartTime = Format-WorkshopTime $phishTime
+    EndTime = Format-WorkshopTime $deviceCodeAlertTime
+    Insights = 'Device code grant is unused by this account in the previous 90 days'
+    MachineGroup = 'Workstations'
+    AdditionalFields = '{"Technique":"T1566,T1078.004","ThreatActor":"MIDNIGHT BLIZZARD","Scenario":"Device code phishing"}'
+}
+
+foreach ($behaviorEntity in @(
+        [pscustomobject]@{ EntityType = 'User'; Role = 'Impacted' }
+        [pscustomobject]@{ EntityType = 'MailMessage'; Role = 'Related' }
+    )) {
+    Add-Record -Table 'BehaviorEntities' -Time $deviceCodeAlertTime -Values @{
+        Timestamp = Format-WorkshopTime $deviceCodeAlertTime
+        TimeGenerated = Format-WorkshopTime $deviceCodeAlertTime
+        BehaviorId = $deviceCodeBehaviorId
+        ActionType = 'DeviceCodeAuthenticationFromUnfamiliarLocation'
+        Categories = 'InitialAccess'
+        ServiceSource = 'Microsoft Defender XDR'
+        DetectionSource = 'Behavior analytics'
+        DataSources = 'SigninLogs,EmailEvents'
+        EntityType = $behaviorEntity.EntityType
+        EntityRole = $behaviorEntity.Role
+        DetailedEntityRole = $behaviorEntity.EntityType
+        AccountName = $victor.Name
+        AccountDomain = $adDomain
+        AccountSid = $victor.Sid
+        AccountObjectId = $victor.ObjectId
+        AccountUpn = $victor.Upn
+        RemoteIP = $externalIp
+        RemoteUrl = $deviceLoginUrl
+        NetworkMessageId = $phishNetworkMessageId
+        EmailSubject = $phishSubject
+        Application = $deviceCodeAppName
+        MachineGroup = 'Workstations'
+        AdditionalFields = '{"Technique":"T1566,T1078.004","ThreatActor":"MIDNIGHT BLIZZARD"}'
+    }
+}
+
+Add-Record -Table 'AlertInfo' -Time $deviceCodeAlertTime -Values @{
+    Timestamp = Format-WorkshopTime $deviceCodeAlertTime
+    AlertId = $scenarioAlertIds.DeviceCodePhishing
+    Title = 'Device code authentication following a phishing message'
+    Category = 'InitialAccess'
+    Severity = 'High'
+    ServiceSource = 'Microsoft Defender XDR'
+    DetectionSource = 'Microsoft Sentinel analytics'
+    AttackTechniques = 'T1566,T1078.004,T1550.001'
+}
+Add-Record -Table 'AlertEvidence' -Time $deviceCodeAlertTime -Values @{
+    Timestamp = Format-WorkshopTime $deviceCodeAlertTime
+    AlertId = $scenarioAlertIds.DeviceCodePhishing
+    Title = 'Device code authentication following a phishing message'
+    Categories = '["InitialAccess"]'
+    AttackTechniques = 'T1566,T1078.004,T1550.001'
+    ServiceSource = 'Microsoft Defender XDR'
+    DetectionSource = 'Microsoft Sentinel analytics'
+    EntityType = 'User'
+    EvidenceRole = 'Impacted'
+    EvidenceDirection = 'Source'
+    AccountName = $victor.Name
+    AccountDomain = $adDomain
+    AccountSid = $victor.Sid
+    AccountObjectId = $victor.ObjectId
+    AccountUpn = $victor.Upn
+    RemoteIP = $externalIp
+    RemoteUrl = $deviceLoginUrl
+    Application = $deviceCodeAppName
+    OAuthApplicationId = $deviceCodeAppId
+    Severity = 'High'
+    AdditionalFields = '{"ThreatActor":"MIDNIGHT BLIZZARD","Technique":"T1566,T1078.004,T1550.001","EvidenceTables":["EmailEvents","EmailUrlInfo","UrlClickEvents","SigninLogs","AADNonInteractiveUserSignInLogs","BehaviorInfo"]}'
+}
+
+# Zero-hour auto purge retroactively removed the lure once the campaign was classified,
+# which is why the message is no longer in the mailbox during the investigation.
+Add-Record -Table 'EmailPostDeliveryEvents' -Time $deviceCodeAlertTime.AddMinutes(6) -Values @{
+    Timestamp = Format-WorkshopTime $deviceCodeAlertTime.AddMinutes(6)
+    TimeGenerated = Format-WorkshopTime $deviceCodeAlertTime.AddMinutes(6)
+    NetworkMessageId = $phishNetworkMessageId
+    InternetMessageId = "<$(New-StableHex 'devicecode-phish-internet' 24)@$phishSenderDomain>"
+    Action = 'Quarantine'
+    ActionType = 'Phish ZAP'
+    ActionTrigger = 'ZAP'
+    ActionResult = 'Success'
+    RecipientEmailAddress = $victor.Upn
+    SenderFromAddress = $phishSenderAddress
+    DeliveryLocation = 'Quarantine'
+    SourceLocation = 'Inbox'
+    EmailDirection = 'Inbound'
+    ThreatTypes = 'Phish'
+    DetectionMethods = 'Advanced filter'
+    ReportId = '6005'
+}
+
+# The malicious application the stolen token is used to consent to in act 3.
+Add-Record -Table 'OAuthAppInfo' -Time $StartTime.AddMinutes(5) -Values @{
+    Timestamp = Format-WorkshopTime $StartTime.AddMinutes(5)
+    TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes(5)
+    OAuthAppId = $maliciousOAuthAppId
+    ServicePrincipalId = $maliciousOAuthSpId
+    AppName = 'USAG Cyber Sync Helper'
+    AddedOnTime = Format-WorkshopTime $StartTime.AddMinutes(4)
+    LastModifiedTime = Format-WorkshopTime $StartTime.AddMinutes(6)
+    LastUsedTime = Format-WorkshopTime $StartTime.AddMinutes(12)
+    AppStatus = 'Enabled'
+    VerifiedPublisher = @{ verifiedPublisherId = ''; displayName = ''; addedDateTime = '' }
+    PrivilegeLevel = 'High'
+    Permissions = [object[]]@('Mail.Read', 'Files.Read.All', 'Directory.ReadWrite.All', 'offline_access')
+    ConsentedUsersCount = 1
+    IsAdminConsented = $false
+    AppOrigin = 'Custom'
+    AppOwnerTenantId = $tenantId
+    ReportId = '6006'
+}
+
+# ---------------------------------------------------------------------------
+# Benign twin. Legitimate device code use by a platform engineer in the same window.
+# Every field an analyst would pivot on differs: corporate address, compliant device,
+# no risk, and a long history of the same behavior.
+# ---------------------------------------------------------------------------
+$benignDeviceCodeTime = $StartTime.AddMinutes(-52)
+$benignDeviceCodeSignIn = @{
+    Timestamp = Format-WorkshopTime $benignDeviceCodeTime
+    TimeGenerated = Format-WorkshopTime $benignDeviceCodeTime
+    CreatedDateTime = Format-WorkshopTime $benignDeviceCodeTime
+    AADTenantId = $tenantId
+    Application = $deviceCodeAppName
+    ApplicationId = $deviceCodeAppId
+    AppDisplayName = $deviceCodeAppName
+    AppId = $deviceCodeAppId
+    ResourceDisplayName = 'Windows Azure Service Management API'
+    ResourceId = '797f4846-ba00-4fd7-ba43-dac1f8f63013'
+    AccountDisplayName = $alice.DisplayName
+    AccountObjectId = $alice.ObjectId
+    AccountUpn = $alice.Upn
+    UserPrincipalName = $alice.Upn
+    UserDisplayName = $alice.DisplayName
+    UserId = $alice.ObjectId
+    Identity = $alice.DisplayName
+    IPAddress = '198.51.100.50'
+    Country = 'DE'
+    State = 'Hesse'
+    City = 'Wiesbaden'
+    Location = 'DE'
+    LogonType = 'deviceCode'
+    AuthenticationProtocol = 'deviceCode'
+    IncomingTokenType = 'none'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'success'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    DeviceTrustType = 'Azure AD joined'
+    IsInteractive = $true
+    IsManaged = $true
+    IsCompliant = $true
+    ResultType = '0'
+    ResultDescription = 'Success'
+    ErrorCode = 0
+    RiskLevelDuringSignIn = 'none'
+    RiskLevelAggregated = 'none'
+    RiskState = 'none'
+    RiskEventTypes = '[]'
+    TokenIssuerType = 'AzureAD'
+    UserAgent = 'AzureCLI/2.62.0 (MSI)'
+    CorrelationId = New-StableGuid 'benign-devicecode-correlation'
+    SessionId = New-StableGuid 'benign-devicecode-session'
+    ReportId = 6201
+    AdditionalFields = '{"Scenario":"Benign device code authentication","AnalystNote":"Corporate egress, compliant device, no risk, routine platform engineering use"}'
+}
+Add-Record -Table 'EntraIdSignInEvents' -Time $benignDeviceCodeTime -Values $benignDeviceCodeSignIn
+Add-Record -Table 'AADSignInEventsBeta' -Time $benignDeviceCodeTime -Values $benignDeviceCodeSignIn
 
 $signinTime = $StartTime
 $signinCommon = @{
@@ -3443,7 +4782,7 @@ Add-Record -Table 'AADServicePrincipalSignInLogs' -Time $StartTime.AddMinutes(6)
 
 foreach ($offset in 7, 8, 9) {
     $requestUri = if ($offset -eq 7) { "https://graph.microsoft.com/v1.0/users/$($victor.Upn)/messages" } elseif ($offset -eq 8) { "https://graph.microsoft.com/v1.0/users/$($victor.Upn)/drive/root/children" } else { 'https://graph.microsoft.com/v1.0/users' }
-    Add-Record -Table 'GraphApiAuditEvents' -Time $StartTime.AddMinutes($offset) -Values @{
+    Add-Record -Table 'GraphAPIAuditEvents' -Time $StartTime.AddMinutes($offset) -Values @{
         TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes($offset)
         Timestamp = Format-WorkshopTime $StartTime.AddMinutes($offset)
         IdentityProvider = 'AAD'
@@ -3467,7 +4806,7 @@ foreach ($offset in 7, 8, 9) {
         ServicePrincipalId = $maliciousOAuthSpId
         ResponseSize = 40896
         TenantId = ''
-        Type = 'GraphApiAuditEvents'
+        Type = 'GraphAPIAuditEvents'
         SourceSystem = ''
     }
     Add-Record -Table 'MicrosoftGraphActivityLogs' -Time $StartTime.AddMinutes($offset) -Values @{
@@ -3493,7 +4832,7 @@ $graphAbuseRequests = @(
     [pscustomobject]@{ Offset = 12; Method = 'GET'; Uri = 'https://graph.microsoft.com/v1.0/sites/root/drive/root/children'; Scopes = 'Files.Read.All Sites.Read.All'; Status = '200'; Workload = 'Microsoft.FileServices'; ResponseSize = 98304 }
 )
 foreach ($request in $graphAbuseRequests) {
-    Add-Record -Table 'GraphApiAuditEvents' -Time $StartTime.AddMinutes($request.Offset) -Values @{
+    Add-Record -Table 'GraphAPIAuditEvents' -Time $StartTime.AddMinutes($request.Offset) -Values @{
         TimeGenerated = Format-WorkshopTime $StartTime.AddMinutes($request.Offset)
         Timestamp = Format-WorkshopTime $StartTime.AddMinutes($request.Offset)
         IdentityProvider = 'AAD'
@@ -3517,7 +4856,7 @@ foreach ($request in $graphAbuseRequests) {
         ServicePrincipalId = $maliciousOAuthSpId
         ResponseSize = $request.ResponseSize
         TenantId = ''
-        Type = 'GraphApiAuditEvents'
+        Type = 'GraphAPIAuditEvents'
         SourceSystem = ''
     }
     Add-Record -Table 'MicrosoftGraphActivityLogs' -Time $StartTime.AddMinutes($request.Offset) -Values @{
@@ -3606,7 +4945,7 @@ $scenarioCorrelationAlerts = @(
         Command = 'USAG Cyber Sync Helper service-principal credential added and used for Microsoft Graph'
         Application = 'USAG Cyber Sync Helper'
         OAuthApplicationId = $maliciousOAuthAppId
-        AdditionalFields = '{"Scenario":"OAuth persistence and Graph access","ServicePrincipal":"USAG Cyber Sync Helper","EvidenceTables":["CloudAppEvents","AuditLogs","AADServicePrincipalSignInLogs","GraphApiAuditEvents","MicrosoftGraphActivityLogs"]}'
+        AdditionalFields = '{"Scenario":"OAuth persistence and Graph access","ServicePrincipal":"USAG Cyber Sync Helper","EvidenceTables":["CloudAppEvents","AuditLogs","AADServicePrincipalSignInLogs","GraphAPIAuditEvents","MicrosoftGraphActivityLogs"]}'
     },
     [pscustomobject]@{
         AlertId = $scenarioAlertIds.CorrelationCredentialCollection
@@ -4437,7 +5776,7 @@ $summary = [ordered]@{
         [ordered]@{ Title = 'Risky interactive Entra sign-in from unfamiliar infrastructure'; Technique = 'T1078.004,T1110.003,T1090.002'; Offset = 0; Command = 'SigninLogs high-risk interactive sign-in with MFA from 185.225.73.18' }
         [ordered]@{ Title = 'Suspicious OAuth consent grants mailbox and file scopes'; Technique = 'T1528,T1098.003,T1550.001'; Offset = 5; Command = 'CloudAppEvents OAuthAppConsentGranted for USAG Cyber Sync Helper with Mail.Read Files.Read.All offline_access' }
         [ordered]@{ Title = 'Service principal credential added for OAuth persistence'; Technique = 'T1098.001,T1550.001'; Offset = 6; Command = 'AuditLogs Add service principal credentials and AADServicePrincipalSignInLogs client-secret sign-in to Microsoft Graph' }
-        [ordered]@{ Title = 'Graph API mailbox, file, and directory collection'; Technique = 'T1087.004,T1114.002,T1530'; Offset = 7; Command = 'GraphApiAuditEvents and MicrosoftGraphActivityLogs read messages, OneDrive, users, and SharePoint content' }
+        [ordered]@{ Title = 'Graph API mailbox, file, and directory collection'; Technique = 'T1087.004,T1114.002,T1530'; Offset = 7; Command = 'GraphAPIAuditEvents and MicrosoftGraphActivityLogs read messages, OneDrive, users, and SharePoint content' }
     )
     attackVectors = $attackSteps | Select-Object Title, Technique, Offset, Command
     linuxAttackVectors = @(

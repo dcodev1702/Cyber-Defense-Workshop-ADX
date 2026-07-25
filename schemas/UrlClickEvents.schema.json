@@ -1,0 +1,129 @@
+{
+  "tableName": "UrlClickEvents",
+  "categories": [
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender XDR",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-urlclickevents-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Live schema captured from the UrlClickEvents table.",
+  "columns": [
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "Url",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "ActionType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "AccountUpn",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "Workload",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "NetworkMessageId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "ThreatTypes",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "DetectionMethods",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "IPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "IsClickedThrough",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "UrlChain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "ReportId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "AppName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "AppVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "SourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live UrlClickEvents schema."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live UrlClickEvents schema."
+    }
+  ],
+  "adx": {
+    "mappingName": "UrlClickEvents_JsonMapping"
+  }
+}

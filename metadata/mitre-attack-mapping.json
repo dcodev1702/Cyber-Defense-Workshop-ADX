@@ -24,7 +24,7 @@
       "tactic": "Command and Control",
       "techniqueId": "T1090.002",
       "techniqueName": "Proxy: External Proxy",
-      "primaryTables": ["SigninLogs", "CloudAppEvents", "GraphApiAuditEvents", "MicrosoftGraphActivityLogs"]
+      "primaryTables": ["SigninLogs", "CloudAppEvents", "GraphAPIAuditEvents", "MicrosoftGraphActivityLogs"]
     },
     {
       "scenarioMinute": 5,
@@ -32,7 +32,7 @@
       "tactic": "Credential Access",
       "techniqueId": "T1528",
       "techniqueName": "Steal Application Access Token",
-      "primaryTables": ["CloudAppEvents", "AuditLogs", "GraphApiAuditEvents", "MicrosoftGraphActivityLogs", "AlertInfo", "AlertEvidence"]
+      "primaryTables": ["CloudAppEvents", "AuditLogs", "GraphAPIAuditEvents", "MicrosoftGraphActivityLogs", "AlertInfo", "AlertEvidence"]
     },
     {
       "scenarioMinute": 5,
@@ -48,7 +48,7 @@
       "tactic": "Persistence",
       "techniqueId": "T1098.001",
       "techniqueName": "Account Manipulation: Additional Cloud Credentials",
-      "primaryTables": ["AuditLogs", "CloudAppEvents", "AADServicePrincipalSignInLogs", "GraphApiAuditEvents", "AlertInfo", "AlertEvidence"]
+      "primaryTables": ["AuditLogs", "CloudAppEvents", "AADServicePrincipalSignInLogs", "GraphAPIAuditEvents", "AlertInfo", "AlertEvidence"]
     },
     {
       "scenarioMinute": 6,
@@ -56,7 +56,7 @@
       "tactic": "Defense Evasion",
       "techniqueId": "T1550.001",
       "techniqueName": "Use Alternate Authentication Material: Application Access Token",
-      "primaryTables": ["AADServicePrincipalSignInLogs", "GraphApiAuditEvents", "MicrosoftGraphActivityLogs"]
+      "primaryTables": ["AADServicePrincipalSignInLogs", "GraphAPIAuditEvents", "MicrosoftGraphActivityLogs"]
     },
     {
       "scenarioMinute": 7,
@@ -64,7 +64,7 @@
       "tactic": "Discovery",
       "techniqueId": "T1087.004",
       "techniqueName": "Account Discovery: Cloud Account",
-      "primaryTables": ["GraphApiAuditEvents", "MicrosoftGraphActivityLogs"]
+      "primaryTables": ["GraphAPIAuditEvents", "MicrosoftGraphActivityLogs"]
     },
     {
       "scenarioMinute": 7,
@@ -72,7 +72,7 @@
       "tactic": "Collection",
       "techniqueId": "T1114.002",
       "techniqueName": "Email Collection: Remote Email Collection",
-      "primaryTables": ["GraphApiAuditEvents", "MicrosoftGraphActivityLogs"]
+      "primaryTables": ["GraphAPIAuditEvents", "MicrosoftGraphActivityLogs"]
     },
     {
       "scenarioMinute": 8,
@@ -80,7 +80,7 @@
       "tactic": "Collection",
       "techniqueId": "T1530",
       "techniqueName": "Data from Cloud Storage",
-      "primaryTables": ["GraphApiAuditEvents", "MicrosoftGraphActivityLogs"]
+      "primaryTables": ["GraphAPIAuditEvents", "MicrosoftGraphActivityLogs"]
     }
   ],
   "attackVectors": [
