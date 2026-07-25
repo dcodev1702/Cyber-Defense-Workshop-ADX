@@ -69,7 +69,7 @@ Do not redeploy or delete the same cluster name while its provisioning state is 
 | --- | --- |
 | Source cluster and database | `dibsecadx/cyber-defend-q0xxzc` in the Security subscription |
 | Destination cluster and database | `usag-wiesbaden-cys26/cyber-defend-usagwsbdn-cys26` in Student |
-| Source inventory at copy preparation | 48 tables, 358,621 rows, approximately 200.9 MB original data (point-in-time at that copy; the package now creates 79 tables) |
+| Source inventory at copy preparation | 79 tables from Microsoft Learn-derived schema JSON |
 | Transfer method | Source schema script, UAMI-backed Parquet export, and table-by-table restore through temporary external tables |
 | Backup identity | `uami-adx-backup` (`8b8fadd4-9d17-4471-b0c7-139625bfef12`) |
 | Backup storage | `adxdibsecadx09da4d6a` / `adx-backups` |
