@@ -1,0 +1,882 @@
+{
+  "tableName": "ASimDnsActivityLogs",
+  "categories": [
+    "Network",
+    "Dns",
+    "AzureMonitor",
+    "Asim"
+  ],
+  "sourceProduct": "Microsoft Sentinel ASIM",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/asimdnsactivitylogs",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Normalized ASIM DNS activity used to hunt command and control resolution and to teach schema normalization.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 998. Most common: 07/24/2026 18:37:04"
+    },
+    {
+      "name": "EventCount",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: 1"
+    },
+    {
+      "name": "EventType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 2. Most common: Query"
+    },
+    {
+      "name": "EventSubType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 3. Most common: NA"
+    },
+    {
+      "name": "EventResult",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 2. Most common: NA"
+    },
+    {
+      "name": "EventResultDetails",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 3. Most common: NA"
+    },
+    {
+      "name": "EventOriginalType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 8. Most common: 279"
+    },
+    {
+      "name": "EventProduct",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: DNS Server"
+    },
+    {
+      "name": "EventVendor",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: Microsoft"
+    },
+    {
+      "name": "DvcIpAddr",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: 10.1.1.4"
+    },
+    {
+      "name": "DvcHostname",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: adds01"
+    },
+    {
+      "name": "DvcDomain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: dibsec.net"
+    },
+    {
+      "name": "DvcDomainType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: FQDN"
+    },
+    {
+      "name": "DvcOs",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: Windows"
+    },
+    {
+      "name": "DvcOsVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: 10.0.26100.0"
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 125. Most common: {}"
+    },
+    {
+      "name": "SrcIpAddr",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 3. Most common: 10.1.1.4"
+    },
+    {
+      "name": "SrcPortNumber",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 25. Most common: 59033"
+    },
+    {
+      "name": "SrcGeoCountry",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 2."
+    },
+    {
+      "name": "SrcGeoRegion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcGeoCity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcGeoLatitude",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: 47.68"
+    },
+    {
+      "name": "SrcGeoLongitude",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: -122.12"
+    },
+    {
+      "name": "DstIpAddr",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 3. Most common: 10.1.1.4"
+    },
+    {
+      "name": "DstGeoCountry",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 2."
+    },
+    {
+      "name": "DstGeoRegion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstGeoCity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstGeoLatitude",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: 47.68"
+    },
+    {
+      "name": "DstGeoLongitude",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: -122.12"
+    },
+    {
+      "name": "DnsQuery",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 90. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977.ods.opinsights.azure.com"
+    },
+    {
+      "name": "DnsQueryType",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 6. Most common: 1"
+    },
+    {
+      "name": "DnsQueryTypeName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 7. Most common: A"
+    },
+    {
+      "name": "DnsResponseCode",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 2. Most common: 0"
+    },
+    {
+      "name": "DnsResponseName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 31. Most common: []"
+    },
+    {
+      "name": "TransactionIdHex",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 327. Most common: EE2C"
+    },
+    {
+      "name": "DstDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstDvcScope",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstOriginalRiskLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstRiskLevel",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "DvcDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DvcInterface",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DvcOriginalAction",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DvcScope",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DvcScopeId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "EventOriginalSeverity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "NetworkProtocolVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "RuleName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "RuleNumber",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "DnsResponseIpCountry",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 5."
+    },
+    {
+      "name": "DnsResponseIpLatitude",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 10. Most common: 36.64"
+    },
+    {
+      "name": "DnsResponseIpLongitude",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 10. Most common: -78.27"
+    },
+    {
+      "name": "NetworkProtocol",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: UDP"
+    },
+    {
+      "name": "DnsQueryClass",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: 1"
+    },
+    {
+      "name": "DnsQueryClassName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: IN"
+    },
+    {
+      "name": "DnsNetworkDuration",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 16. Most common: 3"
+    },
+    {
+      "name": "DnsFlagsAuthenticated",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: False"
+    },
+    {
+      "name": "DnsFlagsAuthoritative",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 2. Most common: False"
+    },
+    {
+      "name": "DnsFlagsRecursionDesired",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 2. Most common: True"
+    },
+    {
+      "name": "DnsSessionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 176."
+    },
+    {
+      "name": "SrcDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcDvcScope",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcDvcScopeId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcOriginalRiskLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcUserScope",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcUserScopeId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcUserSessionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ThreatId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ThreatIpAddr",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ThreatField",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "UrlCategory",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ThreatCategory",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ThreatName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ThreatConfidence",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "ThreatOriginalConfidence",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ThreatRiskLevel",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "ThreatOriginalRiskLevel_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ThreatOriginalRiskLevel",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "ThreatIsActive",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "ThreatFirstReportedTime",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ThreatFirstReportedTime_d",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "ThreatLastReportedTime",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "ThreatLastReportedTime_d",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "EventStartTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 998. Most common: 07/24/2026 18:37:04"
+    },
+    {
+      "name": "EventEndTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 998. Most common: 07/24/2026 18:37:04"
+    },
+    {
+      "name": "EventMessage",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "EventOriginalUid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "EventReportUrl",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "EventSchemaVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "Dvc",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DvcFQDN",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DvcId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DvcIdType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DvcMacAddr",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DvcZone",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DnsResponseIpCity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DnsResponseIpRegion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "EventOwner",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "EventProductVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "EventSeverity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "Src",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcHostname",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcDomain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcDomainType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcFQDN",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcDvcId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcDvcIdType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcDeviceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcRiskLevel",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "SrcUserId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcUserIdType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcUsername",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcUsernameType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcUserType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcOriginalUserType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcProcessName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcProcessId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcProcessGuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "Dst",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstPortNumber",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "DstHostname",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstDomain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstDomainType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstFQDN",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstDvcId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstDvcScopeId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstDvcIdType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstDeviceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DvcAction",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DnsFlags",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 7. Most common: 33,152"
+    },
+    {
+      "name": "DnsFlagsCheckingDisabled",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "DnsFlagsRecursionAvailable",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 2. Most common: True"
+    },
+    {
+      "name": "DnsFlagsTruncated",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: False"
+    },
+    {
+      "name": "DnsFlagsZ",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "SrcSystemEntityKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcUserEntityKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcProcessEntityKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DstSystemEntityKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DvcEntityKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SrcUserAdditionalIds",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "AdditionalEntities",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 0."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: ASimDnsActivityLogs"
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: /subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/provider..."
+    }
+  ],
+  "adx": {
+    "mappingName": "ASimDnsActivityLogs_JsonMapping"
+  }
+}

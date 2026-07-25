@@ -2198,6 +2198,105 @@ $securityEventCatalog = @(
     [pscustomobject]@{ EventID = 4732; Activity = '4732 - A member was added to a security-enabled local group.'; Task = 13826; LogonType = 0; LogonTypeName = ''; LogonProcessName = ''; AuthenticationPackage = ''; Status = '0x0'; TicketEncryptionType = ''; ServiceName = '' }
 )
 
+# ---------------------------------------------------------------------------
+# Tier 2 catalogs. Every distribution below is measured from the exported
+# DIBSecCom sample in sample\<DTG>\_field-profiles rather than assumed.
+# ---------------------------------------------------------------------------
+
+# ThreatIntelIndicators. In the real sample ObservableKey is
+# network-traffic:src_ref.value on 971 of 1000 rows, file:hashes.'SHA-256' on 15,
+# and domain-name:value on 6. Scenario indicators are listed first so students can
+# join threat intelligence to the attacker infrastructure that already appears in
+# the endpoint, identity, and cloud tables.
+$threatIntelScenarioIndicators = @(
+    [pscustomobject]@{ Key = 'network-traffic:src_ref.value'; Value = $externalIp; Confidence = 100; Tlp = 'Amber'; Tags = 'midnight-blizzard,device-code-phishing,actor:MB,p:high' }
+    [pscustomobject]@{ Key = 'domain-name:value'; Value = $c2Host; Confidence = 100; Tlp = 'Amber'; Tags = 'midnight-blizzard,c2,actor:MB,p:high' }
+    [pscustomobject]@{ Key = 'network-traffic:src_ref.value'; Value = $c2Ip; Confidence = 100; Tlp = 'Amber'; Tags = 'midnight-blizzard,c2,actor:MB,p:high' }
+    [pscustomobject]@{ Key = 'url:value'; Value = 'https://login.microsftonline.device-auth.example/common/oauth2/deviceauth'; Confidence = 100; Tlp = 'Amber'; Tags = 'midnight-blizzard,phishing,actor:MB,p:high' }
+)
+
+# Commodity indicator shapes that fill the long tail. The honeypot tag block and the
+# ic/vic/gid key format are copied from the real MDTI connector output.
+$threatIntelObservableCatalog = @(
+    [pscustomobject]@{ Key = 'network-traffic:src_ref.value'; Kind = 'Ipv4'; Confidence = 100; Tlp = 'Green' }
+    [pscustomobject]@{ Key = 'network-traffic:src_ref.value'; Kind = 'Ipv4'; Confidence = 100; Tlp = 'Green' }
+    [pscustomobject]@{ Key = 'network-traffic:src_ref.value'; Kind = 'Ipv4'; Confidence = 100; Tlp = 'Green' }
+    [pscustomobject]@{ Key = 'network-traffic:src_ref.value'; Kind = 'Ipv4'; Confidence = 75; Tlp = 'White' }
+    [pscustomobject]@{ Key = "file:hashes.'SHA-256'"; Kind = 'Sha256'; Confidence = 100; Tlp = 'Green' }
+    [pscustomobject]@{ Key = 'domain-name:value'; Kind = 'Domain'; Confidence = 60; Tlp = 'Green' }
+    [pscustomobject]@{ Key = 'url:value'; Kind = 'Url'; Confidence = 75; Tlp = 'White' }
+    [pscustomobject]@{ Key = 'email-addr:value'; Kind = 'Email'; Confidence = 75; Tlp = 'Green' }
+)
+
+# SecurityAlert. ProviderName in the real sample is MDATP on 552 of 1000 rows,
+# ASI Scheduled Alerts on 307, and ASI NRT Alerts on 126, so the product mix here
+# follows that split. Severity runs Informational 420, Medium 331, Low 142.
+$securityAlertCatalog = @(
+    [pscustomobject]@{ Name = 'NRT User added to Microsoft Entra ID Privileged Groups'; Provider = 'ASI NRT Alerts'; Product = 'Azure Sentinel'; Severity = 'Informational'; Tactics = 'PrivilegeEscalation'; Techniques = 'T1078'; Description = 'This will alert when a user is added to any of the Entra ID privileged groups.' }
+    [pscustomobject]@{ Name = 'User added to Microsoft Entra ID Privileged Groups'; Provider = 'ASI Scheduled Alerts'; Product = 'Azure Sentinel'; Severity = 'Informational'; Tactics = 'PrivilegeEscalation'; Techniques = 'T1078'; Description = 'This will alert when a user is added to any of the Entra ID privileged groups.' }
+    [pscustomobject]@{ Name = 'User Added to Admin Role'; Provider = 'ASI Scheduled Alerts'; Product = 'Azure Sentinel'; Severity = 'Medium'; Tactics = 'PrivilegeEscalation'; Techniques = 'T1078'; Description = 'Detects a user being added to a new privileged role.' }
+    [pscustomobject]@{ Name = 'Malware was prevented'; Provider = 'MDATP'; Product = 'Microsoft Defender Advanced Threat Protection'; Severity = 'Informational'; Tactics = 'Unknown'; Techniques = ''; Description = 'Malware and unwanted software are undesirable applications that perform annoying, disruptive, or harmful actions on affected machines.' }
+    [pscustomobject]@{ Name = 'Suspicious PowerShell command line'; Provider = 'MDATP'; Product = 'Microsoft Defender Advanced Threat Protection'; Severity = 'Medium'; Tactics = 'Execution'; Techniques = 'T1059'; Description = 'A PowerShell command line with suspicious characteristics was observed.' }
+    [pscustomobject]@{ Name = 'Suspicious sign-in from an unfamiliar location'; Provider = 'ASI Scheduled Alerts'; Product = 'Azure Sentinel'; Severity = 'Medium'; Tactics = 'InitialAccess'; Techniques = 'T1078'; Description = 'Identifies a sign-in from infrastructure not previously seen for this identity.' }
+    [pscustomobject]@{ Name = 'Anomalous OAuth application consent'; Provider = 'ASI Scheduled Alerts'; Product = 'Azure Sentinel'; Severity = 'High'; Tactics = 'Persistence'; Techniques = 'T1098'; Description = 'A user consented to an application requesting high-privilege Microsoft Graph scopes.' }
+    [pscustomobject]@{ Name = 'Credential theft activity detected'; Provider = 'MDATP'; Product = 'Microsoft Defender Advanced Threat Protection'; Severity = 'High'; Tactics = 'CredentialAccess'; Techniques = 'T1003'; Description = 'Activity consistent with credential dumping was observed on the device.' }
+    [pscustomobject]@{ Name = 'Suspicious Kerberos service ticket request'; Provider = 'MDATP'; Product = 'Microsoft Defender Advanced Threat Protection'; Severity = 'Medium'; Tactics = 'CredentialAccess'; Techniques = 'T1558'; Description = 'A pattern of service ticket requests consistent with Kerberoasting was observed.' }
+    [pscustomobject]@{ Name = 'Suspicious device code authentication'; Provider = 'ASI NRT Alerts'; Product = 'Azure Sentinel'; Severity = 'High'; Tactics = 'InitialAccess'; Techniques = 'T1566'; Description = 'A device code authentication completed from infrastructure unrelated to the signing-in user.' }
+    [pscustomobject]@{ Name = 'Unfamiliar sign-in properties'; Provider = 'MDATP'; Product = 'Microsoft Defender Advanced Threat Protection'; Severity = 'Low'; Tactics = 'Unknown'; Techniques = ''; Description = 'Sign-in properties deviate from the established baseline for this identity.' }
+    [pscustomobject]@{ Name = 'Mass download by a single user'; Provider = 'ASI Scheduled Alerts'; Product = 'Azure Sentinel'; Severity = 'Medium'; Tactics = 'Collection'; Techniques = 'T1530'; Description = 'A single principal downloaded an unusual volume of content in a short window.' }
+)
+
+# AzureActivity. The operation mix mirrors the real sample, where
+# MICROSOFT.SECURITY/DATASCANNERS/WRITE is 430 of 1000 rows and
+# MICROSOFT.STORAGE/STORAGEACCOUNTS/LISTKEYS/ACTION is 166. The storage key listing
+# is the operation that carries the cloud collection beat of the scenario.
+$azureActivityCatalog = @(
+    [pscustomobject]@{ Operation = 'MICROSOFT.SECURITY/DATASCANNERS/WRITE'; Provider = 'MICROSOFT.SECURITY'; Category = 'Administrative'; Status = 'Success'; Substatus = 'OK' }
+    [pscustomobject]@{ Operation = 'MICROSOFT.SECURITY/DATASCANNERS/WRITE'; Provider = 'MICROSOFT.SECURITY'; Category = 'Administrative'; Status = 'Start'; Substatus = '' }
+    [pscustomobject]@{ Operation = 'MICROSOFT.STORAGE/STORAGEACCOUNTS/LISTKEYS/ACTION'; Provider = 'MICROSOFT.STORAGE'; Category = 'Administrative'; Status = 'Success'; Substatus = 'OK' }
+    [pscustomobject]@{ Operation = 'MICROSOFT.COMPUTE/VIRTUALMACHINES/WRITE'; Provider = 'MICROSOFT.COMPUTE'; Category = 'Administrative'; Status = 'Success'; Substatus = 'Created' }
+    [pscustomobject]@{ Operation = 'MICROSOFT.EVENTGRID/REGISTER/ACTION'; Provider = 'MICROSOFT.EVENTGRID'; Category = 'Administrative'; Status = 'Success'; Substatus = 'OK' }
+    [pscustomobject]@{ Operation = 'MICROSOFT.KEYVAULT/VAULTS/SECRETS/WRITE'; Provider = 'MICROSOFT.KEYVAULT'; Category = 'Administrative'; Status = 'Success'; Substatus = 'OK' }
+    [pscustomobject]@{ Operation = 'MICROSOFT.AUTHORIZATION/ROLEASSIGNMENTS/WRITE'; Provider = 'MICROSOFT.AUTHORIZATION'; Category = 'Administrative'; Status = 'Success'; Substatus = 'Created' }
+    [pscustomobject]@{ Operation = 'MICROSOFT.RESOURCES/DEPLOYMENTS/WRITE'; Provider = 'MICROSOFT.RESOURCES'; Category = 'Administrative'; Status = 'Start'; Substatus = '' }
+    [pscustomobject]@{ Operation = 'MICROSOFT.AUTHORIZATION/POLICIES/AUDIT/ACTION'; Provider = 'MICROSOFT.AUTHORIZATION'; Category = 'Policy'; Status = 'Succeeded'; Substatus = '' }
+    [pscustomobject]@{ Operation = 'MICROSOFT.ADVISOR/RECOMMENDATIONS/AVAILABLE/ACTION'; Provider = 'MICROSOFT.ADVISOR'; Category = 'Recommendation'; Status = 'Active'; Substatus = '' }
+)
+
+# ASimDnsActivityLogs. In the real sample every row is emitted by the domain
+# controller adds01 (10.1.1.4), EventType is Query on 948 of 1000 rows, DnsQueryTypeName
+# is A on 854, and NetworkProtocol is always UDP. The scenario C2 name is included so
+# DNS resolution corroborates the endpoint network beat.
+$dnsQueryCatalog = @(
+    [pscustomobject]@{ Name = 'eus2-oi-ods.trafficmanager.net'; Type = 1; TypeName = 'A'; Response = '["104.208.231.133"]'; Malicious = $false }
+    [pscustomobject]@{ Name = 'ipv4-eus2-oi-ods-cses-b.eastus2.cloudapp.azure.com'; Type = 1; TypeName = 'A'; Response = '["52.167.145.180"]'; Malicious = $false }
+    [pscustomobject]@{ Name = 'login.microsoftonline.com'; Type = 1; TypeName = 'A'; Response = '["20.190.190.132"]'; Malicious = $false }
+    [pscustomobject]@{ Name = 'graph.microsoft.com'; Type = 1; TypeName = 'A'; Response = '["20.190.151.9"]'; Malicious = $false }
+    [pscustomobject]@{ Name = 'outlook.office365.com'; Type = 1; TypeName = 'A'; Response = '["52.96.40.242"]'; Malicious = $false }
+    [pscustomobject]@{ Name = 'usag-cyber.local'; Type = 6; TypeName = 'SOA'; Response = '[]'; Malicious = $false }
+    [pscustomobject]@{ Name = 'wpad.usag-cyber.local'; Type = 1; TypeName = 'A'; Response = '[]'; Malicious = $false }
+    [pscustomobject]@{ Name = 'sql01.usag-cyber.local'; Type = 1; TypeName = 'A'; Response = '["10.20.30.41"]'; Malicious = $false }
+    [pscustomobject]@{ Name = 'aadconnect01.usag-cyber.local'; Type = 1; TypeName = 'A'; Response = '["10.20.30.52"]'; Malicious = $false }
+    [pscustomobject]@{ Name = $c2Host; Type = 1; TypeName = 'A'; Response = "[`"$c2Ip`"]"; Malicious = $true }
+)
+
+# OfficeActivity. RecordType in the real sample is ExchangeAdmin on 829 of 1000 rows,
+# and the workload split is Exchange 944, MicrosoftTeams 31, SharePoint 25. Most rows
+# are emitted by Exchange service principals rather than humans, which is why the
+# NT SERVICE accounts dominate UserId. MailItemsAccessed carries the collection beat.
+$officeActivityCatalog = @(
+    [pscustomobject]@{ Operation = 'Set-ConditionalAccessPolicy'; RecordType = 'ExchangeAdmin'; Workload = 'Exchange'; UserType = 'DcAdmin'; Service = $true }
+    [pscustomobject]@{ Operation = 'Set-ConditionalAccessPolicy'; RecordType = 'ExchangeAdmin'; Workload = 'Exchange'; UserType = 'DcAdmin'; Service = $true }
+    [pscustomobject]@{ Operation = 'Add-MailboxLocation'; RecordType = 'ExchangeAdmin'; Workload = 'Exchange'; UserType = 'Admin'; Service = $true }
+    [pscustomobject]@{ Operation = 'Set-Mailbox'; RecordType = 'ExchangeAdmin'; Workload = 'Exchange'; UserType = 'Admin'; Service = $true }
+    [pscustomobject]@{ Operation = 'MailItemsAccessed'; RecordType = 'ExchangeItemAggregated'; Workload = 'Exchange'; UserType = 'Regular'; Service = $false }
+    [pscustomobject]@{ Operation = 'New-InboxRule'; RecordType = 'ExchangeAdmin'; Workload = 'Exchange'; UserType = 'Regular'; Service = $false }
+    [pscustomobject]@{ Operation = 'Add-MailboxPermission'; RecordType = 'ExchangeAdmin'; Workload = 'Exchange'; UserType = 'Admin'; Service = $false }
+    [pscustomobject]@{ Operation = 'FileDownloaded'; RecordType = 'SharePointFileOperation'; Workload = 'SharePoint'; UserType = 'Regular'; Service = $false }
+    [pscustomobject]@{ Operation = 'FileAccessed'; RecordType = 'SharePointFileOperation'; Workload = 'SharePoint'; UserType = 'Regular'; Service = $false }
+    [pscustomobject]@{ Operation = 'MemberAdded'; RecordType = 'MicrosoftTeams'; Workload = 'MicrosoftTeams'; UserType = 'Regular'; Service = $false }
+)
+
 $windowsProcessTemplates = @(
     [pscustomobject]@{ File = 'svchost.exe'; Path = 'C:\Windows\System32\svchost.exe'; Parent = 'services.exe'; Command = 'C:\Windows\System32\svchost.exe -k netsvcs -p' },
     [pscustomobject]@{ File = 'msedge.exe'; Path = 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'; Parent = 'explorer.exe'; Command = 'msedge.exe --type=renderer --lang=en-US' },
@@ -3847,6 +3946,414 @@ function New-NormalTelemetryValues {
                 $values.ObjectName = '-'
                 $values.HandleId = '0x0'
                 $values.AccessMask = '16777216'
+            }
+        }
+        'ThreatIntelIndicators' {
+            # Shaped from the real ThreatIntelIndicators sample: 21 of 23 columns carry
+            # data, SourceSystem is always the MDTI connector, Confidence is 100 on 971
+            # of 1000 rows, and ObservableKey is network-traffic:src_ref.value on 971.
+            # The scenario indicators occupy the first slots of a 250-row rotation so a
+            # join from this table reaches the device, identity, and cloud tables.
+            $scenarioSlot = $Index % 250
+            if ($scenarioSlot -lt $threatIntelScenarioIndicators.Count) {
+                $indicator = $threatIntelScenarioIndicators[$scenarioSlot]
+                $observableKey = $indicator.Key
+                $observableValue = $indicator.Value
+                $confidence = $indicator.Confidence
+                $tlpLevel = $indicator.Tlp
+                $indicatorTags = $indicator.Tags
+            }
+            else {
+                $tiTemplate = $threatIntelObservableCatalog[$Index % $threatIntelObservableCatalog.Count]
+                $observableKey = $tiTemplate.Key
+                $confidence = $tiTemplate.Confidence
+                $tlpLevel = $tiTemplate.Tlp
+                $observableValue = switch ($tiTemplate.Kind) {
+                    'Ipv4' { '{0}.{1}.{2}.{3}' -f (20 + ($Index % 200)), (($Index * 7) % 256), (($Index * 13) % 256), (1 + (($Index * 29) % 254)) }
+                    'Sha256' { (New-StableHex "ti-sha256|$Index" 64).ToUpperInvariant() }
+                    'Domain' { 'cdn{0}.static-content.example' -f (($Index * 17) % 9999) }
+                    'Url' { 'https://cdn{0}.static-content.example/a/{1}' -f (($Index * 17) % 9999), (New-StableHex "ti-url|$Index" 8) }
+                    'Email' { 'no-reply{0}@mail-delivery.example' -f (($Index * 11) % 9999) }
+                    default { $externalIp }
+                }
+                $indicatorTags = 'honeypot,p:default,ic:{0},vic:{1},gid:{2},ci:{3}' -f $confidence, $confidence, (New-StableHex "ti-gid|$Index" 5), (New-StableHex "ti-ci|$Index" 6)
+            }
+
+            $pattern = "[{0} = '{1}']" -f $observableKey, $observableValue
+            $validFrom = $Time.AddDays(-1 * ($Index % 45))
+            $created = $validFrom.AddDays(-1 * ($Index % 30))
+            $validUntil = $validFrom.AddDays(365 + ($Index % 2900))
+            $isActive = ($Index % 500) -ne 0
+
+            $values.TenantId = $tenantId
+            $values.WorkspaceId = $tenantId
+            $values.AzureTenantId = $tenantId
+            $values.Id = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes(('Microsoft Defender Threat Intelligence|{0}' -f $pattern)))
+            $values.SourceSystem = 'Microsoft Defender Threat Intelligence'
+            $values.LastUpdateMethod = 'BasicMDTIConnector'
+            $values.IsDeleted = $false
+            $values.AdditionalFields = @{ TLPLevel = $tlpLevel }
+            $values.IsActive = $isActive
+            $values.ValidFrom = Format-WorkshopTime $validFrom
+            $values.ValidUntil = Format-WorkshopTime $validUntil
+            $values.Created = Format-WorkshopTime $created
+            $values.Modified = Format-WorkshopTime $validFrom
+            $values.Tags = $indicatorTags
+            $values.Confidence = $confidence
+            $values.Pattern = $pattern
+            $values.ObservableKey = $observableKey
+            $values.ObservableValue = $observableValue
+            $values.Data = @{
+                pattern = $pattern
+                type = 'indicator'
+                spec_version = '2.1'
+                id = 'indicator--{0}' -f (New-StableGuid "ti-stix|$observableValue")
+                created = Format-WorkshopTime $created
+                modified = Format-WorkshopTime $validFrom
+                valid_from = Format-WorkshopTime $validFrom
+                valid_until = Format-WorkshopTime $validUntil
+                pattern_type = 'stix'
+                confidence = $confidence
+                indicator_types = [object[]]@('malicious-activity')
+            }
+            $values.Type = 'ThreatIntelIndicators'
+        }
+        'SecurityAlert' {
+            # Shaped from the real SecurityAlert sample: 30 of 35 columns carry data.
+            # ProviderName is MDATP on 552 of 1000 rows and the Sentinel analytics
+            # providers on 433, so the Sentinel-only columns are deliberately empty on
+            # the MDATP rows exactly as they are in the real table.
+            $alertTemplate = $securityAlertCatalog[$Index % $securityAlertCatalog.Count]
+            $isSentinelAlert = $alertTemplate.Provider -like 'ASI *'
+            $alertStart = $Time.AddMinutes(-1 * (5 + ($Index % 55)))
+            $systemAlertId = New-StableGuid "security-alert|$Index"
+            $alertUser = $users[($Index * 19) % $users.Count]
+            $alertDevice = $devices[($Index * 7) % $devices.Count]
+
+            $values.TenantId = $tenantId
+            $values.DisplayName = $alertTemplate.Name
+            $values.AlertName = $alertTemplate.Name
+            $values.AlertSeverity = $alertTemplate.Severity
+            $values.Description = $alertTemplate.Description
+            $values.ProviderName = $alertTemplate.Provider
+            $values.VendorName = 'Microsoft'
+            $values.ProductName = $alertTemplate.Product
+            $values.VendorOriginalId = if ($isSentinelAlert) { '{0}_aml' -f (New-StableGuid "alert-vendor|$Index") } else { '{0}_1' -f (New-StableGuid "alert-vendor|$Index") }
+            $values.SystemAlertId = $systemAlertId
+            $values.AlertType = if ($isSentinelAlert) { '{0}_{1}' -f $tenantId, (New-StableGuid "alert-rule|$($alertTemplate.Name)") } else { 'CustomDetection' }
+            $values.IsIncident = $false
+            $values.StartTime = Format-WorkshopTime $alertStart
+            $values.EndTime = Format-WorkshopTime $alertStart.AddMinutes(2 + ($Index % 9))
+            $values.ProcessingEndTime = $timeText
+            $values.SourceSystem = 'Detection'
+            $values.Status = if (($Index % 20) -eq 0) { 'Resolved' } else { 'New' }
+            $values.Tactics = $alertTemplate.Tactics
+            $values.Type = 'SecurityAlert'
+            $values.ExtendedProperties = @{
+                IncidentId = [string](300 + ($Index % 400))
+                OriginSource = 'Microsoft Defender XDR'
+                Alert_Display_Name = $alertTemplate.Name
+                ProcessedBySentinel = if ($isSentinelAlert) { 'True' } else { 'False' }
+            }
+
+            # RemediationSteps is null on 83 percent of real rows, Techniques on 88,
+            # SubTechniques on 98, and Entities on 35.
+            if (($Index % 6) -eq 0) {
+                $values.RemediationSteps = [object[]]@('Collect artifacts and determine scope', 'Review the sign-in and consent history for the affected identity')
+            }
+            if ($alertTemplate.Techniques -and ($Index % 8) -lt 1) {
+                $values.Techniques = [object[]]@($alertTemplate.Techniques)
+            }
+            if (($Index % 50) -eq 0 -and $alertTemplate.Techniques) {
+                $values.SubTechniques = [object[]]@('{0}.001' -f $alertTemplate.Techniques)
+            }
+            if (($Index % 100) -lt 65) {
+                $values.Entities = [object[]]@(
+                    @{ '$id' = '3'; DnsDomain = $corpFqdn; HostName = $alertDevice.ShortName; Type = 'host' }
+                    @{ '$id' = '4'; Name = $alertUser.Name; UPNSuffix = $tenantDomain; Type = 'account' }
+                )
+                $values.CompromisedEntity = $alertDevice.Name
+            }
+
+            if ($isSentinelAlert) {
+                $values.WorkspaceSubscriptionId = $subscriptionId
+                $values.WorkspaceResourceGroup = 'sentinel'
+                $values.ProductComponentName = if ($alertTemplate.Provider -eq 'ASI NRT Alerts') { 'NRT Alerts' } else { 'Scheduled Alerts' }
+            }
+            else {
+                $values.AlertLink = 'https://security.microsoft.com/alerts/{0}' -f $systemAlertId
+            }
+        }
+        'AzureActivity' {
+            # Shaped from the real AzureActivity sample: 26 of 34 columns carry data.
+            # Level is Information on 921 of 1000 rows, CategoryValue is Administrative
+            # on 892, and the _d suffixed columns mirror their dynamic counterparts.
+            $activityTemplate = $azureActivityCatalog[$Index % $azureActivityCatalog.Count]
+            $isScenarioCaller = ($Index % 37) -eq 0
+            $callerObjectId = if ($isScenarioCaller) { $maliciousOAuthSpId } else { New-StableGuid "azure-caller|$($Index % 22)" }
+            $callerIp = if ($isScenarioCaller) { $externalIp } else { '172.170.{0}.{1}' -f (($Index * 3) % 256), (1 + (($Index * 11) % 254)) }
+            $activityResourceGroup = @('FOUNDRY', 'ADDS', 'SENTINEL', 'STORAGE', 'NETWORK')[$Index % 5]
+            $activityScope = '/subscriptions/{0}/resourceGroups/{1}' -f $subscriptionId, $activityResourceGroup
+            $authorizationBlock = @{
+                scope = $activityScope
+                action = ($activityTemplate.Operation.ToLowerInvariant())
+                evidence = @{ role = 'Contributor'; roleAssignmentScope = "/subscriptions/$subscriptionId" }
+            }
+            $claimsBlock = @{
+                aud = 'https://management.core.windows.net/'
+                iss = "https://sts.windows.net/$tenantId/"
+                appid = $callerObjectId
+                'http://schemas.microsoft.com/identity/claims/objectidentifier' = $callerObjectId
+                'http://schemas.microsoft.com/identity/claims/tenantid' = $tenantId
+            }
+            $propertiesBlock = @{
+                eventCategory = $activityTemplate.Category
+                entity = $activityScope
+                statusCode = if ($activityTemplate.Substatus) { $activityTemplate.Substatus } else { 'OK' }
+                message = $activityTemplate.Operation
+            }
+
+            $values.TenantId = $tenantId
+            $values.OperationNameValue = $activityTemplate.Operation
+            $values.Level = if (($Index % 100) -lt 92) { 'Information' } elseif (($Index % 100) -lt 97) { 'Informational' } else { 'Warning' }
+            $values.ActivityStatusValue = $activityTemplate.Status
+            $values.ActivitySubstatusValue = $activityTemplate.Substatus
+            $values.ResourceGroup = $activityResourceGroup
+            $values.SubscriptionId = $subscriptionId
+            $values.CorrelationId = New-StableGuid "azure-correlation|$($Index % 450)"
+            $values.Caller = $callerObjectId
+            $values.CallerIpAddress = $callerIp
+            $values.CategoryValue = $activityTemplate.Category
+            $values.HTTPRequest = @{ clientIpAddress = $callerIp }
+            $values.ResourceProviderValue = $activityTemplate.Provider
+            $values.EventDataId = New-StableGuid "azure-event-data|$Index"
+            $values.EventSubmissionTimestamp = $timeText
+            $values.SourceSystem = 'Azure'
+            $values.Authorization = $authorizationBlock
+            $values.Authorization_d = $authorizationBlock
+            $values.Claims = $claimsBlock
+            $values.Claims_d = $claimsBlock
+            $values.Properties = $propertiesBlock
+            $values.Properties_d = $propertiesBlock
+            $values.Hierarchy = '{0}/DibSecurity' -f $tenantId
+            $values._ResourceId = $activityScope
+            $values.Type = 'AzureActivity'
+        }
+        'ASimDnsActivityLogs' {
+            # Shaped from the real ASimDnsActivityLogs sample: 50 of 144 columns carry
+            # data. Every row is emitted by the domain controller, EventType is Query on
+            # 948 of 1000 rows, DnsQueryTypeName is A on 854, NetworkProtocol is always
+            # UDP, and DnsResponseName is the literal "[]" when no answer is recorded.
+            $dnsTemplate = $dnsQueryCatalog[$Index % $dnsQueryCatalog.Count]
+            $isQuery = ($Index % 100) -lt 95
+            $subTypeRoll = $Index % 3
+            $eventSubType = @('NA', 'request', 'response')[$subTypeRoll]
+            $hasResult = $eventSubType -eq 'response'
+            $isNxDomain = $hasResult -and (($Index % 25) -eq 0)
+            $dnsSource = @('10.1.1.4', '10.1.1.4', '10.1.1.4', '168.63.129.16', '10.1.2.4')[$Index % 5]
+
+            $values.TenantId = $tenantId
+            $values.EventCount = 1
+            $values.EventType = if ($isQuery) { 'Query' } else { 'Update' }
+            $values.EventSubType = $eventSubType
+            $values.EventResult = if ($hasResult) { 'Success' } else { 'NA' }
+            $values.EventResultDetails = if (-not $hasResult) { 'NA' } elseif ($isNxDomain) { 'NXDOMAIN' } else { 'NOERROR' }
+            $values.EventOriginalType = [string]@(279, 256, 257, 258, 259, 260, 261, 262)[$Index % 8]
+            $values.EventProduct = 'DNS Server'
+            $values.EventVendor = 'Microsoft'
+            $values.EventStartTime = $timeText
+            $values.EventEndTime = $timeText
+            $values.DvcIpAddr = '10.1.1.4'
+            $values.DvcHostname = 'adds01'
+            $values.DvcDomain = $corpFqdn
+            $values.DvcDomainType = 'FQDN'
+            $values.DvcOs = 'Windows'
+            $values.DvcOsVersion = '10.0.26100.0'
+            $values.SrcIpAddr = $dnsSource
+            $values.SrcPortNumber = @(59033, 0, 50532, 53)[$Index % 4]
+            $values.DstIpAddr = '10.1.1.4'
+            $values.DnsQuery = $dnsTemplate.Name
+            $values.DnsQueryType = $dnsTemplate.Type
+            $values.DnsQueryTypeName = $dnsTemplate.TypeName
+            $values.DnsQueryClass = 1
+            $values.DnsQueryClassName = 'IN'
+            $values.DnsResponseName = if ($hasResult -and -not $isNxDomain) { $dnsTemplate.Response } else { '[]' }
+            $values.DnsResponseCode = if ($hasResult) { if ($isNxDomain) { 3 } else { 0 } } else { $null }
+            $values.NetworkProtocol = 'UDP'
+            $values.TransactionIdHex = (New-StableHex "dns-transaction|$Index" 4).ToUpperInvariant()
+            $values.DnsFlags = @('33,152', '256', '34,176')[$Index % 3]
+            $values.DnsFlagsRecursionDesired = ($Index % 100) -lt 65
+            $values.DnsFlagsRecursionAvailable = ($Index % 100) -lt 65
+            $values.DnsFlagsTruncated = $false
+            $values.DnsFlagsAuthoritative = ($Index % 10) -eq 0
+            $values.AdditionalFields = if (($Index % 8) -eq 0) { @{ QXID = (New-StableHex "dns-qxid|$Index" 4).ToUpperInvariant() } } else { @{} }
+            $values.Type = 'ASimDnsActivityLogs'
+            $values._ResourceId = '/subscriptions/{0}/resourcegroups/adds/providers/microsoft.compute/virtualmachines/adds01' -f $subscriptionId
+
+            if ($dnsTemplate.Malicious) {
+                $values.SrcIpAddr = '10.20.30.24'
+                $values.DnsResponseIpCountry = 'Netherlands'
+            }
+            elseif (($Index % 8) -eq 0) {
+                $values.SrcGeoCountry = 'United States'
+                $values.SrcGeoLatitude = 47.68
+                $values.SrcGeoLongitude = -122.12
+                $values.DnsResponseIpCountry = 'United States'
+            }
+        }
+        'OfficeActivity' {
+            # Shaped from the real OfficeActivity sample: 83 of 152 columns carry data.
+            # RecordType is ExchangeAdmin on 829 of 1000 rows and most activity is
+            # emitted by Exchange service principals rather than humans, which is why
+            # UserId is an NT SERVICE principal on 826. OfficeTenantId is the literal
+            # token $RestApiTenantId$ in the real data. The _ suffixed columns duplicate
+            # their base column exactly as the connector emits them.
+            $officeTemplate = $officeActivityCatalog[$Index % $officeActivityCatalog.Count]
+            $officeUser = $users[($Index * 23) % $users.Count]
+            $isServicePrincipalActor = $officeTemplate.Service
+            $officeActor = if ($isServicePrincipalActor) {
+                @('NT SERVICE\MSExchangeServiceHostNetCore (Microsoft.Exchange.ServiceHost)', 'NT SERVICE\MSExchangeAdminApiNetCore (Microsoft.Exchange.AdminApi)')[$Index % 2]
+            }
+            else {
+                $officeUser.Upn
+            }
+            $officeClientIp = if ($isServicePrincipalActor) {
+                '[2603:1036:301:4409::5]:{0}' -f (20000 + ($Index % 45000))
+            }
+            elseif (($Index % 61) -eq 0) {
+                $externalIp
+            }
+            else {
+                '45.23.{0}.{1}' -f (($Index * 5) % 256), (1 + (($Index * 17) % 254))
+            }
+            $officeRecordId = New-StableGuid "office-activity|$Index"
+            $officeStart = $Time.AddMinutes(-1 * ($Index % 120))
+
+            $values.TenantId = $tenantId
+            $values.OrganizationId = $tenantId
+            $values.OrganizationId_ = $tenantId
+            $values.RecordType = $officeTemplate.RecordType
+            $values.Operation = $officeTemplate.Operation
+            $values.OfficeWorkload = $officeTemplate.Workload
+            $values.UserType = $officeTemplate.UserType
+            $values.UserKey = $officeActor
+            $values.UserId = $officeActor
+            $values.UserId_ = $officeActor
+            $values.ClientIP = $officeClientIp
+            $values.ClientIP_ = $officeClientIp
+            $values.ResultStatus = if ($officeTemplate.RecordType -eq 'ExchangeAdmin') { 'True' } else { 'Succeeded' }
+            $values.ResultReasonType = $values.ResultStatus
+            $values.ExternalAccess = ($Index % 100) -lt 53
+            $values.OriginatingServer = '{0} (15.21.0202.012)' -f @('MN0PR18MB6038', 'DM4PR18MB4318', 'CH2PR18MB3901')[$Index % 3]
+            $values.OrganizationName = $tenantDomain
+            $values.SourceSystem = 'OfficeActivityManager'
+            $values.OfficeId = $officeRecordId
+            $values.SourceRecordId = $officeRecordId
+            $values.OfficeTenantId = '$RestApiTenantId$'
+            $values.OfficeTenantId_ = '$RestApiTenantId$'
+            $values.ElevationTime = Format-WorkshopTime $officeStart
+            $values.Start_Time = Format-WorkshopTime $officeStart
+            $values.Type = 'OfficeActivity'
+
+            # AppAccessContext is present on 99 percent of real rows and AppPoolName on
+            # 83, so both are effectively baseline rather than exceptional.
+            $values.AppAccessContext = if (($Index % 100) -lt 60) {
+                @{ IssuedAtTime = (Format-WorkshopTime $officeStart); UniqueTokenId = (New-StableHex "office-token|$Index" 22) }
+            }
+            else {
+                @{}
+            }
+            if ($isServicePrincipalActor) {
+                $values.AppPoolName = if ($officeActor -like '*ServiceHost*') { 'MSExchangeServiceHostNetCore' } else { 'MSExchangeAdminApiNetCore' }
+            }
+            if (($Index % 10) -eq 0) {
+                $values.AppId = New-StableGuid "office-app|$($Index % 6)"
+                $values.ClientAppId = $values.AppId
+            }
+            if (($Index % 50) -eq 0) {
+                $values.UserAgent = if ($officeTemplate.Workload -eq 'MicrosoftTeams') { 'TeamsMiddleTier/1.0a$*+' } else { $browserUserAgent }
+            }
+            if (($Index % 100) -eq 0) {
+                $values.ApplicationId = '00000003-0000-0000-c000-000000000000'
+                $values.AzureADAppId = $maliciousOAuthAppId
+            }
+
+            if ($officeTemplate.Operation -in @('MailItemsAccessed', 'New-InboxRule', 'Add-MailboxPermission')) {
+                $values.Logon_Type = if ($officeTemplate.UserType -eq 'Admin') { 'Admin' } else { 'Owner' }
+                $values.InternalLogonType = if ($officeTemplate.UserType -eq 'Admin') { 1 } else { 0 }
+                $values.MailboxGuid = New-StableGuid "office-mailbox|$($officeUser.Name)"
+                $values.MailboxOwnerUPN = $officeUser.Upn
+                $values.MailboxOwnerSid = $officeUser.Sid
+                $values.LogonUserSid = $officeUser.Sid
+                $values.ClientInfoString = @('Client=REST;Client=RESTSystem;;', 'Client=OutlookService;Outlook-iOS/2.0;')[$Index % 2]
+                $values.Client_IPAddress = $officeClientIp -replace '^\[|\]:\d+$', ''
+                $values.MailboxOwnerMasterAccountSid = 'S-1-5-10'
+                $values.MessageId = [string](1782900000000 + ($Index * 977))
+                $values.OperationProperties = [object[]]@(
+                    @{ Name = 'MailAccessType'; Value = 'Bind' }
+                    @{ Name = 'IsSucceeded'; Value = 'True' }
+                )
+                $values.Folders = [object[]]@(
+                    @{
+                        FolderItems = [object[]]@(@{ ClientRequestId = (New-StableGuid "office-folder-item|$Index"); InternetMessageId = ('<{0}@usag-cyber.local>' -f (New-StableHex "office-imid|$Index" 20)) })
+                        Id = 'LgAAAAD{0}' -f (New-StableHex "office-folder|$Index" 24)
+                        Path = '\Inbox'
+                    }
+                )
+                $values.Item = @{
+                    Id = 'LgAAAAD{0}' -f (New-StableHex "office-item|$Index" 28)
+                    Subject = 'Quarterly access review'
+                    ParentFolder = @{ Path = '\Inbox' }
+                }
+            }
+
+            if ($officeTemplate.Workload -eq 'SharePoint') {
+                $values.EventSource = 'SharePoint'
+                $values.ItemType = 'File'
+                $values.Site_ = New-StableGuid "office-site|$($Index % 4)"
+                $values.Site_Url = 'https://usagcyber.sharepoint.com/sites/Engineering/'
+                $values.Site_Url_ = $values.Site_Url
+                $values.SourceRelativeUrl = 'Shared Documents/Engineering'
+                $values.SourceRelativeUrl_ = $values.SourceRelativeUrl
+                $values.SourceFileName = 'network-diagram-{0}.vsdx' -f (($Index * 7) % 500)
+                $values.SourceFileName_ = $values.SourceFileName
+                $values.SourceFileExtension = 'vsdx'
+                $values.DestinationRelativeUrl = 'Shared Documents/Archive'
+                $values.DestinationFileName = $values.SourceFileName
+                $values.ListItemUniqueId = New-StableGuid "office-list-item|$Index"
+                $values.OperationScope = 'Site'
+                $values.TargetUserOrGroupName = 'SHAREPOINT\system'
+                $values.TargetUserOrGroupType = 'SecurityGroup'
+                $values.ModifiedProperties = [object[]]@(@{ Name = 'SiteAccess'; NewValue = 'False'; OldValue = 'True' })
+                $values.Event_Data = '<Group>Site Owners</Group><GroupId>3</GroupId>'
+            }
+
+            if ($officeTemplate.Workload -eq 'MicrosoftTeams') {
+                $values.TeamName = 'Engineering'
+                $values.TeamGuid = New-StableGuid "office-team|$($Index % 3)"
+                $values.ChannelType = 'Standard'
+                $values.ChannelName = 'General'
+                $values.ChannelGuid = '19:{0}@thread.tacv2' -f (New-StableHex "office-channel|$($Index % 3)" 32)
+                $values.CommunicationType = 'Team'
+                $values.AADGroupId = New-StableGuid "office-aad-group|$($Index % 3)"
+                $values.ExtraProperties = [object[]]@()
+                $values.ItemName = 'Engineering'
+                $values.ChatThreadId = '19:{0}@thread.tacv2' -f (New-StableHex "office-chat|$($Index % 9)" 32)
+                $values.OperationScope = 'Chat'
+                $values.Members = [object[]]@(@{ OrganizationId = $tenantId; UPN = $officeUser.Upn; Role = 1; DisplayName = $officeUser.DisplayName })
+                $values.AddOnType = 'Tab'
+                $values.AddonName = 'Notes'
+                $values.TabType = 'extension'
+                $values.AddOnGuid = New-StableGuid "office-addon|$($Index % 3)"
+                $values.AppDistributionMode = 'Store'
+            }
+
+            if ($officeTemplate.RecordType -eq 'ExchangeAdmin') {
+                $values.Parameters = [object[]]@(
+                    @{ Name = 'Identity'; Value = (New-StableGuid "office-parameter|$Index") }
+                    @{ Name = 'Confirm'; Value = 'False' }
+                )
+                $values.OfficeObjectId = '{0}\{1}' -f $tenantDomain, (New-StableGuid "office-object|$($Index % 200)")
             }
         }
         default {

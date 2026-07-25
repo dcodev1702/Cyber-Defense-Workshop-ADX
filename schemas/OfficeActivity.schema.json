@@ -1,0 +1,929 @@
+{
+  "tableName": "OfficeActivity",
+  "categories": [
+    "Office365",
+    "CloudApp",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Microsoft 365",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/officeactivity",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Exchange, SharePoint, and Teams workload operations that corroborate mailbox and file collection activity.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "Application",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "UserDomain",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "Activity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "UserAgent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 5."
+    },
+    {
+      "name": "RecordType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 11. Most common: ExchangeAdmin"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live OfficeActivity column. Distinct values observed: 592. Most common: 06/30/2026 16:03:12"
+    },
+    {
+      "name": "Operation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 54. Most common: Set-ConditionalAccessPolicy"
+    },
+    {
+      "name": "OrganizationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+    },
+    {
+      "name": "OrganizationId_",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+    },
+    {
+      "name": "UserType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 4. Most common: DcAdmin"
+    },
+    {
+      "name": "UserKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 20. Most common: NT SERVICE\\MSExchangeServiceHostNetCore (Microsoft.Exchange.ServiceHost)"
+    },
+    {
+      "name": "OfficeWorkload",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3. Most common: Exchange"
+    },
+    {
+      "name": "ResultStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3. Most common: True"
+    },
+    {
+      "name": "ResultReasonType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3. Most common: True"
+    },
+    {
+      "name": "OfficeObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 133."
+    },
+    {
+      "name": "UserId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 17. Most common: NT SERVICE\\MSExchangeServiceHostNetCore (Microsoft.Exchange.ServiceHost)"
+    },
+    {
+      "name": "UserId_",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 17. Most common: NT SERVICE\\MSExchangeServiceHostNetCore (Microsoft.Exchange.ServiceHost)"
+    },
+    {
+      "name": "ClientIP",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 115."
+    },
+    {
+      "name": "ClientIP_",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 115."
+    },
+    {
+      "name": "Scope",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "Site_",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 4."
+    },
+    {
+      "name": "ItemType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 10."
+    },
+    {
+      "name": "EventSource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "Source_Name",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "MachineDomainInfo",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "MachineId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "Site_Url",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 4."
+    },
+    {
+      "name": "Site_Url_",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 4."
+    },
+    {
+      "name": "SourceRelativeUrl",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 4."
+    },
+    {
+      "name": "SourceRelativeUrl_",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 4."
+    },
+    {
+      "name": "SourceFileName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3."
+    },
+    {
+      "name": "SourceFileName_",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3."
+    },
+    {
+      "name": "SourceFileExtension",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "DestinationRelativeUrl",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "DestinationFileName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "DestinationFileExtension",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "UserSharedWith",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "SharingType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "CustomEvent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "Event_Data",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 5."
+    },
+    {
+      "name": "ModifiedObjectResolvedName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "Parameters",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 155."
+    },
+    {
+      "name": "ExternalAccess",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3. Most common: True"
+    },
+    {
+      "name": "OriginatingServer",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 99. Most common: MN0PR18MB6038 (15.21.0202.012)"
+    },
+    {
+      "name": "OrganizationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2. Most common: MngEnvMCAP343999.onmicrosoft.com"
+    },
+    {
+      "name": "Logon_Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3."
+    },
+    {
+      "name": "InternalLogonType",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live OfficeActivity column. Distinct values observed: 2. Most common: 0"
+    },
+    {
+      "name": "MailboxGuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 9."
+    },
+    {
+      "name": "MailboxOwnerUPN",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 9."
+    },
+    {
+      "name": "MailboxOwnerSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 9."
+    },
+    {
+      "name": "MailboxOwnerMasterAccountSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "LogonUserSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 9."
+    },
+    {
+      "name": "LogonUserDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ClientInfoString",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 7."
+    },
+    {
+      "name": "Client_IPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 55."
+    },
+    {
+      "name": "ClientMachineName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ClientProcessName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ClientVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "Folder",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "CrossMailboxOperations",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live OfficeActivity column. Distinct values observed: 0."
+    },
+    {
+      "name": "DestMailboxId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "DestMailboxOwnerUPN",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "DestMailboxOwnerSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "DestMailboxOwnerMasterAccountSid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "DestFolder",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "Folders",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 88."
+    },
+    {
+      "name": "AffectedItems",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "Item",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 18."
+    },
+    {
+      "name": "ModifiedProperties",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 4."
+    },
+    {
+      "name": "SendAsUserSmtp",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "SendAsUserMailboxGuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "SendOnBehalfOfUserSmtp",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "SendonBehalfOfUserMailboxGuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ExtendedProperties",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "Client",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "LoginStatus",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live OfficeActivity column. Distinct values observed: 0."
+    },
+    {
+      "name": "Actor",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ActorContextId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ActorIpAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "InterSystemsId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "IntraSystemId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "SupportTicketId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "TargetContextId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "DataCenterSecurityEventType",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live OfficeActivity column. Distinct values observed: 0."
+    },
+    {
+      "name": "EffectiveOrganization",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ElevationTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live OfficeActivity column. Distinct values observed: 171. Most common: 07/13/2026 15:59:41"
+    },
+    {
+      "name": "ElevationApprover",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ElevationApprovedTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live OfficeActivity column. Distinct values observed: 0."
+    },
+    {
+      "name": "ElevationRequestId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ElevationRole",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ElevationDuration",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live OfficeActivity column. Distinct values observed: 0."
+    },
+    {
+      "name": "GenericInfo",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1. Most common: OfficeActivityManager"
+    },
+    {
+      "name": "OfficeId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 985. Most common: ab5e2045-0a18-4fdd-b4cb-08deac0fe1da"
+    },
+    {
+      "name": "SourceRecordId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 985. Most common: ab5e2045-0a18-4fdd-b4cb-08deac0fe1da"
+    },
+    {
+      "name": "AzureActiveDirectory_EventType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "AADTarget",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "Start_Time",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live OfficeActivity column. Distinct values observed: 171. Most common: 07/13/2026 15:59:41"
+    },
+    {
+      "name": "OfficeTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1. Most common: $RestApiTenantId$"
+    },
+    {
+      "name": "OfficeTenantId_",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1. Most common: $RestApiTenantId$"
+    },
+    {
+      "name": "TargetUserOrGroupName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 4."
+    },
+    {
+      "name": "TargetUserOrGroupType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3."
+    },
+    {
+      "name": "MessageId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 8."
+    },
+    {
+      "name": "Members",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live OfficeActivity column. Distinct values observed: 3. Most common: [{\"OrganizationId\":\"b22dee98-83da-4207-b9ab-5ba931866f44\",\"DisplayName\":\"Finn, R..."
+    },
+    {
+      "name": "TeamName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "TeamGuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "ChannelType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "ChannelName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "ChannelGuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "ExtraProperties",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live OfficeActivity column. Distinct values observed: 1. Most common: []"
+    },
+    {
+      "name": "AddOnType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3."
+    },
+    {
+      "name": "AddonName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3."
+    },
+    {
+      "name": "TabType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "Name",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "OldValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "NewValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ItemName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 5."
+    },
+    {
+      "name": "ChatThreadId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3."
+    },
+    {
+      "name": "ChatName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "CommunicationType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3."
+    },
+    {
+      "name": "AADGroupId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "AddOnGuid",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3."
+    },
+    {
+      "name": "AppDistributionMode",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "TargetUserId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "OperationScope",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "AzureADAppId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
+    },
+    {
+      "name": "OperationProperties",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live OfficeActivity column. Distinct values observed: 2. Most common: [{\"Name\":\"MailAccessType\",\"Value\":\"Bind\"}]"
+    },
+    {
+      "name": "AppId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 12."
+    },
+    {
+      "name": "ClientAppId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 10."
+    },
+    {
+      "name": "ApplicationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 3."
+    },
+    {
+      "name": "SRPolicyId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "SRPolicyName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "SRRuleMatchDetails",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live OfficeActivity column. Distinct values observed: 0."
+    },
+    {
+      "name": "IsManagedDevice",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live OfficeActivity column. Distinct values observed: 1. Most common: False"
+    },
+    {
+      "name": "AppPoolName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 4. Most common: MSExchangeServiceHostNetCore"
+    },
+    {
+      "name": "UniqueTokenId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "IssuedAtTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live OfficeActivity column. Distinct values observed: 0."
+    },
+    {
+      "name": "AppAccessContext",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live OfficeActivity column. Distinct values observed: 174. Most common: {}"
+    },
+    {
+      "name": "Attendees",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live OfficeActivity column. Distinct values observed: 0."
+    },
+    {
+      "name": "ArtifactsShared",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live OfficeActivity column. Distinct values observed: 0."
+    },
+    {
+      "name": "IsJoinedFromLobby",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live OfficeActivity column. Distinct values observed: 0."
+    },
+    {
+      "name": "JoinTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live OfficeActivity column. Distinct values observed: 0."
+    },
+    {
+      "name": "LeaveTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live OfficeActivity column. Distinct values observed: 0."
+    },
+    {
+      "name": "DeviceInformation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "MeetingDetailId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ListItemUniqueId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 4."
+    },
+    {
+      "name": "SensitivityLabelId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "UniqueSharingId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ActorContextId_",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1. Most common: OfficeActivity"
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
+    }
+  ],
+  "adx": {
+    "mappingName": "OfficeActivity_JsonMapping"
+  }
+}

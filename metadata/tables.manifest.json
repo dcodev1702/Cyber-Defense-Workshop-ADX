@@ -573,5 +573,56 @@
     ],
     "sourceProduct": "Microsoft Intune",
     "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-intunedevices-table"
+  },
+  {
+    "name": "ThreatIntelIndicators",
+    "categories": [
+      "ThreatIntelligence",
+      "AzureMonitor",
+      "Sentinel"
+    ],
+    "sourceProduct": "Microsoft Sentinel",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/threatintelindicators"
+  },
+  {
+    "name": "SecurityAlert",
+    "categories": [
+      "Alert",
+      "AzureMonitor",
+      "Sentinel"
+    ],
+    "sourceProduct": "Microsoft Sentinel",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/securityalert"
+  },
+  {
+    "name": "AzureActivity",
+    "categories": [
+      "CloudResource",
+      "ControlPlane",
+      "AzureMonitor"
+    ],
+    "sourceProduct": "Azure Activity Log",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/azureactivity"
+  },
+  {
+    "name": "ASimDnsActivityLogs",
+    "categories": [
+      "Network",
+      "Dns",
+      "AzureMonitor",
+      "Asim"
+    ],
+    "sourceProduct": "Microsoft Sentinel ASIM",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/asimdnsactivitylogs"
+  },
+  {
+    "name": "OfficeActivity",
+    "categories": [
+      "Office365",
+      "CloudApp",
+      "AzureMonitor"
+    ],
+    "sourceProduct": "Microsoft 365",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/officeactivity"
   }
 ]

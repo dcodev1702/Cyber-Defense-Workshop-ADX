@@ -1,0 +1,227 @@
+{
+  "tableName": "SecurityAlert",
+  "categories": [
+    "Alert",
+    "AzureMonitor",
+    "Sentinel"
+  ],
+  "sourceProduct": "Microsoft Sentinel",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/securityalert",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Microsoft Sentinel analytics rule and connected product alerts that pair with the SecurityIncident queue.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live SecurityAlert column. Distinct values observed: 998. Most common: 05/17/2026 18:19:50"
+    },
+    {
+      "name": "DisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 115. Most common: NRT User added to Microsoft Entra ID Privileged Groups"
+    },
+    {
+      "name": "AlertName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 115. Most common: NRT User added to Microsoft Entra ID Privileged Groups"
+    },
+    {
+      "name": "AlertSeverity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 4. Most common: Informational"
+    },
+    {
+      "name": "Description",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 82. Most common: This will alert when a user is added to any of the Privileged Groups.\nFor furthe..."
+    },
+    {
+      "name": "ProviderName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 5. Most common: MDATP"
+    },
+    {
+      "name": "VendorName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 1. Most common: Microsoft"
+    },
+    {
+      "name": "VendorOriginalId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 595. Most common: 07ea1516-612d-4b0d-ac44-7300f232c207_1"
+    },
+    {
+      "name": "SystemAlertId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 595. Most common: dd732c2f-fd2e-01d4-71e3-767af34a7d95"
+    },
+    {
+      "name": "ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 1."
+    },
+    {
+      "name": "SourceComputerId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 1."
+    },
+    {
+      "name": "AlertType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 53. Most common: CustomDetection"
+    },
+    {
+      "name": "ConfidenceLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 1."
+    },
+    {
+      "name": "ConfidenceScore",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live SecurityAlert column. Distinct values observed: 0."
+    },
+    {
+      "name": "IsIncident",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live SecurityAlert column. Distinct values observed: 1. Most common: False"
+    },
+    {
+      "name": "StartTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live SecurityAlert column. Distinct values observed: 441. Most common: 05/26/2026 00:45:18"
+    },
+    {
+      "name": "EndTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live SecurityAlert column. Distinct values observed: 566. Most common: 05/26/2026 00:40:41"
+    },
+    {
+      "name": "ProcessingEndTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live SecurityAlert column. Distinct values observed: 940. Most common: 07/23/2026 15:57:44"
+    },
+    {
+      "name": "RemediationSteps",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 18."
+    },
+    {
+      "name": "ExtendedProperties",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 526. Most common: {\"IncidentId\":\"476\",\"OriginSource\":\"Microsoft 365 defender\",\"Category\":\"Suspicio..."
+    },
+    {
+      "name": "Entities",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 178."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 1. Most common: Detection"
+    },
+    {
+      "name": "WorkspaceSubscriptionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 2."
+    },
+    {
+      "name": "WorkspaceResourceGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 2."
+    },
+    {
+      "name": "ExtendedLinks",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 1."
+    },
+    {
+      "name": "ProductName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 4. Most common: Microsoft Defender Advanced Threat Protection"
+    },
+    {
+      "name": "ProductComponentName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 3."
+    },
+    {
+      "name": "AlertLink",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 163."
+    },
+    {
+      "name": "Status",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 2. Most common: New"
+    },
+    {
+      "name": "CompromisedEntity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 24."
+    },
+    {
+      "name": "Tactics",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 19. Most common: Unknown"
+    },
+    {
+      "name": "Techniques",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 18."
+    },
+    {
+      "name": "SubTechniques",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 8."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SecurityAlert column. Distinct values observed: 1. Most common: SecurityAlert"
+    }
+  ],
+  "adx": {
+    "mappingName": "SecurityAlert_JsonMapping"
+  }
+}

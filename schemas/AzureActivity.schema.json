@@ -1,0 +1,221 @@
+{
+  "tableName": "AzureActivity",
+  "categories": [
+    "CloudResource",
+    "ControlPlane",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Azure Activity Log",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/azureactivity",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Azure Resource Manager control plane operations used to hunt cloud pivots that follow identity compromise.",
+  "columns": [
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "OperationNameValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 44. Most common: MICROSOFT.SECURITY/DATASCANNERS/WRITE"
+    },
+    {
+      "name": "Level",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 5. Most common: Information"
+    },
+    {
+      "name": "ActivityStatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ActivityStatusValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 11. Most common: Success"
+    },
+    {
+      "name": "ActivitySubstatus",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ActivitySubstatusValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 7."
+    },
+    {
+      "name": "ResourceGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 18."
+    },
+    {
+      "name": "SubscriptionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 10. Most common: 192ad012-896e-4f14-8525-c37a2a9640f9"
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 454. Most common: 29743038-5a6f-4923-9963-b802c4c6fa97"
+    },
+    {
+      "name": "Caller",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 22. Most common: 42067bb9-5746-4542-9ce5-1fa26dca7c84"
+    },
+    {
+      "name": "CallerIpAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 39. Most common: 172.170.17.100"
+    },
+    {
+      "name": "Category",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "CategoryValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 5. Most common: Administrative"
+    },
+    {
+      "name": "HTTPRequest",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 39. Most common: {\"clientIpAddress\":\"172.170.17.100\"}"
+    },
+    {
+      "name": "Properties",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 172. Most common: {\"eventCategory\":\"Administrative\",\"entity\":\"/subscriptions/192ad012-896e-4f14-85..."
+    },
+    {
+      "name": "EventSubmissionTimestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AzureActivity column. Distinct values observed: 974. Most common: 07/23/2026 15:29:32"
+    },
+    {
+      "name": "Authorization",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 69. Most common: {\"scope\":\"/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/fou..."
+    },
+    {
+      "name": "ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "OperationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ResourceProvider",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "ResourceProviderValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 14. Most common: MICROSOFT.SECURITY"
+    },
+    {
+      "name": "Resource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 1."
+    },
+    {
+      "name": "EventDataId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 1000. Most common: 68fbbb4d-770e-2880-c2f9-e234d61abd9e"
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AzureActivity column. Distinct values observed: 974. Most common: 07/23/2026 15:29:32"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 1. Most common: Azure"
+    },
+    {
+      "name": "Authorization_d",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AzureActivity column. Distinct values observed: 68. Most common: {\"scope\":\"/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/fou..."
+    },
+    {
+      "name": "Claims",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 212. Most common: {\"aud\":\"https://management.core.windows.net/\",\"iss\":\"https://sts.windows.net/b22..."
+    },
+    {
+      "name": "Claims_d",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AzureActivity column. Distinct values observed: 211. Most common: {\"aud\":\"https://management.core.windows.net/\",\"iss\":\"https://sts.windows.net/b22..."
+    },
+    {
+      "name": "Properties_d",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AzureActivity column. Distinct values observed: 998. Most common: {\"eventCategory\":\"Administrative\",\"entity\":\"/subscriptions/192ad012-896e-4f14-85..."
+    },
+    {
+      "name": "Hierarchy",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 12. Most common: b22dee98-83da-4207-b9ab-5ba931866f44/DibSecurity/CISO/Security/192ad012-896e-4f1..."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 1. Most common: AzureActivity"
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureActivity column. Distinct values observed: 56. Most common: /subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/foundry/provi..."
+    }
+  ],
+  "adx": {
+    "mappingName": "AzureActivity_JsonMapping"
+  }
+}

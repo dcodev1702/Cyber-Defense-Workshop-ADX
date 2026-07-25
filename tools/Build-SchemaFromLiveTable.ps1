@@ -70,6 +70,42 @@ $script:TableMetadata = @{
         sourceUrl     = 'https://learn.microsoft.com/defender-xdr/advanced-hunting-intunedevices-table'
         summary       = 'Microsoft Intune managed device inventory, enrollment state, ownership, and compliance posture.'
     }
+    ThreatIntelIndicators = [ordered]@{
+        categories    = @('ThreatIntelligence', 'AzureMonitor', 'Sentinel')
+        sourceProduct = 'Microsoft Sentinel'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/threatintelindicators'
+        summary       = 'Current Microsoft Sentinel threat intelligence indicators in STIX 2.1 shape, used to join indicators to observed telemetry.'
+    }
+    SecurityAlert   = [ordered]@{
+        categories    = @('Alert', 'AzureMonitor', 'Sentinel')
+        sourceProduct = 'Microsoft Sentinel'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/securityalert'
+        summary       = 'Microsoft Sentinel analytics rule and connected product alerts that pair with the SecurityIncident queue.'
+    }
+    AzureActivity   = [ordered]@{
+        categories    = @('CloudResource', 'ControlPlane', 'AzureMonitor')
+        sourceProduct = 'Azure Activity Log'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/azureactivity'
+        summary       = 'Azure Resource Manager control plane operations used to hunt cloud pivots that follow identity compromise.'
+    }
+    ASimDnsActivityLogs = [ordered]@{
+        categories    = @('Network', 'Dns', 'AzureMonitor', 'Asim')
+        sourceProduct = 'Microsoft Sentinel ASIM'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/asimdnsactivitylogs'
+        summary       = 'Normalized ASIM DNS activity used to hunt command and control resolution and to teach schema normalization.'
+    }
+    OfficeActivity  = [ordered]@{
+        categories    = @('Office365', 'CloudApp', 'AzureMonitor')
+        sourceProduct = 'Microsoft 365'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/officeactivity'
+        summary       = 'Exchange, SharePoint, and Teams workload operations that corroborate mailbox and file collection activity.'
+    }
+    CloudAuditEvents = [ordered]@{
+        categories    = @('CloudResource', 'ControlPlane', 'DefenderXDR')
+        sourceProduct = 'Microsoft Defender XDR'
+        sourceUrl     = 'https://learn.microsoft.com/defender-xdr/advanced-hunting-cloudauditevents-table'
+        summary       = 'Multicloud control plane audit events across Azure, AWS, and GCP surfaced through Defender for Cloud.'
+    }
 }
 
 function ConvertTo-WorkshopColumnType {

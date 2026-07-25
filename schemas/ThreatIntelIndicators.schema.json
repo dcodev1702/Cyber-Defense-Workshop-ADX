@@ -1,0 +1,155 @@
+{
+  "tableName": "ThreatIntelIndicators",
+  "categories": [
+    "ThreatIntelligence",
+    "AzureMonitor",
+    "Sentinel"
+  ],
+  "sourceProduct": "Microsoft Sentinel",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/threatintelindicators",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Current Microsoft Sentinel threat intelligence indicators in STIX 2.1 shape, used to join indicators to observed telemetry.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 997. Most common: 07/25/2026 03:32:02"
+    },
+    {
+      "name": "WorkspaceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "AzureTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+    },
+    {
+      "name": "Id",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 618. Most common: TWljcm9zb2Z0IERlZmVuZGVyIFRocmVhdCBJbnRlbGxpZ2VuY2U=---indicator--6d3c248b-c72d-..."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1. Most common: Microsoft Defender Threat Intelligence"
+    },
+    {
+      "name": "LastUpdateMethod",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1. Most common: BasicMDTIConnector"
+    },
+    {
+      "name": "IsDeleted",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1. Most common: False"
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 2. Most common: {\"TLPLevel\":\"Green\"}"
+    },
+    {
+      "name": "Data",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 996. Most common: {\"pattern\":\"[network-traffic:src_ref.value = '138.249.139.203']\",\"pattern_type\":..."
+    },
+    {
+      "name": "IsActive",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 2. Most common: True"
+    },
+    {
+      "name": "Revoked",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 0."
+    },
+    {
+      "name": "ValidUntil",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 995. Most common: 07/06/2031 06:00:00"
+    },
+    {
+      "name": "ValidFrom",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 652. Most common: 07/25/2026 04:03:18"
+    },
+    {
+      "name": "Created",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 592. Most common: 06/09/2026 03:31:17"
+    },
+    {
+      "name": "Modified",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 652. Most common: 07/25/2026 04:03:18"
+    },
+    {
+      "name": "Tags",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 651. Most common: honeypot,p:default,ic:100,vic:100,gid:0107a,cid:26de6,ultime07/25/2026 04:03:18"
+    },
+    {
+      "name": "Confidence",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 3. Most common: 100"
+    },
+    {
+      "name": "Pattern",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 618. Most common: [network-traffic:src_ref.value = '138.249.170.187']"
+    },
+    {
+      "name": "ObservableKey",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 6. Most common: network-traffic:src_ref.value"
+    },
+    {
+      "name": "ObservableValue",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 617. Most common: 138.249.170.187"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1. Most common: ThreatIntelIndicators"
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1."
+    }
+  ],
+  "adx": {
+    "mappingName": "ThreatIntelIndicators_JsonMapping"
+  }
+}

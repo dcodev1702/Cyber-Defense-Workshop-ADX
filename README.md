@@ -162,12 +162,15 @@ The repository already includes generated schemas. Use this command only when yo
 .\tools\Build-SchemasFromMicrosoftLearn.ps1 -Force
 ```
 
-For tables that Microsoft Learn does not document yet, or whose published schema lags the live one, build the schema straight from the live table instead. This is how the `AgentsInfo`, `StorageBlobLogs`, `IntuneDevices`, `SecurityEvent`, and email tables were added.
+For tables that Microsoft Learn does not document yet, or whose published schema lags the live one, build the schema straight from the live table instead. This is how the `AgentsInfo`, `StorageBlobLogs`, `IntuneDevices`, `SecurityEvent`, the email tables, and the cloud control plane tables were added.
 
 ```powershell
 .\tools\Build-SchemaFromLiveTable.ps1 -TableName AgentsInfo, StorageBlobLogs, IntuneDevices
 .\tools\Build-SchemaFromLiveTable.ps1 -TableName SecurityEvent -Source LogAnalytics
+.\tools\Build-SchemaFromLiveTable.ps1 -TableName ThreatIntelIndicators, SecurityAlert, AzureActivity, ASimDnsActivityLogs, OfficeActivity -Source LogAnalytics
 ```
+
+`ThreatIntelIndicators` is the current threat intelligence table. The legacy `ThreatIntelligenceIndicator` table is empty in this tenant and is deliberately not used.
 
 ### Sample real telemetry to ground synthetic generation
 
@@ -195,7 +198,7 @@ Row counts are resolved per table. `DeviceProcessEvents` defaults to 32000 becau
 .\scripts\New-SyntheticTelemetryParallel.ps1 -RowsPerTable 8000 -TableRowOverride @{ DeviceProcessEvents = 32000; DeviceNetworkEvents = 16000 }
 ```
 
-> ⚠️ **Generated telemetry is large.** The full 60-table set at 8000 rows per table is roughly 640 MB. It is reproducible from the generator, so treat it as a build artifact rather than something to commit. `Initialize-Workshop.ps1` regenerates it by default unless you pass `-SkipGenerateData`.
+> ⚠️ **Generated telemetry is large.** The full 65-table set at 8000 rows per table is roughly 737 MB, and `DeviceProcessEvents` alone is 92 MB. It is committed so the workshop can be run without Azure access, but it is fully reproducible from the generator, so prefer regenerating over re-committing it. `Initialize-Workshop.ps1` regenerates it by default unless you pass `-SkipGenerateData`.
 
 ### Build the managed ADX database, tables, mappings, synthetic telemetry, and ingest data
 

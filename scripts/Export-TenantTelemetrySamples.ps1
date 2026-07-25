@@ -88,10 +88,21 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
 # Tables added after the original 48-table manifest. StorageBlobInfo does not exist on
 # either surface; the Azure Storage blob diagnostic table StorageBlobLogs is the real
 # equivalent and is present in both Log Analytics and Defender XDR advanced hunting.
+#
+# Tier 2 additions cover the cloud control plane, threat intelligence, Sentinel
+# analytics, DNS resolution, and Office workload activity. ThreatIntelIndicators is the
+# current threat intelligence table; the legacy ThreatIntelligenceIndicator table is
+# empty in this tenant and is deliberately not exported.
 $script:AdditionalTables = @(
     [pscustomobject]@{ Name = 'AgentsInfo'; PreferredSource = 'DefenderXdr' }
     [pscustomobject]@{ Name = 'StorageBlobLogs'; PreferredSource = 'DefenderXdr' }
     [pscustomobject]@{ Name = 'IntuneDevices'; PreferredSource = 'DefenderXdr' }
+    [pscustomobject]@{ Name = 'ThreatIntelIndicators'; PreferredSource = 'LogAnalytics' }
+    [pscustomobject]@{ Name = 'SecurityAlert'; PreferredSource = 'LogAnalytics' }
+    [pscustomobject]@{ Name = 'AzureActivity'; PreferredSource = 'LogAnalytics' }
+    [pscustomobject]@{ Name = 'ASimDnsActivityLogs'; PreferredSource = 'LogAnalytics' }
+    [pscustomobject]@{ Name = 'OfficeActivity'; PreferredSource = 'LogAnalytics' }
+    [pscustomobject]@{ Name = 'CloudAuditEvents'; PreferredSource = 'DefenderXdr' }
 )
 
 # Repo schema names that historically did not match the live table name. The live name
