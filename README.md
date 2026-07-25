@@ -7,7 +7,7 @@ For security conferences with walk-up or mixed-tenant participants, the **Docker
 | Delivery model | Position | Best fit |
 | --- | --- | --- |
 | Docker Kustainer + Cloudflare Service Auth | **Primary** | Time-boxed security conferences, random participants, and fast classroom setup. |
-| Managed Azure ADX + Microsoft Entra B2B | Secondary | Governed, recurring, or long-running programs that require per-person identities, MFA policy, and lifecycle governance. |
+| Managed Azure ADX + Microsoft Entra B2B | Secondary | Governed, recurring, or long-running programs that require per-person identities, MFA policy, and lifecycle governance. See [docs/managed_azure_adx_setup.md](docs/managed_azure_adx_setup.md). |
 
 The shared Service Token is a temporary lab password, not an identity system: distribute it only for the event, restrict all public traffic through the read-only gateway, and rotate it immediately after class. See [docs/cloudflare_adx_access.md](docs/cloudflare_adx_access.md) for the full host and student flow.
 
@@ -37,46 +37,9 @@ To run the Docker-first conference lab, you need:
 - PowerShell 7 and Azure CLI when refreshing the local snapshot from the source Student ADX database
 - Student devices with Cloudflared and an account that can sign in to the ADX Web UI
 
-## Secondary prerequisites: managed Azure ADX and Entra B2B
+## Secondary delivery model: managed Azure ADX and Entra B2B
 
-Use these only for the managed Azure delivery model:
-
-- An existing ADX cluster and permissions to create or manage the workshop database
-- ADX database admin permissions for table creation and ingestion
-- Entra permissions for B2B guest onboarding, access packages, security groups, and Conditional Access
-- PowerShell 7 with the Azure, Kusto, and Microsoft Graph modules installed
-
-### Managed Azure tooling install commands
-
-Install PowerShell 7 silently / non-interactively from Windows Terminal, Command Prompt, or an existing PowerShell session:
-
-```powershell
-winget install --id Microsoft.PowerShell --source winget --silent --accept-package-agreements --accept-source-agreements
-```
-
-After PowerShell 7 installs, open a new **PowerShell 7** terminal and install the required modules:
-
-```powershell
-Install-Module -Name Az -Repository PSGallery -Scope CurrentUser -Force
-Install-Module -Name Az.Kusto -Repository PSGallery -Scope CurrentUser -Force
-Install-Module -Name Microsoft.Graph -Repository PSGallery -Scope CurrentUser -Force
-```
-
-Install Azure CLI silently / non-interactively:
-
-```powershell
-winget install --id Microsoft.AzureCLI --source winget --silent --accept-package-agreements --accept-source-agreements
-```
-
-Close and reopen the terminal after installing PowerShell 7 or Azure CLI.
-
-### 🔗 Official install references
-
-- PowerShell 7 on Windows: <https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows>
-- Azure PowerShell Az module: <https://learn.microsoft.com/powershell/azure/install-azure-powershell>
-- Az.Kusto module reference: <https://learn.microsoft.com/powershell/module/az.kusto/>
-- Azure CLI on Windows: <https://learn.microsoft.com/cli/azure/install-azure-cli-windows>
-- Microsoft Graph PowerShell SDK: <https://learn.microsoft.com/microsoftgraph/installation>
+Need per-person identities, Conditional Access and MFA policy, and access-package lifecycle instead of a shared class credential? That route is documented end to end — prerequisites, tooling install commands, schema refresh, telemetry generation, database build, ADLS Gen2 backup, and B2B participant provisioning — in **[docs/managed_azure_adx_setup.md](docs/managed_azure_adx_setup.md)**.
 
 ## Cyber Defense Scenario summary
 
@@ -109,7 +72,7 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | Schemas | Holds one Microsoft Learn-derived JSON schema file per ADX table | [`schemas\`](schemas/), [`metadata\tables.manifest.json`](metadata/tables.manifest.json), [`tools\Build-SchemasFromMicrosoftLearn.ps1`](tools/Build-SchemasFromMicrosoftLearn.ps1), [`tools\Build-SchemaFromLiveTable.ps1`](tools/Build-SchemaFromLiveTable.ps1) |
 | Tenant sampling | Exports real Log Analytics and Defender XDR advanced hunting rows plus per-column field profiles that ground synthetic generation | [`scripts\Export-TenantTelemetrySamples.ps1`](scripts/Export-TenantTelemetrySamples.ps1) |
 | Synthetic data | Holds generated schema-aligned NDJSON telemetry files | [`data\generated\`](data/generated/), [`data\scenario-summary.json`](data/scenario-summary.json), [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1), [`scripts\New-SyntheticTelemetryParallel.ps1`](scripts/New-SyntheticTelemetryParallel.ps1) |
-| Managed Azure access (secondary) | Documents SFI-aligned B2B guest provisioning, MFA, access-package lifecycle, participant group access, ADX database viewer permissions, and dashboard sharing | [`user_creation\README.md`](user_creation/README.md), [`docs\student_access.md`](docs/student_access.md), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1) |
+| Managed Azure access (secondary) | Documents the full managed Azure ADX build plus SFI-aligned B2B guest provisioning, MFA, access-package lifecycle, participant group access, ADX database viewer permissions, and dashboard sharing | [`docs\managed_azure_adx_setup.md`](docs/managed_azure_adx_setup.md), [`user_creation\README.md`](user_creation/README.md), [`docs\student_access.md`](docs/student_access.md), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1) |
 | Cloudflare ADX class access | Documents the shared Service Auth credential, student TCP proxy, read-only KQL gateway, rotation, and troubleshooting | [`docs\cloudflare_adx_access.md`](docs/cloudflare_adx_access.md) |
 | Kustainer gateway | Documents the read-only request policy, browser CORS/private-network support, default-database cleaner, configuration, and security boundary | [`tools\kusto-readonly-gateway\README.md`](tools/kusto-readonly-gateway/README.md) |
 | Scenario and MITRE | Documents the threat actor framing, infrastructure, and attack-vector to ATT&CK mapping | [`docs\threat-actor-midnight-blizzard.md`](docs/threat-actor-midnight-blizzard.md), [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json), [`data\scenario-summary.json`](data/scenario-summary.json), [`docs\workshop_design.md`](docs/workshop_design.md) |
@@ -149,116 +112,6 @@ docker compose start kusto
 ```
 
 The command writes a timestamped ZIP under `data\backups\local-kusto` and reports its SHA-256 hash. See [docs/cloudflare_adx_access.md](docs/cloudflare_adx_access.md) for the full participant and recovery procedure.
-
-## Secondary: managed Azure ADX and Entra B2B
-
-Run these commands from the repository root.
-
-### 1. Refresh table schemas from Microsoft Learn
-
-The repository already includes generated schemas. Use this command only when you want to refresh them from Microsoft Learn.
-
-```powershell
-.\tools\Build-SchemasFromMicrosoftLearn.ps1 -Force
-```
-
-For tables that Microsoft Learn does not document yet, or whose published schema lags the live one, build the schema straight from the live table instead. This is how the `AgentsInfo`, `StorageBlobLogs`, `IntuneDevices`, `SecurityEvent`, the email tables, and the cloud control plane tables were added.
-
-```powershell
-.\tools\Build-SchemaFromLiveTable.ps1 -TableName AgentsInfo, StorageBlobLogs, IntuneDevices
-.\tools\Build-SchemaFromLiveTable.ps1 -TableName SecurityEvent -Source LogAnalytics
-.\tools\Build-SchemaFromLiveTable.ps1 -TableName ThreatIntelIndicators, SecurityAlert, AzureActivity, ASimDnsActivityLogs, OfficeActivity -Source LogAnalytics
-.\tools\Build-SchemaFromLiveTable.ps1 -TableName ExposureGraphNodes, ExposureGraphEdges, CloudStorageAggregatedEvents
-```
-
-`ThreatIntelIndicators` is the current threat intelligence table. The legacy `ThreatIntelligenceIndicator` table is empty in this tenant and is deliberately not used.
-
-This builder reads `<Table> | getschema`, which is metadata only. That matters for three tables: `ExposureGraphEdges` times out against the advanced hunting data API, and `AADRiskyServicePrincipals` and `AADServicePrincipalRiskEvents` hold no rows in the source tenant. All three still yield an exact live schema because `getschema` does not read data.
-
-### Sample real telemetry to ground synthetic generation
-
-Synthetic realism is measured against real telemetry rather than guessed. This exports up to 1000 rows per table from the Log Analytics workspace and Microsoft Defender XDR advanced hunting, writes them as NDJSON under `sample\<DTG>\`, and writes a per-column field profile next to them.
-
-The generator reads those profiles automatically and uses the observed distinct-value ratios, null rates, and enum distributions when it fills columns. Dated export folders are git-ignored because they contain real tenant identities.
-
-```powershell
-.\scripts\Export-TenantTelemetrySamples.ps1 -MaxRowsPerTable 1000 -LookbackDays 90
-```
-
-Log Analytics access uses the Az context. Defender advanced hunting uses Microsoft Graph with the `ThreatHunting.Read.All` delegated scope through interactive browser sign-in. Advanced hunting retains 30 days regardless of the requested lookback.
-
-### Generate telemetry at workshop volume
-
-The single-process generator is fine for one table. For the full set, use the parallel driver, which partitions tables across worker processes. Output is identical either way because the generator reseeds per table from `RandomSeed` XOR the table seed.
-
-```powershell
-.\scripts\New-SyntheticTelemetryParallel.ps1 -RowsPerTable 8000
-```
-
-Row counts are resolved per table. `DeviceProcessEvents` defaults to 32000 because process creation is by a wide margin the highest-volume endpoint table, and small reference tables are reduced. Override any table explicitly:
-
-```powershell
-.\scripts\New-SyntheticTelemetryParallel.ps1 -RowsPerTable 8000 -TableRowOverride @{ DeviceProcessEvents = 32000; DeviceNetworkEvents = 16000 }
-```
-
-> ⚠️ **Generated telemetry is large.** The full 79-table set at 8000 rows per table is roughly 876 MB, and `DeviceProcessEvents` alone is 92 MB. It is committed so the workshop can be run without Azure access, but it is fully reproducible from the generator, so prefer regenerating over re-committing it. `Initialize-Workshop.ps1` regenerates it by default unless you pass `-SkipGenerateData`.
-
-### Build the managed ADX database, tables, mappings, synthetic telemetry, and ingest data
-
-```powershell
-.\scripts\Initialize-Workshop.ps1 `
-  -ResourceGroupName '<resource-group>' `
-  -ClusterName '<adx-cluster-name>' `
-  -DatabaseName 'CyberDefenseKqlWorkshop' `
-  -ForceRecreateTables
-```
-
-If the database already exists and you only need to create tables and load data:
-
-```powershell
-.\scripts\Initialize-Workshop.ps1 `
-  -ResourceGroupName '<resource-group>' `
-  -ClusterName '<adx-cluster-name>' `
-  -ClusterUri 'https://<cluster>.<region>.kusto.windows.net' `
-  -DatabaseName 'CyberDefenseKqlWorkshop' `
-  -SkipDatabaseCreate `
-  -ForceRecreateTables
-```
-
-### Optional: back up the ADX database to secured ADLS Gen2
-
-The backup flow uses a user-assigned managed identity, RBAC, no shared keys, and no anonymous blob access. The default storage mode disables public network access and creates ADX managed private endpoints to the storage account.
-
-```powershell
-.\adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1 `
-  -SubscriptionName 'Security' `
-  -ResourceGroupName 'ADX' `
-  -ClusterName 'dibsecadx' `
-  -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' `
-  -DatabaseName 'cyber-defend-q0xxzc'
-```
-
-Use the `backupCommand` from that script's JSON output, or run the backup directly:
-
-```powershell
-.\adx_db_backupNrestore\Backup-AdxDatabase.ps1 `
-  -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' `
-  -DatabaseName 'cyber-defend-q0xxzc' `
-  -StorageAccountName '<storage-account-name>' `
-  -FileSystemName 'adx-backups' `
-  -ManagedIdentityObjectId '<uami-object-id>'
-```
-
-Restore later from the generated local manifest and schema file:
-
-```powershell
-.\adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1 `
-  -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' `
-  -DatabaseName '<restore-database-name>' `
-  -ManifestPath '.\data\backups\<backup-name>\backup-manifest.json'
-```
-
-For operational details and the security model, see [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md).
 
 ## Primary host operations: exact Student ADX copy
 
@@ -332,32 +185,7 @@ Rotate the class credential after the workshop to invalidate the distributed pai
 
 See [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md) for the Service Auth setup, DNS routing, secret handling, and connection validation steps.
 
-## Secondary: managed Entra B2B participant access
-
-For managed Azure delivery, provision students as Microsoft Entra B2B guests through an entitlement management access package. The access package should add approved participants to a resource-tenant security group, enforce MFA through Conditional Access, and expire access after the event.
-
-Grant ADX database viewer access to the participant security group:
-
-```powershell
-.\scripts\Grant-StudentAdxAccess.ps1 `
-  -ClusterUri 'https://<cluster>.<region>.kusto.windows.net' `
-  -DatabaseName 'CyberDefenseKqlWorkshop' `
-  -GroupObjectId '<student-group-object-id>'
-```
-
-### Give managed Azure participants the ADX Web UI URL
-
-```text
-https://dataexplorer.azure.com/clusters/<cluster>.<region>.kusto.windows.net/databases/CyberDefenseKqlWorkshop
-```
-
-Students sign in with their home organization identity, redeem the guest invitation when prompted, and complete MFA according to the resource tenant policy.
-
-After login, students should see the ADX database, workshop tables, and query results in the web UI. The screenshot below shows the expected query experience using `SecurityIncident` telemetry:
-
-![ADX Web UI showing SecurityIncident query results](images/adx-query-securityincident-results.png)
-
-### 5. Import the ADX SOC threat protection dashboard
+## Import the ADX SOC threat protection dashboard
 
 The repository includes an Azure Data Explorer dashboard template with a SOC-style landing page plus drilldown pages for identity/sign-ins, network/Graph activity, alert timeline review, and inventory/posture:
 
@@ -377,13 +205,13 @@ If you already imported an older copy, open that dashboard and use **File** > **
 
 If dashboard import is unavailable, use `dashboards\cyber-defense-workshop-dashboard.kql` to run and pin the same KQL tiles manually.
 
-Share the dashboard with the participant security group using dashboard `Can view` permission, then distribute the dashboard link. Dashboard access still requires underlying ADX database viewer access.
+On the managed Azure route, share the dashboard with the participant security group using dashboard `Can view` permission, then distribute the link. Dashboard access still requires underlying ADX database viewer access. See [docs/managed_azure_adx_setup.md](docs/managed_azure_adx_setup.md).
 
 After import, the **SOC Overview** page should provide a threat-protection landing view with alert, sign-in, identity, Graph, egress, MITRE, and scenario timeline tiles:
 
 ![ADX SOC Overview dashboard for the cyber defense workshop](images/adx-soc-overview-dashboard.png)
 
-### 6. Validate the package
+## Validate the package
 
 ```powershell
 .\scripts\Test-WorkshopPackage.ps1
@@ -403,7 +231,7 @@ The package creates 47 tables from Microsoft Learn-derived schema JSON. The 21 t
 
 ## Security and operations notes
 
-- For external conference participants, use the primary Docker and Cloudflare Service Auth route with its temporary shared credential, read-only gateway, and post-class credential rotation. Use B2B guest access only for the secondary managed Azure ADX model.
+- For external conference participants, use the primary Docker and Cloudflare Service Auth route with its temporary shared credential, read-only gateway, and post-class credential rotation. Use B2B guest access only for the secondary managed Azure ADX model documented in [docs/managed_azure_adx_setup.md](docs/managed_azure_adx_setup.md).
 - Treat generated student roster CSV files as sensitive if using the internal-only identity helper scripts because they may contain initial passwords or TAP values.
 - Treat ADX backup manifests and local `schema.csl` files as sensitive operational artifacts. Local backups are written under `data\backups\`, which is git-ignored.
 - ADX backups use ADLS Gen2, a user-assigned managed identity, RBAC, disabled shared-key access, and disabled anonymous blob access. Prefer the default managed-private-endpoint mode for nonpublic storage.
@@ -420,6 +248,7 @@ The package creates 47 tables from Microsoft Learn-derived schema JSON. The 21 t
 - Diagrams: [`docs\diagrams.md`](docs/diagrams.md)
 - ADX backup guide: [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md)
 - Threat actor profile: [`docs\threat-actor-midnight-blizzard.md`](docs/threat-actor-midnight-blizzard.md)
+- Managed Azure ADX + Entra B2B setup (secondary): [`docs\managed_azure_adx_setup.md`](docs/managed_azure_adx_setup.md)
 - B2B user provisioning guide: [`user_creation\README.md`](user_creation/README.md)
 - Student access guide: [`docs\student_access.md`](docs/student_access.md)
 - MITRE mapping: [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json)
