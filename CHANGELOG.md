@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added a collapsible GNU/Linux Debian install path to step 1 of the student lab setup guide, using Cloudflare's apt repository with a direct `.deb` fallback.
 - Made the MacOS install path in step 1 of the student lab setup guide a collapsible section, added `brew update` before the `cloudflared` install, and added sparing section emojis.
 - Split step 1 of the student lab setup guide into Windows (`winget`) and macOS (Homebrew) installation paths, including how to install Homebrew for students who do not have it.
 - Corrected deck slide 3 from 60 to 120 minutes and rebalanced its five segments to 10/40/30/35/5, matching the flow diagram; its second segment now reads Acts 2-5 instead of double-counting the orientation acts.

@@ -12,7 +12,7 @@ Use this guide at the workshop to connect your Windows computer to the Cyber Def
 
 ### 1. Install Cloudflare Tunnel
 
-Follow the instructions for your operating system: **Windows** uses `winget`, **MacOS** uses Homebrew (`brew`).
+Follow the instructions for your operating system: **Windows** uses `winget`, **MacOS** uses Homebrew (`brew`), **GNU/Linux Debian** uses `apt`.
 
 #### 🪟 Windows Users
 
@@ -62,6 +62,44 @@ cloudflared --version
 ```
 
 > ℹ️ The remaining steps show PowerShell prompts because most of the class is on Windows. The `cloudflared` command in step 2 is identical on MacOS &mdash; just run it in Terminal instead.
+
+</details>
+
+<details>
+<summary><strong>🐧 GNU/Linux Debian Users</strong> &mdash; click to expand the apt steps</summary>
+
+Debian-based distributions install `cloudflared` from Cloudflare's own apt repository. These steps come from [pkg.cloudflare.com](https://pkg.cloudflare.com/) and cover Debian, Ubuntu, and their derivatives.
+
+**1. Add the Cloudflare GPG key**
+
+```bash
+sudo mkdir -p --mode=0755 /usr/share/keyrings
+curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg >/dev/null
+```
+
+**2. Add the repository, then update and install `cloudflared`**
+
+```bash
+echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main' | sudo tee /etc/apt/sources.list.d/cloudflared.list
+sudo apt-get update && sudo apt-get install cloudflared
+```
+
+**3. Confirm the installation worked**
+
+```bash
+cloudflared --version
+```
+
+> ℹ️ If your machine cannot add third-party apt repositories, install the package directly instead:
+>
+> ```bash
+> curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+> sudo dpkg -i cloudflared.deb
+> ```
+>
+> On ARM machines, swap `cloudflared-linux-amd64.deb` for `cloudflared-linux-arm64.deb`.
+
+> ℹ️ The remaining steps show PowerShell prompts because most of the class is on Windows. The `cloudflared` command in step 2 is identical on GNU/Linux &mdash; just run it in your terminal instead.
 
 </details>
 
