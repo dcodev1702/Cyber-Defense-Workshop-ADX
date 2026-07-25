@@ -113,8 +113,8 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | Cloudflare ADX class access | Documents the shared Service Auth credential, student TCP proxy, read-only KQL gateway, rotation, and troubleshooting | [`docs\cloudflare_adx_access.md`](docs/cloudflare_adx_access.md) |
 | Kustainer gateway | Documents the read-only request policy, browser CORS/private-network support, default-database cleaner, configuration, and security boundary | [`tools\kusto-readonly-gateway\README.md`](tools/kusto-readonly-gateway/README.md) |
 | Scenario and MITRE | Documents the threat actor framing, infrastructure, and attack-vector to ATT&CK mapping | [`docs\threat-actor-midnight-blizzard.md`](docs/threat-actor-midnight-blizzard.md), [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json), [`data\scenario-summary.json`](data/scenario-summary.json), [`docs\workshop_design.md`](docs/workshop_design.md) |
-| Workshop content | Provides the student lab, instructor guide, design notes, and diagrams | [`workshop\student_lab.kql`](workshop/student_lab.kql), [`docs\instructor_guide.md`](docs/instructor_guide.md), [`docs\workshop_design.md`](docs/workshop_design.md), [`docs\diagrams.md`](docs/diagrams.md) |
-| Slides | Provides an instructor-led slide outline and a PowerPoint generator for Windows systems with PowerPoint installed | [`workshop\slide_deck_outline.md`](workshop/slide_deck_outline.md), [`scripts\New-WorkshopDeck.ps1`](scripts/New-WorkshopDeck.ps1) |
+| Workshop content | Provides the student setup guide, instructor guide, design notes, and diagrams | [`STUDENT-GUIDES\STUDENT-LAB-SETUP-GUIDE.md`](STUDENT-GUIDES/STUDENT-LAB-SETUP-GUIDE.md), [`docs\instructor_guide.md`](docs/instructor_guide.md), [`docs\workshop_design.md`](docs/workshop_design.md), [`docs\diagrams.md`](docs/diagrams.md) |
+| Slides | Provides the instructor-led deck and a PowerPoint generator for Windows systems with PowerPoint installed | [`STUDENT-GUIDES\Cyber_Defense_KQL_Workshop_v2.pptx`](STUDENT-GUIDES/Cyber_Defense_KQL_Workshop_v2.pptx), [`scripts\New-WorkshopDeck.ps1`](scripts/New-WorkshopDeck.ps1) |
 | Validation | Validates PowerShell syntax, schemas, and generated telemetry alignment | [`scripts\Test-WorkshopPackage.ps1`](scripts/Test-WorkshopPackage.ps1) |
 
 ## Primary quick start: Docker, Cloudflare, and shared Service Auth
@@ -408,7 +408,7 @@ The package creates 47 tables from Microsoft Learn-derived schema JSON. The 21 t
 
 ## Main entry points
 
-- Student lab: [`workshop\student_lab.kql`](workshop/student_lab.kql)
+- Student setup guide: [`STUDENT-GUIDES\STUDENT-LAB-SETUP-GUIDE.md`](STUDENT-GUIDES/STUDENT-LAB-SETUP-GUIDE.md)
 - Instructor guide: [`docs\instructor_guide.md`](docs/instructor_guide.md)
 - Workshop design: [`docs\workshop_design.md`](docs/workshop_design.md)
 - Diagrams: [`docs\diagrams.md`](docs/diagrams.md)
