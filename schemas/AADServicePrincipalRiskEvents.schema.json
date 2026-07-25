@@ -1,0 +1,174 @@
+{
+  "tableName": "AADServicePrincipalRiskEvents",
+  "categories": [
+    "Identity",
+    "ServicePrincipal",
+    "IdentityProtection",
+    "EntraID"
+  ],
+  "sourceProduct": "Microsoft Entra ID Protection",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadserviceprincipalriskevents",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Individual risk detections raised against service principals.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "Activity",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "ActivityDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "AdditionalInfo",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "AppId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "DetectedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "DetectionTimingType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "Id",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "IpAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "KeyIds",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "LastUpdatedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "Location",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "RequestId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "RiskDetail",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "RiskEventType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "RiskLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "RiskState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "ServicePrincipalDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "ServicePrincipalId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "Source",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "TokenIssuerType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADServicePrincipalRiskEvents schema."
+    }
+  ],
+  "adx": {
+    "mappingName": "AADServicePrincipalRiskEvents_JsonMapping"
+  }
+}

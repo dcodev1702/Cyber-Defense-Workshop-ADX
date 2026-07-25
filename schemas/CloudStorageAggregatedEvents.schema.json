@@ -1,0 +1,239 @@
+{
+  "tableName": "CloudStorageAggregatedEvents",
+  "categories": [
+    "CloudResource",
+    "AzureStorage",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Defender for Cloud",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-cloudstorageaggregatedevents-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Aggregated cloud storage object operations used to detect bulk collection and exfiltration.",
+  "columns": [
+    {
+      "name": "DataAggregationStartTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 392. Most common: 07/14/2026 21:00:00"
+    },
+    {
+      "name": "DataAggregationEndTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 392. Most common: 07/14/2026 22:00:00"
+    },
+    {
+      "name": "DataSource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 1. Most common: Azure Storage"
+    },
+    {
+      "name": "SubscriptionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 5. Most common: 192ad012-896e-4f14-8525-c37a2a9640f9"
+    },
+    {
+      "name": "ResourceGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 12. Most common: foundry"
+    },
+    {
+      "name": "StorageAccount",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 14. Most common: dibsecfoundryst"
+    },
+    {
+      "name": "StorageContainer",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 11. Most common: $purview"
+    },
+    {
+      "name": "StorageFileShare",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 2."
+    },
+    {
+      "name": "ServiceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 2. Most common: Blob"
+    },
+    {
+      "name": "IPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 355. Most common: 10.0.3.211"
+    },
+    {
+      "name": "UserAgentHeader",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 23. Most common: SRP/1.0"
+    },
+    {
+      "name": "OperationNamesList",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 17. Most common: GetContainerProperties"
+    },
+    {
+      "name": "AuthenticationType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 2. Most common: OAuth"
+    },
+    {
+      "name": "AccountObjectId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 14. Most common: 664372c9-3b78-4c38-9b0f-4a4238c1c4b9"
+    },
+    {
+      "name": "AccountTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 2. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+    },
+    {
+      "name": "AccountApplicationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 15. Most common: a15dcae4-a235-4eda-afe0-72c6dd2e1764"
+    },
+    {
+      "name": "AccountUpn",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 2."
+    },
+    {
+      "name": "AccountType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 3. Most common: App"
+    },
+    {
+      "name": "OperationsCount",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 15. Most common: 1"
+    },
+    {
+      "name": "SuccessfulOperationsCount",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 15. Most common: 0"
+    },
+    {
+      "name": "FailedOperationsCount",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 6. Most common: 2"
+    },
+    {
+      "name": "TotalResponseLength",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 15. Most common: 0"
+    },
+    {
+      "name": "SuccessfulReadOperations",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 14. Most common: 0"
+    },
+    {
+      "name": "DistinctGetOperations",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 6. Most common: 0"
+    },
+    {
+      "name": "AnonymousSuccessfulOperations",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 1. Most common: 0"
+    },
+    {
+      "name": "HasAnonymousResourceNotFoundFailures",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 1. Most common: 0"
+    },
+    {
+      "name": "Md5Hashes",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 0."
+    },
+    {
+      "name": "AzureResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 14. Most common: /subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/foundry/provi..."
+    },
+    {
+      "name": "Location",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 3. Most common: eastus2"
+    },
+    {
+      "name": "Timestamp",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 478. Most common: 07/14/2026 22:45:12"
+    },
+    {
+      "name": "ReportId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 996. Most common: d0f80506-3847-5f2a-8fa9-b572b3f3ba4d"
+    },
+    {
+      "name": "ActionType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 1. Most common: Data Aggregation"
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 996. Most common: {\"@odata.type\":\"#microsoft.graph.security.dynamicColumnValue\",\"FirstEventTimesta..."
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 1."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 1. Most common: CloudStorageAggregatedEvents"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 1."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 478. Most common: 07/14/2026 22:45:12"
+    }
+  ],
+  "adx": {
+    "mappingName": "CloudStorageAggregatedEvents_JsonMapping"
+  }
+}

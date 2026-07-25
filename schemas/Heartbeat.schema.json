@@ -1,0 +1,202 @@
+{
+  "tableName": "Heartbeat",
+  "categories": [
+    "Operations",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Azure Monitor Agent",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/heartbeat",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Agent check-in records used to find monitoring coverage gaps across the fleet.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: OpsManager"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live Heartbeat column. Distinct values observed: 1000. Most common: 07/24/2026 19:14:52"
+    },
+    {
+      "name": "MG",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: 00000000-0000-0000-0000-000000000001"
+    },
+    {
+      "name": "ManagementGroupName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: AOI-7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "SourceComputerId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 2. Most common: 2e50966b-0596-4dc9-b372-fff763fe75da"
+    },
+    {
+      "name": "ComputerIP",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: 20.10.224.161"
+    },
+    {
+      "name": "Computer",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 2. Most common: adds01.dibsec.net"
+    },
+    {
+      "name": "Category",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: Azure Monitor Agent"
+    },
+    {
+      "name": "OSType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: Windows"
+    },
+    {
+      "name": "OSName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: Microsoft Windows Server 2025 Datacenter"
+    },
+    {
+      "name": "OSMajorVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: 10"
+    },
+    {
+      "name": "OSMinorVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: 0"
+    },
+    {
+      "name": "Version",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: 1.41.0.0"
+    },
+    {
+      "name": "SCAgentChannel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: Direct"
+    },
+    {
+      "name": "IsGatewayInstalled",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live Heartbeat column. Distinct values observed: 0."
+    },
+    {
+      "name": "RemoteIPLongitude",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: -78.27"
+    },
+    {
+      "name": "RemoteIPLatitude",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: 36.64"
+    },
+    {
+      "name": "RemoteIPCountry",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: United States"
+    },
+    {
+      "name": "SubscriptionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: 2161bce7-2c89-4434-8a8b-52a16239af29"
+    },
+    {
+      "name": "ResourceGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 2. Most common: adds"
+    },
+    {
+      "name": "ResourceProvider",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: Microsoft.Compute"
+    },
+    {
+      "name": "Resource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 2. Most common: adds01"
+    },
+    {
+      "name": "ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 2. Most common: /subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourceGroups/adds/provider..."
+    },
+    {
+      "name": "ResourceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: virtualMachines"
+    },
+    {
+      "name": "ComputerEnvironment",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: Azure"
+    },
+    {
+      "name": "Solutions",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: \"SecurityInsights\", \"BehaviorAnalyticsInsights\", \"SecurityCenterFree\", \"Security..."
+    },
+    {
+      "name": "VMUUID",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 2. Most common: 2e50966b-0596-4dc9-b372-fff763fe75db"
+    },
+    {
+      "name": "ComputerPrivateIPs",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live Heartbeat column. Distinct values observed: 2. Most common: [\"10.1.1.4\"]"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: Heartbeat"
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live Heartbeat column. Distinct values observed: 2. Most common: /subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/provider..."
+    }
+  ],
+  "adx": {
+    "mappingName": "Heartbeat_JsonMapping"
+  }
+}

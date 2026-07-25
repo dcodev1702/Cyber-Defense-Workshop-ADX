@@ -1,0 +1,198 @@
+{
+  "tableName": "BehaviorAnalytics",
+  "categories": [
+    "Ueba",
+    "Identity",
+    "AzureMonitor",
+    "Sentinel"
+  ],
+  "sourceProduct": "Microsoft Sentinel UEBA",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/behavioranalytics",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "User and entity behavior analytics scoring that ranks activity against learned baselines.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "SourceRecordId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 999. Most common: a88dc2d8-7f72-11f1-8065-7c1e52f5e947"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 986. Most common: 07/25/2026 01:23:21"
+    },
+    {
+      "name": "TimeProcessed",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 997. Most common: 07/14/2026 11:02:53"
+    },
+    {
+      "name": "ActivityType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 5. Most common: Logon"
+    },
+    {
+      "name": "ActionType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 10. Most common: Logon_Success"
+    },
+    {
+      "name": "UserName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 8."
+    },
+    {
+      "name": "UserPrincipalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 8."
+    },
+    {
+      "name": "EventSource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 4. Most common: Authentication"
+    },
+    {
+      "name": "SourceIPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 32."
+    },
+    {
+      "name": "SourceIPLocation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 9."
+    },
+    {
+      "name": "SourceDevice",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 4."
+    },
+    {
+      "name": "DestinationIPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 1."
+    },
+    {
+      "name": "DestinationIPLocation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 1."
+    },
+    {
+      "name": "DestinationDevice",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 4."
+    },
+    {
+      "name": "EventVendor",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 2. Most common: Microsoft"
+    },
+    {
+      "name": "EventProductVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 2. Most common: 1.0"
+    },
+    {
+      "name": "ActorName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 2."
+    },
+    {
+      "name": "ActorPrincipalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 1."
+    },
+    {
+      "name": "TargetName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 20."
+    },
+    {
+      "name": "TargetPrincipalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 20."
+    },
+    {
+      "name": "Device",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 4. Most common: Microsft/AAD"
+    },
+    {
+      "name": "UsersInsights",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 50. Most common: {\"UserType\":\"AADID\",\"UserId\":\"cb35c2b4-d46f-4693-9732-e513751bed8c\",\"AccountObje..."
+    },
+    {
+      "name": "DevicesInsights",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 12. Most common: {}"
+    },
+    {
+      "name": "ActivityInsights",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 82. Most common: {\"LogonMethod\":\"Managed Identity\",\"EventResult\":\"Success\",\"EventCount\":\"1\",\"Reso..."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 3. Most common: AAD"
+    },
+    {
+      "name": "NativeTableName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 1."
+    },
+    {
+      "name": "InvestigationPriority",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 4. Most common: 0"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 1. Most common: BehaviorAnalytics"
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 1."
+    }
+  ],
+  "adx": {
+    "mappingName": "BehaviorAnalytics_JsonMapping"
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "tableName": "ExposureGraphEdges",
+  "categories": [
+    "ExposureManagement",
+    "AttackPath",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Security Exposure Management",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-exposuregraphedges-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Relationships between exposure graph nodes that describe how an attacker can traverse the estate.",
+  "columns": [
+    {
+      "name": "EdgeId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "EdgeLabel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "SourceNodeId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "SourceNodeName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "SourceNodeLabel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "SourceNodeCategories",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "TargetNodeId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "TargetNodeName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "TargetNodeLabel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "TargetNodeCategories",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "EdgeProperties",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live ExposureGraphEdges schema."
+    }
+  ],
+  "adx": {
+    "mappingName": "ExposureGraphEdges_JsonMapping"
+  }
+}

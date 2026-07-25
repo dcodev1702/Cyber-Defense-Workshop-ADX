@@ -1,0 +1,96 @@
+{
+  "tableName": "UserPeerAnalytics",
+  "categories": [
+    "Ueba",
+    "Identity",
+    "AzureMonitor",
+    "Sentinel"
+  ],
+  "sourceProduct": "Microsoft Sentinel UEBA",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/userpeeranalytics",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Peer group ranking for each user, used to judge whether an action is unusual for their cohort.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 15. Most common: 07/24/2026 19:00:00"
+    },
+    {
+      "name": "AADTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 1. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+    },
+    {
+      "name": "UserId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 33. Most common: ad4ea7e4-a256-4217-9671-133c24e80ca7"
+    },
+    {
+      "name": "UserPrincipalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 1."
+    },
+    {
+      "name": "UserName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 1."
+    },
+    {
+      "name": "PeerUserId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 35. Most common: ad4ea7e4-a256-4217-9671-133c24e80ca7"
+    },
+    {
+      "name": "PeerUserPrincipalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 1."
+    },
+    {
+      "name": "PeerUserName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 1."
+    },
+    {
+      "name": "Rank",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 14. Most common: 1"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 1. Most common: Azure"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 1. Most common: UserPeerAnalytics"
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 1."
+    }
+  ],
+  "adx": {
+    "mappingName": "UserPeerAnalytics_JsonMapping"
+  }
+}

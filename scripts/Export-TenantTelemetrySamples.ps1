@@ -103,6 +103,20 @@ $script:AdditionalTables = @(
     [pscustomobject]@{ Name = 'ASimDnsActivityLogs'; PreferredSource = 'LogAnalytics' }
     [pscustomobject]@{ Name = 'OfficeActivity'; PreferredSource = 'LogAnalytics' }
     [pscustomobject]@{ Name = 'CloudAuditEvents'; PreferredSource = 'DefenderXdr' }
+    # Tier 3 attack path, UEBA, and identity risk surfaces.
+    [pscustomobject]@{ Name = 'ExposureGraphNodes'; PreferredSource = 'DefenderXdr' }
+    [pscustomobject]@{ Name = 'ExposureGraphEdges'; PreferredSource = 'DefenderXdr' }
+    [pscustomobject]@{ Name = 'CloudStorageAggregatedEvents'; PreferredSource = 'DefenderXdr' }
+    [pscustomobject]@{ Name = 'BehaviorAnalytics'; PreferredSource = 'LogAnalytics' }
+    [pscustomobject]@{ Name = 'UserPeerAnalytics'; PreferredSource = 'LogAnalytics' }
+    [pscustomobject]@{ Name = 'IntuneDeviceComplianceOrg'; PreferredSource = 'LogAnalytics' }
+    [pscustomobject]@{ Name = 'MicrosoftServicePrincipalSignInLogs'; PreferredSource = 'LogAnalytics' }
+    [pscustomobject]@{ Name = 'AADGraphActivityLogs'; PreferredSource = 'LogAnalytics' }
+    # Tier 4 depth and coverage surfaces.
+    [pscustomobject]@{ Name = 'AADRiskyUsers'; PreferredSource = 'LogAnalytics' }
+    [pscustomobject]@{ Name = 'SentinelHealth'; PreferredSource = 'LogAnalytics' }
+    [pscustomobject]@{ Name = 'AzureDiagnostics'; PreferredSource = 'LogAnalytics' }
+    [pscustomobject]@{ Name = 'Heartbeat'; PreferredSource = 'LogAnalytics' }
 )
 
 # Repo schema names that historically did not match the live table name. The live name

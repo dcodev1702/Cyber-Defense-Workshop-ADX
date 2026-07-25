@@ -624,5 +624,151 @@
     ],
     "sourceProduct": "Microsoft 365",
     "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/officeactivity"
+  },
+  {
+    "name": "BehaviorAnalytics",
+    "categories": [
+      "Ueba",
+      "Identity",
+      "AzureMonitor",
+      "Sentinel"
+    ],
+    "sourceProduct": "Microsoft Sentinel UEBA",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/behavioranalytics"
+  },
+  {
+    "name": "UserPeerAnalytics",
+    "categories": [
+      "Ueba",
+      "Identity",
+      "AzureMonitor",
+      "Sentinel"
+    ],
+    "sourceProduct": "Microsoft Sentinel UEBA",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/userpeeranalytics"
+  },
+  {
+    "name": "IntuneDeviceComplianceOrg",
+    "categories": [
+      "Intune",
+      "DeviceManagement",
+      "AzureMonitor"
+    ],
+    "sourceProduct": "Microsoft Intune",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/intunedevicecomplianceorg"
+  },
+  {
+    "name": "MicrosoftServicePrincipalSignInLogs",
+    "categories": [
+      "Identity",
+      "ServicePrincipal",
+      "AzureMonitor",
+      "EntraID"
+    ],
+    "sourceProduct": "Microsoft Entra ID",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/microsoftserviceprincipalsigninlogs"
+  },
+  {
+    "name": "AADGraphActivityLogs",
+    "categories": [
+      "Identity",
+      "Graph",
+      "AzureMonitor",
+      "EntraID"
+    ],
+    "sourceProduct": "Microsoft Entra ID",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadgraphactivitylogs"
+  },
+  {
+    "name": "AADRiskyUsers",
+    "categories": [
+      "Identity",
+      "IdentityProtection",
+      "AzureMonitor",
+      "EntraID"
+    ],
+    "sourceProduct": "Microsoft Entra ID Protection",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadriskyusers"
+  },
+  {
+    "name": "SentinelHealth",
+    "categories": [
+      "Operations",
+      "AzureMonitor",
+      "Sentinel"
+    ],
+    "sourceProduct": "Microsoft Sentinel",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/sentinelhealth"
+  },
+  {
+    "name": "AzureDiagnostics",
+    "categories": [
+      "CloudResource",
+      "Diagnostics",
+      "AzureMonitor"
+    ],
+    "sourceProduct": "Azure Monitor",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics"
+  },
+  {
+    "name": "Heartbeat",
+    "categories": [
+      "Operations",
+      "AzureMonitor"
+    ],
+    "sourceProduct": "Azure Monitor Agent",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/heartbeat"
+  },
+  {
+    "name": "ExposureGraphNodes",
+    "categories": [
+      "ExposureManagement",
+      "AttackPath",
+      "DefenderXDR"
+    ],
+    "sourceProduct": "Microsoft Security Exposure Management",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-exposuregraphnodes-table"
+  },
+  {
+    "name": "CloudStorageAggregatedEvents",
+    "categories": [
+      "CloudResource",
+      "AzureStorage",
+      "DefenderXDR"
+    ],
+    "sourceProduct": "Microsoft Defender for Cloud",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-cloudstorageaggregatedevents-table"
+  },
+  {
+    "name": "ExposureGraphEdges",
+    "categories": [
+      "ExposureManagement",
+      "AttackPath",
+      "DefenderXDR"
+    ],
+    "sourceProduct": "Microsoft Security Exposure Management",
+    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-exposuregraphedges-table"
+  },
+  {
+    "name": "AADRiskyServicePrincipals",
+    "categories": [
+      "Identity",
+      "ServicePrincipal",
+      "IdentityProtection",
+      "EntraID"
+    ],
+    "sourceProduct": "Microsoft Entra ID Protection",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadriskyserviceprincipals"
+  },
+  {
+    "name": "AADServicePrincipalRiskEvents",
+    "categories": [
+      "Identity",
+      "ServicePrincipal",
+      "IdentityProtection",
+      "EntraID"
+    ],
+    "sourceProduct": "Microsoft Entra ID Protection",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadserviceprincipalriskevents"
   }
 ]

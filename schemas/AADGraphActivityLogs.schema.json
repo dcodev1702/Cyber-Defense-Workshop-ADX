@@ -1,0 +1,222 @@
+{
+  "tableName": "AADGraphActivityLogs",
+  "categories": [
+    "Identity",
+    "Graph",
+    "AzureMonitor",
+    "EntraID"
+  ],
+  "sourceProduct": "Microsoft Entra ID",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadgraphactivitylogs",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Legacy Azure AD Graph API request telemetry, still abused for directory enumeration.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 892. Most common: 07/14/2026 15:04:26"
+    },
+    {
+      "name": "TimeRequested",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 979. Most common: 07/15/2026 02:09:01"
+    },
+    {
+      "name": "Location",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 5. Most common: eastus"
+    },
+    {
+      "name": "RequestId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 852. Most common: 59b0fede-2342-4e64-9f0e-6f6c7df94e95"
+    },
+    {
+      "name": "AADTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1. Most common: AAD Graph Activity"
+    },
+    {
+      "name": "ApiVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 6. Most common: 1.6-internal"
+    },
+    {
+      "name": "Category",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1. Most common: AzureADGraphActivityLogs"
+    },
+    {
+      "name": "ResultSignature",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "DurationMs",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 174. Most common: 46"
+    },
+    {
+      "name": "Level",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "RequestMethod",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 3. Most common: GET"
+    },
+    {
+      "name": "ResponseStatusCode",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 6. Most common: 200"
+    },
+    {
+      "name": "ResponseSizeBytes",
+      "type": "int",
+      "sourceType": "int",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 146. Most common: 97"
+    },
+    {
+      "name": "SignInActivityId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 584. Most common: c1332fb7-8c67-4b89-9c56-5cb72bd24300"
+    },
+    {
+      "name": "Roles",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 4."
+    },
+    {
+      "name": "TokenIssuedAt",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 425. Most common: 07/14/2026 14:37:21"
+    },
+    {
+      "name": "ActorType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 2. Most common: User"
+    },
+    {
+      "name": "AppId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 18. Most common: 74658136-14ec-4630-ad9b-26e160ff0fc6"
+    },
+    {
+      "name": "UserId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 11."
+    },
+    {
+      "name": "ServicePrincipalId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 14."
+    },
+    {
+      "name": "Scopes",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 8."
+    },
+    {
+      "name": "IdentityProvider",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 3."
+    },
+    {
+      "name": "ClientAuthMethod",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1. Most common: 0"
+    },
+    {
+      "name": "Wids",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 10."
+    },
+    {
+      "name": "CallerIpAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 129. Most common: 72.152.168.2"
+    },
+    {
+      "name": "UserAgent",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 8."
+    },
+    {
+      "name": "RequestUri",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 74. Most common: /v2/b22dee98-83da-4207-b9ab-5ba931866f44/policies"
+    },
+    {
+      "name": "SessionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 24."
+    },
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1. Most common: AADGraphActivityLogs"
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1."
+    }
+  ],
+  "adx": {
+    "mappingName": "AADGraphActivityLogs_JsonMapping"
+  }
+}

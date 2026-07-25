@@ -1,0 +1,107 @@
+{
+  "tableName": "SentinelHealth",
+  "categories": [
+    "Operations",
+    "AzureMonitor",
+    "Sentinel"
+  ],
+  "sourceProduct": "Microsoft Sentinel",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/sentinelhealth",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Sentinel connector and analytics rule health, used to teach detection blind spots.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live SentinelHealth column. Distinct values observed: 1000. Most common: 07/25/2026 02:53:24"
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 3. Most common: NRT analytics rule run"
+    },
+    {
+      "name": "SentinelResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 81. Most common: /subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/prov..."
+    },
+    {
+      "name": "SentinelResourceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 82. Most common: NRT Squid proxy events related to mining pools"
+    },
+    {
+      "name": "Status",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 2. Most common: Success"
+    },
+    {
+      "name": "Description",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 5. Most common: Rule executed successfully, but did not reach the threshold (0) required to gene..."
+    },
+    {
+      "name": "Reason",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 3. Most common: The analytics rule executed successfully. The alert generation threshold was not..."
+    },
+    {
+      "name": "WorkspaceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "SentinelResourceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 2. Most common: Analytics Rule"
+    },
+    {
+      "name": "SentinelResourceKind",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 4. Most common: NRT"
+    },
+    {
+      "name": "RecordId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 1000. Most common: 12f19839-ef85-423d-b2db-b896ba443af5"
+    },
+    {
+      "name": "ExtendedProperties",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live SentinelHealth column. Distinct values observed: 83. Most common: {\"QueryFrequency\":null,\"AggregationKind\":\"SingleAlert\",\"QueryPeriod\":null,\"RuleI..."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 1."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live SentinelHealth column. Distinct values observed: 1. Most common: SentinelHealth"
+    }
+  ],
+  "adx": {
+    "mappingName": "SentinelHealth_JsonMapping"
+  }
+}

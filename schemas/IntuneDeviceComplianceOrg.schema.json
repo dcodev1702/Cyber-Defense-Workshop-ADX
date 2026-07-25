@@ -1,0 +1,197 @@
+{
+  "tableName": "IntuneDeviceComplianceOrg",
+  "categories": [
+    "Intune",
+    "DeviceManagement",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Microsoft Intune",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/intunedevicecomplianceorg",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Organization-wide Intune device compliance state, used to explain conditional access outcomes.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 297. Most common: 07/24/2026 01:25:44"
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 1. Most common: DeviceCompliance"
+    },
+    {
+      "name": "Result",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 2. Most common: None"
+    },
+    {
+      "name": "DeviceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 5."
+    },
+    {
+      "name": "UPN",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 3. Most common: lireland@DibSecurity.onmicrosoft.com"
+    },
+    {
+      "name": "ComplianceState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 4. Most common: Compliant"
+    },
+    {
+      "name": "OSDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 2. Most common: Windows"
+    },
+    {
+      "name": "OSVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 10."
+    },
+    {
+      "name": "OS",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 2. Most common: Windows"
+    },
+    {
+      "name": "OwnerType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 4. Most common: Personal"
+    },
+    {
+      "name": "DeviceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 5."
+    },
+    {
+      "name": "LastContact",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 81."
+    },
+    {
+      "name": "UserId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 3. Most common: 1821f16b-41ee-4008-914d-12334122753d"
+    },
+    {
+      "name": "IMEI",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 1."
+    },
+    {
+      "name": "SerialNumber",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 4."
+    },
+    {
+      "name": "RetireAfterDatetime",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 1."
+    },
+    {
+      "name": "ManagementAgents",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 4. Most common: 514"
+    },
+    {
+      "name": "DeviceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 2. Most common: 1"
+    },
+    {
+      "name": "UserName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 3. Most common: Lorenzo Ireland"
+    },
+    {
+      "name": "BatchId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 181. Most common: de4c2deb-bd6f-4556-ae86-639bd644edc3"
+    },
+    {
+      "name": "InGracePeriodUntil",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 5. Most common: 12/31/9999 23:59:59"
+    },
+    {
+      "name": "DeviceHealthThreatLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 5."
+    },
+    {
+      "name": "UserEmail",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 3. Most common: lireland@DibSecurity.onmicrosoft.com"
+    },
+    {
+      "name": "IntuneAccountId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 1. Most common: ae45df63-b097-434d-9668-f85de1cb2fcb"
+    },
+    {
+      "name": "AADTenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 2. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+    },
+    {
+      "name": "Stats",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 4. Most common: {\"RecordCount\":3}"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 1. Most common: Azure"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 1. Most common: IntuneDeviceComplianceOrg"
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 1."
+    }
+  ],
+  "adx": {
+    "mappingName": "IntuneDeviceComplianceOrg_JsonMapping"
+  }
+}

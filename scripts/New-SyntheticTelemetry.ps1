@@ -2297,8 +2297,148 @@ $officeActivityCatalog = @(
     [pscustomobject]@{ Operation = 'MemberAdded'; RecordType = 'MicrosoftTeams'; Workload = 'MicrosoftTeams'; UserType = 'Regular'; Service = $false }
 )
 
-$windowsProcessTemplates = @(
-    [pscustomobject]@{ File = 'svchost.exe'; Path = 'C:\Windows\System32\svchost.exe'; Parent = 'services.exe'; Command = 'C:\Windows\System32\svchost.exe -k netsvcs -p' },
+# ---------------------------------------------------------------------------
+# Tier 3 and Tier 4 catalogs. Distributions measured from the exported sample.
+# ---------------------------------------------------------------------------
+
+# BehaviorAnalytics. ActivityType in the real sample is Logon 599, LogOn 264, and
+# Administrative 69, and InvestigationPriority is 0 on 914 of 1000 rows. The casing
+# inconsistency between Logon and LogOn is real and is preserved deliberately.
+$behaviorAnalyticsCatalog = @(
+    [pscustomobject]@{ ActivityType = 'Logon'; ActionType = 'Logon_Success'; EventSource = 'Authentication'; SourceSystem = 'AAD'; Priority = 0 }
+    [pscustomobject]@{ ActivityType = 'Logon'; ActionType = 'Logon_Success'; EventSource = 'Authentication'; SourceSystem = 'AAD'; Priority = 0 }
+    [pscustomobject]@{ ActivityType = 'Logon'; ActionType = 'Logon_Success'; EventSource = 'Authentication'; SourceSystem = 'AAD'; Priority = 0 }
+    [pscustomobject]@{ ActivityType = 'LogOn'; ActionType = 'Sign-in'; EventSource = 'Azure AD'; SourceSystem = 'AAD'; Priority = 0 }
+    [pscustomobject]@{ ActivityType = 'LogOn'; ActionType = 'Sign-in'; EventSource = 'Azure AD'; SourceSystem = 'AAD'; Priority = 0 }
+    [pscustomobject]@{ ActivityType = 'Administrative'; ActionType = 'ResourceAccess'; EventSource = 'SecurityEvent'; SourceSystem = 'M365 Defender for EndPoint'; Priority = 2 }
+    [pscustomobject]@{ ActivityType = 'Administrative'; ActionType = 'DirectoryChange'; EventSource = 'Azure AD'; SourceSystem = 'AAD'; Priority = 3 }
+    [pscustomobject]@{ ActivityType = 'FailedLogOn'; ActionType = 'Logon_Failure'; EventSource = 'Authentication'; SourceSystem = 'AAD'; Priority = 5 }
+)
+
+# IntuneDeviceComplianceOrg. ComplianceState is Compliant on 179 of the 207 rows that
+# carry device detail, and the sentinel grace period value 9999-12-31 is what the real
+# connector emits for devices that are not in a grace period.
+$intuneComplianceCatalog = @(
+    [pscustomobject]@{ State = 'Compliant'; Owner = 'Personal'; Agents = 514; Threat = 'Secured' }
+    [pscustomobject]@{ State = 'Compliant'; Owner = 'Company'; Agents = 2; Threat = 'Secured' }
+    [pscustomobject]@{ State = 'Compliant'; Owner = 'Personal'; Agents = 514; Threat = 'Unknown' }
+    [pscustomobject]@{ State = 'Compliant'; Owner = 'Company'; Agents = 2; Threat = 'Low' }
+    [pscustomobject]@{ State = 'Not compliant'; Owner = 'Personal'; Agents = 1024; Threat = 'Medium' }
+    [pscustomobject]@{ State = 'Not evaluated'; Owner = 'Unknown'; Agents = 1024; Threat = 'Unknown' }
+)
+
+# SentinelHealth. NRT analytics rule runs dominate at 898 of 1000 rows and Status is
+# Success on 998, which is exactly why this table teaches detection blind spots: the
+# failures are rare and easy to miss.
+$sentinelHealthCatalog = @(
+    [pscustomobject]@{ Operation = 'NRT analytics rule run'; Kind = 'NRT'; ResourceType = 'Analytics Rule'; Status = 'Success' }
+    [pscustomobject]@{ Operation = 'NRT analytics rule run'; Kind = 'NRT'; ResourceType = 'Analytics Rule'; Status = 'Success' }
+    [pscustomobject]@{ Operation = 'NRT analytics rule run'; Kind = 'NRT'; ResourceType = 'Analytics Rule'; Status = 'Success' }
+    [pscustomobject]@{ Operation = 'Scheduled analytics rule run'; Kind = 'Scheduled'; ResourceType = 'Analytics Rule'; Status = 'Success' }
+    [pscustomobject]@{ Operation = 'Data fetch status change'; Kind = 'Office365'; ResourceType = 'Data connector'; Status = 'Success' }
+    [pscustomobject]@{ Operation = 'Scheduled analytics rule run'; Kind = 'Scheduled'; ResourceType = 'Analytics Rule'; Status = 'Failure' }
+)
+
+$sentinelRuleNameCatalog = @(
+    'NRT Squid proxy events related to mining pools'
+    'NRT Authentication Methods Changed for VIP Users'
+    'NRT Modified domain federation trust settings'
+    'Device code authentication from unfamiliar infrastructure'
+    'OAuth application granted high privilege Graph scopes'
+    'Mass mailbox item access by a single principal'
+    'Storage account key enumeration'
+    'Kerberoasting service ticket burst'
+)
+
+# MicrosoftServicePrincipalSignInLogs. Resource mix in the real sample is Azure Resource
+# Manager 457, Microsoft Graph 289, and Office 365 Management APIs 94. AppOwnerTenantId
+# is Microsoft's own first-party tenant on every row.
+$spnSignInResourceCatalog = @(
+    [pscustomobject]@{ Name = 'Azure Resource Manager'; Id = '797f4846-ba00-4fd7-ba43-dac1f8f63013' }
+    [pscustomobject]@{ Name = 'Azure Resource Manager'; Id = '797f4846-ba00-4fd7-ba43-dac1f8f63013' }
+    [pscustomobject]@{ Name = 'Microsoft Graph'; Id = '00000003-0000-0000-c000-000000000000' }
+    [pscustomobject]@{ Name = 'Microsoft Graph'; Id = '00000003-0000-0000-c000-000000000000' }
+    [pscustomobject]@{ Name = 'Office 365 Management APIs'; Id = 'c5393580-f805-4401-95e8-94b7a6ef2fc2' }
+    [pscustomobject]@{ Name = 'Windows Azure Active Directory'; Id = '00000002-0000-0000-c000-000000000000' }
+    [pscustomobject]@{ Name = 'Azure Key Vault'; Id = 'cfa8b339-82a2-471a-a3c9-0fc0be7a4093' }
+    [pscustomobject]@{ Name = 'Azure Storage'; Id = 'e406a681-f3d4-42a8-90b6-c2b029497af1' }
+)
+
+$spnDisplayNameCatalog = @(
+    'Windows Azure Security Resource Provider'
+    'Microsoft Defender for Cloud Apps - APIs'
+    'Azure RBAC Data Plane'
+    'USAG Cyber Backup Service'
+    'USAG Cyber Inventory Collector'
+    'USAG Cyber Reporting Connector'
+)
+
+# AADGraphActivityLogs. The legacy Azure AD Graph surface still sees real traffic:
+# GET 632 of 1000, HTTP 200 on 797, and an even User against Application actor split.
+$graphActivityCatalog = @(
+    [pscustomobject]@{ ApiVersion = '1.6-internal'; Method = 'GET'; Status = 200; Uri = '/v2/{0}/policies'; Agent = 'Microsoft Azure Graph Client Library 1.0' }
+    [pscustomobject]@{ ApiVersion = '1.6-internal'; Method = 'GET'; Status = 200; Uri = '/v2/myorganization/isDirectoryFeatureEnabled'; Agent = 'Microsoft.OData.Client/7.12.5' }
+    [pscustomobject]@{ ApiVersion = '1.61-internal'; Method = 'POST'; Status = 202; Uri = '/{0}/$batch'; Agent = 'Microsoft ADO.NET Data Services' }
+    [pscustomobject]@{ ApiVersion = '1.61-internal'; Method = 'GET'; Status = 200; Uri = '/{0}/users'; Agent = 'Microsoft Azure Graph Client Library 1.0' }
+    [pscustomobject]@{ ApiVersion = '1.6'; Method = 'GET'; Status = 200; Uri = '/{0}/servicePrincipals'; Agent = 'Microsoft.OData.Client/7.12.5' }
+    [pscustomobject]@{ ApiVersion = '1.6-internal'; Method = 'PATCH'; Status = 204; Uri = '/{0}/applications'; Agent = 'Microsoft ADO.NET Data Services' }
+    [pscustomobject]@{ ApiVersion = '1.6-internal'; Method = 'GET'; Status = 403; Uri = '/{0}/directoryRoles'; Agent = 'Microsoft Azure Graph Client Library 1.0' }
+)
+
+# ExposureGraphNodes. Security recommendations dominate the real graph at 964 of 1000
+# nodes. The scenario asset types are added so attack paths terminate somewhere real.
+$exposureNodeCatalog = @(
+    [pscustomobject]@{ Label = 'mdcSecurityRecommendation'; Categories = @('finding', 'security_finding') }
+    [pscustomobject]@{ Label = 'mdcSecurityRecommendation'; Categories = @('finding', 'security_finding') }
+    [pscustomobject]@{ Label = 'mdcSecurityRecommendation'; Categories = @('finding', 'security_finding') }
+    [pscustomobject]@{ Label = 'container-image'; Categories = @('container', 'container_image', 'containers') }
+    [pscustomobject]@{ Label = 'device'; Categories = @('compute', 'endpoint') }
+    [pscustomobject]@{ Label = 'user'; Categories = @('identity') }
+    [pscustomobject]@{ Label = 'serviceprincipal'; Categories = @('identity', 'application') }
+    [pscustomobject]@{ Label = 'microsoft.storage/storageaccounts'; Categories = @('storage', 'cloud_resource') }
+)
+
+$exposureEdgeLabelCatalog = @(
+    'affecting', 'has role on', 'can authenticate to', 'member of',
+    'contains', 'can access', 'has credentials to', 'routes to'
+)
+
+# CloudStorageAggregatedEvents. GetContainerProperties is 659 of 1000 real rows and
+# authentication splits OAuth 664 against TrustedAccess 336. GetBlob carries the
+# collection beat when it appears in volume from a single principal.
+$cloudStorageOperationCatalog = @(
+    [pscustomobject]@{ Operation = 'GetContainerProperties'; Service = 'Blob'; Auth = 'TrustedAccess' }
+    [pscustomobject]@{ Operation = 'GetContainerProperties'; Service = 'Blob'; Auth = 'OAuth' }
+    [pscustomobject]@{ Operation = 'GetContainerProperties'; Service = 'Blob'; Auth = 'OAuth' }
+    [pscustomobject]@{ Operation = 'ListContainers'; Service = 'Blob'; Auth = 'OAuth' }
+    [pscustomobject]@{ Operation = 'GetBlob'; Service = 'Blob'; Auth = 'OAuth' }
+    [pscustomobject]@{ Operation = 'GetBlobProperties'; Service = 'Blob'; Auth = 'OAuth' }
+    [pscustomobject]@{ Operation = 'ListBlobs'; Service = 'Blob'; Auth = 'OAuth' }
+    [pscustomobject]@{ Operation = 'GetFile'; Service = 'Files.REST'; Auth = 'TrustedAccess' }
+)
+
+# AzureDiagnostics. Logic App workflow runtime dominates the real table at 985 of 1000
+# rows; Key Vault and Cognitive Services make up the tail.
+$azureDiagnosticsCatalog = @(
+    [pscustomobject]@{ Category = 'WorkflowRuntime'; Provider = 'MICROSOFT.LOGIC'; ResourceGroup = 'PLAYBOOK'; ResourceType = 'WORKFLOWS' }
+    [pscustomobject]@{ Category = 'WorkflowRuntime'; Provider = 'MICROSOFT.LOGIC'; ResourceGroup = 'PLAYBOOK'; ResourceType = 'WORKFLOWS' }
+    [pscustomobject]@{ Category = 'WorkflowRuntime'; Provider = 'MICROSOFT.LOGIC'; ResourceGroup = 'PLAYBOOK'; ResourceType = 'WORKFLOWS' }
+    [pscustomobject]@{ Category = 'RequestResponse'; Provider = 'MICROSOFT.COGNITIVESERVICES'; ResourceGroup = 'A365-WORKSHOP'; ResourceType = 'ACCOUNTS' }
+    [pscustomobject]@{ Category = 'AuditEvent'; Provider = 'MICROSOFT.KEYVAULT'; ResourceGroup = 'ZOLAB-BOT-BOTPRD'; ResourceType = 'VAULTS' }
+    [pscustomobject]@{ Category = 'NetworkSecurityGroupEvent'; Provider = 'MICROSOFT.NETWORK'; ResourceGroup = 'NETWORK'; ResourceType = 'NETWORKSECURITYGROUPS' }
+)
+
+# Service principal risk. These two tables hold no rows in the source tenant, so the
+# shapes come from the live getschema plus the documented Entra ID Protection values.
+$spnRiskEventCatalog = @(
+    [pscustomobject]@{ EventType = 'investigationsThreatIntelligence'; Level = 'high'; Detection = 'realtime'; Activity = 'servicePrincipal' }
+    [pscustomobject]@{ EventType = 'suspiciousSignIn'; Level = 'medium'; Detection = 'offline'; Activity = 'servicePrincipal' }
+    [pscustomobject]@{ EventType = 'leakedCredentials'; Level = 'high'; Detection = 'offline'; Activity = 'servicePrincipal' }
+    [pscustomobject]@{ EventType = 'anomalousServicePrincipalActivity'; Level = 'medium'; Detection = 'offline'; Activity = 'servicePrincipal' }
+    [pscustomobject]@{ EventType = 'maliciousIPAddress'; Level = 'high'; Detection = 'realtime'; Activity = 'servicePrincipal' }
+)
+
+$windowsProcessTemplates = @(    [pscustomobject]@{ File = 'svchost.exe'; Path = 'C:\Windows\System32\svchost.exe'; Parent = 'services.exe'; Command = 'C:\Windows\System32\svchost.exe -k netsvcs -p' },
     [pscustomobject]@{ File = 'msedge.exe'; Path = 'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'; Parent = 'explorer.exe'; Command = 'msedge.exe --type=renderer --lang=en-US' },
     [pscustomobject]@{ File = 'Teams.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\Teams\current\Teams.exe'; Parent = 'explorer.exe'; Command = 'Teams.exe --process-start-args --system-initiated' },
     [pscustomobject]@{ File = 'OneDrive.exe'; PathTemplate = 'C:\Users\{0}\AppData\Local\Microsoft\OneDrive\OneDrive.exe'; Parent = 'explorer.exe'; Command = 'OneDrive.exe /background' },
@@ -4355,6 +4495,534 @@ function New-NormalTelemetryValues {
                 )
                 $values.OfficeObjectId = '{0}\{1}' -f $tenantDomain, (New-StableGuid "office-object|$($Index % 200)")
             }
+        }
+        'BehaviorAnalytics' {
+            # Shaped from the real BehaviorAnalytics sample: 25 of 30 columns carry data
+            # and InvestigationPriority is 0 on 914 of 1000 rows. The inconsistent Logon
+            # against LogOn casing is real and is preserved.
+            $uebaTemplate = $behaviorAnalyticsCatalog[$Index % $behaviorAnalyticsCatalog.Count]
+            $uebaUser = if (($Index % 53) -eq 0) { $victor } else { $users[($Index * 31) % $users.Count] }
+            $uebaDevice = $devices[($Index * 11) % $devices.Count]
+            $isScenarioUeba = $uebaUser.Name -eq 'victor.alvarez'
+            $uebaPriority = if ($isScenarioUeba) { 8 } else { $uebaTemplate.Priority }
+            $uebaIp = if ($isScenarioUeba) { $externalIp } else { $uebaDevice.PublicIP }
+
+            $values.TenantId = $tenantId
+            $values.SourceRecordId = New-StableGuid "ueba-record|$Index"
+            $values.TimeProcessed = Format-WorkshopTime $Time.AddSeconds(45 + ($Index % 200))
+            $values.ActivityType = $uebaTemplate.ActivityType
+            $values.ActionType = $uebaTemplate.ActionType
+            $values.EventSource = $uebaTemplate.EventSource
+            $values.SourceSystem = $uebaTemplate.SourceSystem
+            $values.UserName = $uebaUser.Name
+            $values.UserPrincipalName = $uebaUser.Upn
+            $values.SourceIPAddress = $uebaIp
+            $values.SourceIPLocation = if ($isScenarioUeba) { 'amsterdam, netherlands' } else { @('boydton, united states', 'cheyenne, united states', 'des moines, united states')[$Index % 3] }
+            $values.SourceDevice = $uebaDevice.Name
+            $values.DestinationDevice = 'adds01.{0}' -f $corpFqdn
+            $values.EventVendor = 'Microsoft'
+            $values.EventProductVersion = '1.0'
+            $values.ActorName = if (($Index % 40) -eq 0) { 'nt authority\system' } else { $uebaUser.Name }
+            $values.TargetName = $uebaUser.Name
+            $values.TargetPrincipalName = $uebaUser.Upn
+            $values.Device = if ($uebaTemplate.SourceSystem -eq 'AAD') { 'Microsft/AAD' } else { $uebaDevice.Name }
+            $values.InvestigationPriority = $uebaPriority
+            $values.UsersInsights = @{
+                UserType = 'AADID'
+                UserId = $uebaUser.ObjectId
+                OnPremisesSID = $uebaUser.Sid
+                BlastRadius = if ($isScenarioUeba) { 'High' } else { 'Low' }
+                IsDormantAccount = 'False'
+                IsNewAccount = 'False'
+            }
+            $values.DevicesInsights = if (($Index % 3) -eq 0) { @{ IsLocalAdmin = 'True'; UserAgentFamily = 'Edge' } } else { @{} }
+            $values.ActivityInsights = @{
+                LogonMethod = if ($uebaTemplate.SourceSystem -eq 'AAD') { 'Managed Identity' } else { 'Kerberos' }
+                EventResult = if ($uebaTemplate.ActionType -like '*Failure*') { 'Failure' } else { 'Success' }
+                FirstTimeUserConnectedFromCountry = if ($isScenarioUeba) { 'True' } else { 'False' }
+                CountryUncommonlyConnectedFromAmongPeers = if ($isScenarioUeba) { 'True' } else { 'False' }
+                ISPUncommonlyUsedInTenant = if ($isScenarioUeba) { 'True' } else { 'False' }
+            }
+            $values.Type = 'BehaviorAnalytics'
+        }
+        'UserPeerAnalytics' {
+            # Only 8 of 13 columns carry data in the real table. Rank runs 1 to 14.
+            $peerUser = $users[($Index * 7) % $users.Count]
+            $peer = $users[($Index * 19) % $users.Count]
+
+            $values.TenantId = $tenantId
+            $values.AADTenantId = $tenantId
+            $values.UserId = $peerUser.ObjectId
+            $values.PeerUserId = $peer.ObjectId
+            $values.Rank = 1 + ($Index % 14)
+            $values.SourceSystem = 'Azure'
+            $values.Type = 'UserPeerAnalytics'
+        }
+        'IntuneDeviceComplianceOrg' {
+            # Shaped from the real sample: 27 of 30 columns carry data, OperationName is
+            # always DeviceCompliance, and devices not in a grace period carry the
+            # sentinel date 9999-12-31 rather than a null.
+            $complianceTemplate = $intuneComplianceCatalog[$Index % $intuneComplianceCatalog.Count]
+            $mdmDevice = $windowsDevices[($Index * 13) % $windowsDevices.Count]
+            $mdmUser = $users[($Index * 17) % $users.Count]
+            $isNonCompliant = $complianceTemplate.State -eq 'Not compliant'
+
+            $values.TenantId = $tenantId
+            $values.AADTenantId = $tenantId
+            $values.OperationName = 'DeviceCompliance'
+            $values.Result = if (($Index % 100) -lt 70) { 'None' } else { 'Completed' }
+            $values.DeviceName = $mdmDevice.ShortName.ToUpperInvariant()
+            $values.UPN = $mdmUser.Upn
+            $values.UserEmail = $mdmUser.Upn
+            $values.UserName = $mdmUser.DisplayName
+            $values.UserId = $mdmUser.ObjectId
+            $values.ComplianceState = $complianceTemplate.State
+            $values.OS = 'Windows'
+            $values.OSDescription = 'Windows'
+            $values.OSVersion = @('10.0.26200.8655', '10.0.26200.8246', '10.0.28000.2340')[$Index % 3]
+            $values.OwnerType = $complianceTemplate.Owner
+            $values.DeviceId = $mdmDevice.DeviceId
+            $values.LastContact = Format-WorkshopTime $Time.AddHours(-1 * ($Index % 400))
+            $values.SerialNumber = (New-StableHex "intune-serial|$($mdmDevice.ShortName)" 10).ToUpperInvariant()
+            $values.ManagementAgents = $complianceTemplate.Agents
+            $values.DeviceType = 1
+            $values.BatchId = New-StableGuid "intune-batch|$($Index % 180)"
+            $values.InGracePeriodUntil = if ($isNonCompliant) { Format-WorkshopTime $Time.AddDays(3) } else { '9999-12-31T23:59:59.0000000Z' }
+            $values.DeviceHealthThreatLevel = $complianceTemplate.Threat
+            $values.IntuneAccountId = New-StableGuid 'intune-account'
+            $values.Stats = @{ RecordCount = 1 + ($Index % 4) }
+            $values.SourceSystem = 'Azure'
+            $values.Type = 'IntuneDeviceComplianceOrg'
+        }
+        'AADRiskyUsers' {
+            # 14 of 15 columns carry data. Id and CorrelationId are both the user object
+            # id in the real table, and OperationName is always the literal "Risky user".
+            $riskyUser = if (($Index % 11) -eq 0) { $victor } else { $users[($Index * 23) % $users.Count] }
+            $isScenarioRisk = $riskyUser.Name -eq 'victor.alvarez'
+            $riskStates = @('atRisk', 'dismissed', 'confirmedSafe', 'remediated')
+            $riskState = if ($isScenarioRisk) { 'atRisk' } else { $riskStates[$Index % $riskStates.Count] }
+
+            $values.TenantId = $tenantId
+            $values.Id = $riskyUser.ObjectId
+            $values.CorrelationId = $riskyUser.ObjectId
+            $values.IsDeleted = $false
+            $values.IsProcessing = $false
+            $values.RiskState = $riskState
+            $values.RiskLevel = if ($isScenarioRisk) { 'high' } elseif ($riskState -eq 'atRisk') { 'medium' } else { 'none' }
+            $values.RiskDetail = switch ($riskState) {
+                'confirmedSafe' { 'adminConfirmedAccountSafe' }
+                'remediated' { 'userPerformedSecuredPasswordReset' }
+                default { 'none' }
+            }
+            $values.RiskLastUpdatedDateTime = $timeText
+            $values.UserDisplayName = $riskyUser.DisplayName
+            $values.UserPrincipalName = $riskyUser.Upn
+            $values.OperationName = 'Risky user'
+            $values.Type = 'AADRiskyUsers'
+        }
+        'SentinelHealth' {
+            # 14 of 15 columns carry data. Status is Success on 998 of 1000 real rows,
+            # which is the point: the rare failure is the coverage gap students hunt for.
+            $healthTemplate = $sentinelHealthCatalog[$Index % $sentinelHealthCatalog.Count]
+            $ruleName = $sentinelRuleNameCatalog[$Index % $sentinelRuleNameCatalog.Count]
+            $isHealthFailure = $healthTemplate.Status -eq 'Failure'
+            $healthRuleId = New-StableGuid "sentinel-rule|$ruleName"
+
+            $values.TenantId = $tenantId
+            $values.WorkspaceId = $tenantId
+            $values.OperationName = $healthTemplate.Operation
+            $values.SentinelResourceId = '/subscriptions/{0}/resourceGroups/sentinel/providers/Microsoft.OperationalInsights/workspaces/usag-cyber/providers/Microsoft.SecurityInsights/alertRules/{1}' -f $subscriptionId, $healthRuleId
+            $values.SentinelResourceName = $ruleName
+            $values.SentinelResourceType = $healthTemplate.ResourceType
+            $values.SentinelResourceKind = $healthTemplate.Kind
+            $values.Status = $healthTemplate.Status
+            $values.Description = if ($isHealthFailure) { 'Rule execution failed' } elseif ($healthTemplate.ResourceType -eq 'Data connector') { 'Data fetch succeeded' } else { 'Rule executed successfully, but did not reach the alert threshold' }
+            $values.Reason = if ($isHealthFailure) { 'The analytics rule execution encountered an error and did not complete.' } else { 'The analytics rule executed successfully. There were no results that matched the rule query.' }
+            $values.RecordId = New-StableGuid "sentinel-health|$Index"
+            $values.ExtendedProperties = @{
+                QueryFrequency = if ($healthTemplate.Kind -eq 'Scheduled') { 'PT1H' } else { $null }
+                AggregationKind = 'SingleAlert'
+                RuleId = $healthRuleId
+                Severity = 'Medium'
+            }
+            $values.Type = 'SentinelHealth'
+        }
+        'Heartbeat' {
+            # 30 of 31 columns carry data and every value is effectively fixed per host.
+            $hbDevice = $windowsDevices[($Index * 3) % $windowsDevices.Count]
+            $hbResourceId = '/subscriptions/{0}/resourcegroups/adds/providers/microsoft.compute/virtualmachines/{1}' -f $subscriptionId, $hbDevice.ShortName
+
+            $values.TenantId = $tenantId
+            $values.SourceSystem = 'OpsManager'
+            $values.MG = '00000000-0000-0000-0000-000000000001'
+            $values.ManagementGroupName = "AOI-$tenantId"
+            $values.SourceComputerId = New-StableGuid "heartbeat-computer|$($hbDevice.ShortName)"
+            $values.ComputerIP = $hbDevice.PublicIP
+            $values.Computer = $hbDevice.Name
+            $values.Category = 'Azure Monitor Agent'
+            $values.OSType = 'Windows'
+            $values.OSName = 'Microsoft Windows Server 2025 Datacenter'
+            $values.OSMajorVersion = '10'
+            $values.OSMinorVersion = '0'
+            $values.Version = '1.41.0.0'
+            $values.SCAgentChannel = 'Direct'
+            $values.RemoteIPLongitude = -78.27
+            $values.RemoteIPLatitude = 36.64
+            $values.RemoteIPCountry = 'United States'
+            $values.SubscriptionId = $subscriptionId
+            $values.ResourceGroup = 'adds'
+            $values.ResourceProvider = 'Microsoft.Compute'
+            $values.Resource = $hbDevice.ShortName
+            $values.ResourceId = $hbResourceId
+            $values.ResourceType = 'virtualMachines'
+            $values.ComputerEnvironment = 'Azure'
+            $values.Solutions = 'SecurityInsights, BehaviorAnalyticsInsights, Security, SecurityCenterFree'
+            $values.VMUUID = New-StableGuid "heartbeat-vm|$($hbDevice.ShortName)"
+            $values.ComputerPrivateIPs = [object[]]@($hbDevice.IP)
+            $values._ResourceId = $hbResourceId
+            $values.Type = 'Heartbeat'
+        }
+        'MicrosoftServicePrincipalSignInLogs' {
+            # 21 of 23 columns carry data. AppOwnerTenantId and ResourceOwnerTenantId are
+            # Microsoft's first-party tenant on every real row, DurationMs is always 0,
+            # and ResultSignature is always SUCCESS.
+            $spnResource = $spnSignInResourceCatalog[$Index % $spnSignInResourceCatalog.Count]
+            $isMaliciousSpn = ($Index % 41) -eq 0
+            $spnName = if ($isMaliciousSpn) { 'USAG Cyber Sync Helper' } else { $spnDisplayNameCatalog[$Index % $spnDisplayNameCatalog.Count] }
+            $spnAppId = if ($isMaliciousSpn) { $maliciousOAuthAppId } else { New-StableGuid "spn-app|$spnName" }
+            $spnObjectId = if ($isMaliciousSpn) { $maliciousOAuthSpId } else { New-StableGuid "spn-object|$spnName" }
+
+            $values.TenantId = $tenantId
+            $values.AppId = $spnAppId
+            $values.AppOwnerTenantId = if ($isMaliciousSpn) { $tenantId } else { 'f8cdef31-a31e-4b4a-93e4-5f571e91255a' }
+            $values.Category = 'MicrosoftServicePrincipalSignInLogs'
+            $values.CorrelationId = New-StableGuid "spn-correlation|$Index"
+            $values.CreatedDateTime = $timeText
+            $values.DurationMs = 0
+            $values.OperationName = 'Sign-in activity'
+            $values.OperationVersion = '1.0'
+            $values.ResourceDisplayName = if ($isMaliciousSpn) { 'Microsoft Graph' } else { $spnResource.Name }
+            $values.ResourceIdentity = if ($isMaliciousSpn) { '00000003-0000-0000-c000-000000000000' } else { $spnResource.Id }
+            $values.ResourceGroup = 'Microsoft.AADIAM'
+            $values.ResourceOwnerTenantId = 'f8cdef31-a31e-4b4a-93e4-5f571e91255a'
+            $values.ResourceServicePrincipalId = New-StableGuid "spn-resource|$($spnResource.Name)"
+            $values.ResultSignature = 'SUCCESS'
+            $values.ServicePrincipalId = $spnObjectId
+            $values.ServicePrincipalName = $spnName
+            $values.SourceSystem = 'Azure AD'
+            $values.UniqueTokenIdentifier = (New-StableHex "spn-token|$Index" 22)
+            $values.Type = 'MicrosoftServicePrincipalSignInLogs'
+        }
+        'AADGraphActivityLogs' {
+            # 29 of 34 columns carry data. The actor split is User 512 against
+            # Application 488, so half the rows carry UserId and half ServicePrincipalId,
+            # exactly as the real table does.
+            $graphTemplate = $graphActivityCatalog[$Index % $graphActivityCatalog.Count]
+            $isApplicationActor = ($Index % 2) -eq 0
+            $graphUser = $users[($Index * 29) % $users.Count]
+            $isMaliciousGraph = ($Index % 47) -eq 0
+
+            $values.TenantId = $tenantId
+            $values.AADTenantId = $tenantId
+            $values.TimeRequested = Format-WorkshopTime $Time.AddMilliseconds(-1 * (20 + ($Index % 300)))
+            $values.Location = @('eastus', 'WestUS', 'NorthCentralUS', 'westeurope')[$Index % 4]
+            $values.RequestId = New-StableGuid "graph-request|$Index"
+            $values.OperationName = 'AAD Graph Activity'
+            $values.Category = 'AzureADGraphActivityLogs'
+            $values.ApiVersion = $graphTemplate.ApiVersion
+            $values.DurationMs = 40 + ($Index % 160)
+            $values.RequestMethod = $graphTemplate.Method
+            $values.ResponseStatusCode = $graphTemplate.Status
+            $values.ResponseSizeBytes = @(97, 2995, 3050, 512)[$Index % 4]
+            $values.SignInActivityId = New-StableGuid "graph-signin|$($Index % 580)"
+            $values.TokenIssuedAt = Format-WorkshopTime $Time.AddMinutes(-1 * (5 + ($Index % 55)))
+            $values.ActorType = if ($isApplicationActor) { 'Application' } else { 'User' }
+            $values.AppId = if ($isMaliciousGraph) { $maliciousOAuthAppId } else { New-StableGuid "graph-app|$($Index % 18)" }
+            $values.ClientAuthMethod = 0
+            $values.CallerIpAddress = if ($isMaliciousGraph) { $externalIp } else { '4.156.{0}.{1}' -f (($Index * 7) % 256), (1 + (($Index * 13) % 254)) }
+            $values.UserAgent = $graphTemplate.Agent
+            $values.RequestUri = $graphTemplate.Uri -f $tenantId
+            $values.Type = 'AADGraphActivityLogs'
+
+            if ($isApplicationActor) {
+                $values.ServicePrincipalId = if ($isMaliciousGraph) { $maliciousOAuthSpId } else { New-StableGuid "graph-spn|$($Index % 14)" }
+                $values.IdentityProvider = "https://sts.windows.net/$tenantId/"
+            }
+            else {
+                $values.UserId = $graphUser.ObjectId
+                $values.Scopes = @('restricted_user_impersonation', 'user_impersonation', 'Directory.Read.All')[$Index % 3]
+                $values.SessionId = New-StableGuid "graph-session|$($Index % 24)"
+            }
+            if (($Index % 6) -eq 0) {
+                $values.Roles = ' Application.Read.All, Directory.Read.All, RoleManagementPolicy.ReadWrite.Directory'
+            }
+            if (($Index % 6) -eq 1) {
+                $values.Wids = ' 62e90394-69f5-4237-9190-012177145e10, 9f06204d-73c1-4d4c-880a-6edb90606fd8'
+            }
+        }
+        'ExposureGraphNodes' {
+            # Only 9 columns exist and 7 carry data. Security recommendations are 964 of
+            # 1000 real nodes; the scenario asset types are mixed in so attack paths
+            # terminate on hosts, identities, and storage that exist elsewhere.
+            $nodeTemplate = $exposureNodeCatalog[$Index % $exposureNodeCatalog.Count]
+            $nodeDevice = $devices[($Index * 5) % $devices.Count]
+            $nodeUser = $users[($Index * 37) % $users.Count]
+            $nodeName = switch ($nodeTemplate.Label) {
+                'device' { $nodeDevice.Name }
+                'user' { $nodeUser.Upn }
+                'serviceprincipal' { if (($Index % 23) -eq 0) { 'USAG Cyber Sync Helper' } else { "svc-app-$($Index % 400)" } }
+                'container-image' { 'usagcyber.azurecr.io/api:{0}' -f (New-StableHex "node-image|$Index" 8) }
+                'microsoft.storage/storageaccounts' { 'usagcyberdata{0}' -f ($Index % 40) }
+                default { @('Improper Control of Generation of Code', 'Use of cryptographically weak Pseudo-Random Number Generator', 'Improper limitation of a pathname to a restricted directory')[$Index % 3] }
+            }
+
+            $values.NodeId = (New-StableHex "exposure-node|$Index" 32)
+            $values.NodeLabel = $nodeTemplate.Label
+            $values.NodeName = $nodeName
+            $values.Categories = [object[]]$nodeTemplate.Categories
+            $values.NodeProperties = @{
+                '@odata.type' = '#microsoft.graph.security.dynamicNodeProperties'
+                rawData = @{
+                    criticalityLevel = if ($nodeTemplate.Label -eq 'device') { 1 } else { 3 }
+                    exposureScore = 10 + ($Index % 90)
+                }
+            }
+            $values.EntityIds = [object[]]@(
+                (ConvertTo-Json -Compress -InputObject @{ type = 'AzureResourceId'; id = ('/subscriptions/{0}/resourceGroups/usag-cyber/providers/{1}' -f $subscriptionId, $nodeTemplate.Label) })
+            )
+            $values.Type = 'ExposureGraphNodes'
+        }
+        'ExposureGraphEdges' {
+            # The real table times out through the advanced hunting API, so the shape
+            # comes from live getschema rather than a field profile. Edges reference the
+            # same node id space that ExposureGraphNodes generates.
+            $edgeLabel = $exposureEdgeLabelCatalog[$Index % $exposureEdgeLabelCatalog.Count]
+            $sourceTemplate = $exposureNodeCatalog[$Index % $exposureNodeCatalog.Count]
+            $targetTemplate = $exposureNodeCatalog[($Index + 3) % $exposureNodeCatalog.Count]
+            $edgeDevice = $devices[($Index * 5) % $devices.Count]
+            $edgeUser = $users[($Index * 37) % $users.Count]
+
+            $values.EdgeId = (New-StableHex "exposure-edge|$Index" 32)
+            $values.EdgeLabel = $edgeLabel
+            $values.SourceNodeId = (New-StableHex "exposure-node|$Index" 32)
+            $values.SourceNodeName = if ($sourceTemplate.Label -eq 'user') { $edgeUser.Upn } else { $edgeDevice.Name }
+            $values.SourceNodeLabel = $sourceTemplate.Label
+            $values.SourceNodeCategories = [object[]]$sourceTemplate.Categories
+            $values.TargetNodeId = (New-StableHex "exposure-node|$($Index + 3)" 32)
+            $values.TargetNodeName = if ($targetTemplate.Label -eq 'serviceprincipal') { 'USAG Cyber Sync Helper' } else { 'usagcyberdata{0}' -f ($Index % 40) }
+            $values.TargetNodeLabel = $targetTemplate.Label
+            $values.TargetNodeCategories = [object[]]$targetTemplate.Categories
+            $values.EdgeProperties = @{
+                '@odata.type' = '#microsoft.graph.security.dynamicEdgeProperties'
+                rawData = @{ accessType = $edgeLabel; isDirect = (($Index % 3) -eq 0) }
+            }
+            $values.TenantId = $tenantId
+            $values.SourceSystem = 'Azure'
+            $values.Type = 'ExposureGraphEdges'
+        }
+        'CloudStorageAggregatedEvents' {
+            # 34 of 37 columns carry data. Rows are hourly aggregates, so the start and
+            # end times bracket a whole hour, and AccountType is App on 662 of the 664
+            # rows that carry account detail.
+            $storageTemplate = $cloudStorageOperationCatalog[$Index % $cloudStorageOperationCatalog.Count]
+            $aggStart = $Time.Date.AddHours($Time.Hour)
+            $isBulkCollection = ($Index % 43) -eq 0 -and $storageTemplate.Operation -eq 'GetBlob'
+            $storageAccountName = @('usagcyberdata', 'usagcyberbackup', 'usagcyberarchive')[$Index % 3]
+            $opsCount = if ($isBulkCollection) { 400 + ($Index % 600) } else { 1 + ($Index % 6) }
+            $storageResourceId = '/subscriptions/{0}/resourceGroups/storage/providers/Microsoft.Storage/storageAccounts/{1}' -f $subscriptionId, $storageAccountName
+
+            $values.DataAggregationStartTime = Format-WorkshopTime $aggStart
+            $values.DataAggregationEndTime = Format-WorkshopTime $aggStart.AddHours(1)
+            $values.DataSource = 'Azure Storage'
+            $values.SubscriptionId = $subscriptionId
+            $values.ResourceGroup = 'storage'
+            $values.StorageAccount = $storageAccountName
+            $values.StorageContainer = @('engineering', 'finance', 'hr-archive', '$purview')[$Index % 4]
+            $values.ServiceType = $storageTemplate.Service
+            $values.IPAddress = if ($isBulkCollection) { $externalIp } else { '10.0.{0}.{1}' -f (($Index * 3) % 256), (1 + (($Index * 7) % 254)) }
+            $values.UserAgentHeader = if ($isBulkCollection) { 'azcopy/10.24.0' } else { @('SRP/1.0', 'Azure-Storage/11.2.3 (.NET Core; Unix 6.6.13)')[$Index % 2] }
+            $values.OperationNamesList = $storageTemplate.Operation
+            $values.AuthenticationType = $storageTemplate.Auth
+            $values.AccountObjectId = if ($isBulkCollection) { $maliciousOAuthSpId } else { New-StableGuid "storage-account-object|$($Index % 14)" }
+            $values.AccountTenantId = $tenantId
+            $values.AccountApplicationId = if ($isBulkCollection) { $maliciousOAuthAppId } else { New-StableGuid "storage-app|$($Index % 15)" }
+            $values.AccountType = 'App'
+            $values.OperationsCount = $opsCount
+            $values.SuccessfulOperationsCount = if ($isBulkCollection) { $opsCount } else { $Index % 2 }
+            $values.FailedOperationsCount = if ($isBulkCollection) { 0 } else { $Index % 3 }
+            $values.TotalResponseLength = if ($isBulkCollection) { $opsCount * 524288 } else { 0 }
+            $values.SuccessfulReadOperations = if ($isBulkCollection) { $opsCount } else { 0 }
+            $values.DistinctGetOperations = if ($isBulkCollection) { $opsCount } else { 0 }
+            $values.AnonymousSuccessfulOperations = 0
+            $values.HasAnonymousResourceNotFoundFailures = 0
+            $values.AzureResourceId = $storageResourceId
+            $values.Location = @('eastus2', 'eastus', 'westus2')[$Index % 3]
+            $values.ReportId = New-StableGuid "storage-report|$Index"
+            $values.ActionType = 'Data Aggregation'
+            $values.AdditionalFields = @{
+                '@odata.type' = '#microsoft.graph.security.dynamicAdditionalFields'
+                BlobCount = $opsCount
+            }
+            $values.Type = 'CloudStorageAggregatedEvents'
+        }
+        'AzureDiagnostics' {
+            # 73 of 170 columns carry data. Logic App workflow runtime is 985 of 1000
+            # real rows, so the tail providers stay rare here too.
+            $diagTemplate = $azureDiagnosticsCatalog[$Index % $azureDiagnosticsCatalog.Count]
+            $diagResourceName = switch ($diagTemplate.Provider) {
+                'MICROSOFT.LOGIC' { 'PLAYBOOK-ISOLATE-DEVICE' }
+                'MICROSOFT.KEYVAULT' { 'USAGCYBER-KV' }
+                'MICROSOFT.NETWORK' { 'USAGCYBER-NSG' }
+                default { 'USAGCYBER-AI' }
+            }
+            $diagResourceId = '/SUBSCRIPTIONS/{0}/RESOURCEGROUPS/{1}/PROVIDERS/{2}/{3}/{4}' -f $subscriptionId.ToUpperInvariant(), $diagTemplate.ResourceGroup, $diagTemplate.Provider, $diagTemplate.ResourceType, $diagResourceName
+
+            $values.TenantId = $tenantId
+            $values.ResourceId = $diagResourceId
+            $values.Category = $diagTemplate.Category
+            $values.ResourceGroup = $diagTemplate.ResourceGroup
+            $values.SubscriptionId = $subscriptionId
+            $values.ResourceProvider = $diagTemplate.Provider
+            $values.Resource = $diagResourceName
+            $values.ResourceType = $diagTemplate.ResourceType
+            $values.OperationName = switch ($diagTemplate.Category) {
+                'WorkflowRuntime' { 'Microsoft.Logic/workflows/workflowRunAction/completed' }
+                'AuditEvent' { 'SecretGet' }
+                'NetworkSecurityGroupEvent' { 'NetworkSecurityGroupCounters' }
+                default { 'ChatCompletions_Create' }
+            }
+            $values.OperationVersion = '2019-05-01'
+            $values.ResultType = if (($Index % 50) -eq 0) { 'Failed' } else { 'Succeeded' }
+            $values.ResultSignature = if (($Index % 50) -eq 0) { '500' } else { '200' }
+            $values.Level = if (($Index % 50) -eq 0) { 'Error' } else { 'Information' }
+            $values.DurationMs = 20 + ($Index % 4000)
+            $values.CorrelationId = New-StableGuid "diag-correlation|$($Index % 300)"
+            $values.CallerIPAddress = '20.10.{0}.{1}' -f (($Index * 5) % 256), (1 + (($Index * 11) % 254))
+            $values.Location = @('eastus2', 'eastus', 'westus2')[$Index % 3]
+            $values.SourceSystem = 'Azure'
+            $values._ResourceId = $diagResourceId.ToLowerInvariant()
+            $values.Type = 'AzureDiagnostics'
+
+            # Azure Monitor projects resource specific properties into typed suffix
+            # columns. Logic App workflow runtime dominates the real table, so those
+            # columns are effectively baseline; Key Vault and policy fields are rare.
+            $values.location_s = $values.Location
+            $values.status_s = if ($values.ResultType -eq 'Failed') { 'Failed' } else { @('Succeeded', 'Running', 'Skipped')[$Index % 3] }
+            $values.code_s = if ($values.ResultType -eq 'Failed') { 'ActionFailed' } elseif (($Index % 3) -eq 2) { 'ActionSkipped' } else { 'OK' }
+
+            if ($diagTemplate.Category -eq 'WorkflowRuntime') {
+                $runId = '0858416{0:D4}91664268578063097212CU53' -f ($Index % 10000)
+                $values.workflowId_s = $diagResourceId
+                $values.resource_location_s = $values.Location
+                $values.resource_workflowId_g = New-StableGuid "diag-workflow|$diagResourceName"
+                $values.resource_resourceGroupName_s = 'Playbook'
+                $values.resource_subscriptionId_g = $subscriptionId
+                $values.resource_runId_s = $runId
+                $values.resource_workflowName_s = 'playbook-isolate-device'
+                $values.resource_actionName_s = @('Get_MDE_Device', 'Query_DeviceInfo', 'Isolate_Machine')[$Index % 3]
+                $values.correlation_clientTrackingId_s = $runId
+                $values.correlation_actionTrackingId_g = New-StableGuid "diag-action|$Index"
+                $values._schema_s = '2016-06-01'
+                $values.executionClusterType_s = 'AppService'
+                $values.tags_purpose_s = 'security-playbook'
+                $values.tags_tool_s = 'usagcyber-soar'
+                $values.tags_component_s = 'device-isolation'
+                $values.tags_trigger_model_s = 'recurrence-watchlist'
+
+                if (($Index % 50) -eq 0) {
+                    $values.error_code_s = 'ActionConditionFailed'
+                    $values.error_message_s = "The execution of template action 'Get_MDE_Device' skipped: the branch condition was not satisfied."
+                }
+                if (($Index % 33) -eq 0) {
+                    $values.resource_triggerName_s = @('Every_hour', 'Recurrence')[$Index % 2]
+                    $values.resource_originRunId_s = $runId
+                }
+            }
+
+            if ($diagTemplate.Provider -eq 'MICROSOFT.KEYVAULT') {
+                $values.id_s = 'https://usagcyber-kv.vault.azure.net/secrets/{0}' -f (New-StableGuid "diag-secret|$($Index % 40)")
+                $values.ObjectName_s = New-StableGuid "diag-object|$($Index % 40)"
+                $values.ObjectType_s = 'Secret'
+                $values.requestUri_s = $values.id_s
+                $values.clientInfo_s = 'AzureResourceGraph.IngestionWorkerService'
+                $values.identity_claim_appid_g = $maliciousOAuthAppId
+                $values.identity_claim_http_schemas_microsoft_com_identity_claims_objectidentifier_g = $maliciousOAuthSpId
+                $values.properties_sku_Family_s = 'A'
+                $values.properties_sku_Name_s = 'standard'
+                $values.properties_tenantId_g = $tenantId
+            }
+
+            if (($Index % 100) -eq 0) {
+                $values.event_s = 'ShoeboxCallResult'
+                $values.Tenant_s = $values.Location
+                $values.properties_s = ConvertTo-Json -Compress -InputObject @{ apiName = 'Azure AI Projects API'; statusCode = 200 }
+                $values.EvaluationDetails_s = ConvertTo-Json -Compress -InputObject ([object[]]@(@{ AssignmentId = "/subscriptions/$subscriptionId/providers/Microsoft.Authorization/policyAssignments/security-baseline" }))
+            }
+        }
+        'AADRiskyServicePrincipals' {
+            # No rows exist in the source tenant, so the shape comes from live getschema
+            # plus documented Entra ID Protection values. The malicious application from
+            # the OAuth consent act is deliberately the highest-risk principal here.
+            $isMaliciousRiskSpn = ($Index % 29) -eq 0
+            $riskSpnName = if ($isMaliciousRiskSpn) { 'USAG Cyber Sync Helper' } else { $spnDisplayNameCatalog[$Index % $spnDisplayNameCatalog.Count] }
+            $riskSpnStates = @('atRisk', 'dismissed', 'confirmedSafe', 'remediated')
+            $riskSpnState = if ($isMaliciousRiskSpn) { 'atRisk' } else { $riskSpnStates[$Index % $riskSpnStates.Count] }
+
+            $values.TenantId = $tenantId
+            $values.AccountEnabled = $true
+            $values.AppId = if ($isMaliciousRiskSpn) { $maliciousOAuthAppId } else { New-StableGuid "risk-spn-app|$riskSpnName" }
+            $values.Id = if ($isMaliciousRiskSpn) { $maliciousOAuthSpId } else { New-StableGuid "risk-spn-object|$riskSpnName" }
+            $values.DisplayName = $riskSpnName
+            $values.IsProcessing = $false
+            $values.RiskState = $riskSpnState
+            $values.RiskLevel = if ($isMaliciousRiskSpn) { 'high' } elseif ($riskSpnState -eq 'atRisk') { 'medium' } else { 'none' }
+            $values.RiskDetail = if ($riskSpnState -eq 'confirmedSafe') { 'adminConfirmedServicePrincipalCompromised' } else { 'none' }
+            $values.RiskLastUpdatedDateTime = $timeText
+            $values.ServicePrincipalType = 'Application'
+            $values.OperationName = 'Risky service principal'
+            $values.CorrelationId = New-StableGuid "risk-spn-correlation|$Index"
+            $values.SourceSystem = 'Azure AD'
+            $values.Type = 'AADRiskyServicePrincipals'
+        }
+        'AADServicePrincipalRiskEvents' {
+            # Also empty in the source tenant. Detections are tied back to the malicious
+            # application and the attacker infrastructure used elsewhere in the scenario.
+            $spnRiskTemplate = $spnRiskEventCatalog[$Index % $spnRiskEventCatalog.Count]
+            $isMaliciousRiskEvent = ($Index % 19) -eq 0
+            $riskEventSpnName = if ($isMaliciousRiskEvent) { 'USAG Cyber Sync Helper' } else { $spnDisplayNameCatalog[$Index % $spnDisplayNameCatalog.Count] }
+
+            $values.TenantId = $tenantId
+            $values.Activity = $spnRiskTemplate.Activity
+            $values.ActivityDateTime = $timeText
+            $values.AppId = if ($isMaliciousRiskEvent) { $maliciousOAuthAppId } else { New-StableGuid "risk-event-app|$riskEventSpnName" }
+            $values.ServicePrincipalId = if ($isMaliciousRiskEvent) { $maliciousOAuthSpId } else { New-StableGuid "risk-event-spn|$riskEventSpnName" }
+            $values.ServicePrincipalDisplayName = $riskEventSpnName
+            $values.CorrelationId = New-StableGuid "risk-event-correlation|$Index"
+            $values.DetectedDateTime = Format-WorkshopTime $Time.AddMinutes(-1 * (2 + ($Index % 30)))
+            $values.DetectionTimingType = $spnRiskTemplate.Detection
+            $values.Id = New-StableGuid "risk-event|$Index"
+            $values.IpAddress = if ($isMaliciousRiskEvent) { $externalIp } else { '4.156.{0}.{1}' -f (($Index * 3) % 256), (1 + (($Index * 17) % 254)) }
+            $values.KeyIds = [object[]]@($maliciousOAuthKeyId)
+            $values.LastUpdatedDateTime = $timeText
+            $values.Location = if ($isMaliciousRiskEvent) {
+                @{ city = 'Amsterdam'; state = 'North Holland'; countryOrRegion = 'NL' }
+            }
+            else {
+                @{ city = 'Boydton'; state = 'Virginia'; countryOrRegion = 'US' }
+            }
+            $values.RequestId = New-StableGuid "risk-event-request|$Index"
+            $values.RiskEventType = $spnRiskTemplate.EventType
+            $values.RiskLevel = if ($isMaliciousRiskEvent) { 'high' } else { $spnRiskTemplate.Level }
+            $values.RiskState = if ($isMaliciousRiskEvent) { 'atRisk' } else { 'dismissed' }
+            $values.RiskDetail = 'none'
+            $values.Source = 'IdentityProtection'
+            $values.TokenIssuerType = 'AzureAD'
+            $values.AdditionalInfo = [object[]]@(
+                @{ Key = 'userAgent'; Value = $graphClientUserAgent }
+            )
+            $values.OperationName = 'Service principal risk detection'
+            $values.SourceSystem = 'Azure AD'
+            $values.Type = 'AADServicePrincipalRiskEvents'
         }
         default {
             $values.ActionType = 'WorkshopNormalBaseline'

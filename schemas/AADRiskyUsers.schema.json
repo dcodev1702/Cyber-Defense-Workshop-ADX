@@ -1,0 +1,108 @@
+{
+  "tableName": "AADRiskyUsers",
+  "categories": [
+    "Identity",
+    "IdentityProtection",
+    "AzureMonitor",
+    "EntraID"
+  ],
+  "sourceProduct": "Microsoft Entra ID Protection",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadriskyusers",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Current risk state per user, giving risk a timeline rather than a single detection event.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "Id",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: 1821f16b-41ee-4008-914d-12334122753d"
+    },
+    {
+      "name": "IsDeleted",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: False"
+    },
+    {
+      "name": "IsProcessing",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: False"
+    },
+    {
+      "name": "RiskDetail",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 3. Most common: none"
+    },
+    {
+      "name": "RiskLastUpdatedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 7. Most common: 03/17/2026 06:31:08"
+    },
+    {
+      "name": "RiskLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 2. Most common: none"
+    },
+    {
+      "name": "RiskState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 4. Most common: atRisk"
+    },
+    {
+      "name": "UserDisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: Lorenzo Ireland"
+    },
+    {
+      "name": "UserPrincipalName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: lireland@DibSecurity.onmicrosoft.com"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 10. Most common: 07/16/2026 18:35:38"
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: Risky user"
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: 1821f16b-41ee-4008-914d-12334122753d"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: AADRiskyUsers"
+    }
+  ],
+  "adx": {
+    "mappingName": "AADRiskyUsers_JsonMapping"
+  }
+}

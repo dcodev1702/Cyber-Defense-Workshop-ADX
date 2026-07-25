@@ -1,0 +1,71 @@
+{
+  "tableName": "ExposureGraphNodes",
+  "categories": [
+    "ExposureManagement",
+    "AttackPath",
+    "DefenderXDR"
+  ],
+  "sourceProduct": "Microsoft Security Exposure Management",
+  "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-exposuregraphnodes-table",
+  "schemaSource": "Live DefenderXdr getschema",
+  "summary": "Assets in the enterprise exposure graph, used with ExposureGraphEdges for attack path analysis.",
+  "columns": [
+    {
+      "name": "NodeId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ExposureGraphNodes column. Distinct values observed: 1000. Most common: 82a6bd24e8e44dfd9c3eeff0e844296f"
+    },
+    {
+      "name": "NodeLabel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ExposureGraphNodes column. Distinct values observed: 8. Most common: mdcSecurityRecommendation"
+    },
+    {
+      "name": "NodeName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ExposureGraphNodes column. Distinct values observed: 914. Most common: Improper Control of Generation of Code ('Code Injection')"
+    },
+    {
+      "name": "Categories",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live ExposureGraphNodes column. Distinct values observed: 7. Most common: [\"finding\",\"security_finding\"]"
+    },
+    {
+      "name": "NodeProperties",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live ExposureGraphNodes column. Distinct values observed: 420. Most common: {\"@odata.type\":\"#microsoft.graph.security.dynamicColumnValue\",\"rawData\":{\"@odata..."
+    },
+    {
+      "name": "EntityIds",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live ExposureGraphNodes column. Distinct values observed: 973. Most common: [\"{\\\"type\\\":\\\"AzureResourceId\\\",\\\"id\\\":\\\"/subscriptions/08fdc492-f5aa-4601-84ae-..."
+    },
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ExposureGraphNodes column. Distinct values observed: 1."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ExposureGraphNodes column. Distinct values observed: 1. Most common: ExposureGraphNodes"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live ExposureGraphNodes column. Distinct values observed: 1."
+    }
+  ],
+  "adx": {
+    "mappingName": "ExposureGraphNodes_JsonMapping"
+  }
+}

@@ -1,0 +1,1037 @@
+{
+  "tableName": "AzureDiagnostics",
+  "categories": [
+    "CloudResource",
+    "Diagnostics",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Azure Monitor",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Multi-resource Azure diagnostic logs covering Key Vault, network security groups, and more.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1000. Most common: 07/25/2026 05:35:19"
+    },
+    {
+      "name": "ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 228. Most common: /SUBSCRIPTIONS/192AD012-896E-4F14-8525-C37A2A9640F9/RESOURCEGROUPS/PLAYBOOK/PROV..."
+    },
+    {
+      "name": "Category",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 4. Most common: WorkflowRuntime"
+    },
+    {
+      "name": "ResourceGroup",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 6. Most common: PLAYBOOK"
+    },
+    {
+      "name": "SubscriptionId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3. Most common: 192ad012-896e-4f14-8525-c37a2a9640f9"
+    },
+    {
+      "name": "ResourceProvider",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3. Most common: MICROSOFT.LOGIC"
+    },
+    {
+      "name": "Resource",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 48. Most common: GET_MDE_DEVICE"
+    },
+    {
+      "name": "ResourceType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 5. Most common: WORKFLOWS/RUNS/ACTIONS"
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 10. Most common: Microsoft.Logic/workflows/workflowActionStarted"
+    },
+    {
+      "name": "ResultType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 15."
+    },
+    {
+      "name": "ResultDescription",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "Tenant_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "JobId_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "RunbookName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "StreamType_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "Caller_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "requestUri_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "Level",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2. Most common: Information"
+    },
+    {
+      "name": "DurationMs",
+      "type": "long",
+      "sourceType": "long",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 15. Most common: 492"
+    },
+    {
+      "name": "CallerIPAddress",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 6."
+    },
+    {
+      "name": "OperationVersion",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "ResultSignature",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 4."
+    },
+    {
+      "name": "id_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "status_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 4. Most common: Running"
+    },
+    {
+      "name": "LogicalServerName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "Message",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "clientInfo_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "httpStatusCode_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: 200"
+    },
+    {
+      "name": "identity_claim_appid_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "identity_claim_http_schemas_microsoft_com_identity_claims_objectidentifier_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "userAgent_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "ruleName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_http_schemas_xmlsoap_org_ws_2005_05_identity_claims_upn_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "systemId_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "isAccessPolicyMatch_b",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "EventName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "httpMethod_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "subnetId_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "type_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "instanceId_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "macAddress_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "vnetResourceGuid_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "direction_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "subnetPrefix_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "primaryIPv4Address_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "conditions_sourcePortRange_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "priority_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "conditions_destinationPortRange_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "conditions_destinationIP_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "conditions_None_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "conditions_sourceIP_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "httpVersion_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "matchedConnections_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "startTime_t",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 585. Most common: 07/25/2026 05:35:19"
+    },
+    {
+      "name": "endTime_t",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 493. Most common: 07/25/2026 05:35:19"
+    },
+    {
+      "name": "DatabaseName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "clientIP_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "host_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "requestQuery_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "sslEnabled_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "clientPort_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "httpStatus_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "receivedBytes_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "sentBytes_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "timeTaken_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "resultDescription_ErrorJobs_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "resultDescription_ChildJobs_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_http_schemas_microsoft_com_identity_claims_scope_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "workflowId_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3. Most common: /SUBSCRIPTIONS/192AD012-896E-4F14-8525-C37A2A9640F9/RESOURCEGROUPS/PLAYBOOK/PROV..."
+    },
+    {
+      "name": "resource_location_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2. Most common: eastus2"
+    },
+    {
+      "name": "resource_workflowId_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3. Most common: 66ffa43b-28f1-4050-89d8-1128642ad627"
+    },
+    {
+      "name": "resource_resourceGroupName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3. Most common: Playbook"
+    },
+    {
+      "name": "resource_subscriptionId_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3. Most common: 192ad012-896e-4f14-8525-c37a2a9640f9"
+    },
+    {
+      "name": "resource_runId_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 22. Most common: 08584166491664268578063097212CU53"
+    },
+    {
+      "name": "resource_workflowName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3. Most common: ualtimebomb-disarm"
+    },
+    {
+      "name": "_schema_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2. Most common: 2016-06-01"
+    },
+    {
+      "name": "correlation_clientTrackingId_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 22. Most common: 08584166491664268578063097212CU53"
+    },
+    {
+      "name": "properties_sku_Family_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "properties_sku_Name_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "properties_tenantId_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "properties_enabledForDeployment_b",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: True"
+    },
+    {
+      "name": "code_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3."
+    },
+    {
+      "name": "resultDescription_Summary_MachineId_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "resultDescription_Summary_ScheduleName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "resultDescription_Summary_Status_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "resultDescription_Summary_StatusDescription_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "resultDescription_Summary_MachineName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "resultDescription_Summary_TotalUpdatesInstalled_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "resultDescription_Summary_RebootRequired_b",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "resultDescription_Summary_TotalUpdatesFailed_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "resultDescription_Summary_InstallPercentage_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "resultDescription_Summary_StartDateTimeUtc_t",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "resource_triggerName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3."
+    },
+    {
+      "name": "resultDescription_Summary_InitialRequiredUpdatesCount_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "properties_enabledForTemplateDeployment_b",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: True"
+    },
+    {
+      "name": "resultDescription_Summary_EndDateTimeUtc_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "resultDescription_Summary_DurationInMinutes_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "resource_originRunId_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 19."
+    },
+    {
+      "name": "properties_enabledForDiskEncryption_b",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: True"
+    },
+    {
+      "name": "resource_actionName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 24."
+    },
+    {
+      "name": "correlation_actionTrackingId_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 573."
+    },
+    {
+      "name": "resultDescription_Summary_EndDateTimeUtc_t",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "resultDescription_Summary_DurationInMinutes_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "conditions_protocols_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_ipaddr_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "ElasticPoolName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_http_schemas_microsoft_com_claims_authnmethodsreferences_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "RunOn_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "query_hash_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: Azure"
+    },
+    {
+      "name": "MG",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "ManagementGroupName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "Computer",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "RawData",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "retryHistory_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "tags_purpose_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2. Most common: security-playbook"
+    },
+    {
+      "name": "tags_tool_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2. Most common: ualtimebomb"
+    },
+    {
+      "name": "tags_component_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2. Most common: user-access-lockout-disarm"
+    },
+    {
+      "name": "tags_trigger_model_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2. Most common: recurrence-watchlist"
+    },
+    {
+      "name": "executionClusterType_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2. Most common: AppService"
+    },
+    {
+      "name": "isV2Threshold_b",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: False"
+    },
+    {
+      "name": "metadataOverflowContentLength_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2. Most common: -1"
+    },
+    {
+      "name": "actionCount_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 4. Most common: 0"
+    },
+    {
+      "name": "error_code_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 4."
+    },
+    {
+      "name": "error_message_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 19."
+    },
+    {
+      "name": "fired_b",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: True"
+    },
+    {
+      "name": "identity_claim_xms_az_rid_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_scp_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_upn_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_unique_name_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_amr_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_sid_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "properties_networkAcls_bypass_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "properties_networkAcls_defaultAction_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_http_schemas_xmlsoap_org_ws_2005_05_identity_claims_name_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "properties_enableSoftDelete_b",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: True"
+    },
+    {
+      "name": "properties_softDeleteRetentionInDays_d",
+      "type": "real",
+      "sourceType": "real",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: 7"
+    },
+    {
+      "name": "properties_enableRbacAuthorization_b",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: True"
+    },
+    {
+      "name": "properties_enablePurgeProtection_b",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: True"
+    },
+    {
+      "name": "ObjectName_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "ObjectType_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "IsComplianceCheck_b",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: True"
+    },
+    {
+      "name": "EvaluationDetails_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "identity_claim_oid_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_appidacr_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_iss_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_xms_mirid_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_xms_az_tm_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_xms_az_nwperimid_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_idtyp_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_uti_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_iat_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_exp_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_aud_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "identity_claim_nbf_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "isRbacAuthorized_b",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "appliedAssignmentId_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "trustedService_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "tlsVersion_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "EnqueueTime_t",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 13. Most common: 07/24/2026 10:19:20"
+    },
+    {
+      "name": "event_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 2."
+    },
+    {
+      "name": "location_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3. Most common: eastus2"
+    },
+    {
+      "name": "Tenant_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3."
+    },
+    {
+      "name": "properties_s",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 14."
+    },
+    {
+      "name": "AssetIdentity_g",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
+    },
+    {
+      "name": "AdditionalFields",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 0."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: AzureDiagnostics"
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Live AzureDiagnostics column. Distinct values observed: 55. Most common: /subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/prov..."
+    }
+  ],
+  "adx": {
+    "mappingName": "AzureDiagnostics_JsonMapping"
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "tableName": "AADRiskyServicePrincipals",
+  "categories": [
+    "Identity",
+    "ServicePrincipal",
+    "IdentityProtection",
+    "EntraID"
+  ],
+  "sourceProduct": "Microsoft Entra ID Protection",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadriskyserviceprincipals",
+  "schemaSource": "Live LogAnalytics getschema",
+  "summary": "Risk state for service principals, directly on scenario for the compromised OAuth application.",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "AccountEnabled",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "AppId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "DisplayName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "Id",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "IsProcessing",
+      "type": "bool",
+      "sourceType": "bool",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "RiskDetail",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "RiskLastUpdatedDateTime",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "RiskLevel",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "RiskState",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "ServicePrincipalType",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "OperationName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "CorrelationId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Column captured from the live AADRiskyServicePrincipals schema."
+    }
+  ],
+  "adx": {
+    "mappingName": "AADRiskyServicePrincipals_JsonMapping"
+  }
+}

@@ -106,6 +106,90 @@ $script:TableMetadata = @{
         sourceUrl     = 'https://learn.microsoft.com/defender-xdr/advanced-hunting-cloudauditevents-table'
         summary       = 'Multicloud control plane audit events across Azure, AWS, and GCP surfaced through Defender for Cloud.'
     }
+    ExposureGraphNodes = [ordered]@{
+        categories    = @('ExposureManagement', 'AttackPath', 'DefenderXDR')
+        sourceProduct = 'Microsoft Security Exposure Management'
+        sourceUrl     = 'https://learn.microsoft.com/defender-xdr/advanced-hunting-exposuregraphnodes-table'
+        summary       = 'Assets in the enterprise exposure graph, used with ExposureGraphEdges for attack path analysis.'
+    }
+    ExposureGraphEdges = [ordered]@{
+        categories    = @('ExposureManagement', 'AttackPath', 'DefenderXDR')
+        sourceProduct = 'Microsoft Security Exposure Management'
+        sourceUrl     = 'https://learn.microsoft.com/defender-xdr/advanced-hunting-exposuregraphedges-table'
+        summary       = 'Relationships between exposure graph nodes that describe how an attacker can traverse the estate.'
+    }
+    CloudStorageAggregatedEvents = [ordered]@{
+        categories    = @('CloudResource', 'AzureStorage', 'DefenderXDR')
+        sourceProduct = 'Microsoft Defender for Cloud'
+        sourceUrl     = 'https://learn.microsoft.com/defender-xdr/advanced-hunting-cloudstorageaggregatedevents-table'
+        summary       = 'Aggregated cloud storage object operations used to detect bulk collection and exfiltration.'
+    }
+    BehaviorAnalytics = [ordered]@{
+        categories    = @('Ueba', 'Identity', 'AzureMonitor', 'Sentinel')
+        sourceProduct = 'Microsoft Sentinel UEBA'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/behavioranalytics'
+        summary       = 'User and entity behavior analytics scoring that ranks activity against learned baselines.'
+    }
+    UserPeerAnalytics = [ordered]@{
+        categories    = @('Ueba', 'Identity', 'AzureMonitor', 'Sentinel')
+        sourceProduct = 'Microsoft Sentinel UEBA'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/userpeeranalytics'
+        summary       = 'Peer group ranking for each user, used to judge whether an action is unusual for their cohort.'
+    }
+    IntuneDeviceComplianceOrg = [ordered]@{
+        categories    = @('Intune', 'DeviceManagement', 'AzureMonitor')
+        sourceProduct = 'Microsoft Intune'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/intunedevicecomplianceorg'
+        summary       = 'Organization-wide Intune device compliance state, used to explain conditional access outcomes.'
+    }
+    MicrosoftServicePrincipalSignInLogs = [ordered]@{
+        categories    = @('Identity', 'ServicePrincipal', 'AzureMonitor', 'EntraID')
+        sourceProduct = 'Microsoft Entra ID'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/microsoftserviceprincipalsigninlogs'
+        summary       = 'Service principal sign-in activity, the current table for app-only authentication hunting.'
+    }
+    AADGraphActivityLogs = [ordered]@{
+        categories    = @('Identity', 'Graph', 'AzureMonitor', 'EntraID')
+        sourceProduct = 'Microsoft Entra ID'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadgraphactivitylogs'
+        summary       = 'Legacy Azure AD Graph API request telemetry, still abused for directory enumeration.'
+    }
+    AADRiskyUsers = [ordered]@{
+        categories    = @('Identity', 'IdentityProtection', 'AzureMonitor', 'EntraID')
+        sourceProduct = 'Microsoft Entra ID Protection'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadriskyusers'
+        summary       = 'Current risk state per user, giving risk a timeline rather than a single detection event.'
+    }
+    SentinelHealth = [ordered]@{
+        categories    = @('Operations', 'AzureMonitor', 'Sentinel')
+        sourceProduct = 'Microsoft Sentinel'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/sentinelhealth'
+        summary       = 'Sentinel connector and analytics rule health, used to teach detection blind spots.'
+    }
+    AzureDiagnostics = [ordered]@{
+        categories    = @('CloudResource', 'Diagnostics', 'AzureMonitor')
+        sourceProduct = 'Azure Monitor'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/azurediagnostics'
+        summary       = 'Multi-resource Azure diagnostic logs covering Key Vault, network security groups, and more.'
+    }
+    Heartbeat = [ordered]@{
+        categories    = @('Operations', 'AzureMonitor')
+        sourceProduct = 'Azure Monitor Agent'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/heartbeat'
+        summary       = 'Agent check-in records used to find monitoring coverage gaps across the fleet.'
+    }
+    AADRiskyServicePrincipals = [ordered]@{
+        categories    = @('Identity', 'ServicePrincipal', 'IdentityProtection', 'EntraID')
+        sourceProduct = 'Microsoft Entra ID Protection'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadriskyserviceprincipals'
+        summary       = 'Risk state for service principals, directly on scenario for the compromised OAuth application.'
+    }
+    AADServicePrincipalRiskEvents = [ordered]@{
+        categories    = @('Identity', 'ServicePrincipal', 'IdentityProtection', 'EntraID')
+        sourceProduct = 'Microsoft Entra ID Protection'
+        sourceUrl     = 'https://learn.microsoft.com/azure/azure-monitor/reference/tables/aadserviceprincipalriskevents'
+        summary       = 'Individual risk detections raised against service principals.'
+    }
 }
 
 function ConvertTo-WorkshopColumnType {
