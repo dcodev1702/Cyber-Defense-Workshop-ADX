@@ -62,7 +62,8 @@ brew install cloudflared
 cloudflared --version
 ```
 
-> ℹ️ The remaining steps show PowerShell prompts because most of the class is on Windows. The `cloudflared` command in step 2 is identical on MacOS &mdash; just run it in Terminal instead.
+> [!NOTE]
+> The remaining steps show PowerShell prompts because most of the class is on Windows. The `cloudflared` command in step 2 is identical on MacOS &mdash; just run it in Terminal instead.
 
 </details>
 
@@ -91,7 +92,8 @@ sudo apt-get update && sudo apt-get install cloudflared
 cloudflared --version
 ```
 
-> ℹ️ If your machine cannot add third-party apt repositories, install the package directly instead:
+> [!TIP]
+> If your machine cannot add third-party apt repositories, install the package directly instead:
 >
 > ```bash
 > curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
@@ -100,7 +102,8 @@ cloudflared --version
 >
 > On ARM machines, swap `cloudflared-linux-amd64.deb` for `cloudflared-linux-arm64.deb`.
 
-> ℹ️ The remaining steps show PowerShell prompts because most of the class is on Windows. The `cloudflared` command in step 2 is identical on GNU/Linux &mdash; just run it in your terminal instead.
+> [!NOTE]
+> The remaining steps show PowerShell prompts because most of the class is on Windows. The `cloudflared` command in step 2 is identical on GNU/Linux &mdash; just run it in your terminal instead.
 
 </details>
 
@@ -109,6 +112,9 @@ cloudflared --version
 1. In the same terminal, change to the folder containing the workshop-provided files.
 1. Run the command below. It is identical on Windows, MacOS, and GNU/Linux.
 1. Leave this terminal window open. Closing it disconnects the lab database.
+
+> [!IMPORTANT]
+> This terminal must stay open for the whole lab. It is the tunnel. If you close it, every query and dashboard tile stops working until you run the command again.
 
 ```powershell
 cloudflared access tcp --hostname adx.tier1-cyberdefense.ai --url 127.0.0.1:8080 --service-token-id d693cceb2da12c0e608489dbb2ceac02.access --service-token-secret 81cd3a66ab62afab8193b39cdf432c8c4db6ae7a08534f0f3e3ddacdca7b8822
@@ -260,7 +266,8 @@ You should get back **80 records** &mdash; the 79 workshop tables plus a `__TOTA
 
 ![Step 17: Verify the table row counts](../images/student-walk-through/17-CMD-Verify-Table-Row-Counts.png)
 
-> ℹ️ If `__TOTAL__` is much lower than 629,000, or you see far fewer than 80 records, tell an instructor before continuing &mdash; you may be connected to an older snapshot.
+> [!WARNING]
+> If `__TOTAL__` is much lower than 629,000, or you see far fewer than 80 records, tell an instructor before continuing &mdash; you may be connected to an older snapshot.
 
 ---
 
@@ -276,6 +283,21 @@ You should get back **80 records** &mdash; the 79 workshop tables plus a `__TOTA
 - Use `http://127.0.0.1:8080` exactly when Azure Data Explorer asks for the connection URI.
 - Select `CyberDefendStudentSnapshot` before you run a query.
 - Ask a workshop instructor for help if the tunnel check fails or the database does not appear.
+
+## 🧯 Troubleshooting
+
+| Symptom | Cause and fix |
+| --- | --- |
+| `winget` / `brew` / `apt` not recognised | You are in the wrong shell, or the tool is not installed. Reopen the terminal and re-run step 1 for your operating system. |
+| Tunnel command exits immediately | Usually a typo in the copied command. Copy it again from step 2 in one piece, including the token values. |
+| `curl` ping fails, or connection refused | The tunnel terminal was closed or never started. Return to step 2, start it, and leave that window open. |
+| Tunnel works, then stops mid-lab | The laptop slept or the network changed. Re-run the step 2 command, then hard-refresh the ADX tab with `Ctrl+F5`. |
+| Azure Data Explorer keeps warning about an untrusted host | The trust confirmation was not completed. Repeat steps 11 and 12, typing `http://127.0.0.1:8080` exactly. |
+| Browser blocks the local connection | Select **Allow** on the browser prompt in step 14, then refresh the page. |
+| `Query was executed without a database in context` | No database is selected. Open a new tab and select **CyberDefendStudentSnapshot** as in step 15. |
+| Connection appears but no tables are listed | You are connected to the wrong database. Expand **Cyber Defense** and select `CyberDefendStudentSnapshot`. |
+| `__TOTAL__` far below 629,000, or fewer than 80 records | You are on an older snapshot. Tell an instructor before continuing. |
+| Everything worked, then all queries fail | Check the tunnel terminal first. It is the single point of failure for the whole lab. |
 
 ## 🧭 Fast triage pattern
 
@@ -358,3 +380,7 @@ The address must be the local tunnel endpoint, not the cloud cluster address sav
 **Triage callout:** Use this page to determine the affected estate and response coverage. Prioritize devices that are unsupported, not onboarded, missing a healthy sensor, exposed, or in an unexpected machine group. Use **Device inventory drilldown** to capture the device name, operating system, build, machine group, onboarding status, and public IP, then pivot back to the identity, network, and alert pages with that device as the investigation anchor.
 
 </details>
+
+---
+
+<sub>Cyber Defense KQL Workshop &middot; the lab data is synthetic &middot; keep the tunnel terminal open for the whole session</sub>

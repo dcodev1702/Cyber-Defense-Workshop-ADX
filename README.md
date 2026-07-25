@@ -1,6 +1,6 @@
 # 🚀 Cyber Defense KQL Workshop for Azure Data Explorer (ADX)
 
-## Docker-first conference delivery
+## 🐳 Docker-first conference delivery
 
 For security conferences with walk-up or mixed-tenant participants, the **Docker, Cloudflare Service Auth, and read-only gateway** route is the primary delivery model. It keeps the workshop database on the instructor-controlled host, requires no participant tenant provisioning or per-student Cloudflare seat, opens no inbound host port, and exposes only read-only KQL through the temporary shared credential.
 
@@ -9,15 +9,18 @@ For security conferences with walk-up or mixed-tenant participants, the **Docker
 | Docker Kustainer + Cloudflare Service Auth | **Primary** | Time-boxed security conferences, random participants, and fast classroom setup. |
 | Managed Azure ADX + Microsoft Entra B2B | Secondary | Governed, recurring, or long-running programs that require per-person identities, MFA policy, and lifecycle governance. See [docs/managed_azure_adx_setup.md](docs/managed_azure_adx_setup.md). |
 
-The shared Service Token is a temporary lab password, not an identity system: distribute it only for the event, restrict all public traffic through the read-only gateway, and rotate it immediately after class. See [docs/cloudflare_adx_access.md](docs/cloudflare_adx_access.md) for the full host and student flow.
+> [!IMPORTANT]
+> The shared Service Token is a temporary lab password, not an identity system. Distribute it only for the event, restrict all public traffic through the read-only gateway, and rotate it immediately after class.
 
-## Workshop description
+See [docs/cloudflare_adx_access.md](docs/cloudflare_adx_access.md) for the full host and student flow.
+
+## 📖 Workshop description
 
 This repository contains a complete two-hour cyber defense workshop package for teaching KQL-driven investigation in Azure Data Explorer (ADX). The workshop uses synthetic Microsoft security telemetry loaded into an ADX database so students can investigate a realistic hybrid identity and endpoint intrusion without needing live production infrastructure.
 
 The lab is designed for **20 - 40 students** using the **ADX Web UI**. The primary conference path uses the local Kustainer snapshot through a Cloudflare TCP proxy; the managed Azure ADX and Microsoft Entra B2B path remains available when per-person tenant access is required. Students query Microsoft Defender XDR-style, Microsoft Defender for Endpoint (MDE), Microsoft Defender for Identity (MDI), Microsoft Entra ID, Microsoft Graph, sign-in, cloud app, and alert telemetry.
 
-## Purpose
+## 🎯 Purpose
 
 The purpose of this workshop is to help defenders learn how to:
 
@@ -27,7 +30,7 @@ The purpose of this workshop is to help defenders learn how to:
 4. Map observed attack behavior to MITRE ATT&CK techniques.
 5. Understand how Microsoft Security Solutions (telemetry via tables) illuminate specific adversarial credential-access behaviors along the Cyber Kill Chain.
 
-## Primary prerequisites
+## 📋 Primary prerequisites
 
 To run the Docker-first conference lab, you need:
 
@@ -37,11 +40,11 @@ To run the Docker-first conference lab, you need:
 - PowerShell 7 and Azure CLI when refreshing the local snapshot from the source Student ADX database
 - Student devices with Cloudflared and an account that can sign in to the ADX Web UI
 
-## Secondary delivery model: managed Azure ADX and Entra B2B
+## ☁️ Secondary delivery model: managed Azure ADX and Entra B2B
 
 Need per-person identities, Conditional Access and MFA policy, and access-package lifecycle instead of a shared class credential? That route is documented end to end — prerequisites, tooling install commands, schema refresh, telemetry generation, database build, ADLS Gen2 backup, and B2B participant provisioning — in **[docs/managed_azure_adx_setup.md](docs/managed_azure_adx_setup.md)**.
 
-## Cyber Defense Scenario summary
+## 🐻 Cyber Defense Scenario summary
 
 The Cyber Defense scenario models a **Midnight Blizzard-inspired hybrid identity credential-access intrusion** against a notional organization named USAG Cyber. The intrusion begins with a risky Entra sign-in, suspicious OAuth consent, service-principal credential abuse, and Microsoft Graph activity — tradecraft that Midnight Blizzard (also tracked as APT29 / Cozy Bear / SVR-attributed) used in the real-world Microsoft and HPE breaches in 2023–2024. From there it pivots to a compromised Windows endpoint where the attacker performs credential-access activity, and the attack path later touches domain controller telemetry and service-account activity against the Entra Connect server.
 
@@ -61,7 +64,7 @@ Notional infrastructure:
 
 The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including `T1552.002`, `T1003.002`, `T1555.003`, `T1558.003`, `T1003.001`, and `T1555`.
 
-## Artifact index
+## 🗂️ Artifact index
 
 | Area | Purpose | Primary files |
 | --- | --- | --- |
@@ -80,7 +83,7 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | Slides | Provides the instructor-led deck and a PowerPoint generator for Windows systems with PowerPoint installed | [`STUDENT-GUIDES\Cyber_Defense_KQL_Workshop_v2.pptx`](STUDENT-GUIDES/Cyber_Defense_KQL_Workshop_v2.pptx), [`scripts\New-WorkshopDeck.ps1`](scripts/New-WorkshopDeck.ps1) |
 | Validation | Validates PowerShell syntax, schemas, and generated telemetry alignment | [`scripts\Test-WorkshopPackage.ps1`](scripts/Test-WorkshopPackage.ps1) |
 
-## Primary quick start: Docker, Cloudflare, and shared Service Auth
+## ⚡ Primary quick start: Docker, Cloudflare, and shared Service Auth
 
 Run these commands from the repository root for the conference route.
 
@@ -113,7 +116,7 @@ docker compose start kusto
 
 The command writes a timestamped ZIP under `data\backups\local-kusto` and reports its SHA-256 hash. See [docs/cloudflare_adx_access.md](docs/cloudflare_adx_access.md) for the full participant and recovery procedure.
 
-## Primary host operations: exact Student ADX copy
+## 🖥️ Primary host operations: exact Student ADX copy
 
 The Student database is the source of truth for the local workflow. The copy script reads its live schema and rows directly from ADX, writes an ignored local NDJSON snapshot, loads the same rows into the official Kusto emulator, and verifies every table's row count.
 
@@ -132,7 +135,8 @@ Then copy the current Student database. `-ForceRecreate` replaces the previous l
 
 The script defaults to `usag-wiesbaden-cys26.northeurope.kusto.windows.net`, database `cyber-defend-usagwsbdn-cys26`, and local database `CyberDefendStudentSnapshot`. It writes the verification manifest beneath `data\local-export\`, which is intentionally ignored by Git because it contains the copied telemetry.
 
-> ⚠️ **Preserve the Kustainer container.** The mounted files and Kustainer's database registration work together. Use `docker compose stop kusto` and `docker compose start kusto` for routine shutdown and startup. Do not use `docker compose down`, `docker compose rm`, `docker compose up` after a Compose configuration change, or `--force-recreate` for `kusto` while retaining the local snapshot. If a Kusto container replacement is required, first run `Backup-LocalKustoSnapshot.ps1`, then rerun `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` after the replacement to rebuild and verify the mounted Student database.
+> [!WARNING]
+> **Preserve the Kustainer container.** The mounted files and Kustainer's database registration work together. Use `docker compose stop kusto` and `docker compose start kusto` for routine shutdown and startup. Do not use `docker compose down`, `docker compose rm`, `docker compose up` after a Compose configuration change, or `--force-recreate` for `kusto` while retaining the local snapshot. If a Kusto container replacement is required, first run `Backup-LocalKustoSnapshot.ps1`, then rerun `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` after the replacement to rebuild and verify the mounted Student database.
 
 `kusto-defaultdb-cleaner` runs continuously in Compose. Once `CyberDefendStudentSnapshot` exists, it drops `NetDefaultDB` and removes its residual directory under `data\local-kusto\dbs`. On a fresh emulator, it leaves the default database in place until the Student import has created the retained snapshot database.
 
@@ -185,7 +189,7 @@ Rotate the class credential after the workshop to invalidate the distributed pai
 
 See [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md) for the Service Auth setup, DNS routing, secret handling, and connection validation steps.
 
-## Import the ADX SOC threat protection dashboard
+## 📊 Import the ADX SOC threat protection dashboard
 
 The repository includes an Azure Data Explorer dashboard template with a SOC-style landing page plus drilldown pages for identity/sign-ins, network/Graph activity, alert timeline review, and inventory/posture:
 
@@ -211,25 +215,38 @@ After import, the **SOC Overview** page should provide a threat-protection landi
 
 ![ADX SOC Overview dashboard for the cyber defense workshop](images/adx-soc-overview-dashboard.png)
 
-## Validate the package
+## ✅ Validate the package
 
 ```powershell
 .\scripts\Test-WorkshopPackage.ps1
 ```
 
-## Workshop flow
+## 🧭 Workshop flow
 
 The recommended two-hour flow is documented in [`docs\workshop_design.md`](docs/workshop_design.md). At a high level:
 
 ![Workshop flow timeline](images/workshop-flow.svg)
 
-## Key tables
+## 🗄️ Key tables
 
 The package creates 79 tables from Microsoft Learn-derived schema JSON. The 32 tables below carry the bulk of the investigation work, grouped by the Microsoft platform that produces them:
 
 ![Key tables by Microsoft platform](images/key-tables.svg)
 
-## Security and operations notes
+## 🧯 Instructor troubleshooting
+
+| Symptom | Cause and fix |
+| --- | --- |
+| Students report `connection refused` on `127.0.0.1:8080` | Their local `cloudflared` proxy is not running. Have them re-run the step 2 command from the student guide and leave that terminal open. |
+| Local snapshot disappeared after a Compose change | The Kustainer container was replaced, which drops the database registration. Rerun `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate`. |
+| Row counts far below ~629,000 | The local database is a stale snapshot. Recopy from the source cluster, or regenerate and re-ingest. |
+| Dashboard tiles blank for everyone | Data source still points at the cloud cluster. Set it to `http://127.0.0.1:8080` and database `CyberDefendStudentSnapshot`. |
+| One tile empty, everything else fine | Not a connection problem. Adjust the global time range and check that specific query. |
+| Browser rejects the local connection | Complete the ADX **Trust** prompts and the browser **Allow** prompt, then hard-refresh with `Ctrl+F5`. |
+| Student credential leaked or class ended | Rotate immediately: `.\scripts\Start-CloudflareAdxTunnel.ps1 -Apply -RotateStudentCredential`. |
+| `git push` reports an error but the push worked | PowerShell surfaces git's stderr progress as `NativeCommandError`. Verify with `git rev-list --count origin/main..HEAD`. |
+
+## 🛡️ Security and operations notes
 
 - For external conference participants, use the primary Docker and Cloudflare Service Auth route with its temporary shared credential, read-only gateway, and post-class credential rotation. Use B2B guest access only for the secondary managed Azure ADX model documented in [docs/managed_azure_adx_setup.md](docs/managed_azure_adx_setup.md).
 - Treat generated student roster CSV files as sensitive if using the internal-only identity helper scripts because they may contain initial passwords or TAP values.
@@ -240,7 +257,7 @@ The package creates 79 tables from Microsoft Learn-derived schema JSON. The 32 t
 - Expire or remove participant access package assignments after the event and confirm the participant security group is empty.
 - If reusing the ADX database for another class, rerun setup with `-ForceRecreateTables`.
 
-## Main entry points
+## 🚪 Main entry points
 
 - Student setup guide: [`STUDENT-GUIDES\STUDENT-LAB-SETUP-GUIDE.md`](STUDENT-GUIDES/STUDENT-LAB-SETUP-GUIDE.md)
 - Instructor guide: [`docs\instructor_guide.md`](docs/instructor_guide.md)
@@ -253,3 +270,16 @@ The package creates 79 tables from Microsoft Learn-derived schema JSON. The 32 t
 - Student access guide: [`docs\student_access.md`](docs/student_access.md)
 - MITRE mapping: [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json)
 - Scenario summary: [`data\scenario-summary.json`](data/scenario-summary.json)
+
+## 📚 References
+
+- [Kusto Query Language reference](https://learn.microsoft.com/kusto/query/)
+- [Azure Data Explorer documentation](https://learn.microsoft.com/azure/data-explorer/)
+- [Kustainer, the ADX emulator for containers](https://learn.microsoft.com/azure/data-explorer/kusto-emulator-overview)
+- [Microsoft Defender XDR advanced hunting schema](https://learn.microsoft.com/defender-xdr/advanced-hunting-schema-tables)
+- [Cloudflare Zero Trust service tokens](https://developers.cloudflare.com/cloudflare-one/identity/service-tokens/)
+- [MITRE ATT&CK: APT29 (G0016)](https://attack.mitre.org/groups/G0016/)
+
+---
+
+<sub>Cyber Defense KQL Workshop for Azure Data Explorer · synthetic telemetry only, no production data · 79 tables · ~629K rows</sub>
