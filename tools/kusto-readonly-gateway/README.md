@@ -43,10 +43,10 @@ The Azure Data Explorer web UI is served from `https://dataexplorer.azure.com` a
 The proxy connection URI is:
 
 ```text
-http://127.0.0.1:8080;Fed=false
+http://127.0.0.1:8080
 ```
 
-`Fed=false` prevents the Kusto client from attempting Microsoft Entra authentication against Kustainer. Cloudflare Service Auth has already authenticated the tunnel connection before traffic reaches the gateway.
+Cloudflare Service Auth has already authenticated the tunnel connection before traffic reaches the gateway, so the Kusto client does not authenticate again.
 
 ## Configuration
 
@@ -98,7 +98,7 @@ docker compose logs --follow kusto-readonly-gateway
 docker compose logs --follow kusto-defaultdb-cleaner
 ```
 
-Use the class guide for student proxy setup, Service Token rotation, browser diagnostics, and the expected `Fed=false` connection URI: [docs/cloudflare_adx_access.md](../../docs/cloudflare_adx_access.md).
+Use the class guide for student proxy setup, Service Token rotation, browser diagnostics, and the expected connection URI: [docs/cloudflare_adx_access.md](../../docs/cloudflare_adx_access.md).
 
 ## Security Boundary
 

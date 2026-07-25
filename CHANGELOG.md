@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Removed `;Fed=false` from every ADX connection instruction across the README, student guide, class guide, IaC setup, gateway, and infra docs; the student connection URI is now `http://127.0.0.1:8080`.
 - Added a collapsible GNU/Linux Debian install path to step 1 of the student lab setup guide, using Cloudflare's apt repository with a direct `.deb` fallback.
 - Made the MacOS install path in step 1 of the student lab setup guide a collapsible section, added `brew update` before the `cloudflared` install, and added sparing section emojis.
 - Split step 1 of the student lab setup guide into Windows (`winget`) and macOS (Homebrew) installation paths, including how to install Homebrew for students who do not have it.

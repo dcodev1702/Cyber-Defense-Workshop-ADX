@@ -1,6 +1,6 @@
 # Cyber Range user provisioning (secondary managed Azure delivery)
 
-> **Scope:** This guide applies to the secondary managed Azure ADX cluster route. It does not configure the primary containerized class lab's local Kustainer route. For the primary conference path, use [docs/cloudflare_adx_access.md](../docs/cloudflare_adx_access.md), which uses a shared Cloudflare Service Token, a local student proxy, `Fed=false`, and a read-only KQL gateway.
+> **Scope:** This guide applies to the secondary managed Azure ADX cluster route. It does not configure the primary containerized class lab's local Kustainer route. For the primary conference path, use [docs/cloudflare_adx_access.md](../docs/cloudflare_adx_access.md), which uses a shared Cloudflare Service Token, a local student proxy, and a read-only KQL gateway.
 
 This guide describes how exercise participants are provisioned to access the Cyber Range Azure Data Explorer (ADX) database and dashboard when managed Azure ADX is required. For short security conferences with random participants, prefer the Docker-first route so attendees do not need B2B invitations, entitlement access-package approval, or resource-tenant membership.
 

@@ -99,7 +99,7 @@ docker compose up --detach --wait kusto
 .\scripts\Start-CloudflareAdxTunnel.ps1 -Apply
 ```
 
-Distribute only the ignored `infra\cloudflare-adx\student-access.env` file and [scripts/Start-StudentAdxProxy.ps1](scripts/Start-StudentAdxProxy.ps1) through the temporary class channel. Students use `http://127.0.0.1:8080;Fed=false` in the ADX Web UI. The gateway permits queries and read-only `.show` metadata commands only.
+Distribute only the ignored `infra\cloudflare-adx\student-access.env` file and [scripts/Start-StudentAdxProxy.ps1](scripts/Start-StudentAdxProxy.ps1) through the temporary class channel. Students use `http://127.0.0.1:8080` in the ADX Web UI. The gateway permits queries and read-only `.show` metadata commands only.
 
 ### 3. Back up the local snapshot
 
@@ -171,11 +171,11 @@ For each student, distribute the ignored `student-access.env` file and [scripts/
 .\Start-StudentAdxProxy.ps1 -CredentialFile .\student-access.env
 ```
 
-They then sign in to the Azure Data Explorer web UI with Microsoft Entra ID and add `http://127.0.0.1:8080;Fed=false` as the cluster connection URI. `Fed=false` disables Microsoft Entra authentication for the local Kustainer connection; Cloudflare Service Auth is already handled by the local proxy. Users do not need a Cloudflare account, One-Time PIN, or individual Cloudflare Access seat.
+They then sign in to the Azure Data Explorer web UI with Microsoft Entra ID and add `http://127.0.0.1:8080` as the cluster connection URI. Cloudflare Service Auth is already handled by the local proxy, so the local Kustainer connection needs no further authentication. Users do not need a Cloudflare account, One-Time PIN, or individual Cloudflare Access seat.
 
 The gateway permits queries and read-only `.show` metadata commands only. It rejects all other management commands, including `.drop`, `.add`, `.create`, `.alter`, `.delete`, `.ingest`, and `.set`.
 
-The gateway also permits the Azure Data Explorer web UI browser origin, its `x-ms-*` request headers, and browser private-network preflight traffic to the student proxy. If a browser previously showed a connection failure, restart the student proxy, hard-refresh the ADX web UI with `Ctrl+F5`, and add the complete `;Fed=false` connection URI again.
+The gateway also permits the Azure Data Explorer web UI browser origin, its `x-ms-*` request headers, and browser private-network preflight traffic to the student proxy. If a browser previously showed a connection failure, restart the student proxy, hard-refresh the ADX web UI with `Ctrl+F5`, and add the connection URI again.
 
 Rotate the class credential after the workshop to invalidate the distributed pair and write a new unshared local pair:
 

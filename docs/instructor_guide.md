@@ -1,6 +1,6 @@
 # Instructor guide
 
-> **Primary delivery path:** Use the containerized class lab and [Shared Class Credential Guide](cloudflare_adx_access.md) for security conferences with mixed or random participants. Distribute the temporary shared credential and student proxy script, have students connect through `http://127.0.0.1:8080;Fed=false`, and verify the `kusto-readonly-gateway` service is healthy.
+> **Primary delivery path:** Use the containerized class lab and [Shared Class Credential Guide](cloudflare_adx_access.md) for security conferences with mixed or random participants. Distribute the temporary shared credential and student proxy script, have students connect through `http://127.0.0.1:8080`, and verify the `kusto-readonly-gateway` service is healthy.
 >
 > **Secondary delivery path:** Use managed Azure ADX plus B2B participant setup only when the event requires per-person identity governance, tenant access policy, and managed ADX database authorization.
 

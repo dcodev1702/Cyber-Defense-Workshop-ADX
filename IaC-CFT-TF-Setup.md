@@ -268,11 +268,11 @@ The checked-in Compose connector uses `tcp://kusto-readonly-gateway:8081` on its
     -Uri 'http://127.0.0.1:8080/v1/rest/mgmt'
   ```
 
-1. The read-only gateway supports the ADX web UI browser origin, its required `x-ms-*` headers, and browser private-network preflight to the local proxy. If the ADX connection dialog previously failed, hard-refresh the browser with `Ctrl+F5` before retrying the exact URI `http://127.0.0.1:8080;Fed=false`.
+1. The read-only gateway supports the ADX web UI browser origin, its required `x-ms-*` headers, and browser private-network preflight to the local proxy. If the ADX connection dialog previously failed, hard-refresh the browser with `Ctrl+F5` before retrying the exact URI `http://127.0.0.1:8080`.
 
   Use the CORS/private-network preflight diagnostic in [docs/cloudflare_adx_access.md](docs/cloudflare_adx_access.md) when the local management query succeeds but the browser still cannot add the connection.
 
-1. Sign in to the Azure Data Explorer web UI with Microsoft Entra ID and add `http://127.0.0.1:8080;Fed=false` as the cluster connection URI. Select the `CyberDefendStudentSnapshot` database.
+1. Sign in to the Azure Data Explorer web UI with Microsoft Entra ID and add `http://127.0.0.1:8080` as the cluster connection URI. Select the `CyberDefendStudentSnapshot` database.
 
 1. Run a basic query:
 
@@ -305,8 +305,8 @@ The checked-in Compose connector uses `tcp://kusto-readonly-gateway:8081` on its
 | `curl.exe -fsS http://127.0.0.1:8080/v1/rest/ping` fails | Kusto is not healthy on the Docker host. Check `docker compose ps` and `docker compose logs kusto`. |
 | Student proxy returns `403` | The shared Service Token is expired, rotated, or missing. Distribute the current `student-access.env` file. |
 | Student can query but a `.drop` or `.create` command returns `403` | Expected. The read-only gateway is enforcing immutable workshop data. |
-| Azure Data Explorer cannot connect | Start the local student proxy and use the complete Kusto connection URI `http://127.0.0.1:8080;Fed=false`, not the public hostname or bare local URL. |
-| ADX still cannot connect after `Fed=false` | Run the student proxy management query from the validation step. If it returns HTTP `200`, hard-refresh the ADX web UI with `Ctrl+F5`; the gateway now allows ADX browser CORS and private-network preflight. |
+| Azure Data Explorer cannot connect | Start the local student proxy and use the Kusto connection URI `http://127.0.0.1:8080`, not the public hostname. |
+| ADX still cannot connect after entering the local URI | Run the student proxy management query from the validation step. If it returns HTTP `200`, hard-refresh the ADX web UI with `Ctrl+F5`; the gateway now allows ADX browser CORS and private-network preflight. |
 | Terraform reports an existing resource | Import the actual Tunnel, DNS record, Access application, or Service Token, then rerun the plan. |
 
 ---

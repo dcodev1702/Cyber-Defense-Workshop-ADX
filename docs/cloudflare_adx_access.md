@@ -28,7 +28,7 @@ Student device
 | --- | --- |
 | Tunnel hostname | `adx.tier1-cyberdefense.ai` |
 | Tunnel origin | `tcp://kusto-readonly-gateway:8081` |
-| Student Kusto connection URI | `http://127.0.0.1:8080;Fed=false` |
+| Student Kusto connection URI | `http://127.0.0.1:8080` |
 | Local database | `CyberDefendStudentSnapshot` |
 | Credential lifetime | `168h` default, `48h` enforced minimum |
 | Credential type | Shared Cloudflare Service Token Client ID and Client Secret |
@@ -125,10 +125,10 @@ On each student device:
 4. Add or select this cluster connection URI:
 
    ```text
-   http://127.0.0.1:8080;Fed=false
+   http://127.0.0.1:8080
    ```
 
-   `Fed=false` is required because Kustainer does not perform Microsoft Entra authentication. The Cloudflare shared credential has already been handled by the local proxy.
+   The Cloudflare shared credential is already handled by the local proxy, so Azure Data Explorer does not need to authenticate again against Kustainer.
 
 5. Select `CyberDefendStudentSnapshot` and run a query:
 
@@ -158,7 +158,7 @@ If the ADX **Add connection** dialog shows a failure while the proxy terminal sa
 
     This must return HTTP `200`.
 
-3. Use the complete URI `http://127.0.0.1:8080;Fed=false`.
+3. Use the URI `http://127.0.0.1:8080`.
 4. Hard-refresh the ADX web UI with `Ctrl+F5`, close the failed dialog, and add the connection again.
 
 The CORS/private-network fix is hosted in the read-only gateway. Students do not need a new Cloudflare account or an individual credential for this browser step.
@@ -214,11 +214,11 @@ The launcher overwrites the ignored `student-access.env` file with the new pair.
 | Symptom | Action |
 | --- | --- |
 | `curl.exe -fsS http://127.0.0.1:8080/v1/rest/ping` fails on the instructor host | Kusto is not healthy. Run `docker compose ps` and `docker compose logs kusto`. |
-| Student proxy cannot bind port `8080` | Another local service owns the port. Start the proxy with `-LocalPort 18080` and use `http://127.0.0.1:18080;Fed=false` in ADX. |
+| Student proxy cannot bind port `8080` | Another local service owns the port. Start the proxy with `-LocalPort 18080` and use `http://127.0.0.1:18080` in ADX. |
 | Student sees HTTP `403` through the local proxy | The shared credential was rotated, expired, malformed, or not passed to Cloudflared. Obtain the current `student-access.env` from the instructor. |
 | Student can query but `.drop` or `.create` returns HTTP `403` | Expected. The read-only gateway is blocking mutable Kusto management commands. |
-| ADX says it cannot connect while the local proxy is listening | Use the complete connection URI `http://127.0.0.1:8080;Fed=false`, not the bare local URL. |
-| ADX still says it cannot connect after adding `Fed=false` | Run the local management test in **Browser Connection Compatibility**. If it returns `200`, hard-refresh ADX with `Ctrl+F5`; the gateway already allows ADX CORS headers and private-network preflight. |
+| ADX says it cannot connect while the local proxy is listening | Use `http://127.0.0.1:8080`, not the public tunnel hostname. |
+| ADX still says it cannot connect after entering the local URI | Run the local management test in **Browser Connection Compatibility**. If it returns `200`, hard-refresh ADX with `Ctrl+F5`; the gateway already allows ADX CORS headers and private-network preflight. |
 | Database is absent | The instructor should start the existing Kusto container with `docker compose start kusto`. If Kustainer was replaced, retain the backup ZIP and rebuild the mounted snapshot with `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate`. |
 
 ## References

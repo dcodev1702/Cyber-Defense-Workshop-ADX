@@ -241,7 +241,7 @@ Select **Run**. Seeing rows of results confirms that you are connected and ready
 ## ✅ Quick checks
 
 - Keep the terminal running the Cloudflare tunnel open throughout the lab.
-- Use `http://127.0.0.1:8080;Fed=false` exactly when Azure Data Explorer asks for the connection URI.
+- Use `http://127.0.0.1:8080` exactly when Azure Data Explorer asks for the connection URI.
 - Select `CyberDefendStudentSnapshot` before you run a query.
 - Ask a workshop instructor for help if the tunnel check fails or the database does not appear.
 
@@ -254,7 +254,7 @@ Use the Defender Dashboard after completing the connection steps above. It bring
 The dashboard depends on the same local Cloudflare tunnel as the query experience. Open **Data sources** in the dashboard and confirm that the data source connection URI is:
 
 ```text
-http://127.0.0.1:8080;Fed=false
+http://127.0.0.1:8080
 ```
 
 Azure Data Explorer may display the URI with a trailing `/`; that is expected. Do not replace the local address with the public tunnel hostname, use `https`, or add a path after the port. The local address routes dashboard queries through the tunnel running on your computer.
@@ -279,7 +279,7 @@ In Azure Data Explorer, select **Dashboards** > **New dashboard** > **Import das
 The JSON was exported with its authoring cloud data source, so set the lab connection before relying on the tiles:
 
 1. In the imported dashboard, select **Data sources** and edit **Cyber Defense Workshop ADX**.
-1. Replace the cluster address with exactly `http://127.0.0.1:8080;Fed=false`.
+1. Replace the cluster address with exactly `http://127.0.0.1:8080`.
 1. Set the database to `CyberDefendStudentSnapshot`, then save the data source and select **Refresh**.
 
 The address must be the local tunnel endpoint, not the cloud cluster address saved in the JSON. The Cloudflare tunnel must still be running, and the local endpoint must already be trusted in Azure Data Explorer. When the data source is set correctly, the imported dashboard renders the SOC Overview, Identity and Sign-ins, Network and Graph, and Inventory and Posture views shown below.

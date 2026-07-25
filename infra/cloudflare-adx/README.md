@@ -91,7 +91,7 @@ winget install --id Cloudflare.cloudflared --exact
 
 Leave the proxy running and connect the Azure Data Explorer web UI to `http://127.0.0.1:8080`. Select `CyberDefendStudentSnapshot`.
 
-Use the complete Kusto connection URI `http://127.0.0.1:8080;Fed=false`. `Fed=false` prevents the client from attempting Microsoft Entra authentication against Kustainer; the Cloudflare Service Token has already authenticated the tunnel proxy.
+Use the Kusto connection URI `http://127.0.0.1:8080`. The Cloudflare Service Token has already authenticated the tunnel proxy, so the client does not authenticate again against Kustainer.
 
 ## Browser Compatibility
 
@@ -109,7 +109,7 @@ If the ADX **Add connection** dialog reports a failure while the proxy is listen
      -Uri 'http://127.0.0.1:8080/v1/rest/mgmt'
    ```
 
-2. Use `http://127.0.0.1:8080;Fed=false` as the connection URI.
+2. Use `http://127.0.0.1:8080` as the connection URI.
 3. Hard-refresh the ADX web UI with `Ctrl+F5`, then add the connection again.
 
 The local management request should return HTTP `200`. If it does not, the issue is the proxy or credential rather than the ADX browser.
