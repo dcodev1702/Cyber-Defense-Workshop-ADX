@@ -12,6 +12,10 @@ Use this guide at the workshop to connect your Windows computer to the Cyber Def
 
 ### 1. Install Cloudflare Tunnel
 
+Follow the instructions for your operating system: **Windows** uses `winget`, **macOS** uses Homebrew (`brew`).
+
+#### Windows users
+
 1. Open **PowerShell** or **Windows Terminal**.
 1. Run this command:
 
@@ -22,6 +26,39 @@ winget install --id Cloudflare.cloudflared --exact
 1. Wait for the installation to finish. If Windows asks for permission, approve it.
 
 ![Step 1: Install Cloudflare Tunnel](../images/student-walk-through/1-CMD-Install-Cloudflare-Tunnel-Application.jpg)
+
+#### macOS users
+
+macOS installs `cloudflared` with **Homebrew**. If you already have Homebrew, skip ahead to the install command.
+
+**If you do not have Homebrew yet**, install it from [brew.sh](https://brew.sh) or run this in **Terminal**:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+On Apple Silicon Macs the installer finishes by printing two `echo` commands that add Homebrew to your `PATH`. Run them, then close and reopen Terminal. Confirm Homebrew is ready:
+
+```bash
+brew --version
+```
+
+**Install `cloudflared`:**
+
+1. Open **Terminal**.
+1. Run this command:
+
+```bash
+brew install cloudflared
+```
+
+1. Wait for the installation to finish, then confirm it worked:
+
+```bash
+cloudflared --version
+```
+
+> The remaining steps show PowerShell prompts because most of the class is on Windows. The `cloudflared` command in step 2 is identical on macOS — just run it in Terminal instead.
 
 ### 2. Start the local Cloudflare proxy
 
