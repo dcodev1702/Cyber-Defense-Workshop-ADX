@@ -2,18 +2,27 @@ name: cyber-conf-wiesbaden
 
 services:
   kusto:
-    # Pinned by digest to the emulator the workshop was actually rehearsed,
-    # backed up, and restored against: build 1.0.9697.27504, product version
-    # 2026.07.20.1506-2629-8bf4dbb-master. `:latest` moves, and the restore path
-    # is only proven for this build -- a persistent database written by one
-    # emulator version cannot be attached by another, so a silent tag change
-    # between rehearsal and delivery is a data-loss event, not a version bump.
+    # Deliberately unpinned: this instance runs indefinitely rather than for a
+    # single event, so it tracks the current emulator and picks up Microsoft's
+    # fixes as they ship. Decided 2026-07-26, reversing a digest pin.
     #
-    # Override deliberately with KUSTO_IMAGE (full reference, tag or digest):
-    #   $env:KUSTO_IMAGE = 'mcr.microsoft.com/azuredataexplorer/kustainer-linux:latest'
-    # Re-pin after rehearsing a new build:
+    # Know the trade. Kustainer's persistent database is written in the format of
+    # the build that created it, and a different build cannot attach it --
+    # `.create database ... persist` fails 520 and `.attach database` reports a
+    # missing V11 pointer. So when the image moves, the snapshot in
+    # data/local-kusto does not come with it. That is recoverable and rehearsed:
+    # the NDJSON payload is what actually restores.
+    #
+    #   .\scripts\Import-GeneratedDataToKustainer.ps1
+    #
+    # Test-WorkshopReadiness.ps1 reports the running build and gates on the table
+    # and row counts, so a version move shows up as data to re-import rather than
+    # as a surprise mid-class.
+    #
+    # To pin for a specific delivery, set a full reference -- tag or digest:
+    #   $env:KUSTO_IMAGE = 'mcr.microsoft.com/azuredataexplorer/kustainer-linux@sha256:<digest>'
     #   docker image inspect <image> --format '{{index .RepoDigests 0}}'
-    image: ${KUSTO_IMAGE:-mcr.microsoft.com/azuredataexplorer/kustainer-linux@sha256:9cd9859c5ebd9d6d5cf81ec2681222ff9c805de49fedb1f6fb901eac7e25dac2}
+    image: ${KUSTO_IMAGE:-mcr.microsoft.com/azuredataexplorer/kustainer-linux:latest}
     container_name: cyber-conf-wiesbaden-kusto
     restart: unless-stopped
     init: true

@@ -8,12 +8,14 @@ other signal said the workshop was fine. That is the point of this script: it
 checks the things that are quiet when they break.
 
   1. All four containers are up, and Kustainer is healthy.
-  2. Kustainer is the emulator build the snapshot was rehearsed against. A
-     persistent database written by one build cannot be attached by another, so
-     an image change is a data-loss event rather than a version bump.
+  2. Which emulator build is running. Reported, not asserted: the image
+     deliberately tracks `latest`, so the build is expected to move. What that
+     move costs is a re-import, and check 4 is what catches it -- a persistent
+     database written by one build cannot be attached by another.
   3. The read-only gateway is running the policy its source describes, not a
      stale build. `docker compose ps` cannot tell the difference.
-  4. The database holds the expected tables and rows.
+  4. The database holds the expected tables and rows. This is the gate that
+     catches an emulator version move.
   5. The connector cannot route around the gateway to Kustainer's published
      port. This one lives in the host firewall and does not survive a Docker
      engine restart, so it is reapplied here rather than merely reported.
@@ -41,7 +43,6 @@ param(
     [string]$Database = 'CyberDefendStudentSnapshot',
     [int]$ExpectedTables = 79,
     [int]$ExpectedRows = 623832,
-    [string]$ExpectedEmulatorBuild = '1.0.9697.27504',
     [string]$GatewayContainer = 'cyber-conf-wiesbaden-kusto-readonly-gateway',
     [string]$KustoContainer = 'cyber-conf-wiesbaden-kusto',
     [switch]$NoRepair
@@ -69,6 +70,11 @@ function Report {
         $script:Failures++
         if ($Remedy) { $script:Remedies += $Remedy }
     }
+}
+
+function Write-Info {
+    param([Parameter(Mandatory)][string]$Name, [string]$Detail = '')
+    Write-Host ('  INFO  {0}{1}' -f $Name.PadRight(46), $Detail) -ForegroundColor DarkGray
 }
 
 function Invoke-Kusto {
@@ -100,24 +106,24 @@ Report -Name 'all four containers running' -Ok ($missing.Count -eq 0) `
 $kustoHealth = (docker inspect $KustoContainer --format '{{.State.Health.Status}}' 2>$null)
 Report -Name 'kustainer healthy' -Ok ("$kustoHealth".Trim() -eq 'healthy') -Detail "$kustoHealth"
 
-# ---- 2. the rehearsed emulator build -------------------------------------------
+# ---- 2. which emulator build is running ----------------------------------------
 
-# The restore path is proven for one build only. Catching a changed image here is
-# the difference between a five-minute re-import and discovering mid-class that
-# the persistent database cannot be attached.
-$buildOk = $false
+# Reported rather than asserted. The image tracks `latest` by choice, so the
+# build moves when Microsoft ships. The cost of a move is that the persisted
+# database cannot be attached by the new build -- which surfaces as check 4
+# failing on row counts, with the import as the documented remedy. Recording the
+# build here means that failure is immediately explainable rather than mysterious.
 $buildDetail = 'engine not answering'
 try {
     $version = Invoke-Kusto -Csl '.show version' -Endpoint 'mgmt'
     $columns = @($version.Columns | ForEach-Object { $_.ColumnName })
-    $buildVersion = [string]$version.Rows[0][$columns.IndexOf('BuildVersion')]
-    $buildOk = ($buildVersion -eq $ExpectedEmulatorBuild)
-    $buildDetail = $buildVersion
+    $buildDetail = '{0}  ({1})' -f `
+        $version.Rows[0][$columns.IndexOf('BuildVersion')], `
+        $version.Rows[0][$columns.IndexOf('ProductVersion')]
 }
-catch { $buildOk = $false }
+catch { }
 
-Report -Name 'emulator is the rehearsed build' -Ok $buildOk -Detail $buildDetail `
-    -Remedy 'Image changed. Re-rehearse the restore before delivery, then re-pin the digest in compose.yaml.'
+Write-Info -Name 'emulator build' -Detail $buildDetail
 
 # ---- 3. the gateway is running its own source ----------------------------------
 
@@ -156,7 +162,7 @@ catch { }
 
 Report -Name 'database holds the workshop data' -Ok ($tables -eq $ExpectedTables -and $rows -eq $ExpectedRows) `
     -Detail ('{0} tables, {1:N0} rows' -f $tables, $rows) `
-    -Remedy '.\scripts\Import-GeneratedDataToKustainer.ps1'
+    -Remedy '.\scripts\Import-GeneratedDataToKustainer.ps1   (also the remedy after an emulator version move)'
 
 # ---- 5. the network boundary (repaired, not just reported) ---------------------
 

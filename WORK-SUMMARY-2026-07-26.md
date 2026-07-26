@@ -157,20 +157,24 @@ Commits: `704d6ef`, `54ed23b`, `705b0f5` (backup/restore), `cdd0332` (gateway ha
 
 ### Before Wiesbaden — operational, not code ✅ DONE
 
-All four are now implemented. One carries a consequence you have to choose when to take.
+All four are now settled.
 
-- **`KUSTO_IMAGE_TAG` pinned — done.** `compose.yaml` now pins Kustainer **by digest** to the build
-  the snapshot was rehearsed, backed up, and restored against (`1.0.9697.27504` /
-  `2026.07.20.1506-2629-8bf4dbb-master`). The pin sits in the tracked Compose file rather than the
-  generated, git-ignored `compose.override.yaml`, so Terraform cannot wipe it. `KUSTO_IMAGE`
-  overrides it deliberately. The old `KUSTO_IMAGE_TAG` could not express a digest at all —
-  `image:sha256:...` is not a valid reference.
+- **Emulator image — decided: stay on `latest`.** A digest pin was added and then deliberately
+  reversed. This instance runs indefinitely rather than for a single event, so it tracks the current
+  emulator and picks up Microsoft's fixes as they ship. The trade is stated in `compose.yaml` rather
+  than left to be rediscovered: Kustainer writes its persistent database in the format of the build
+  that created it, so when the image moves, the snapshot in `data/local-kusto` does not come with
+  it. That is recoverable and rehearsed — the NDJSON payload is what restores, via
+  `Import-GeneratedDataToKustainer.ps1`. `KUSTO_IMAGE` accepts a full reference, so pinning for a
+  specific delivery is one environment variable away.
 
-  > ⚠️ **The pin will recreate the `kusto` container on the next `docker compose up`.** Confirmed
-  > with `--dry-run`. The digest resolves to the image already running, but Compose recreates on a
-  > changed config hash regardless, and that destroys the persistent database registration. Back up
-  > and plan the re-import, or stay on `docker compose stop`/`start` as the repository already
-  > recommends for this container.
+  Reversing the pin also removed the container recreate it introduced:
+  `docker compose up -d --dry-run` reports `kusto` as `Running` again, so the persistent database
+  registration is no longer one `up` away from being destroyed.
+
+  `Test-WorkshopReadiness.ps1` reports the running build rather than asserting it — asserting a
+  fixed build would turn every legitimate update into a red preflight, which trains people to ignore
+  preflights. The gate is the table and row count, which is what actually catches a version move.
 
 - **Isolation rule surviving a restart — done.** `scripts/Test-WorkshopReadiness.ps1` reapplies it
   (idempotent, clears its own stale rules first) and then proves it by sending packets. No standing
