@@ -129,7 +129,7 @@ pwsh ./scripts/Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate
 
 The replacement removes Kustainer's database registration, so the final import is required even though the persistent files remain under `data/local-kusto`.
 
-### 3.5 Back up the local Student snapshot
+### 3.5 Back up the local Student snapshot, and verify the restore
 
 Before an intentional replacement, stop only Kusto, create the archive, and start that same container again. The command prints the timestamped ZIP path and SHA-256 hash; copy the ZIP from `data\backups\local-kusto` to secure storage or Google Drive.
 
@@ -137,6 +137,19 @@ Before an intentional replacement, stop only Kusto, create the archive, and star
 docker compose stop kusto
 .\scripts\Backup-LocalKustoSnapshot.ps1
 docker compose start kusto
+```
+
+Prove the archive restores instead of assuming it does. `Restore-LocalKustoSnapshot.ps1` rebuilds the database in a throwaway container on port 8099, reconciles the restored row count against the archive, and tears the container down:
+
+```powershell
+.\scripts\Restore-LocalKustoSnapshot.ps1
+```
+
+The final import in section 3.4 is only needed when the Student cluster is reachable. Otherwise rebuild the replaced container from the archive, which requires no Azure access:
+
+```powershell
+.\scripts\Restore-LocalKustoSnapshot.ps1 -ExtractPayloadTo .\data\generated
+.\scripts\Import-GeneratedDataToKustainer.ps1
 ```
 
 ---

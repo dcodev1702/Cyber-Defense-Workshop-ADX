@@ -156,7 +156,12 @@ Then copy the current Student database. `-ForceRecreate` replaces the previous l
 The script defaults to `usag-wiesbaden-cys26.northeurope.kusto.windows.net`, database `cyber-defend-usagwsbdn-cys26`, and local database `CyberDefendStudentSnapshot`. It writes the verification manifest beneath `data\local-export\`, which is intentionally ignored by Git because it contains the copied telemetry.
 
 > [!WARNING]
-> **Preserve the Kustainer container.** The mounted files and Kustainer's database registration work together. Use `docker compose stop kusto` and `docker compose start kusto` for routine shutdown and startup. Do not use `docker compose down`, `docker compose rm`, `docker compose up` after a Compose configuration change, or `--force-recreate` for `kusto` while retaining the local snapshot. If a Kusto container replacement is required, first run `Backup-LocalKustoSnapshot.ps1`, then rerun `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` after the replacement to rebuild and verify the mounted Student database.
+> **Preserve the Kustainer container.** The mounted files and Kustainer's database registration work together. Use `docker compose stop kusto` and `docker compose start kusto` for routine shutdown and startup. Do not use `docker compose down`, `docker compose rm`, `docker compose up` after a Compose configuration change, or `--force-recreate` for `kusto` while retaining the local snapshot. If a Kusto container replacement is required, first run `Backup-LocalKustoSnapshot.ps1`, then rebuild the database after the replacement by one of two routes: rerun `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` to re-copy from the Student cluster, or rebuild offline from the backup archive. Prefer the offline route on site, because the Azure route needs cluster access and an entitled sign-in, and those are unavailable exactly when a rebuild is most likely to be needed:
+>
+> ```powershell
+> .\scripts\Restore-LocalKustoSnapshot.ps1 -ExtractPayloadTo .\data\generated
+> .\scripts\Import-GeneratedDataToKustainer.ps1
+> ```
 
 `kusto-defaultdb-cleaner` runs continuously in Compose. Once `CyberDefendStudentSnapshot` exists, it drops `NetDefaultDB` and removes its residual directory under `data\local-kusto\dbs`. On a fresh emulator, it leaves the default database in place until the Student import has created the retained snapshot database.
 

@@ -22,11 +22,21 @@ By default this restores into a throwaway container on a spare port and removes
 it afterwards, which makes it safe to run as a recovery rehearsal at any time
 without touching the workshop cluster.
 
+To rebuild the workshop cluster itself, use -ExtractPayloadTo to put the
+archive's telemetry and schemas back on disk, then load them with
+scripts\Import-GeneratedDataToKustainer.ps1. That path needs no Azure
+connectivity, which matters because the alternative, re-copying from the Student
+cluster, is unavailable exactly when it is most likely to be needed.
+
 .EXAMPLE
 .\scripts\Restore-LocalKustoSnapshot.ps1
 
 .EXAMPLE
 .\scripts\Restore-LocalKustoSnapshot.ps1 -ArchivePath .\data\backups\local-kusto\snap.zip -KeepContainer
+
+.EXAMPLE
+.\scripts\Restore-LocalKustoSnapshot.ps1 -ExtractPayloadTo .\data\generated
+.\scripts\Import-GeneratedDataToKustainer.ps1
 #>
 #Requires -Version 7
 [CmdletBinding()]
@@ -39,7 +49,8 @@ param(
     [string]$Image = 'mcr.microsoft.com/azuredataexplorer/kustainer-linux:latest',
     [string]$WorkingDirectory = (Join-Path ([System.IO.Path]::GetTempPath()) 'cdw-restore-check'),
     [string]$Memory = '16g',
-    [switch]$KeepContainer
+    [switch]$KeepContainer,
+    [string]$ExtractPayloadTo
 )
 
 Set-StrictMode -Version Latest
@@ -81,7 +92,9 @@ function ConvertTo-KustoType {
 }
 
 Write-Host ("Archive   : {0}" -f $ArchivePath)
-Write-Host ("Container : {0} on 127.0.0.1:{1}" -f $ContainerName, $HostPort)
+if (-not $ExtractPayloadTo) {
+    Write-Host ("Container : {0} on 127.0.0.1:{1}" -f $ContainerName, $HostPort)
+}
 Write-Host ''
 
 $restoredTables = 0
@@ -90,7 +103,7 @@ $actualRows = 0L
 $manifest = $null
 
 try {
-    docker rm --force $ContainerName 2>$null | Out-Null
+    if (-not $ExtractPayloadTo) { docker rm --force $ContainerName 2>$null | Out-Null }
     if (Test-Path $WorkingDirectory) { Remove-Item $WorkingDirectory -Recurse -Force }
     foreach ($dir in @($stateDir, $exportDir, $schemaDir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
 
@@ -137,6 +150,20 @@ try {
         if ($missing.Count -gt 0) {
             throw ("The archive payload is missing {0} table(s) the manifest declares: {1}" -f $missing.Count, ($missing -join ', '))
         }
+    }
+
+    # Recovery of the workshop cluster itself goes through here: put the payload
+    # back on disk, then load it with Import-GeneratedDataToKustainer.ps1. No
+    # container is started, so this is safe to run while the workshop is up.
+    if ($ExtractPayloadTo) {
+        New-Item -ItemType Directory -Path $ExtractPayloadTo -Force | Out-Null
+        Copy-Item -Path (Join-Path $exportDir '*') -Destination $ExtractPayloadTo -Force
+        $target = (Resolve-Path -LiteralPath $ExtractPayloadTo).Path
+        Write-Host ''
+        Write-Host ("Payload written to {0} ({1} table(s))." -f $target, $dataFiles.Count)
+        Write-Host 'Load it into the workshop cluster with:'
+        Write-Host '  .\scripts\Import-GeneratedDataToKustainer.ps1'
+        return
     }
 
     Write-Host ''
@@ -222,7 +249,10 @@ try {
     if (-not $ok) { exit 1 }
 }
 finally {
-    if (-not $KeepContainer) {
+    if ($ExtractPayloadTo) {
+        if (Test-Path $WorkingDirectory) { Remove-Item $WorkingDirectory -Recurse -Force -ErrorAction SilentlyContinue }
+    }
+    elseif (-not $KeepContainer) {
         docker rm --force $ContainerName 2>$null | Out-Null
         if (Test-Path $WorkingDirectory) { Remove-Item $WorkingDirectory -Recurse -Force -ErrorAction SilentlyContinue }
         Write-Host 'Restore container and working files removed.'

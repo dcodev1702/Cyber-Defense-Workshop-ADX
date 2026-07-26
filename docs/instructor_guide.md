@@ -13,7 +13,7 @@
 5. Distribute only `student-access.env`, `Start-StudentAdxProxy.ps1`, and the student lab instructions through the temporary class channel.
 6. Have students import `STUDENT-GUIDES\dashboard-CYBER-DEFEND-V4.json` as their dashboard; keep `dashboards\cyber-defense-workshop-dashboard.kql` open in the query editor for pinning tiles manually, and `docs\instructor_answer_key.kql` in a second tab for yourself.
 
-Before an intentional Kustainer replacement, run `docker compose stop kusto`, `scripts\Backup-LocalKustoSnapshot.ps1`, and `docker compose start kusto`; copy the resulting ZIP to secure storage.
+Before an intentional Kustainer replacement, run `docker compose stop kusto`, `scripts\Backup-LocalKustoSnapshot.ps1`, and `docker compose start kusto`; copy the resulting ZIP to secure storage. Rehearse the restore before the event with `scripts\Restore-LocalKustoSnapshot.ps1`, which rebuilds the database in a throwaway container and reconciles the row counts. If the snapshot is lost on site, rebuild it without Azure by running `scripts\Restore-LocalKustoSnapshot.ps1 -ExtractPayloadTo .\data\generated` followed by `scripts\Import-GeneratedDataToKustainer.ps1`.
 
 ## Secondary managed Azure checklist
 

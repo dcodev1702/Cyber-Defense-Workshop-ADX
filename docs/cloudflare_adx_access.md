@@ -85,7 +85,7 @@ The `kusto-readonly-gateway` service must report `healthy` before students conne
 
 The Compose `kusto-defaultdb-cleaner` service keeps the database list clean: after `CyberDefendStudentSnapshot` exists, it removes `NetDefaultDB` and its persistent state directory. This does not affect the Student snapshot.
 
-## Back Up Before Replacement
+## Back Up Before Replacement, and Know How to Restore
 
 Use the local backup command before an intentional Kustainer replacement or before copying the database off the host. Stop and start the existing container directly; do not use `docker compose up` to wait after a Compose change because that can replace Kustainer.
 
@@ -96,6 +96,23 @@ docker compose start kusto
 ```
 
 The command writes a timestamped ZIP and SHA-256 hash under `data\backups\local-kusto`. Copy that ZIP to the destination of your choice, such as Google Drive, and keep it out of source control.
+
+Rehearse the restore rather than trusting the ZIP. A structurally valid archive is not evidence that it can be restored, and an archive carrying the wrong data passes every size and checksum test:
+
+```powershell
+.\scripts\Restore-LocalKustoSnapshot.ps1
+```
+
+That rebuilds the database in a throwaway container on `127.0.0.1:8099`, reconciles the restored row count against the archive, and removes the container afterwards. It refuses to run against the workshop container.
+
+To rebuild the workshop cluster itself after a replacement, put the payload back on disk and load it. This needs no Azure connectivity, which is the point: re-copying from the Student cluster is unavailable on venue wifi or after the cluster is gone.
+
+```powershell
+.\scripts\Restore-LocalKustoSnapshot.ps1 -ExtractPayloadTo .\data\generated
+.\scripts\Import-GeneratedDataToKustainer.ps1
+```
+
+Only the NDJSON payload in the archive restores. The emulator registers a persistent database inside the container rather than in the mounted state directory, so a fresh container cannot attach state that a different container wrote.
 
 ## Student Setup
 

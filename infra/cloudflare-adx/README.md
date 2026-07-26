@@ -76,6 +76,13 @@ docker compose stop kusto
 docker compose start kusto
 ```
 
+After the replacement, rebuild the database either with `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` or, when there is no Azure access, straight from that archive:
+
+```powershell
+.\scripts\Restore-LocalKustoSnapshot.ps1 -ExtractPayloadTo .\data\generated
+.\scripts\Import-GeneratedDataToKustainer.ps1
+```
+
 Subsequent calls to `Start-CloudflareAdxTunnel.ps1 -Apply` leave the existing connector token and healthy Compose connector in place. Use `-ReplaceExistingConnector` only when you intentionally need a new connector token and container.
 
 ## Student Connection
