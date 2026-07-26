@@ -2012,7 +2012,12 @@ function New-WorkshopRecordObject {
         [Parameter(Mandatory)][string]$Table,
         [Parameter(Mandatory)][hashtable]$Values,
         [datetime]$Time = $script:StartTime,
-        [switch]$Ambient
+        [switch]$Ambient,
+        # Evidence rows that have to hide inside ambient traffic take the same
+        # profile-driven column fill as ambient rows, but keep the deliberate
+        # workshop signal the caller set (IsRisky, RiskLevel and friends) instead
+        # of having it blanked by the empty-column pass below.
+        [switch]$Blend
     )
 
     if (-not $script:Schemas.ContainsKey($Table)) {
@@ -2025,7 +2030,7 @@ function New-WorkshopRecordObject {
         $record[[string]$column.name] = New-DefaultValue -Type ([string]$column.type) -Time $Time
     }
 
-    if ($Ambient) {
+    if ($Ambient -or $Blend) {
         # Ambient rows inherit the real observed distribution for enum-like columns
         # instead of an empty type default. Scenario rows are left alone so
         # hand-authored investigation evidence stays exact. The weighted pick is
@@ -2082,10 +2087,11 @@ function Add-Record {
     param(
         [Parameter(Mandatory)][string]$Table,
         [Parameter(Mandatory)][hashtable]$Values,
-        [datetime]$Time = $script:StartTime
+        [datetime]$Time = $script:StartTime,
+        [switch]$Blend
     )
 
-    $record = New-WorkshopRecordObject -Table $Table -Values $Values -Time $Time
+    $record = New-WorkshopRecordObject -Table $Table -Values $Values -Time $Time -Blend:$Blend
     if ($null -ne $record) {
         $script:Records[$Table].Add($record) | Out-Null
     }
@@ -2316,6 +2322,14 @@ function Add-WorkshopPasswordSprayEvidence {
     $targets = @($Identities | Where-Object { $script:SignInSprayTargets.ContainsKey($_.Upn) })
     if ($targets.Count -eq 0) { return }
 
+    # The per-table samplers are normally configured by Write-WorkshopTableData,
+    # which runs long after this. Configure them here so -Blend has the SigninLogs
+    # distributions to draw from; Write-WorkshopTableData sets them again for each
+    # table it writes, so nothing downstream is disturbed.
+    $script:CurrentTargetRows = [Math]::Max(1, (Get-WorkshopTargetRowCount -Table 'SigninLogs'))
+    Set-WorkshopTableCardinality -Table 'SigninLogs' -TargetRows $script:CurrentTargetRows
+    Set-WorkshopTableSamplers -Table 'SigninLogs'
+
     $sprayApp = 'Office 365 Exchange Online'
     $sprayAppId = '00000002-0000-0ff1-ce00-000000000000'
     $sprayAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
@@ -2348,46 +2362,54 @@ function Add-WorkshopPasswordSprayEvidence {
 
             $seed = "spray|$($identity.Upn)|$attempt"
 
-            Add-Record -Table 'SigninLogs' -Time $attemptTime -Values @{
-                TimeGenerated = Format-WorkshopTime $attemptTime
-                CreatedDateTime = Format-WorkshopTime $attemptTime
-                AADTenantId = $tenantId
-                AppDisplayName = $sprayApp
-                AppId = $sprayAppId
-                AuthenticationMethodsUsed = 'Password'
-                AuthenticationRequirement = 'singleFactorAuthentication'
-                ClientAppUsed = 'Other clients'
-                ConditionalAccessStatus = 'notApplied'
-                CorrelationId = New-StableGuid "$seed|correlation"
-                DeviceDetail = @{ operatingSystem = 'Unknown'; browser = 'Other'; isCompliant = $false; trustType = 'Unmanaged' }
-                Id = New-StableGuid "$seed|signin"
-                Identity = $identity.DisplayName
-                IPAddress = $sprayIp
-                IsInteractive = $true
-                IsRisky = $true
-                Location = 'RU'
-                LocationDetails = @{ city = 'Moscow'; state = 'Moscow'; countryOrRegion = 'RU' }
-                OperationName = 'Sign-in activity'
-                ResourceDisplayName = $sprayApp
-                ResultType = $outcome.Code
-                ResultDescription = $outcome.Description
-                ResultSignature = if ($outcome.Failure) { 'FAILURE' } else { 'SUCCESS' }
-                ErrorCode = [int]$outcome.Code
-                RiskLevel = 'high'
-                RiskLevelDuringSignIn = 'high'
-                RiskState = 'atRisk'
-                RiskEventTypes = 'passwordSpray'
-                Status = @{ errorCode = [int]$outcome.Code; failureReason = $outcome.Reason; additionalDetails = $outcome.Description }
-                Type = 'SigninLogs'
-                UserAgent = $sprayAgent
-                UserDisplayName = $identity.DisplayName
-                UserId = $identity.ObjectId
-                UserPrincipalName = $identity.Upn
-                UserType = 'Member'
-                Country = 'RU'
-                State = 'Moscow'
-                City = 'Moscow'
-            }
+            # Built from the ambient generator and then overridden, rather than
+            # hand-authored. A hand-written hashtable only carried the fields the
+            # narrative cared about, leaving the other fifty-odd columns empty --
+            # and because these rows sort to the front of the file, the quality
+            # gate's 1500-row sample was 27% spray rows and reported thirty
+            # columns as sparse that were fine in the ambient population. Scenario
+            # evidence has to be as complete as the traffic it hides in.
+            $values = New-NormalTelemetryValues -Table 'SigninLogs' -Time $attemptTime -Index ($targetIndex * 10 + $attempt)
+
+            $values.TimeGenerated = Format-WorkshopTime $attemptTime
+            $values.CreatedDateTime = Format-WorkshopTime $attemptTime
+            $values.AppDisplayName = $sprayApp
+            $values.AppId = $sprayAppId
+            $values.ApplicationId = $sprayAppId
+            $values.Application = $sprayApp
+            $values.ResourceDisplayName = $sprayApp
+            $values.AuthenticationMethodsUsed = 'Password'
+            $values.AuthenticationRequirement = 'singleFactorAuthentication'
+            $values.ClientAppUsed = 'Other clients'
+            $values.ConditionalAccessStatus = 'notApplied'
+            $values.CorrelationId = New-StableGuid "$seed|correlation"
+            $values.DeviceDetail = @{ operatingSystem = 'Unknown'; browser = 'Other'; isCompliant = $false; trustType = 'Unmanaged' }
+            $values.Id = New-StableGuid "$seed|signin"
+            $values.Identity = $identity.DisplayName
+            $values.IPAddress = $sprayIp
+            $values.IsInteractive = $true
+            $values.IsRisky = $true
+            $values.Location = 'RU'
+            $values.LocationDetails = @{ city = 'Moscow'; state = 'Moscow'; countryOrRegion = 'RU' }
+            $values.Country = 'RU'
+            $values.State = 'Moscow'
+            $values.City = 'Moscow'
+            $values.ResultType = $outcome.Code
+            $values.ResultDescription = $outcome.Description
+            $values.ResultSignature = if ($outcome.Failure) { 'FAILURE' } else { 'SUCCESS' }
+            $values.ErrorCode = [int]$outcome.Code
+            $values.RiskLevel = 'high'
+            $values.RiskLevelDuringSignIn = 'high'
+            $values.RiskState = 'atRisk'
+            $values.RiskEventTypes = 'passwordSpray'
+            $values.Status = @{ errorCode = [int]$outcome.Code; failureReason = $outcome.Reason; additionalDetails = $outcome.Description }
+            $values.UserAgent = $sprayAgent
+            $values.UserDisplayName = $identity.DisplayName
+            $values.UserId = $identity.ObjectId
+            $values.UserPrincipalName = $identity.Upn
+            $values.UniqueTokenIdentifier = New-StableGuid "$seed|token"
+
+            Add-Record -Table 'SigninLogs' -Time $attemptTime -Values $values -Blend
 
             Add-Record -Table 'EntraIdSignInEvents' -Time $attemptTime -Values @{
                 Timestamp = Format-WorkshopTime $attemptTime
@@ -2435,46 +2457,47 @@ function Add-WorkshopPasswordSprayEvidence {
         $outcome = $script:SignInSprayOutcomes.MfaRequired
         $seed = "leaked|$($identity.Upn)"
 
-        Add-Record -Table 'SigninLogs' -Time $attemptTime -Values @{
-            TimeGenerated = Format-WorkshopTime $attemptTime
-            CreatedDateTime = Format-WorkshopTime $attemptTime
-            AADTenantId = $tenantId
-            AppDisplayName = $sprayApp
-            AppId = $sprayAppId
-            AuthenticationMethodsUsed = 'Password'
-            AuthenticationRequirement = 'multiFactorAuthentication'
-            ClientAppUsed = 'Browser'
-            ConditionalAccessStatus = 'failure'
-            CorrelationId = New-StableGuid "$seed|correlation"
-            DeviceDetail = @{ operatingSystem = 'Unknown'; browser = 'Chrome'; isCompliant = $false; trustType = 'Unmanaged' }
-            Id = New-StableGuid "$seed|signin"
-            Identity = $identity.DisplayName
-            IPAddress = $leakIp
-            IsInteractive = $true
-            IsRisky = $true
-            Location = 'RU'
-            LocationDetails = @{ city = 'Moscow'; state = 'Moscow'; countryOrRegion = 'RU' }
-            OperationName = 'Sign-in activity'
-            ResourceDisplayName = $sprayApp
-            ResultType = $outcome.Code
-            ResultDescription = $outcome.Description
-            ResultSignature = 'FAILURE'
-            ErrorCode = [int]$outcome.Code
-            RiskLevel = 'high'
-            RiskLevelDuringSignIn = 'high'
-            RiskState = 'atRisk'
-            RiskEventTypes = 'leakedCredentials'
-            Status = @{ errorCode = [int]$outcome.Code; failureReason = $outcome.Reason; additionalDetails = $outcome.Description }
-            Type = 'SigninLogs'
-            UserAgent = $sprayAgent
-            UserDisplayName = $identity.DisplayName
-            UserId = $identity.ObjectId
-            UserPrincipalName = $identity.Upn
-            UserType = 'Member'
-            Country = 'RU'
-            State = 'Moscow'
-            City = 'Moscow'
-        }
+        $values = New-NormalTelemetryValues -Table 'SigninLogs' -Time $attemptTime -Index (5000 + $leakIndex)
+
+        $values.TimeGenerated = Format-WorkshopTime $attemptTime
+        $values.CreatedDateTime = Format-WorkshopTime $attemptTime
+        $values.AppDisplayName = $sprayApp
+        $values.AppId = $sprayAppId
+        $values.ApplicationId = $sprayAppId
+        $values.Application = $sprayApp
+        $values.ResourceDisplayName = $sprayApp
+        $values.AuthenticationMethodsUsed = 'Password'
+        $values.AuthenticationRequirement = 'multiFactorAuthentication'
+        $values.ClientAppUsed = 'Browser'
+        $values.ConditionalAccessStatus = 'failure'
+        $values.CorrelationId = New-StableGuid "$seed|correlation"
+        $values.DeviceDetail = @{ operatingSystem = 'Unknown'; browser = 'Chrome'; isCompliant = $false; trustType = 'Unmanaged' }
+        $values.Id = New-StableGuid "$seed|signin"
+        $values.Identity = $identity.DisplayName
+        $values.IPAddress = $leakIp
+        $values.IsInteractive = $true
+        $values.IsRisky = $true
+        $values.Location = 'RU'
+        $values.LocationDetails = @{ city = 'Moscow'; state = 'Moscow'; countryOrRegion = 'RU' }
+        $values.Country = 'RU'
+        $values.State = 'Moscow'
+        $values.City = 'Moscow'
+        $values.ResultType = $outcome.Code
+        $values.ResultDescription = $outcome.Description
+        $values.ResultSignature = 'FAILURE'
+        $values.ErrorCode = [int]$outcome.Code
+        $values.RiskLevel = 'high'
+        $values.RiskLevelDuringSignIn = 'high'
+        $values.RiskState = 'atRisk'
+        $values.RiskEventTypes = 'leakedCredentials'
+        $values.Status = @{ errorCode = [int]$outcome.Code; failureReason = $outcome.Reason; additionalDetails = $outcome.Description }
+        $values.UserAgent = $sprayAgent
+        $values.UserDisplayName = $identity.DisplayName
+        $values.UserId = $identity.ObjectId
+        $values.UserPrincipalName = $identity.Upn
+        $values.UniqueTokenIdentifier = New-StableGuid "$seed|token"
+
+        Add-Record -Table 'SigninLogs' -Time $attemptTime -Values $values -Blend
     }
 }
 
@@ -4628,6 +4651,24 @@ function New-NormalTelemetryValues {
             $values.UserAgent = if ($isUbuntuDevice) { Get-WorkshopRandomItem @('Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36', 'curl/8.5.0', 'Microsoft-MDATP/101.25042.0000') } else { Get-WorkshopRandomItem @('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'Microsoft Office/16.0', 'Teams/24215.1007.3082.1590') }
             $values.CorrelationId = New-StableGuid "$Table|signin-correlation|$Index"
             $values.Id = New-StableGuid "$Table|signin|$Index"
+
+            # Eleven columns the profiles record at 100% fill that this branch
+            # had never written. They are not decoration: TenantId and
+            # IncomingTokenType are how a real investigation separates a token
+            # replay from an interactive sign-in, and their absence is why
+            # SigninLogs scored worst of all 69 tables in the quality gate.
+            $values.TenantId = $tenantId
+            $values.AADTenantId = $tenantId
+            $values.OperationName = 'Sign-in activity'
+            $values.TokenIssuerType = 'AzureAD'
+            $values.UserType = if ($user.IsServiceAccount) { 'Member' } else { Get-WorkshopRandomItem @('Member', 'Member', 'Member', 'Guest') }
+            $values.ClientCredentialType = 'none'
+            $values.CrossTenantAccessType = 'none'
+            $values.IncomingTokenType = Get-WorkshopRandomItem @('none', 'none', 'none', 'none', 'none', 'none', 'none', 'primaryRefreshToken')
+            $values.ProcessingTimeInMilliseconds = 40 + ($Index % 860)
+            $values.ResourceId = New-StableGuid "resource|$($app.Resource)"
+            $values.ServicePrincipalName = $app.Name
+            $values.UniqueTokenIdentifier = New-StableGuid "$Table|token|$Index"
             $values.Status = @{ errorCode = [int]$signInOutcome.Code; failureReason = $signInOutcome.Reason; additionalDetails = if ($signInFailed) { $signInOutcome.Description } else { 'MFA requirement satisfied' } }
             $values.DeviceDetail = @{ operatingSystem = if ($device.OS -eq 'Ubuntu') { 'Linux' } else { 'Windows' }; browser = 'Edge'; isCompliant = $true; trustType = 'Hybrid Azure AD joined' }
 
@@ -5121,7 +5162,48 @@ function New-NormalTelemetryValues {
             $values.Type = $Table
             $values.SourceSystem = ''
         }
-        { $_ -like 'Identity*' -and $_ -ne 'IdentityLogonEvents' } {
+        'IdentityQueryEvents' {
+            # Split out of the catch-all Identity* arm below, which described
+            # every identity table as LDAP/Kerberos search traffic. Real
+            # IdentityQueryEvents is 81% DNS and 19% LDAP -- domain controllers
+            # resolving _msdcs SRV records, with occasional group lookups -- so
+            # the generated table taught students a vocabulary the product does
+            # not emit: ActionType 'LdapSearch' where Defender writes 'DNS query',
+            # QueryType 'Search' where it writes 'Ns', Protocol 'Kerberos' where
+            # it writes 'Dns'. Weights below are the profile's own.
+            $isDnsQuery = ((Get-WorkshopRandomInt -Minimum 0 -Maximum 100000) / 100000.0) -lt 0.81285
+
+            if ($isDnsQuery) {
+                $values.ActionType = 'DNS query'
+                $values.Protocol = 'Dns'
+                $values.QueryType = if (((Get-WorkshopRandomInt -Minimum 0 -Maximum 100000) / 100000.0) -lt 0.9418) { 'Ns' } else { 'Srv' }
+                # The tenant's own domains stay out of the repository, so these
+                # are the workshop estate's equivalents.
+                $values.QueryTarget = Get-WorkshopRandomItem @("_msdcs.$corpFqdn", "_msdcs.$corpFqdn", "_msdcs.$corpFqdn", $corpFqdn, "_ldap._tcp.$corpFqdn", 'harmonydl.adobe.com')
+                $values.Query = ''
+                $values.DestinationPort = 53
+            }
+            else {
+                $values.ActionType = 'LDAP query'
+                $values.Protocol = 'Ldap'
+                $values.QueryType = 'None'
+                $values.QueryTarget = Get-WorkshopRandomItem @('Domain Admins', 'Enterprise Admins', 'Domain Controllers', 'Schema Admins')
+                $values.Query = 'LDAP Search Scope: "WholeSubtree", Base Object: "DC=usag-cyber,DC=local", Search Filter: " ( & ( | (objectClass=user) (objectClass=group) ) (objectSid={0}) ) "' -f $user.Sid
+                # Only DNS rows carry a port in the real table, which is why the
+                # profile records DestinationPort at 81% fill and never 389.
+                $values.DestinationPort = ''
+            }
+
+            $values.Application = 'Active Directory'
+            $values.IPAddress = $device.IP
+            $values.DestinationDeviceName = (Get-WorkshopRandomItem $domainControllers).Name
+            $values.DestinationIPAddress = (Get-WorkshopRandomItem $domainControllers).IP
+            $values.AccountObjectId = $user.ObjectId
+            $values.AccountUpn = $user.Upn
+            $values.AccountDisplayName = $user.DisplayName
+            $values.OnPremSid = $user.Sid
+        }
+        { $_ -like 'Identity*' -and $_ -notin @('IdentityLogonEvents', 'IdentityQueryEvents') } {
             $values.ActionType = Get-WorkshopRandomItem @('LogonSuccess', 'LdapSearch', 'AccountModified', 'GroupMembershipChanged', 'IdentitySnapshot')
             $values.Application = Get-WorkshopRandomItem @('Active Directory', 'Kerberos', 'LDAP', 'Microsoft Entra Connect')
             $values.Protocol = Get-WorkshopRandomItem @('Kerberos', 'LDAP', 'NTLM')

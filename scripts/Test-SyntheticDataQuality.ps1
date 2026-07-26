@@ -101,6 +101,7 @@ foreach ($file in $profileFiles) {
     $sparse = [System.Collections.Generic.List[object]]::new()
     $overfull = [System.Collections.Generic.List[string]]::new()
     $foreign = [System.Collections.Generic.List[object]]::new()
+    $unusableVocabulary = [System.Collections.Generic.List[string]]::new()
     $checked = 0
 
     foreach ($property in $doc.columns.PSObject.Properties) {
@@ -134,10 +135,29 @@ foreach ($file in $profileFiles) {
 
         $vocabulary = @($observed.topValues | ForEach-Object { [string]$_.value })
 
+        # A vocabulary of .NET type names is not a vocabulary. Where the exporter
+        # met a nested object or array it recorded "System.Collections.Hashtable"
+        # or "System.Object[]" instead of the value, so the profile captured no
+        # observable values for that column and comparing against it says nothing
+        # about the generated data. ExposureGraphEdges is the clearest case: all
+        # three of its reported foreign columns are this. Reported, not silently
+        # skipped, because the profile is what needs regenerating.
+        if ($vocabulary.Count -gt 0 -and @($vocabulary | Where-Object { $_ -match '^System\.(Collections|Object)' }).Count -eq $vocabulary.Count) {
+            $unusableVocabulary.Add($column)
+            continue
+        }
+
         # Out-of-vocabulary only means something for product-defined enumerations.
         # Entity names, identifiers, and service names legitimately differ because
         # the workshop runs its own estate rather than replaying the tenant's.
-        $isEntityColumn = $column -match '(?i)(name$|id$|ids$|agent|service|role|principal|user|account|device|host|machine|resource)'
+        #
+        # Titles, sources and query targets belong in that group too, even though
+        # they look enumerated: which detections a tenant has enabled, and which
+        # domains its controllers resolve, are configuration rather than product
+        # vocabulary. The workshop's alert catalogue is drawn from real Defender
+        # and Sentinel titles; they are simply not the ones this tenant happened
+        # to fire, and its domains are deliberately not this tenant's.
+        $isEntityColumn = $column -match '(?i)(name$|id$|ids$|agent|service|role|principal|user|account|device|host|machine|resource|title$|source$|target$|^query$)'
 
         if (-not $isEntityColumn -and $vocabulary.Count -gt 0 -and $filled.Count -gt 0) {
             $outside = @($filled | Where-Object { $vocabulary -notcontains [string]$_ })
@@ -159,6 +179,7 @@ foreach ($file in $profileFiles) {
         Sparse = $sparse.Count; Overfull = $overfull.Count; Foreign = $foreign.Count
         Score = $score
         SparseDetail = $sparse; OverfullDetail = $overfull; ForeignDetail = $foreign
+        UnusableVocabulary = $unusableVocabulary
     })
 }
 
@@ -204,6 +225,19 @@ if ($results.Count -gt 0) {
 if ($skipped.Count -gt 0) {
     Write-Host ('Skipped       : {0}' -f $skipped.Count) -ForegroundColor Yellow
     if ($Detailed) { $skipped | ForEach-Object { Write-Host "    $_" } }
+}
+
+# Surfaced rather than swallowed: these columns cannot be checked at all, because
+# the exporter recorded .NET type names in place of the values it met. The gate
+# is not weaker for skipping them, but the profile is weaker for containing them.
+$unusable = @($results | Where-Object { $_.UnusableVocabulary.Count -gt 0 })
+if ($unusable.Count -gt 0) {
+    $total = ($unusable | ForEach-Object { $_.UnusableVocabulary.Count } | Measure-Object -Sum).Sum
+    Write-Host ('Unusable vocab: {0} column(s) across {1} table(s) - the profile stored .NET type names, not values' -f $total, $unusable.Count) -ForegroundColor Yellow
+    Write-Host '                Regenerate with Export-WorkshopTelemetryProfiles.ps1 to make these checkable.' -ForegroundColor Yellow
+    foreach ($entry in $unusable) {
+        Write-Host ('                {0}: {1}' -f $entry.Table, ($entry.UnusableVocabulary -join ', ')) -ForegroundColor DarkGray
+    }
 }
 
 if ($failing.Count -gt 0) {
