@@ -39,17 +39,28 @@ cluster, is unavailable exactly when it is most likely to be needed.
 .\scripts\Import-GeneratedDataToKustainer.ps1
 #>
 #Requires -Version 7
-[CmdletBinding()]
+[CmdletBinding(DefaultParameterSetName = 'Verify')]
 param(
     [string]$ArchivePath,
     [string]$BackupDirectory = (Join-Path $PSScriptRoot '..\data\backups\local-kusto'),
     [string]$DatabaseName = 'CyberDefendStudentSnapshot',
-    [string]$ContainerName = 'cdw-restore-check',
-    [int]$HostPort = 8099,
-    [string]$Image = 'mcr.microsoft.com/azuredataexplorer/kustainer-linux:latest',
     [string]$WorkingDirectory = (Join-Path ([System.IO.Path]::GetTempPath()) 'cdw-restore-check'),
+
+    # Container options apply only to a verification restore. They live in their
+    # own parameter set so extract mode cannot accept a flag it would ignore; a
+    # silently ignored option in a recovery tool is its own kind of failure.
+    [Parameter(ParameterSetName = 'Verify')]
+    [string]$ContainerName = 'cdw-restore-check',
+    [Parameter(ParameterSetName = 'Verify')]
+    [int]$HostPort = 8099,
+    [Parameter(ParameterSetName = 'Verify')]
+    [string]$Image = 'mcr.microsoft.com/azuredataexplorer/kustainer-linux:latest',
+    [Parameter(ParameterSetName = 'Verify')]
     [string]$Memory = '16g',
+    [Parameter(ParameterSetName = 'Verify')]
     [switch]$KeepContainer,
+
+    [Parameter(ParameterSetName = 'Extract', Mandatory = $true)]
     [string]$ExtractPayloadTo
 )
 
@@ -105,7 +116,8 @@ $manifest = $null
 try {
     if (-not $ExtractPayloadTo) { docker rm --force $ContainerName 2>$null | Out-Null }
     if (Test-Path $WorkingDirectory) { Remove-Item $WorkingDirectory -Recurse -Force }
-    foreach ($dir in @($stateDir, $exportDir, $schemaDir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
+    $needed = if ($ExtractPayloadTo) { @($exportDir, $schemaDir) } else { @($stateDir, $exportDir, $schemaDir) }
+    foreach ($dir in $needed) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
 
     Write-Host 'Extracting archive payload...'
     $zip = [System.IO.Compression.ZipFile]::OpenRead($ArchivePath)
