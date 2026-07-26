@@ -39,6 +39,59 @@ async function withUpstreamStub(run) {
   }
 }
 
+// ---- lexer parity (H1c) -------------------------------------------------------
+
+test('a backslash-escaped quote cannot hide a second statement', () => {
+  // The reported bypass. Kusto reads the literal as a single `"` and then a
+  // second statement; a lexer blind to the backslash saw the quote close and
+  // re-open, swallowing the `;` and the `.drop` into one `print` statement.
+  const attack = 'print x = "\\""; .drop table SecurityIncident';
+
+  assert.equal(splitTopLevelStatements(attack).length, 2, 'the drop must be seen as its own statement');
+  assert.equal(validateKql(attack, 'query').allowed, false);
+  assert.equal(validateKql(attack, 'mgmt').allowed, false);
+});
+
+test('the same trick with single quotes is also split', () => {
+  const attack = "print x = '\\''; .drop table SecurityIncident";
+  assert.equal(validateKql(attack, 'query').allowed, false);
+});
+
+test('verbatim literals treat a backslash as data, not an escape', () => {
+  // @"C:\path\" is a complete literal: the trailing backslash escapes nothing,
+  // so treating it as an escape would swallow the closing quote and drag the
+  // next statement inside the string.
+  const csl = 'print path = @"C:\\temp\\"; .drop table SecurityIncident';
+  assert.equal(splitTopLevelStatements(csl).length, 2);
+  assert.equal(validateKql(csl, 'query').allowed, false);
+});
+
+test('a doubled quote inside a verbatim literal stays inside it', () => {
+  const csl = 'print quoted = @"he said ""hello"" loudly"';
+  assert.equal(splitTopLevelStatements(csl).length, 1);
+  assert.equal(validateKql(csl, 'query').allowed, true);
+});
+
+test('the h@\'...\' obfuscated literal form is understood', () => {
+  const csl = "print secret = h@'not; a statement'";
+  assert.equal(splitTopLevelStatements(csl).length, 1);
+  assert.equal(validateKql(csl, 'query').allowed, true);
+});
+
+test('an unterminated literal is refused rather than guessed at', () => {
+  // If the lexer cannot tell where the statement ends, neither can the policy.
+  for (const csl of ['print x = "abc', "print x = 'abc", 'print x = @"abc', 'print 1 /* unclosed']) {
+    const result = validateKql(csl, 'query');
+    assert.equal(result.allowed, false, `${csl} must be refused`);
+    assert.match(result.reason, /unterminated/i);
+  }
+});
+
+test('escapes do not break ordinary multi-statement splitting', () => {
+  assert.equal(splitTopLevelStatements('print a = "x\\ty"; print b = 2').length, 2);
+  assert.equal(splitTopLevelStatements("print message = 'one; two'; print message = 'three'").length, 2);
+});
+
 test('allows read-only query statements and KQL let bindings', () => {
   const result = validateKql("let incidents = SecurityIncident | take 10; incidents | count", 'query');
   assert.equal(result.allowed, true);
@@ -101,10 +154,15 @@ test('still allows harmless evaluate plugins such as bag_unpack', () => {
 });
 
 test('rejects a statement hidden inside a string from reaching Kusto', () => {
-  // The lexer models ''/"" doubling but not backslash escapes; the deny scan on
-  // the raw text means the classic smuggling payload still fails closed.
-  assert.equal(validateKql('print x = "\\""; .drop table T', 'query').allowed, true, 'lexer sees one statement');
-  assert.equal(validateKql('print x = "\\""; cluster(\'x\').database(\'y\')', 'query').allowed, false, 'deny scan is not string-aware, so this fails closed');
+  // This test previously asserted the opposite -- that the lexer saw one
+  // statement and allowed the payload -- because it documented a known gap: the
+  // lexer modelled ''/"" doubling but not backslash escapes, so a crafted
+  // literal could hide a second statement, and only the raw-text deny scan
+  // caught the subset of payloads containing a denied primitive. The lexer now
+  // handles escapes and verbatim literals, so the smuggled statement is seen
+  // and refused on its own merits.
+  assert.equal(validateKql('print x = "\\""; .drop table T', 'query').allowed, false, 'the hidden .drop must be seen');
+  assert.equal(validateKql('print x = "\\""; cluster(\'x\').database(\'y\')', 'query').allowed, false, 'deny scan still fails closed');
 });
 
 // ---- canonical forwarded body (validate-one-thing, forward-the-same-thing) ---

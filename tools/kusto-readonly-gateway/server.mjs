@@ -17,13 +17,29 @@ const hopByHopHeaders = new Set([
   'upgrade'
 ]);
 
-export function splitTopLevelStatements(csl) {
+// Kusto string literals come in two flavours, and the difference decides where a
+// statement ends:
+//
+//   "a\"b"    non-verbatim -- a backslash escapes the next character
+//   @"a""b"   verbatim     -- a backslash is data, a doubled quote is one quote
+//
+// Modelling only the doubling let a crafted literal hide a second statement.
+// Given `print x = "\""; .drop table T`, Kusto reads the literal as a single
+// `"` and then a second statement -- while a lexer blind to the backslash sees
+// the quote close and immediately re-open, swallowing the `;` and the `.drop`
+// into what it believes is one `print` statement. That passed validation.
+//
+// Over-splitting is the safe direction, because an unexpected extra statement
+// is rejected. Under-splitting is the dangerous one. So this errs toward
+// splitting, and reports an unterminated literal to the caller rather than
+// guessing, which lets validation fail closed.
+export function lexCsl(csl) {
   const statements = [];
   let statementStart = 0;
   let inBlockComment = false;
-  let inDoubleQuote = false;
   let inLineComment = false;
-  let inSingleQuote = false;
+  let quote = null; // the closing character while inside a literal
+  let verbatim = false; // whether that literal was opened with @
 
   for (let index = 0; index < csl.length; index += 1) {
     const character = csl[index];
@@ -44,23 +60,23 @@ export function splitTopLevelStatements(csl) {
       continue;
     }
 
-    if (inSingleQuote) {
-      if (character === "'" && nextCharacter === "'") {
+    if (quote) {
+      // A verbatim literal has no escape character, so the backslash is data.
+      if (!verbatim && character === '\\') {
         index += 1;
+        continue;
       }
-      else if (character === "'") {
-        inSingleQuote = false;
-      }
-      continue;
-    }
 
-    if (inDoubleQuote) {
-      if (character === '"' && nextCharacter === '"') {
+      if (character === quote && nextCharacter === quote) {
         index += 1;
+        continue;
       }
-      else if (character === '"') {
-        inDoubleQuote = false;
+
+      if (character === quote) {
+        quote = null;
+        verbatim = false;
       }
+
       continue;
     }
 
@@ -76,13 +92,17 @@ export function splitTopLevelStatements(csl) {
       continue;
     }
 
-    if (character === "'") {
-      inSingleQuote = true;
+    // @"..." and @'...', including the h@'...' obfuscated form the ADX docs use.
+    if (character === '@' && (nextCharacter === '"' || nextCharacter === "'")) {
+      quote = nextCharacter;
+      verbatim = true;
+      index += 1;
       continue;
     }
 
-    if (character === '"') {
-      inDoubleQuote = true;
+    if (character === '"' || character === "'") {
+      quote = character;
+      verbatim = false;
       continue;
     }
 
@@ -93,7 +113,12 @@ export function splitTopLevelStatements(csl) {
   }
 
   statements.push(csl.slice(statementStart));
-  return statements;
+
+  return { statements, unterminated: quote !== null || inBlockComment };
+}
+
+export function splitTopLevelStatements(csl) {
+  return lexCsl(csl).statements;
 }
 
 export function trimLeadingComments(statement) {
@@ -207,7 +232,17 @@ export function validateKql(csl, endpoint) {
     }
   }
 
-  const statements = splitTopLevelStatements(csl)
+  const lexed = lexCsl(csl);
+
+  // An unterminated literal means the lexer and Kusto have almost certainly
+  // disagreed about where statements end, and the gateway cannot tell which
+  // reading is right. Refuse rather than forward a request it does not
+  // understand.
+  if (lexed.unterminated) {
+    return { allowed: false, reason: 'The KQL request contains an unterminated string literal or comment.' };
+  }
+
+  const statements = lexed.statements
     .map(trimLeadingComments)
     .filter((statement) => statement.length > 0);
 

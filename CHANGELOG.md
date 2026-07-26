@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### 2026-07-26 — closed the lexer gap the tests had been documenting (H1c)
+
+- Taught the gateway's statement lexer about backslash escapes and `@`-verbatim literals, closing a bypass that let a crafted string hide a second statement. Given `print x = "\""; .drop table T`, Kusto reads the literal as a single `"` followed by a second statement, while a lexer that models only `''`/`""` doubling sees the quote close and immediately re-open — swallowing the `;` and the `.drop` into what it believes is one `print` statement, which then passed validation. Non-verbatim literals now honour `\` as an escape, `@"..."` and `@'...'` (including the `h@'...'` obfuscated form) treat a backslash as data, and a doubled quote inside a verbatim literal stays inside it.
+- Made an unterminated literal or comment a refusal rather than a guess. If the lexer cannot tell where a statement ends, neither can the policy, so the request is rejected instead of forwarded on an assumption. Over-splitting was already the safe direction — an unexpected extra statement is refused — and this keeps every remaining ambiguity on that side.
+- The existing test for this had been asserting the *vulnerable* behaviour. `rejects a statement hidden inside a string from reaching Kusto` asserted `allowed: true` for the smuggling payload, with a comment explaining that only the raw-text deny scan caught the subset of payloads containing a denied primitive — so `.drop table T`, which contains none, got through. The test now asserts the statement is seen and refused on its own merits. A test that documents a gap is worth having; one that outlives the gap is worth updating.
+- Seven new tests cover the reported payload in both quote styles, verbatim backslash handling, doubled quotes, the `h@'...'` form, all four unterminated cases, and that ordinary multi-statement splitting still works. Suite is 63 tests.
+
 ### 2026-07-26 — unpinned the emulator, deliberately
 
 - Reversed the digest pin added earlier the same day. This instance runs indefinitely rather than for a single event, so it tracks the current emulator and picks up Microsoft's fixes as they ship, rather than freezing on a build that will age. Recorded as a decision, with the trade stated in `compose.yaml` rather than left for someone to rediscover: Kustainer writes its persistent database in the format of the build that created it, and a different build cannot attach it, so when the image moves the snapshot in `data/local-kusto` does not come with it. That is recoverable and rehearsed — the NDJSON payload is what actually restores, via `Import-GeneratedDataToKustainer.ps1`. `KUSTO_IMAGE` still accepts a full reference, so pinning for a specific delivery remains one environment variable away.
