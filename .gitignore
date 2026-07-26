@@ -16,6 +16,12 @@ data/backups/
 data/local-export/
 data/local-kusto/
 
+# Generated telemetry. Reproduced deterministically by
+# scripts/New-SyntheticTelemetry.ps1 from schemas/ and metadata/field-profiles/,
+# so the ~900 MB of NDJSON does not belong in the repository. data/scenario-summary.json
+# stays tracked because it documents the scenario rather than carrying bulk data.
+data/generated/
+
 # Python virtual environment.
 .venv/
 __pycache__/

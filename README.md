@@ -73,8 +73,9 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | ADX setup | Creates the ADX database tables, JSON ingestion mappings, generated telemetry, and ingestion flow | [`scripts\Initialize-Workshop.ps1`](scripts/Initialize-Workshop.ps1), [`scripts\Initialize-AdxTables.ps1`](scripts/Initialize-AdxTables.ps1), [`scripts\Import-SyntheticTelemetry.ps1`](scripts/Import-SyntheticTelemetry.ps1), [`scripts\AdxWorkshop.Common.psm1`](scripts/AdxWorkshop.Common.psm1) |
 | ADX backup | Creates secured ADLS Gen2 backup storage, exports schema records, exports table data as Parquet, and restores from the backup manifest | [`adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1`](adx_db_backupNrestore/Initialize-AdxBackupStorage.ps1), [`adx_db_backupNrestore\Backup-AdxDatabase.ps1`](adx_db_backupNrestore/Backup-AdxDatabase.ps1), [`adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1`](adx_db_backupNrestore/Restore-AdxDatabaseBackup.ps1), [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md) |
 | Schemas | Holds one Microsoft Learn-derived JSON schema file per ADX table | [`schemas\`](schemas/), [`metadata\tables.manifest.json`](metadata/tables.manifest.json), [`tools\Build-SchemasFromMicrosoftLearn.ps1`](tools/Build-SchemasFromMicrosoftLearn.ps1), [`tools\Build-SchemaFromLiveTable.ps1`](tools/Build-SchemaFromLiveTable.ps1) |
-| Tenant sampling | Exports real Log Analytics and Defender XDR advanced hunting rows plus per-column field profiles that ground synthetic generation | [`scripts\Export-TenantTelemetrySamples.ps1`](scripts/Export-TenantTelemetrySamples.ps1) |
-| Synthetic data | Holds generated schema-aligned NDJSON telemetry files | [`data\generated\`](data/generated/), [`data\scenario-summary.json`](data/scenario-summary.json), [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1), [`scripts\New-SyntheticTelemetryParallel.ps1`](scripts/New-SyntheticTelemetryParallel.ps1) |
+| Tenant sampling | Exports real Log Analytics and Defender XDR advanced hunting rows plus per-column field profiles that ground synthetic generation | [`scripts\Export-TenantTelemetrySamples.ps1`](scripts/Export-TenantTelemetrySamples.ps1), [`scripts\Export-WorkshopTelemetryProfiles.ps1`](scripts/Export-WorkshopTelemetryProfiles.ps1) |
+| Synthetic data | Reproduces the schema-aligned NDJSON telemetry from the committed schemas and field profiles. `data\generated\` is not tracked; run the generator to create it | [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1), [`scripts\New-SyntheticTelemetryParallel.ps1`](scripts/New-SyntheticTelemetryParallel.ps1), [`metadata\field-profiles\`](metadata/field-profiles/), [`metadata\profile-overrides.json`](metadata/profile-overrides.json), [`data\scenario-summary.json`](data/scenario-summary.json) |
+| Data quality gates | Scores generated telemetry against the real field profiles, verifies tenant and subscription identifiers, and blocks tenant data from reaching the profiles | [`scripts\Test-SyntheticDataQuality.ps1`](scripts/Test-SyntheticDataQuality.ps1), [`scripts\Test-WorkshopIdentityInvariants.ps1`](scripts/Test-WorkshopIdentityInvariants.ps1), [`scripts\Test-FieldProfileSafety.ps1`](scripts/Test-FieldProfileSafety.ps1) |
 | Managed Azure access (secondary) | Documents the full managed Azure ADX build plus SFI-aligned B2B guest provisioning, MFA, access-package lifecycle, participant group access, ADX database viewer permissions, and dashboard sharing | [`docs\managed_azure_adx_setup.md`](docs/managed_azure_adx_setup.md), [`user_creation\README.md`](user_creation/README.md), [`docs\student_access.md`](docs/student_access.md), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1) |
 | Cloudflare ADX class access | Documents the shared Service Auth credential, student TCP proxy, read-only KQL gateway, rotation, and troubleshooting | [`docs\cloudflare_adx_access.md`](docs/cloudflare_adx_access.md) |
 | Kustainer gateway | Documents the read-only request policy, browser CORS/private-network support, default-database cleaner, configuration, and security boundary | [`tools\kusto-readonly-gateway\README.md`](tools/kusto-readonly-gateway/README.md) |
@@ -139,6 +140,36 @@ The script defaults to `usag-wiesbaden-cys26.northeurope.kusto.windows.net`, dat
 > **Preserve the Kustainer container.** The mounted files and Kustainer's database registration work together. Use `docker compose stop kusto` and `docker compose start kusto` for routine shutdown and startup. Do not use `docker compose down`, `docker compose rm`, `docker compose up` after a Compose configuration change, or `--force-recreate` for `kusto` while retaining the local snapshot. If a Kusto container replacement is required, first run `Backup-LocalKustoSnapshot.ps1`, then rerun `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` after the replacement to rebuild and verify the mounted Student database.
 
 `kusto-defaultdb-cleaner` runs continuously in Compose. Once `CyberDefendStudentSnapshot` exists, it drops `NetDefaultDB` and removes its residual directory under `data\local-kusto\dbs`. On a fresh emulator, it leaves the default database in place until the Student import has created the retained snapshot database.
+
+### Build the telemetry locally without Azure
+
+`data\generated\` is not tracked. The package is roughly 900 MB of NDJSON and is reproduced deterministically from the committed schemas, field profiles, and a fixed random seed, so the generator is the artifact rather than its output. Use this route when there is no ADX cluster to copy from, or to rebuild after changing a schema or a profile.
+
+```powershell
+.\scripts\New-SyntheticTelemetry.ps1
+.\scripts\Import-GeneratedDataToKustainer.ps1
+```
+
+The generator writes one NDJSON file per manifest table into `data\generated\`. The importer creates each table from its schema, applies a JSON ingestion mapping, ingests from the read-only `/workshop-data` mount, and reconciles every table's row count against the file on disk.
+
+Verify the result before teaching from it:
+
+```powershell
+.\scripts\Test-WorkshopPackage.ps1
+.\scripts\Test-SyntheticDataQuality.ps1
+.\scripts\Test-WorkshopIdentityInvariants.ps1
+```
+
+`Test-SyntheticDataQuality.ps1` scores each generated table against the real field profile in `metadata\field-profiles\`, reporting columns that are emptier than production, columns populated where production leaves them empty, and values outside the observed vocabulary. Columns the workshop deliberately populates beyond production are declared in `metadata\profile-overrides.json`, which both the generator and the quality gate read.
+
+To refresh the field profiles from live telemetry, sign in to the tenant and run:
+
+```powershell
+.\scripts\Export-WorkshopTelemetryProfiles.ps1
+.\scripts\Test-FieldProfileSafety.ps1
+```
+
+`Test-FieldProfileSafety.ps1` must report clean before profiles are committed. It rejects any captured value vocabulary containing a GUID, an Azure resource path, a user principal name, an address, or a credential, so real tenant data cannot reach this repository.
 
 ### Publish read-only local Kusto through Cloudflare
 
@@ -246,7 +277,8 @@ The package creates 79 tables (JSON) from Microsoft Security & Operational Servi
 | --- | --- |
 | Students report `connection refused` on `127.0.0.1:8080` | Their local `cloudflared` proxy is not running. Have them re-run the step 2 command from the student guide and leave that terminal open. |
 | Local snapshot disappeared after a Compose change | The Kustainer container was replaced, which drops the database registration. Rerun `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate`. |
-| Row counts far below ~629,000 | The local database is a stale snapshot. Recopy from the source cluster, or regenerate and re-ingest. |
+| Row counts far below ~624,000 | The local database is a stale snapshot. Recopy from the source cluster, or rebuild with `New-SyntheticTelemetry.ps1` followed by `Import-GeneratedDataToKustainer.ps1`. |
+| `data\generated\` is empty after cloning | That directory is intentionally untracked. Run `.\scripts\New-SyntheticTelemetry.ps1` to reproduce it from the committed schemas and field profiles. |
 | Dashboard tiles blank for everyone | Data source still points at the cloud cluster. Set it to `http://127.0.0.1:8080` and database `CyberDefendStudentSnapshot`. |
 | One tile empty, everything else fine | Not a connection problem. Adjust the global time range and check that specific query. |
 | Browser rejects the local connection | Complete the ADX **Trust** prompts and the browser **Allow** prompt, then hard-refresh with `Ctrl+F5`. |

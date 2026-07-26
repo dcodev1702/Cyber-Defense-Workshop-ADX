@@ -262,12 +262,12 @@ union withsource=SourceTable *
 | order by RowCount desc
 ```
 
-You should get back **80 records** &mdash; the 79 workshop tables plus a `__TOTAL__` row of roughly **629,000 rows**. `DeviceProcessEvents` is the largest table by a wide margin at 32,000 rows, because process creation is the highest-volume endpoint telemetry.
+You should get back **80 records** &mdash; the 79 workshop tables plus a `__TOTAL__` row of roughly **624,000 rows**. `DeviceProcessEvents` is the largest table by a wide margin at 32,000 rows, because process creation is the highest-volume endpoint telemetry.
 
 ![Step 17: Verify the table row counts](../images/student-walk-through/17-CMD-Verify-Table-Row-Counts.png)
 
 > [!WARNING]
-> If `__TOTAL__` is much lower than 629,000, or you see far fewer than 80 records, tell an instructor before continuing &mdash; you may be connected to an older snapshot.
+> If `__TOTAL__` is much lower than 624,000, or you see far fewer than 80 records, tell an instructor before continuing &mdash; you may be connected to an older snapshot.
 
 ---
 
@@ -296,7 +296,7 @@ You should get back **80 records** &mdash; the 79 workshop tables plus a `__TOTA
 | Browser blocks the local connection | Select **Allow** on the browser prompt in step 14, then refresh the page. |
 | `Query was executed without a database in context` | No database is selected. Open a new tab and select **CyberDefendStudentSnapshot** as in step 15. |
 | Connection appears but no tables are listed | You are connected to the wrong database. Expand **Cyber Defense** and select `CyberDefendStudentSnapshot`. |
-| `__TOTAL__` far below 629,000, or fewer than 80 records | You are on an older snapshot. Tell an instructor before continuing. |
+| `__TOTAL__` far below 624,000, or fewer than 80 records | You are on an older snapshot. Tell an instructor before continuing. |
 | Everything worked, then all queries fail | Check the tunnel terminal first. It is the single point of failure for the whole lab. |
 
 ## 🧭 Fast triage pattern
