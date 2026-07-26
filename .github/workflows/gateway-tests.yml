@@ -35,9 +35,25 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      # Dependabot bumps the Dockerfile base on its own schedule, so a node-version
+      # pinned here drifts away from the runtime the workshop actually ships and CI
+      # goes green against a Node the container never runs. It already happened once:
+      # the base moved to 25.x while this job still tested 24. Read the version from
+      # the Dockerfile so the two cannot disagree.
+      - name: Resolve Node version from Dockerfile
+        id: node
+        run: |
+          version=$(sed -n 's|^FROM node:\([0-9][^-]*\).*|\1|p' Dockerfile | head -n1)
+          if [ -z "$version" ]; then
+            echo "::error::Could not parse a Node version from tools/kusto-readonly-gateway/Dockerfile"
+            exit 1
+          fi
+          echo "Testing against Node $version (from Dockerfile)"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '24'
+          node-version: ${{ steps.node.outputs.version }}
 
       # The gateway has no runtime dependencies; npm ci just verifies the lockfile.
       - name: Install (lockfile check)
