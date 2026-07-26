@@ -4075,36 +4075,37 @@ function New-NormalTelemetryValues {
             }
         }
         'DeviceNetworkInfo' {
-            $values.NetworkAdapterName = if ($isUbuntuDevice) { Get-WorkshopRandomItem @('ens160', 'eth0') } else { 'Ethernet0' }
+            # Ambient rows must agree with the per-device inventory records written
+            # by the seeding loop: same vendor catalog, and a hardware address built
+            # from that vendor's own IEEE OUI. Using a separate vendor list here
+            # produced adapters whose OUI contradicted the reported vendor.
+            $adapterPool = @($script:NetworkAdapterVendors | Where-Object { $_.Virtual -eq $isUbuntuDevice })
+            if ($adapterPool.Count -eq 0) { $adapterPool = $script:NetworkAdapterVendors }
+            $netAdapter = $adapterPool[$Index % $adapterPool.Count]
+
+            $netOctets = @( (($Index -shr 8) % 256), ($Index % 256), ((($Index * 7) + 19) % 256) )
+            $netMac = '{0}-{1:X2}-{2:X2}-{3:X2}' -f $netAdapter.Oui, $netOctets[0], $netOctets[1], $netOctets[2]
+            if ($isUbuntuDevice) { $netMac = $netMac.Replace('-', ':').ToLowerInvariant() }
+
+            $netResolver = $script:NetworkSiteResolvers[$Index % $script:NetworkSiteResolvers.Count]
+            $netIpOctets = $device.IP -split '\.'
+            $netSubnet = if ($netIpOctets.Count -eq 4) { '{0}.{1}.{2}' -f $netIpOctets[0], $netIpOctets[1], $netIpOctets[2] } else { '10.42.0' }
+
+            $values.NetworkAdapterName = if ($isUbuntuDevice) { 'ens160' } else { $netAdapter.Model }
             $values.ConnectedNetworks = if ($isUbuntuDevice) { @(@{ Name = 'CorpLinux'; Category = 'Private' }) } else { @(@{ Name = 'CorpNet'; Category = 'DomainAuthenticated' }) }
             $values.IPAddresses = @($device.IP)
-            $values.MacAddress = if ($isUbuntuDevice) { ('00:15:5d:{0:x2}:{1:x2}:{2:x2}' -f ($Index % 255), (($Index + 42) % 255), (($Index + 99) % 255)) } else { ('00-15-5D-{0:X2}-{1:X2}-{2:X2}' -f ($Index % 255), (($Index + 42) % 255), (($Index + 99) % 255)) }
-
-            # Adapter inventory. A network adapter with no vendor or an unexpected
-            # tunnel type is how an unmanaged or virtual interface is spotted, so
-            # these are populated rather than left blank.
+            $values.MacAddress = $netMac
+            $values.NetworkAdapterVendor = $netAdapter.Vendor
+            $values.NetworkAdapterType = if ($netAdapter.Model -match 'Wi-Fi|Wireless') { 'Wireless80211' }
+                elseif (($Index % 29) -eq 0) { 'Tunnel' }
+                else { 'Ethernet' }
             $values.NetworkAdapterStatus = if (($Index % 23) -eq 0) { 'Down' } else { 'Up' }
-            $values.NetworkAdapterType = if ($isUbuntuDevice) { 'Ethernet' } else {
-                Get-WorkshopRandomItem @('Ethernet', 'Ethernet', 'Ethernet', 'Wireless80211', 'Tunnel')
-            }
-            $values.NetworkAdapterVendor = if ($isUbuntuDevice) {
-                Get-WorkshopRandomItem @('VMware, Inc.', 'Red Hat, Inc.', 'Intel Corporation')
-            }
-            else {
-                Get-WorkshopRandomItem @('Microsoft', 'Intel Corporation', 'Realtek Semiconductor Corp.', 'VMware, Inc.', 'Broadcom Inc.')
-            }
-            $values.TunnelType = if ($values.NetworkAdapterType -eq 'Tunnel') {
-                Get-WorkshopRandomItem @('Teredo', 'IPHTTPS', 'SixToFour')
-            }
-            else { 'None' }
-            # Only routed adapters carry a gateway, which matches the low fill rate
-            # observed in real telemetry.
-            if (($Index % 100) -lt 27) {
-                $octets = $device.IP -split '\.'
-                if ($octets.Count -eq 4) {
-                    $values.DefaultGateways = @('{0}.{1}.{2}.1' -f $octets[0], $octets[1], $octets[2])
-                }
-            }
+            $values.TunnelType = if ($values.NetworkAdapterType -eq 'Tunnel') { @('Teredo', 'IPHTTPS', 'SixToFour')[$Index % 3] } else { 'None' }
+            $values.DefaultGateways = @("$netSubnet.1")
+            $values.DnsAddresses = @($netResolver.Primary, $netResolver.Secondary)
+            $values.IPv4Dhcp = "$netSubnet.10"
+            $values.NetworkAdapterDnsSuffix = $corpFqdn
+            $values.OnboardingStatus = if (($Index % 37) -eq 0) { 'Can be onboarded' } else { 'Onboarded' }
         }
         'AADManagedIdentitySignInLogs' {
             $managedResource = $managedIdentityResourceCatalog[$Index % $managedIdentityResourceCatalog.Count]
