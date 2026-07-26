@@ -1,0 +1,61 @@
+name: Network isolation
+
+# The workshop's read-only gateway is only a boundary if the connector cannot
+# route around it. That property lives in a host firewall rule, not in the
+# repository, so the mitigation script is the only thing CI can hold to account:
+# this job proves the rule it writes actually blocks cross-network traffic, and
+# that removing it restores the path. It needs no workshop stack.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/Set-WorkshopNetworkIsolation.ps1'
+      - 'scripts/Test-WorkshopNetworkIsolation.ps1'
+      - 'compose.yaml'
+      - '.github/workflows/network-isolation.yml'
+  pull_request:
+    paths:
+      - 'scripts/Set-WorkshopNetworkIsolation.ps1'
+      - 'scripts/Test-WorkshopNetworkIsolation.ps1'
+      - 'compose.yaml'
+      - '.github/workflows/network-isolation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  isolation-rule:
+    name: The DOCKER-USER rule blocks what it claims to
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Show Docker version
+        run: docker version --format 'server {{.Server.Version}}'
+
+      # The runner is Linux and the job is root, so the script calls iptables
+      # directly rather than through the privileged helper container it uses on
+      # Docker Desktop. Both paths are therefore exercised across environments.
+      - name: Self-test the isolation rule
+        shell: pwsh
+        run: sudo pwsh -NoProfile -File ./scripts/Test-WorkshopNetworkIsolation.ps1 -SelfTest
+
+      - name: Leave no rule behind
+        if: always()
+        shell: pwsh
+        run: |
+          $remaining = sudo iptables -S DOCKER-USER 2>$null |
+              Select-String -Pattern '^-A DOCKER-USER -i br-[0-9a-f]{12} -o br-[0-9a-f]{12} -j DROP$'
+          if ($remaining) {
+              Write-Host 'The self-test left isolation rules behind:' -ForegroundColor Red
+              $remaining | ForEach-Object { Write-Host "  $_" }
+              exit 1
+          }
+          Write-Host 'No isolation rules left behind.' -ForegroundColor Green

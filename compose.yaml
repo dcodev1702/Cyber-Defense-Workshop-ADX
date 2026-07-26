@@ -44,14 +44,20 @@ services:
         read_only: true
     networks:
       # Kustainer lives only on the backend network, so `kusto` does not resolve
-      # for cloudflared and a hostname-based ingress rule cannot reach it. That
-      # is defense in depth, not a hard boundary: verified on Docker 29.6.2,
-      # DOCKER-FORWARD accepts traffic from every bridge, so an ingress rule
-      # naming the backend IP directly (e.g. tcp://172.19.0.2:8080) still
-      # reaches the engine. Only `internal: true` blocks that, and it also
-      # disables the published 127.0.0.1:8080 the instructor and the import
-      # scripts depend on. Treat the read-only gateway and the Cloudflare
-      # ingress configuration as the enforced boundary; see CHANGELOG.
+      # for cloudflared and a hostname-based ingress rule cannot reach it.
+      #
+      # That is not sufficient on its own. Docker does isolate bridges from each
+      # other, but publishing 8080 below inserts an accept ahead of those drops:
+      #   -A DOCKER -d <kusto-ip> ! -i br-<backend> -o br-<backend> \
+      #      -p tcp --dport 8080 -j ACCEPT
+      # which is not restricted by source network, so any container on any other
+      # bridge can reach the engine by IP. Binding the host side to 127.0.0.1
+      # constrains the host, not other containers.
+      #
+      # scripts/Set-WorkshopNetworkIsolation.ps1 closes that with a DOCKER-USER
+      # rule, and scripts/Test-WorkshopNetworkIsolation.ps1 proves it. The
+      # tunnel launcher applies both. Reapply after a Docker engine restart or
+      # anything that recreates the networks.
       - backend
     healthcheck:
       test:
@@ -172,8 +178,9 @@ services:
       - run
     networks:
       # Edge only, so `kusto` does not resolve here and the connector reaches the
-      # emulator through the gateway. This does not block an ingress rule that
-      # names the backend IP directly -- see the note on the kusto service.
+      # emulator through the gateway. The network split alone does not stop an
+      # ingress rule that names the backend IP -- see the note on the kusto
+      # service and scripts/Set-WorkshopNetworkIsolation.ps1.
       - edge
 
 networks:

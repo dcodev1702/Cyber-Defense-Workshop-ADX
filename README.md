@@ -71,6 +71,7 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | Local conference runtime | Runs the persistent Kustainer snapshot, read-only gateway, and outbound Cloudflare connector for the primary attendee route | [compose.yaml](compose.yaml), [scripts/Copy-StudentAdxToLocalKusto.ps1](scripts/Copy-StudentAdxToLocalKusto.ps1), [scripts/Start-CloudflareAdxTunnel.ps1](scripts/Start-CloudflareAdxTunnel.ps1) |
 | Local snapshot backup | Produces a self-contained archive of the local Kustainer state, the generated telemetry, and the schemas needed to restore it, refusing to ship a payload that does not cover the table manifest | [scripts/Backup-LocalKustoSnapshot.ps1](scripts/Backup-LocalKustoSnapshot.ps1) |
 | Local snapshot restore | Rebuilds the database from an archive in a throwaway container and reconciles the restored row counts, so the backup is proven rather than assumed | [scripts/Restore-LocalKustoSnapshot.ps1](scripts/Restore-LocalKustoSnapshot.ps1) |
+| Network boundary | Stops the Cloudflare connector routing around the read-only gateway to Kustainer's published port, and proves the boundary by sending packets rather than reading firewall rules | [scripts/Set-WorkshopNetworkIsolation.ps1](scripts/Set-WorkshopNetworkIsolation.ps1), [scripts/Test-WorkshopNetworkIsolation.ps1](scripts/Test-WorkshopNetworkIsolation.ps1) |
 | ADX setup | Creates the ADX database tables, JSON ingestion mappings, generated telemetry, and ingestion flow | [`scripts\Initialize-Workshop.ps1`](scripts/Initialize-Workshop.ps1), [`scripts\Initialize-AdxTables.ps1`](scripts/Initialize-AdxTables.ps1), [`scripts\Import-SyntheticTelemetry.ps1`](scripts/Import-SyntheticTelemetry.ps1), [`scripts\AdxWorkshop.Common.psm1`](scripts/AdxWorkshop.Common.psm1) |
 | ADX backup | Creates secured ADLS Gen2 backup storage, exports schema records, exports table data as Parquet, and restores from the backup manifest | [`adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1`](adx_db_backupNrestore/Initialize-AdxBackupStorage.ps1), [`adx_db_backupNrestore\Backup-AdxDatabase.ps1`](adx_db_backupNrestore/Backup-AdxDatabase.ps1), [`adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1`](adx_db_backupNrestore/Restore-AdxDatabaseBackup.ps1), [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md) |
 | Schemas | Holds one Microsoft Learn-derived JSON schema file per ADX table | [`schemas\`](schemas/), [`metadata\tables.manifest.json`](metadata/tables.manifest.json), [`tools\Build-SchemasFromMicrosoftLearn.ps1`](tools/Build-SchemasFromMicrosoftLearn.ps1), [`tools\Build-SchemaFromLiveTable.ps1`](tools/Build-SchemaFromLiveTable.ps1) |
@@ -221,6 +222,16 @@ The same [compose.yaml](compose.yaml) runs a private read-only Kusto gateway and
 > ```
 >
 > Neither `docker compose ps` nor the container health check can tell a current policy build from a stale one — both report healthy either way, because the health check only proves the process answers on `/healthz`. Confirm the policy itself is live: `.show tables` must succeed and `.show queries` must return 403. Rebuilding the gateway alone does not disturb the `kusto` container or the persistent Student snapshot.
+
+> [!IMPORTANT]
+> The gateway is only a boundary if the connector cannot route around it. Kustainer publishes `8080`, and publishing a port makes Docker insert a firewall accept ahead of its own cross-bridge isolation that is **not** restricted by source network — so the connector can reach the engine by IP and skip the gateway entirely. Binding the host side to `127.0.0.1` constrains the host, not other containers. Close it and prove it:
+>
+> ```powershell
+> .\scripts\Set-WorkshopNetworkIsolation.ps1
+> .\scripts\Test-WorkshopNetworkIsolation.ps1
+> ```
+>
+> `Start-CloudflareAdxTunnel.ps1 -Apply` does both automatically. The rule lives in the host firewall, so reapply it after a Docker engine restart or anything that recreates the networks. Details in [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md).
 
 Provision the shared class credential, read-only gateway route, and connector token once from the repository root:
 

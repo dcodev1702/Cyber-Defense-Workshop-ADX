@@ -8,6 +8,38 @@ The Terraform provider reads `CLOUDFLARE_API_TOKEN` from the current process env
 
 The published route is `tcp://kusto-readonly-gateway:8081` on the private Compose network. The gateway allows query requests and a single `.show` command on the management endpoint. It rejects all other Kusto management commands before they reach Kustainer.
 
+### The connector must not be able to skip the gateway
+
+Compose puts `cloudflared` on the `edge` network and Kustainer on `backend`, so `kusto` does not resolve for the connector and a hostname-based ingress rule cannot reach the engine. That is not sufficient on its own.
+
+Docker does isolate its bridge networks from each other, but **publishing a port punches a hole through that isolation**. Because Kustainer publishes `8080`, Docker inserts an accept rule ahead of its own cross-bridge drops:
+
+```
+-A DOCKER -d 172.19.0.2/32 ! -i br-<backend> -o br-<backend> -p tcp --dport 8080 -j ACCEPT
+```
+
+That accept is not restricted by source network. Any container on any other bridge — including the connector — can reach the engine at its backend IP. An ingress rule set to `tcp://172.19.0.2:8080` would therefore bypass the read-only gateway completely: no `.show` allowlist, no database restriction, no rate limit, and `.drop table` available. Binding the host side to `127.0.0.1` does not prevent this; it constrains the host, not other containers.
+
+[`scripts/Set-WorkshopNetworkIsolation.ps1`](../../scripts/Set-WorkshopNetworkIsolation.ps1) closes it with one rule in `DOCKER-USER`, which Docker evaluates before its own accept rules and never rewrites:
+
+```powershell
+.\scripts\Set-WorkshopNetworkIsolation.ps1           # apply (idempotent)
+.\scripts\Set-WorkshopNetworkIsolation.ps1 -Status   # report without changing
+.\scripts\Set-WorkshopNetworkIsolation.ps1 -Remove   # undo
+```
+
+It reads the edge and backend networks from the running containers rather than from hard-coded names, and derives the bridge interfaces from live network IDs. This matters: Docker names a bridge after the network ID, so **any `docker compose down` produces new bridge names**, which leaves the old rule pointing at a dead interface — still visible in `iptables -S`, protecting nothing. The script clears rules of its own shape whose interfaces no longer exist before applying the current pair, so re-running it is always the right move after a topology change.
+
+The rule lives in the host firewall, not in the repository, so **it does not survive a Docker engine restart**. `Start-CloudflareAdxTunnel.ps1 -Apply` applies and verifies it automatically; pass `-SkipNetworkIsolation` to opt out.
+
+Prove the boundary rather than trusting it — a stale rule reads as correct:
+
+```powershell
+.\scripts\Test-WorkshopNetworkIsolation.ps1
+```
+
+It sends real packets and asserts that Kustainer is unreachable from the edge network by name *and* by raw IP, that it is still reachable from the backend network so the gateway works, that the gateway is still reachable from the edge network so students get in, and that `127.0.0.1:8080` still answers so the instructor and the import scripts are unaffected. `-SelfTest` proves the rule itself on throwaway networks and needs no workshop stack.
+
 > ⚠️ Kustainer has no native authentication or authorization. The read-only rule protects only traffic entering through the Cloudflare tunnel. A local administrator with access to `127.0.0.1:8080` can still administer the emulator.
 
 The detailed gateway contract is documented in [tools/kusto-readonly-gateway/README.md](../../tools/kusto-readonly-gateway/README.md).
@@ -33,7 +65,7 @@ finally {
 Remove-Item Env:CLOUDFLARE_API_TOKEN
 ```
 
-The launcher starts the Compose `kusto` service, waits for its management-query health check on `http://127.0.0.1:8080`, applies the shared Service Auth route, writes `cloudflared.env` when the connector needs a token, writes `student-access.env` with the class credential, and starts the Compose `cloudflared` service. The connector forwards the public hostname to `tcp://kusto-readonly-gateway:8081` over the private `cyber-conf-wiesbaden-adx` Docker network. Only Kusto has a host port, and that mapping is limited to `127.0.0.1:8080`.
+The launcher starts the Compose `kusto` service, waits for its management-query health check on `http://127.0.0.1:8080`, applies the shared Service Auth route, writes `cloudflared.env` when the connector needs a token, writes `student-access.env` with the class credential, and starts the Compose `cloudflared` service. It then applies the Docker network isolation rule described above and runs the boundary test, failing the run if the connector can still reach Kustainer directly. The connector forwards the public hostname to `tcp://kusto-readonly-gateway:8081` over the private `cyber-conf-wiesbaden-edge` Docker network. Only Kusto has a host port, and that mapping is limited to `127.0.0.1:8080`.
 
 Terraform persists the local Kustainer profile by generating the ignored repository-root `compose.override.yaml`. Its default is 4 CPUs with 24 GiB for memory and swap; set `kusto_cpu_limit` or `kusto_memory_limit` in `terraform.tfvars` to override it. The cleaner, read-only gateway, and Cloudflared connector are all pinned to 1 GiB memory and 1 GiB swap in both Compose and the generated override. On an `-Apply` run, the launcher uses `docker update` to synchronize an existing Kustainer container without replacing the snapshot-holding container.
 
@@ -63,6 +95,13 @@ docker compose stop
 docker compose start
 docker compose logs --follow cloudflared
 ```
+
+> ⚠️ Reapply the network isolation rule after a Docker engine restart or anything that recreates the networks, then confirm it. A `docker compose stop`/`start` is fine; a Docker restart or `docker compose down` is not.
+>
+> ```powershell
+> .\scripts\Set-WorkshopNetworkIsolation.ps1
+> .\scripts\Test-WorkshopNetworkIsolation.ps1
+> ```
 
 > ⚠️ Keep the existing `kusto` container when the local Student snapshot matters. Kustainer's persistent-database registration is retained across a clean stop/start of that container, not a Compose container replacement. Do not use `docker compose down`, `docker compose rm`, `docker compose up` after a Compose configuration change, or `docker compose up --force-recreate kusto`; rebuild with `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` after any intentional replacement.
 

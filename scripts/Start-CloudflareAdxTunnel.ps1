@@ -35,7 +35,8 @@ param(
     [switch]$ManageDnsWithApi,
     [switch]$ReplaceExistingConnector,
     [switch]$MigrateLegacyContainers,
-    [switch]$RotateStudentCredential
+    [switch]$RotateStudentCredential,
+    [switch]$SkipNetworkIsolation
 )
 
 Set-StrictMode -Version Latest
@@ -469,6 +470,27 @@ try {
             -ServiceTokenId $studentServiceTokenId `
             -ServiceTokenSecret $studentServiceTokenSecret
 
+        # Compose alone does not keep the connector away from Kustainer.
+        # Publishing 8080 inserts a firewall accept above Docker's own
+        # cross-bridge isolation, and that accept is not restricted by source
+        # network, so the connector can reach the engine by IP and skip the
+        # read-only gateway entirely. The rule below closes that. It is applied
+        # here because it must be reapplied after anything that recreates the
+        # networks, and this script is what brings the class route up.
+        if (-not $SkipNetworkIsolation) {
+            $isolationScript = Join-Path $PSScriptRoot 'Set-WorkshopNetworkIsolation.ps1'
+            & pwsh -NoProfile -File $isolationScript -EdgeContainer $CloudflaredContainerName -BackendContainer $KustoContainerName | Out-Host
+            if ($LASTEXITCODE -ne 0) {
+                throw 'Failed to apply the Docker network isolation rule. Re-run Set-WorkshopNetworkIsolation.ps1, or pass -SkipNetworkIsolation to proceed without it.'
+            }
+
+            $isolationTest = Join-Path $PSScriptRoot 'Test-WorkshopNetworkIsolation.ps1'
+            & pwsh -NoProfile -File $isolationTest -EdgeContainer $CloudflaredContainerName -BackendContainer $KustoContainerName | Out-Host
+            if ($LASTEXITCODE -ne 0) {
+                throw 'The network boundary did not hold after applying the isolation rule. The connector can still reach Kustainer directly; do not start the class until this passes.'
+            }
+        }
+
         Write-Host "Cloudflare Tunnel connector is ready. The shared student credential is stored in '$StudentAccessEnvironmentFile'."
     }
     finally {
@@ -482,4 +504,4 @@ finally {
     else {
         $env:CLOUDFLARE_API_TOKEN = $previousCloudflareApiToken
     }
-}
+}

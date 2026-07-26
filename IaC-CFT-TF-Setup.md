@@ -99,6 +99,15 @@ The Compose defaults give the emulator four vCPUs, a 24 GiB hard memory limit, n
 
 > **Bind to localhost only.** Keep the Kusto host port on `127.0.0.1`, not `0.0.0.0`. The Cloudflare connector does not need a host port because it uses the private Compose network.
 
+> **Binding to localhost is not enough on its own.** Publishing `8080` makes Docker insert a firewall accept ahead of its own cross-bridge isolation, and that accept is not restricted by source network, so any container on any other Docker network — including the `cloudflared` connector — can reach the emulator at its backend IP and skip the read-only gateway. `127.0.0.1` constrains the host, not other containers. Apply and verify the boundary after provisioning:
+>
+> ```powershell
+> .\scripts\Set-WorkshopNetworkIsolation.ps1
+> .\scripts\Test-WorkshopNetworkIsolation.ps1
+> ```
+>
+> `Start-CloudflareAdxTunnel.ps1 -Apply` runs both and fails the provisioning run if the boundary does not hold; `-SkipNetworkIsolation` opts out. Terraform cannot own this: the rule is host firewall state inside the Docker VM, not a Cloudflare or Compose resource, and it is lost on a Docker engine restart. Treat re-running the script as part of bringing the stack up, not as a one-time install. See [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md).
+
 ⚠️ **Keep the Kusto container.** The Student database survives a clean `docker compose stop kusto` followed by `docker compose start kusto`. Do not use `docker compose down`, `docker compose rm`, or `--force-recreate` for Kusto while relying on its local persistent database. After an intentional container replacement, restore the Student snapshot with `./scripts/Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate`.
 
 `kusto-defaultdb-cleaner` runs automatically after Kustainer is healthy. When `CyberDefendStudentSnapshot` exists, it drops `NetDefaultDB` and deletes its persistent state directory. It waits during first-run bootstrap so the Student import can create the retained database before the default database is removed.
