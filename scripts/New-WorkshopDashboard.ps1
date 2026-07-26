@@ -316,10 +316,18 @@ AuditLogs
 '@
 
 $riskyOAuthConsentQuery = @'
+// Anchored on the compromised account, not on whichever risky sign-in happens to
+// be earliest. The previous form took `top 1 by TimeGenerated asc` across every
+// risky sign-in, which only ever resolved to this user because the dataset
+// contained exactly one risky sign-in. Once the estate gained a realistic
+// password spray -- whose sign-ins are also risky, and earlier -- the anchor
+// moved to an attacker IP with no consent activity behind it and the tile went
+// blank. A tenant always has more than one risky sign-in.
+let compromisedUser = "victor.alvarez@usag-cyber.local";
 let suspiciousIp =
     SigninLogs
     | where TimeGenerated between (['_startTime'] .. ['_endTime'])
-    | where IsRisky == true
+    | where UserPrincipalName =~ compromisedUser and IsRisky == true
     | top 1 by TimeGenerated asc
     | project IPAddress;
 CloudAppEvents
@@ -330,10 +338,12 @@ CloudAppEvents
 '@
 
 $riskyUserGraphApiCallsQuery = @'
+// Same anchoring fix as the OAuth consent tile above.
+let compromisedUser = "victor.alvarez@usag-cyber.local";
 let suspiciousIp =
     SigninLogs
     | where TimeGenerated between (['_startTime'] .. ['_endTime'])
-    | where IsRisky == true
+    | where UserPrincipalName =~ compromisedUser and IsRisky == true
     | top 1 by TimeGenerated asc
     | project IPAddress;
 GraphAPIAuditEvents

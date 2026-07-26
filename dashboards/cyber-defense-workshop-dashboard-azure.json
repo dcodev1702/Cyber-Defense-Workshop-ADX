@@ -684,7 +684,7 @@
     {
       "id": "d9c5ca8f-1884-ca47-6068-23816a8bac2f",
       "title": "Risky OAuth Consent",
-      "query": "let suspiciousIp =\r\n    SigninLogs\r\n    | where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n    | where IsRisky == true\r\n    | top 1 by TimeGenerated asc\r\n    | project IPAddress;\r\nCloudAppEvents\r\n| where Timestamp between (['_startTime'] .. ['_endTime'])\r\n| where IPAddress in (suspiciousIp)\r\n| project Timestamp, AccountDisplayName, AccountId, ActionType, ObjectName, OAuthAppId, RawEventData\r\n| order by Timestamp asc",
+      "query": "// Anchored on the compromised account, not on whichever risky sign-in happens to\r\n// be earliest. The previous form took `top 1 by TimeGenerated asc` across every\r\n// risky sign-in, which only ever resolved to this user because the dataset\r\n// contained exactly one risky sign-in. Once the estate gained a realistic\r\n// password spray -- whose sign-ins are also risky, and earlier -- the anchor\r\n// moved to an attacker IP with no consent activity behind it and the tile went\r\n// blank. A tenant always has more than one risky sign-in.\r\nlet compromisedUser = \"victor.alvarez@usag-cyber.local\";\r\nlet suspiciousIp =\r\n    SigninLogs\r\n    | where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n    | where UserPrincipalName =~ compromisedUser and IsRisky == true\r\n    | top 1 by TimeGenerated asc\r\n    | project IPAddress;\r\nCloudAppEvents\r\n| where Timestamp between (['_startTime'] .. ['_endTime'])\r\n| where IPAddress in (suspiciousIp)\r\n| project Timestamp, AccountDisplayName, AccountId, ActionType, ObjectName, OAuthAppId, RawEventData\r\n| order by Timestamp asc",
       "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
       "visualType": "table",
       "pageId": "6579b92c-2ec1-06bb-fd6d-6def689c4fa4",
@@ -706,7 +706,7 @@
     {
       "id": "6d42fb6b-d57d-7f60-8b1d-80a8d91ad461",
       "title": "Risky User - Graph API Calls",
-      "query": "let suspiciousIp =\r\n    SigninLogs\r\n    | where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n    | where IsRisky == true\r\n    | top 1 by TimeGenerated asc\r\n    | project IPAddress;\r\nGraphAPIAuditEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| where IpAddress in (suspiciousIp)\r\n| project Timestamp=TimeGenerated, AccountObjectId, ApplicationId, RequestMethod, RequestUri, Scopes, ResponseStatusCode\r\n| order by Timestamp asc",
+      "query": "// Same anchoring fix as the OAuth consent tile above.\r\nlet compromisedUser = \"victor.alvarez@usag-cyber.local\";\r\nlet suspiciousIp =\r\n    SigninLogs\r\n    | where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n    | where UserPrincipalName =~ compromisedUser and IsRisky == true\r\n    | top 1 by TimeGenerated asc\r\n    | project IPAddress;\r\nGraphAPIAuditEvents\r\n| where TimeGenerated between (['_startTime'] .. ['_endTime'])\r\n| where IpAddress in (suspiciousIp)\r\n| project Timestamp=TimeGenerated, AccountObjectId, ApplicationId, RequestMethod, RequestUri, Scopes, ResponseStatusCode\r\n| order by Timestamp asc",
       "dataSourceId": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
       "visualType": "table",
       "pageId": "6579b92c-2ec1-06bb-fd6d-6def689c4fa4",

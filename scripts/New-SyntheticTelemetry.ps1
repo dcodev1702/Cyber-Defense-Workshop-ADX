@@ -2163,6 +2163,368 @@ function Add-WorkshopAadUserRiskEvent {
     }
 }
 
+# ---------------------------------------------------------------------------
+# Entra sign-in outcomes
+#
+# Every sign-in table used to emit ResultType '0' unconditionally, so the estate
+# had a 100% authentication success rate across 30,000 sign-ins. That is not a
+# cosmetic gap. AADUserRiskEvents raised 782 passwordSpray and 740
+# leakedCredentials detections with nothing behind them, so a student who pivoted
+# from a risk detection to the sign-in logs -- the first move in any credential
+# investigation -- found a spray with a perfect success rate and no failures.
+# The dashboard's failed-login tiles were empty for the same reason.
+#
+# The ambient weights below are the observed topValues from the real tenant
+# profiles in metadata/field-profiles/, not invented numbers:
+#
+#   SigninLogs                      0 .98855  50140 .00763  90094 .00286  50206 .00095
+#   AADNonInteractiveUserSignInLogs 0 .98740  50011 .00880  65002 .00260  50177 .00120
+#   EntraIdSignInEvents             0 .82350  70043 .15300  500011 .0065  53003 .00250
+#
+# AADServicePrincipalSignInLogs and AADManagedIdentitySignInLogs were 100%
+# success in the captured sample, which is a property of a quiet fortnight rather
+# than of workload identities. Their failures are added deliberately at a low
+# rate using documented Entra error codes, because a workshop that teaches
+# workload-identity hunting needs expired secrets and disabled resource
+# principals to exist.
+# ---------------------------------------------------------------------------
+$script:SignInOutcomeCatalog = @{
+    SigninLogs = @(
+        [pscustomobject]@{ Code = '0'; Weight = 0.98855; Failure = $false; Reason = 'Other'; Description = 'Success' }
+        [pscustomobject]@{ Code = '50140'; Weight = 0.00763; Failure = $true; Reason = 'KmsiInterrupt'; Description = "This occurred due to 'Keep me signed in' interrupt when the user was signing in." }
+        [pscustomobject]@{ Code = '90094'; Weight = 0.00286; Failure = $true; Reason = 'ConsentRequired'; Description = 'The grant requires administrator permission.' }
+        [pscustomobject]@{ Code = '50206'; Weight = 0.00096; Failure = $true; Reason = 'AdditionalAuthenticationRequired'; Description = 'Additional authentication is required to complete the sign-in.' }
+    )
+    AADNonInteractiveUserSignInLogs = @(
+        [pscustomobject]@{ Code = '0'; Weight = 0.98740; Failure = $false; Reason = 'Other'; Description = 'Success' }
+        [pscustomobject]@{ Code = '50011'; Weight = 0.00880; Failure = $true; Reason = 'InvalidReplyTo'; Description = 'The redirect URI specified in the request does not match the reply URLs configured for the application.' }
+        [pscustomobject]@{ Code = '65002'; Weight = 0.00260; Failure = $true; Reason = 'ConsentNotConfigured'; Description = 'Consent between the first party application and the resource must be configured.' }
+        [pscustomobject]@{ Code = '50177'; Weight = 0.00120; Failure = $true; Reason = 'ExternalChallengeRequired'; Description = 'An external security challenge was not satisfied.' }
+    )
+    EntraIdSignInEvents = @(
+        [pscustomobject]@{ Code = '0'; Weight = 0.82350; Failure = $false; Reason = 'Other'; Description = 'Success' }
+        [pscustomobject]@{ Code = '70043'; Weight = 0.15300; Failure = $true; Reason = 'TokenExpired'; Description = 'The refresh token has expired or is invalid because the maximum inactive time was reached.' }
+        [pscustomobject]@{ Code = '500011'; Weight = 0.00650; Failure = $true; Reason = 'ResourcePrincipalNotFound'; Description = 'The resource principal was not found in the tenant.' }
+        [pscustomobject]@{ Code = '9010010'; Weight = 0.00600; Failure = $true; Reason = 'SessionRevoked'; Description = 'The session was revoked and the token can no longer be used.' }
+        [pscustomobject]@{ Code = '53003'; Weight = 0.00250; Failure = $true; Reason = 'BlockedByConditionalAccess'; Description = 'Access has been blocked by Conditional Access policies.' }
+        [pscustomobject]@{ Code = '70044'; Weight = 0.00250; Failure = $true; Reason = 'SessionExpired'; Description = 'The session has expired because the maximum session time was reached.' }
+        [pscustomobject]@{ Code = '50079'; Weight = 0.00300; Failure = $true; Reason = 'MfaEnrollmentRequired'; Description = 'The user is required to enrol in multi-factor authentication.' }
+        [pscustomobject]@{ Code = '65001'; Weight = 0.00300; Failure = $true; Reason = 'ConsentNotGranted'; Description = 'The user or administrator has not consented to use the application.' }
+    )
+    AADServicePrincipalSignInLogs = @(
+        [pscustomobject]@{ Code = '0'; Weight = 0.97800; Failure = $false; Reason = 'Other'; Description = 'Success' }
+        [pscustomobject]@{ Code = '7000215'; Weight = 0.01100; Failure = $true; Reason = 'InvalidClientSecret'; Description = 'Invalid client secret provided.' }
+        [pscustomobject]@{ Code = '7000222'; Weight = 0.00500; Failure = $true; Reason = 'ExpiredClientSecret'; Description = 'The provided client secret has expired.' }
+        [pscustomobject]@{ Code = '700027'; Weight = 0.00350; Failure = $true; Reason = 'ClientAssertionFailed'; Description = 'Client assertion failed signature validation.' }
+        [pscustomobject]@{ Code = '500011'; Weight = 0.00250; Failure = $true; Reason = 'ResourcePrincipalNotFound'; Description = 'The resource principal was not found in the tenant.' }
+    )
+    AADManagedIdentitySignInLogs = @(
+        [pscustomobject]@{ Code = '0'; Weight = 0.99000; Failure = $false; Reason = 'Other'; Description = 'Success' }
+        [pscustomobject]@{ Code = '500011'; Weight = 0.00600; Failure = $true; Reason = 'ResourcePrincipalNotFound'; Description = 'The resource principal was not found in the tenant.' }
+        [pscustomobject]@{ Code = '500014'; Weight = 0.00400; Failure = $true; Reason = 'ResourceServicePrincipalDisabled'; Description = 'The service principal for the resource is disabled.' }
+    )
+}
+
+# Codes a spray actually produces. These are not in the captured sample because
+# the tenant was not being sprayed during the capture window; they are the
+# documented Entra codes for the behaviour the scenario depicts, and they are
+# what makes a passwordSpray risk detection corroborable.
+$script:SignInSprayOutcomes = @{
+    InvalidCredentials = [pscustomobject]@{ Code = '50126'; Failure = $true; Reason = 'InvalidUsernameOrPassword'; Description = 'Error validating credentials due to invalid username or password.' }
+    AccountLocked = [pscustomobject]@{ Code = '50053'; Failure = $true; Reason = 'AccountLocked'; Description = 'The account is locked because the user tried to sign in too many times with an incorrect user ID or password.' }
+    MfaRequired = [pscustomobject]@{ Code = '50074'; Failure = $true; Reason = 'StrongAuthRequired'; Description = 'Strong authentication is required and the user did not pass the multi-factor challenge.' }
+}
+
+# Empty until Initialize-WorkshopSignInFailurePlan runs. Declared here so that a
+# partial run reads an empty plan -- every account simply unsprayed -- rather
+# than failing on an unset variable under StrictMode.
+$script:SignInSprayTargets = @{}
+$script:SignInLockedOut = @{}
+$script:SignInLeakedCredentials = @{}
+$script:SignInSprayIpAddresses = @('45.83.220.17')
+$script:SignInSprayWindowStart = [datetime]::MaxValue
+$script:SignInSprayWindowEnd = [datetime]::MaxValue
+
+function Initialize-WorkshopSignInFailurePlan {
+    <#
+        Decides, once and deterministically, which accounts a spray targeted and
+        which had credentials leaked. Both the sign-in tables and
+        AADUserRiskEvents read this plan, which is what keeps a passwordSpray
+        detection and the failed sign-ins behind it pointing at the same people.
+        Building it from the identity list rather than from generation order
+        means the two producers agree no matter which runs first.
+    #>
+    param([Parameter(Mandatory)][object[]]$Identities)
+
+    $humans = @($Identities | Where-Object { -not $_.IsServiceAccount })
+    if ($humans.Count -eq 0) { return }
+
+    # Ordered by a stable hash so the selection is reproducible for a given seed
+    # but is not the first N of an alphabetical list, which would put every
+    # target in the same department.
+    $ordered = @($humans | Sort-Object { [string](New-StableGuid "spray-target|$($_.ObjectId)") })
+
+    # A spray is wide and shallow: many accounts, few attempts each. Capped in
+    # absolute terms as well as proportionally, because the evidence rows are
+    # written explicitly and an uncapped target list would crowd out the ambient
+    # traffic it is supposed to hide in.
+    $sprayCount = [Math]::Min(120, [Math]::Max(12, [int]($humans.Count / 12)))
+    $script:SignInSprayTargets = @{}
+    foreach ($identity in ($ordered | Select-Object -First $sprayCount)) {
+        $script:SignInSprayTargets[$identity.Upn] = $true
+    }
+
+    # Lockout follows repeated failures, so it applies to a subset of the sprayed
+    # accounts rather than to arbitrary users.
+    $script:SignInLockedOut = @{}
+    $lockoutIndex = 0
+    foreach ($upn in $script:SignInSprayTargets.Keys) {
+        if (($lockoutIndex % 4) -eq 0) { $script:SignInLockedOut[$upn] = $true }
+        $lockoutIndex++
+    }
+
+    # Leaked credentials are a different population: the password is known, so
+    # the sign-in is not refused for being wrong -- it is stopped by MFA. Capped
+    # for the same reason as the spray, because this evidence is written too.
+    $leakedCount = [Math]::Min(40, [Math]::Max(8, [int]($humans.Count / 20)))
+    $script:SignInLeakedCredentials = @{}
+    foreach ($identity in ($ordered | Select-Object -Last $leakedCount)) {
+        $script:SignInLeakedCredentials[$identity.Upn] = $true
+    }
+
+    # A spray arrives in a burst from a small number of hosts, which is what
+    # makes it visible as a spray rather than as scattered typos.
+    $script:SignInSprayWindowStart = $script:TelemetryEndTime.AddDays(-6).Date.AddHours(2)
+    $script:SignInSprayWindowEnd = $script:SignInSprayWindowStart.AddMinutes(140)
+    $script:SignInSprayIpAddresses = @('45.83.220.17', '185.220.101.44', '91.219.236.190')
+}
+
+function Add-WorkshopPasswordSprayEvidence {
+    <#
+        Writes the spray itself, rather than hoping ambient rows happen to land
+        inside the campaign window.
+
+        The first attempt at this filtered ambient sign-ins by time, which failed
+        quietly: a 140-minute window catches a fraction of a percent of rows
+        spread over a month, so 456 passwordSpray detections were raised against
+        zero corroborating failures -- the same unevidenced-detection problem the
+        change set out to fix. Evidence a student is told to go and find has to
+        be written on purpose.
+    #>
+    param([Parameter(Mandatory)][object[]]$Identities)
+
+    $targets = @($Identities | Where-Object { $script:SignInSprayTargets.ContainsKey($_.Upn) })
+    if ($targets.Count -eq 0) { return }
+
+    $sprayApp = 'Office 365 Exchange Online'
+    $sprayAppId = '00000002-0000-0ff1-ce00-000000000000'
+    $sprayAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+
+    for ($targetIndex = 0; $targetIndex -lt $targets.Count; $targetIndex++) {
+        $identity = $targets[$targetIndex]
+        $attempts = 2 + ($targetIndex % 3)
+        $sprayIp = $script:SignInSprayIpAddresses[$targetIndex % $script:SignInSprayIpAddresses.Count]
+        $isLockedOut = $script:SignInLockedOut.ContainsKey($identity.Upn)
+
+        # A spray that never lands teaches half the lesson. A small number of
+        # accounts fall to it, which is the pivot from "noisy failures" to
+        # "someone is inside".
+        $succeeds = ($targetIndex % 25) -eq 0
+
+        for ($attempt = 0; $attempt -lt $attempts; $attempt++) {
+            $attemptTime = $script:SignInSprayWindowStart.AddSeconds(($targetIndex * 37) + ($attempt * 420))
+            if ($attemptTime -gt $script:SignInSprayWindowEnd) { $attemptTime = $script:SignInSprayWindowEnd }
+
+            $isLast = ($attempt -eq ($attempts - 1))
+            $outcome = if ($isLast -and $succeeds) {
+                [pscustomobject]@{ Code = '0'; Description = 'Success'; Reason = 'Other'; Failure = $false }
+            }
+            elseif ($isLast -and $isLockedOut) {
+                $script:SignInSprayOutcomes.AccountLocked
+            }
+            else {
+                $script:SignInSprayOutcomes.InvalidCredentials
+            }
+
+            $seed = "spray|$($identity.Upn)|$attempt"
+
+            Add-Record -Table 'SigninLogs' -Time $attemptTime -Values @{
+                TimeGenerated = Format-WorkshopTime $attemptTime
+                CreatedDateTime = Format-WorkshopTime $attemptTime
+                AADTenantId = $tenantId
+                AppDisplayName = $sprayApp
+                AppId = $sprayAppId
+                AuthenticationMethodsUsed = 'Password'
+                AuthenticationRequirement = 'singleFactorAuthentication'
+                ClientAppUsed = 'Other clients'
+                ConditionalAccessStatus = 'notApplied'
+                CorrelationId = New-StableGuid "$seed|correlation"
+                DeviceDetail = @{ operatingSystem = 'Unknown'; browser = 'Other'; isCompliant = $false; trustType = 'Unmanaged' }
+                Id = New-StableGuid "$seed|signin"
+                Identity = $identity.DisplayName
+                IPAddress = $sprayIp
+                IsInteractive = $true
+                IsRisky = $true
+                Location = 'RU'
+                LocationDetails = @{ city = 'Moscow'; state = 'Moscow'; countryOrRegion = 'RU' }
+                OperationName = 'Sign-in activity'
+                ResourceDisplayName = $sprayApp
+                ResultType = $outcome.Code
+                ResultDescription = $outcome.Description
+                ResultSignature = if ($outcome.Failure) { 'FAILURE' } else { 'SUCCESS' }
+                ErrorCode = [int]$outcome.Code
+                RiskLevel = 'high'
+                RiskLevelDuringSignIn = 'high'
+                RiskState = 'atRisk'
+                RiskEventTypes = 'passwordSpray'
+                Status = @{ errorCode = [int]$outcome.Code; failureReason = $outcome.Reason; additionalDetails = $outcome.Description }
+                Type = 'SigninLogs'
+                UserAgent = $sprayAgent
+                UserDisplayName = $identity.DisplayName
+                UserId = $identity.ObjectId
+                UserPrincipalName = $identity.Upn
+                UserType = 'Member'
+                Country = 'RU'
+                State = 'Moscow'
+                City = 'Moscow'
+            }
+
+            Add-Record -Table 'EntraIdSignInEvents' -Time $attemptTime -Values @{
+                Timestamp = Format-WorkshopTime $attemptTime
+                AccountDisplayName = $identity.DisplayName
+                AccountObjectId = $identity.ObjectId
+                AccountUpn = $identity.Upn
+                Application = $sprayApp
+                ApplicationId = $sprayAppId
+                IsExternalUser = 0
+                IsGuestUser = $false
+                ResourceDisplayName = $sprayApp
+                ResourceId = $sprayAppId
+                IPAddress = $sprayIp
+                Country = 'RU'
+                State = 'Moscow'
+                City = 'Moscow'
+                UserAgent = $sprayAgent
+                ClientAppUsed = 'Other clients'
+                ConditionalAccessStatus = 'notApplied'
+                DeviceTrustType = 'Unmanaged'
+                ErrorCode = [int]$outcome.Code
+                RiskLevelDuringSignIn = 'high'
+                RiskLevelAggregated = 'high'
+                RiskState = 'atRisk'
+                RiskEventTypes = '["passwordSpray"]'
+                AuthenticationRequirement = 'singleFactorAuthentication'
+                TokenIssuerType = 'AzureAD'
+                LogonType = 'interactiveUser'
+                ReportId = 5900 + $targetIndex
+                Type = 'EntraIdSignInEvents'
+            }
+        }
+    }
+
+    # Leaked credentials tell a different story and need their own evidence: the
+    # password is correct, so the attempt is not refused as invalid -- it reaches
+    # the MFA challenge and dies there. Left to ambient sampling this produced
+    # 268 detections behind 2 sign-ins, which is the same unevidenced-detection
+    # failure as the spray.
+    $leaked = @($Identities | Where-Object { $script:SignInLeakedCredentials.ContainsKey($_.Upn) })
+    for ($leakIndex = 0; $leakIndex -lt $leaked.Count; $leakIndex++) {
+        $identity = $leaked[$leakIndex]
+        $attemptTime = $script:SignInSprayWindowStart.AddDays(1).AddSeconds($leakIndex * 613)
+        $leakIp = $script:SignInSprayIpAddresses[($leakIndex + 1) % $script:SignInSprayIpAddresses.Count]
+        $outcome = $script:SignInSprayOutcomes.MfaRequired
+        $seed = "leaked|$($identity.Upn)"
+
+        Add-Record -Table 'SigninLogs' -Time $attemptTime -Values @{
+            TimeGenerated = Format-WorkshopTime $attemptTime
+            CreatedDateTime = Format-WorkshopTime $attemptTime
+            AADTenantId = $tenantId
+            AppDisplayName = $sprayApp
+            AppId = $sprayAppId
+            AuthenticationMethodsUsed = 'Password'
+            AuthenticationRequirement = 'multiFactorAuthentication'
+            ClientAppUsed = 'Browser'
+            ConditionalAccessStatus = 'failure'
+            CorrelationId = New-StableGuid "$seed|correlation"
+            DeviceDetail = @{ operatingSystem = 'Unknown'; browser = 'Chrome'; isCompliant = $false; trustType = 'Unmanaged' }
+            Id = New-StableGuid "$seed|signin"
+            Identity = $identity.DisplayName
+            IPAddress = $leakIp
+            IsInteractive = $true
+            IsRisky = $true
+            Location = 'RU'
+            LocationDetails = @{ city = 'Moscow'; state = 'Moscow'; countryOrRegion = 'RU' }
+            OperationName = 'Sign-in activity'
+            ResourceDisplayName = $sprayApp
+            ResultType = $outcome.Code
+            ResultDescription = $outcome.Description
+            ResultSignature = 'FAILURE'
+            ErrorCode = [int]$outcome.Code
+            RiskLevel = 'high'
+            RiskLevelDuringSignIn = 'high'
+            RiskState = 'atRisk'
+            RiskEventTypes = 'leakedCredentials'
+            Status = @{ errorCode = [int]$outcome.Code; failureReason = $outcome.Reason; additionalDetails = $outcome.Description }
+            Type = 'SigninLogs'
+            UserAgent = $sprayAgent
+            UserDisplayName = $identity.DisplayName
+            UserId = $identity.ObjectId
+            UserPrincipalName = $identity.Upn
+            UserType = 'Member'
+            Country = 'RU'
+            State = 'Moscow'
+            City = 'Moscow'
+        }
+    }
+}
+
+function Get-WorkshopSignInOutcome {
+    <#
+        Returns the outcome for one sign-in row: the scenario's spray and leaked
+        credential stories first, then an ambient draw weighted to the real
+        tenant profile.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$Table,
+        [Parameter(Mandatory)]$User,
+        [Parameter(Mandatory)][int]$Index,
+        [Parameter(Mandatory)][datetime]$Time
+    )
+
+    $upn = [string]$User.Upn
+    $isUserTable = $Table -in @('SigninLogs', 'AADNonInteractiveUserSignInLogs', 'EntraIdSignInEvents')
+
+    if ($isUserTable -and $script:SignInSprayTargets.ContainsKey($upn) -and
+        $Time -ge $script:SignInSprayWindowStart -and $Time -le $script:SignInSprayWindowEnd) {
+
+        # Smart lockout trips after a run of bad passwords, so a locked account
+        # shows both codes rather than only the lockout.
+        if ($script:SignInLockedOut.ContainsKey($upn) -and ($Index % 5) -eq 0) {
+            return [pscustomobject]@{ Outcome = $script:SignInSprayOutcomes.AccountLocked; SprayIp = $script:SignInSprayIpAddresses[$Index % $script:SignInSprayIpAddresses.Count] }
+        }
+
+        return [pscustomobject]@{ Outcome = $script:SignInSprayOutcomes.InvalidCredentials; SprayIp = $script:SignInSprayIpAddresses[$Index % $script:SignInSprayIpAddresses.Count] }
+    }
+
+    if ($isUserTable -and $script:SignInLeakedCredentials.ContainsKey($upn) -and ($Index % 23) -eq 0) {
+        return [pscustomobject]@{ Outcome = $script:SignInSprayOutcomes.MfaRequired; SprayIp = $null }
+    }
+
+    $catalog = $script:SignInOutcomeCatalog[$Table]
+    if (-not $catalog) { $catalog = $script:SignInOutcomeCatalog['SigninLogs'] }
+
+    $roll = (Get-WorkshopRandomInt -Minimum 0 -Maximum 1000000) / 1000000.0
+    $cumulative = 0.0
+    foreach ($entry in $catalog) {
+        $cumulative += $entry.Weight
+        if ($roll -le $cumulative) {
+            return [pscustomobject]@{ Outcome = $entry; SprayIp = $null }
+        }
+    }
+
+    return [pscustomobject]@{ Outcome = $catalog[0]; SprayIp = $null }
+}
+
 function Add-WorkshopAadUserRiskEvents {
     param(
         [Parameter(Mandatory)][object[]]$Identities,
@@ -2214,7 +2576,6 @@ function Add-WorkshopAadUserRiskEvents {
         'Mozilla/5.0 (Linux; Android 14; SM-S928B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/25.0 Chrome/121.0.0.0 Mobile Safari/537.36',
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edg/125.0.0.0 Safari/537.36'
     )
-    $riskEventTypes = @('anonymizedIPAddress', 'unfamiliarFeatures', 'unlikelyTravel', 'maliciousIPAddress', 'passwordSpray', 'suspiciousBrowser', 'leakedCredentials')
     $riskLevels = @('Low', 'Medium', 'High')
     $riskDetailsByState = @{
         atRisk = @('none', 'adminConfirmedSigninCompromised')
@@ -2242,13 +2603,38 @@ function Add-WorkshopAadUserRiskEvents {
         $riskDetail = Get-WorkshopRandomItem $riskDetailsByState[$riskState]
         $activityTime = $script:TelemetryEndTime.AddDays(-1 * (Get-WorkshopRandomInt -Minimum 0 -Maximum $NormalLookbackDays)).AddMinutes(-1 * (Get-WorkshopRandomInt -Minimum 0 -Maximum 1440)).AddSeconds((Get-WorkshopRandomInt -Minimum 0 -Maximum 60))
 
+        # A detection is a claim about an account, and the sign-in logs are where
+        # an analyst goes to substantiate it. Drawing the type at random produced
+        # 782 passwordSpray detections spread across the whole directory while the
+        # sign-in tables held no failures at all -- so the first pivot of any
+        # credential investigation dead-ended. The type is now tied to the same
+        # plan the sign-in tables read, so a sprayed account has 50126 failures
+        # behind its passwordSpray detection and a leaked-credential account has
+        # the MFA refusal behind its.
+        $riskEventType = $null
+        $ipAddress = New-WorkshopRiskIpAddress -Location $location -Index $index
+
+        if ($script:SignInSprayTargets.ContainsKey($identity.Upn)) {
+            $riskEventType = 'passwordSpray'
+            $activityTime = $script:SignInSprayWindowStart.AddMinutes((Get-WorkshopRandomInt -Minimum 0 -Maximum 140))
+            $ipAddress = $script:SignInSprayIpAddresses[$index % $script:SignInSprayIpAddresses.Count]
+        }
+        elseif ($script:SignInLeakedCredentials.ContainsKey($identity.Upn)) {
+            $riskEventType = 'leakedCredentials'
+        }
+        else {
+            # Everyone else draws from the types that do not assert a failed
+            # authentication, so no detection is left without evidence.
+            $riskEventType = Get-WorkshopRandomItem @('anonymizedIPAddress', 'unfamiliarFeatures', 'unlikelyTravel', 'maliciousIPAddress', 'suspiciousBrowser')
+        }
+
         Add-WorkshopAadUserRiskEvent `
             -Identity $identity `
             -ActivityTime $activityTime `
             -Location $location `
-            -IpAddress (New-WorkshopRiskIpAddress -Location $location -Index $index) `
+            -IpAddress $ipAddress `
             -UserAgent (Get-WorkshopRandomItem $riskUserAgents) `
-            -RiskEventType (Get-WorkshopRandomItem $riskEventTypes) `
+            -RiskEventType $riskEventType `
             -RiskLevel $riskLevel `
             -RiskState $riskState `
             -RiskDetail $riskDetail `
@@ -2818,6 +3204,11 @@ $victor = $users | Where-Object Name -eq 'victor.alvarez' | Select-Object -First
 $alice = $users | Where-Object Name -eq 'alice.weber' | Select-Object -First 1
 $svcSql = $users | Where-Object Name -eq 'svc_sql' | Select-Object -First 1
 $svcSync = $users | Where-Object Name -eq 'svc_azureadconnect' | Select-Object -First 1
+
+# Decide who was sprayed and whose credentials leaked before anything writes a
+# sign-in row or a risk detection, so both producers read the same answer no
+# matter which of them runs first.
+Initialize-WorkshopSignInFailurePlan -Identities $users
 
 $devices = @(
     [pscustomobject]@{ Name = "DC01.$corpFqdn"; ShortName = 'DC01'; DeviceId = New-StableHex 'DC01' 40; IP = '10.42.0.10'; PublicIP = '198.51.100.10'; OS = 'WindowsServer2025'; Type = 'DomainController'; AssetValue = 'High' },
@@ -4110,7 +4501,15 @@ function New-NormalTelemetryValues {
         'AADManagedIdentitySignInLogs' {
             $managedResource = $managedIdentityResourceCatalog[$Index % $managedIdentityResourceCatalog.Count]
             $targetResource = $servicePrincipalResourceCatalog[$Index % $servicePrincipalResourceCatalog.Count]
-            $isFailure = ($Index % 97) -eq 0
+
+            # This branch used to flip a coin on ($Index % 97) and then write the
+            # literal strings 'Success' and 'Failure' into ResultType. The real
+            # column carries an Entra error code -- the tenant profile records
+            # ResultType '0' -- so the emitted values matched neither the product
+            # nor the profile, and a query written against real telemetry found
+            # nothing here.
+            $managedIdentityOutcome = (Get-WorkshopSignInOutcome -Table $Table -User $user -Index $Index -Time $Time).Outcome
+            $isFailure = [bool]$managedIdentityOutcome.Failure
             $managedIdentityName = '{0}-mi' -f $managedResource.Name
             $managedIdentityResourceId = '/subscriptions/{0}/resourceGroups/{1}/providers/{2}/{3}' -f (Get-WorkshopSubscriptionId -Key $managedResource.Name), $managedResource.ResourceGroup, $managedResource.Provider, $managedResource.Name
             $servicePrincipalSeed = "$Table|managed-identity|$($managedResource.Name)"
@@ -4166,9 +4565,9 @@ function New-NormalTelemetryValues {
             $values.ResourceIdentity = $targetResource.Id
             $values.ResourceOwnerTenantId = $tenantId
             $values.ResourceServicePrincipalId = New-StableGuid "resource-service-principal|$($targetResource.Id)"
-            $values.ResultDescription = if ($isFailure) { 'Managed identity token request failed synthetic policy evaluation' } else { 'Success' }
-            $values.ResultSignature = if ($isFailure) { '53003' } else { '0' }
-            $values.ResultType = if ($isFailure) { 'Failure' } else { 'Success' }
+            $values.ResultDescription = $managedIdentityOutcome.Description
+            $values.ResultSignature = if ($isFailure) { 'FAILURE' } else { 'SUCCESS' }
+            $values.ResultType = $managedIdentityOutcome.Code
             $values.ServicePrincipalId = $servicePrincipalId
             $values.ServicePrincipalName = $managedIdentityName
             $values.SessionId = New-StableGuid "$Table|session|$Index"
@@ -4195,22 +4594,41 @@ function New-NormalTelemetryValues {
             $values.State = 'Hesse'
             $values.City = 'Wiesbaden'
             $values.Location = 'DE'
-            $values.ResultType = '0'
-            $values.ResultDescription = 'Success'
-            $values.ErrorCode = 0
+
+            # Authentication either succeeds or it does not, and until now it
+            # always did. See $script:SignInOutcomeCatalog for why the weights
+            # are what they are and where they came from.
+            $signInResult = Get-WorkshopSignInOutcome -Table $Table -User $user -Index $Index -Time $Time
+            $signInOutcome = $signInResult.Outcome
+            $signInFailed = [bool]$signInOutcome.Failure
+
+            if ($signInResult.SprayIp) {
+                # A spray comes from the attacker's infrastructure, not from the
+                # user's usual office egress, which is what makes it findable.
+                $values.IPAddress = $signInResult.SprayIp
+                $values.Country = 'RU'
+                $values.State = 'Moscow'
+                $values.City = 'Moscow'
+                $values.Location = 'RU'
+            }
+
+            $values.ResultType = $signInOutcome.Code
+            $values.ResultDescription = $signInOutcome.Description
+            $values.ResultSignature = if ($signInFailed) { 'FAILURE' } else { 'SUCCESS' }
+            $values.ErrorCode = [int]$signInOutcome.Code
             $values.IsInteractive = $Table -notlike '*NonInteractive*'
-            $values.IsRisky = $false
-            $values.RiskLevel = 'none'
-            $values.RiskLevelDuringSignIn = 'none'
-            $values.RiskState = 'none'
-            $values.ConditionalAccessStatus = 'success'
+            $values.IsRisky = $signInFailed -and $null -ne $signInResult.SprayIp
+            $values.RiskLevel = if ($signInResult.SprayIp) { 'high' } else { 'none' }
+            $values.RiskLevelDuringSignIn = $values.RiskLevel
+            $values.RiskState = if ($signInResult.SprayIp) { 'atRisk' } else { 'none' }
+            $values.ConditionalAccessStatus = if ($signInOutcome.Code -eq '53003') { 'failure' } elseif ($signInFailed) { 'notApplied' } else { 'success' }
             $values.AuthenticationRequirement = if (($Index % 4) -eq 0) { 'multiFactorAuthentication' } else { 'singleFactorAuthentication' }
             $values.AuthenticationMethodsUsed = if (($Index % 4) -eq 0) { 'Password,Authenticator App' } else { 'Password' }
             $values.ClientAppUsed = Get-WorkshopRandomItem @('Browser', 'Mobile Apps and Desktop clients', 'Exchange ActiveSync')
             $values.UserAgent = if ($isUbuntuDevice) { Get-WorkshopRandomItem @('Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36', 'curl/8.5.0', 'Microsoft-MDATP/101.25042.0000') } else { Get-WorkshopRandomItem @('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36', 'Microsoft Office/16.0', 'Teams/24215.1007.3082.1590') }
             $values.CorrelationId = New-StableGuid "$Table|signin-correlation|$Index"
             $values.Id = New-StableGuid "$Table|signin|$Index"
-            $values.Status = @{ errorCode = 0; failureReason = 'Other'; additionalDetails = 'MFA requirement satisfied' }
+            $values.Status = @{ errorCode = [int]$signInOutcome.Code; failureReason = $signInOutcome.Reason; additionalDetails = if ($signInFailed) { $signInOutcome.Description } else { 'MFA requirement satisfied' } }
             $values.DeviceDetail = @{ operatingSystem = if ($device.OS -eq 'Ubuntu') { 'Linux' } else { 'Windows' }; browser = 'Edge'; isCompliant = $true; trustType = 'Hybrid Azure AD joined' }
 
             if ($Table -in @('AADSpnSignInEventsBeta', 'EntraIdSpnSignInEvents')) {
@@ -4228,7 +4646,11 @@ function New-NormalTelemetryValues {
                 $values.AppId = $values.ApplicationId
                 $values.IsManagedIdentity = -not $hasNetworkContext
                 $values.IsConfidentialClient = ($Index % 1000) -lt 941
-                $values.ErrorCode = 0
+                # Workload identities fail too: expired secrets and disabled
+                # resource principals are the routine causes. Reuse the outcome
+                # already drawn above rather than resetting this to zero, which
+                # is what previously guaranteed a 100% success rate here.
+                $values.ErrorCode = [int]$signInOutcome.Code
                 $values.CorrelationId = $eventId
                 $values.RequestId = $eventId
                 $values.UniqueTokenId = $eventId
@@ -8078,6 +8500,11 @@ Add-WorkshopScenarioSecurityIncident `
     -TvmTables @('DeviceTvmSoftwareVulnerabilities', 'DeviceTvmSoftwareInventory', 'DeviceTvmHardwareFirmware', 'DeviceTvmSoftwareEvidenceBeta', 'DeviceTvmSoftwareVulnerabilitiesKB', 'DeviceTvmCertificateInfo', 'DeviceTvmSecureConfigurationAssessment')
 
 Add-WorkshopAadUserRiskEvents -Identities $users -ScenarioSignInTime $signinTime -Count $AadUserRiskEventCount
+
+# Written before the ambient fill so the campaign occupies part of the sign-in
+# budget rather than being appended on top of it, and so every passwordSpray
+# detection raised above has failed sign-ins standing behind it.
+Add-WorkshopPasswordSprayEvidence -Identities $users
 
 # Tables without scenario evidence are not seeded with a hand-written placeholder.
 # That placeholder wrote one row per table carrying a fabricated 'WorkshopBaseline'
