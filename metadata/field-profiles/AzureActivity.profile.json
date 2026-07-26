@@ -1,0 +1,843 @@
+{
+  "tableName": "AzureActivity",
+  "sources": [
+    "sample:AzureActivity-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 34,
+  "emptyInProd": [
+    "OperationName",
+    "ActivityStatus",
+    "ActivitySubstatus",
+    "Category",
+    "ResourceId",
+    "OperationId",
+    "ResourceProvider",
+    "Resource"
+  ],
+  "generatedUtc": "2026-07-26T01:05:44.9374887Z",
+  "columns": {
+    "OperationName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OperationNameValue": {
+      "fillRate": 1.0,
+      "distinctCount": 73,
+      "topValues": [
+        {
+          "value": "MICROSOFT.SECURITY/DATASCANNERS/WRITE",
+          "weight": 0.4195
+        },
+        {
+          "value": "MICROSOFT.STORAGE/STORAGEACCOUNTS/LISTKEYS/ACTION",
+          "weight": 0.176
+        },
+        {
+          "value": "MICROSOFT.EVENTGRID/REGISTER/ACTION",
+          "weight": 0.069
+        },
+        {
+          "value": "MICROSOFT.NETWORK/LOADBALANCERS/WRITE",
+          "weight": 0.04
+        },
+        {
+          "value": "MICROSOFT.AUTHORIZATION/POLICIES/AUDITIFNOTEXISTS/ACTION",
+          "weight": 0.028
+        },
+        {
+          "value": "MICROSOFT.AUTHORIZATION/POLICIES/AUDIT/ACTION",
+          "weight": 0.0185
+        },
+        {
+          "value": "MICROSOFT.RESOURCES/DEPLOYMENTS/WRITE",
+          "weight": 0.018
+        },
+        {
+          "value": "Microsoft.Advisor/recommendations/available/action",
+          "weight": 0.018
+        },
+        {
+          "value": "MICROSOFT.AUTHORIZATION/POLICIES/MODIFY/ACTION",
+          "weight": 0.0155
+        },
+        {
+          "value": "MICROSOFT.COMPUTE/RESTOREPOINTCOLLECTIONS/RESTOREPOINTS/RETRIEVESASURIS/ACTION",
+          "weight": 0.014
+        },
+        {
+          "value": "MICROSOFT.AUTHORIZATION/ROLEASSIGNMENTS/WRITE",
+          "weight": 0.013
+        },
+        {
+          "value": "MICROSOFT.COMPUTE/LOCATIONS/PLACEMENTRECOMMENDATIONS/GENERATE/ACTION",
+          "weight": 0.013
+        },
+        {
+          "value": "MICROSOFT.COMPUTE/RESTOREPOINTCOLLECTIONS/RESTOREPOINTS/DELETE",
+          "weight": 0.012
+        },
+        {
+          "value": "MICROSOFT.OPERATIONALINSIGHTS/WORKSPACES/TABLES/DELETEDATA/ACTION",
+          "weight": 0.0105
+        },
+        {
+          "value": "MICROSOFT.RESOURCES/DEPLOYMENTS/VALIDATE/ACTION",
+          "weight": 0.01
+        },
+        {
+          "value": "MICROSOFT.RESOURCES/DEPLOYMENTS/WHATIF/ACTION",
+          "weight": 0.008
+        },
+        {
+          "value": "MICROSOFT.COMPUTE/RESTOREPOINTCOLLECTIONS/RESTOREPOINTS/WRITE",
+          "weight": 0.007
+        },
+        {
+          "value": "Microsoft.RecoveryServices/vaults/backupFabrics/protectionContainers/protectedItems/backup/action",
+          "weight": 0.007
+        },
+        {
+          "value": "MICROSOFT.AUTHORIZATION/POLICIES/DENY/ACTION",
+          "weight": 0.006
+        },
+        {
+          "value": "MICROSOFT.RESOURCES/DEPLOYMENTS/OPERATIONSTATUSES/READ",
+          "weight": 0.0045
+        },
+        {
+          "value": "MICROSOFT.WEB/CONNECTIONS/WRITE",
+          "weight": 0.0045
+        },
+        {
+          "value": "MICROSOFT.STORAGE/STORAGEACCOUNTS/WRITE",
+          "weight": 0.004
+        },
+        {
+          "value": "MICROSOFT.EASM/REGISTER/ACTION",
+          "weight": 0.004
+        },
+        {
+          "value": "MICROSOFT.AUTHORIZATION/POLICIES/DEPLOYIFNOTEXISTS/ACTION",
+          "weight": 0.0035
+        },
+        {
+          "value": "Microsoft.Resourcehealth/healthevent/Activated/action",
+          "weight": 0.003
+        },
+        {
+          "value": "Microsoft.Resourcehealth/healthevent/Updated/action",
+          "weight": 0.003
+        },
+        {
+          "value": "MICROSOFT.OPERATIONALINSIGHTS/WORKSPACES/TABLES/WRITE",
+          "weight": 0.003
+        },
+        {
+          "value": "Microsoft.Resourcehealth/healthevent/Resolved/action",
+          "weight": 0.003
+        },
+        {
+          "value": "MICROSOFT.EASM/WORKSPACES/WRITE",
+          "weight": 0.003
+        },
+        {
+          "value": "MICROSOFT.COMPUTE/VIRTUALMACHINES/WRITE",
+          "weight": 0.003
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 97.0
+    },
+    "Level": {
+      "fillRate": 0.9955,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "Information",
+          "weight": 0.9337
+        },
+        {
+          "value": "Informational",
+          "weight": 0.03767
+        },
+        {
+          "value": "Warning",
+          "weight": 0.01858
+        },
+        {
+          "value": "Error",
+          "weight": 0.01005
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 13.0
+    },
+    "ActivityStatus": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ActivityStatusValue": {
+      "fillRate": 1.0,
+      "distinctCount": 12,
+      "topValues": [
+        {
+          "value": "Success",
+          "weight": 0.496
+        },
+        {
+          "value": "Start",
+          "weight": 0.426
+        },
+        {
+          "value": "Accept",
+          "weight": 0.025
+        },
+        {
+          "value": "Active",
+          "weight": 0.022
+        },
+        {
+          "value": "Failure",
+          "weight": 0.01
+        },
+        {
+          "value": "Succeeded",
+          "weight": 0.0055
+        },
+        {
+          "value": "Started",
+          "weight": 0.005
+        },
+        {
+          "value": "Resolved",
+          "weight": 0.004
+        },
+        {
+          "value": "Updated",
+          "weight": 0.004
+        },
+        {
+          "value": "Completed",
+          "weight": 0.001
+        },
+        {
+          "value": "Unknown",
+          "weight": 0.001
+        },
+        {
+          "value": "Failed",
+          "weight": 0.0005
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 9.0
+    },
+    "ActivitySubstatus": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ActivitySubstatusValue": {
+      "fillRate": 0.42,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "OK",
+          "weight": 0.90595
+        },
+        {
+          "value": "Created",
+          "weight": 0.04643
+        },
+        {
+          "value": "Accepted",
+          "weight": 0.03929
+        },
+        {
+          "value": "NotFound",
+          "weight": 0.00476
+        },
+        {
+          "value": "BadRequest",
+          "weight": 0.00119
+        },
+        {
+          "value": "Conflict",
+          "weight": 0.00119
+        },
+        {
+          "value": "NoContent",
+          "weight": 0.00119
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 10.0
+    },
+    "ResourceGroup": {
+      "fillRate": 0.4825,
+      "distinctCount": 18,
+      "topValues": [
+        {
+          "value": "FOUNDRY",
+          "weight": 0.36477
+        },
+        {
+          "value": "MDO-AUTOMATION-TEST",
+          "weight": 0.19689
+        },
+        {
+          "value": "ADDS",
+          "weight": 0.10466
+        },
+        {
+          "value": "ME_ZOLAB-BOT-ENV-BOTPRD-VNET_ZOLAB-BOT-BOTPRD_EASTUS2",
+          "weight": 0.0829
+        },
+        {
+          "value": "CTF",
+          "weight": 0.06943
+        },
+        {
+          "value": "AZUREBACKUPRG_EASTUS2_1",
+          "weight": 0.06839
+        },
+        {
+          "value": "SENTINEL",
+          "weight": 0.05181
+        },
+        {
+          "value": "MCAPSGOVERNANCE",
+          "weight": 0.02591
+        },
+        {
+          "value": "RHEL-MDE-LAB",
+          "weight": 0.01554
+        },
+        {
+          "value": "ZOLAB-AI-U49GCO",
+          "weight": 0.00415
+        },
+        {
+          "value": "ADX",
+          "weight": 0.00311
+        },
+        {
+          "value": "CYBERTRIAGE",
+          "weight": 0.00207
+        },
+        {
+          "value": "PLAYBOOK",
+          "weight": 0.00207
+        },
+        {
+          "value": "SECCOPILOT",
+          "weight": 0.00207
+        },
+        {
+          "value": "ARC",
+          "weight": 0.00207
+        },
+        {
+          "value": "ZOLAB-WORKER-BOTPRD",
+          "weight": 0.00207
+        },
+        {
+          "value": "USAG-WSBDN-CYS-26",
+          "weight": 0.00104
+        },
+        {
+          "value": "ZOLAB-900",
+          "weight": 0.00104
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 53.0
+    },
+    "SubscriptionId": {
+      "fillRate": 1.0,
+      "distinctCount": 10,
+      "topValues": [],
+      "pattern": "guid",
+      "freeText": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "CorrelationId": {
+      "fillRate": 1.0,
+      "distinctCount": 876,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 80.0
+    },
+    "Caller": {
+      "fillRate": 0.985,
+      "distinctCount": 25,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 17.0,
+      "maxLength": 36.0
+    },
+    "CallerIpAddress": {
+      "fillRate": 0.976,
+      "distinctCount": 46,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 37.0
+    },
+    "Category": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CategoryValue": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "Administrative",
+          "weight": 0.8985
+        },
+        {
+          "value": "Policy",
+          "weight": 0.0715
+        },
+        {
+          "value": "Recommendation",
+          "weight": 0.018
+        },
+        {
+          "value": "ResourceHealth",
+          "weight": 0.01
+        },
+        {
+          "value": "ServiceHealth",
+          "weight": 0.002
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 14.0
+    },
+    "HTTPRequest": {
+      "fillRate": 0.976,
+      "distinctCount": 46,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 29.0,
+      "maxLength": 59.0
+    },
+    "Properties": {
+      "fillRate": 1.0,
+      "distinctCount": 2000,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 314.0,
+      "maxLength": 16228.0
+    },
+    "EventSubmissionTimestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 969,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "Authorization": {
+      "fillRate": 0.9585,
+      "distinctCount": 141,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 216.0,
+      "maxLength": 684.0
+    },
+    "ResourceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OperationId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ResourceProvider": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ResourceProviderValue": {
+      "fillRate": 0.992,
+      "distinctCount": 16,
+      "topValues": [
+        {
+          "value": "MICROSOFT.SECURITY",
+          "weight": 0.42288
+        },
+        {
+          "value": "MICROSOFT.STORAGE",
+          "weight": 0.20665
+        },
+        {
+          "value": "MICROSOFT.COMPUTE",
+          "weight": 0.12349
+        },
+        {
+          "value": "MICROSOFT.EVENTGRID",
+          "weight": 0.06956
+        },
+        {
+          "value": "MICROSOFT.NETWORK",
+          "weight": 0.04637
+        },
+        {
+          "value": "MICROSOFT.RESOURCES",
+          "weight": 0.04083
+        },
+        {
+          "value": "MICROSOFT.WEB",
+          "weight": 0.02167
+        },
+        {
+          "value": "MICROSOFT.OPERATIONALINSIGHTS",
+          "weight": 0.01462
+        },
+        {
+          "value": "MICROSOFT.KEYVAULT",
+          "weight": 0.0131
+        },
+        {
+          "value": "MICROSOFT.INSIGHTS",
+          "weight": 0.01109
+        },
+        {
+          "value": "MICROSOFT.EASM",
+          "weight": 0.00857
+        },
+        {
+          "value": "MICROSOFT.AUTHORIZATION",
+          "weight": 0.00806
+        },
+        {
+          "value": "MICROSOFT.RECOVERYSERVICES",
+          "weight": 0.00806
+        },
+        {
+          "value": "MICROSOFT.COGNITIVESERVICES",
+          "weight": 0.00202
+        },
+        {
+          "value": "MICROSOFT.KUSTO",
+          "weight": 0.00202
+        },
+        {
+          "value": "MICROSOFT.ALERTSMANAGEMENT",
+          "weight": 0.00101
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 29.0
+    },
+    "Resource": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EventDataId": {
+      "fillRate": 1.0,
+      "distinctCount": 1972,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 969,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Azure",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "Authorization_d": {
+      "fillRate": 0.9585,
+      "distinctCount": 141,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 216.0,
+      "maxLength": 684.0
+    },
+    "Claims": {
+      "fillRate": 0.9855,
+      "distinctCount": 415,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2573.0
+    },
+    "Claims_d": {
+      "fillRate": 0.9855,
+      "distinctCount": 415,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2573.0
+    },
+    "Properties_d": {
+      "fillRate": 1.0,
+      "distinctCount": 2000,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 322.0,
+      "maxLength": 16228.0
+    },
+    "Hierarchy": {
+      "fillRate": 0.8865,
+      "distinctCount": 12,
+      "topValues": [
+        {
+          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/DibSecurity/CISO/Security/192ad012-896e-4f14-8525-c37a2a9640f9",
+          "weight": 0.29103
+        },
+        {
+          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/DibSecurity/CISO/Identity/2161bce7-2c89-4434-8a8b-52a16239af29",
+          "weight": 0.11619
+        },
+        {
+          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/DibSecurity/CIO/Operations/1fb89f47-9f73-480d-a6b0-5fb68d13de11",
+          "weight": 0.10998
+        },
+        {
+          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/DibSecurity/SandBox/08fdc492-f5aa-4601-84ae-03a37449c2ba",
+          "weight": 0.0925
+        },
+        {
+          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/408bb797-a8dd-42f8-9b4a-66c71f7fa199",
+          "weight": 0.08404
+        },
+        {
+          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/d84924c6-063a-4990-83e5-919b38903d8f",
+          "weight": 0.06486
+        },
+        {
+          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/03a1bc46-188f-448e-b466-520cb01e29b9",
+          "weight": 0.06373
+        },
+        {
+          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/764279d3-47fc-422e-aaae-859d0a225d9a",
+          "weight": 0.06317
+        },
+        {
+          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/7dc30735-96eb-4531-939f-e445c31b73f4",
+          "weight": 0.06317
+        },
+        {
+          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/DibSecurity/CIO/Connectivity/3c23f774-2e43-4c6d-83f4-41110ccec208",
+          "weight": 0.04738
+        },
+        {
+          "value": "08fdc492-f5aa-4601-84ae-03a37449c2ba",
+          "weight": 0.00226
+        },
+        {
+          "value": "d84924c6-063a-4990-83e5-919b38903d8f",
+          "weight": 0.00169
+        }
+      ],
+      "pattern": null,
+      "minLength": 36.0,
+      "maxLength": 102.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AzureActivity",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "_ResourceId": {
+      "fillRate": 0.924,
+      "distinctCount": 107,
+      "topValues": [
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/foundry/providers/microsoft.storage/storageaccounts/dibsecfoundryst",
+          "weight": 0.19048
+        },
+        {
+          "value": "/subscriptions/03a1bc46-188f-448e-b466-520cb01e29b9/providers/microsoft.security/datascanners/storagedatascanner",
+          "weight": 0.046
+        },
+        {
+          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/providers/microsoft.security/datascanners/storagedatascanner",
+          "weight": 0.04545
+        },
+        {
+          "value": "/subscriptions/3c23f774-2e43-4c6d-83f4-41110ccec208/providers/microsoft.security/datascanners/storagedatascanner",
+          "weight": 0.04545
+        },
+        {
+          "value": "/subscriptions/d84924c6-063a-4990-83e5-919b38903d8f/providers/microsoft.security/datascanners/storagedatascanner",
+          "weight": 0.04545
+        },
+        {
+          "value": "/subscriptions/7dc30735-96eb-4531-939f-e445c31b73f4/providers/microsoft.security/datascanners/storagedatascanner",
+          "weight": 0.04545
+        },
+        {
+          "value": "/subscriptions/764279d3-47fc-422e-aaae-859d0a225d9a/providers/microsoft.security/datascanners/storagedatascanner",
+          "weight": 0.04545
+        },
+        {
+          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/providers/microsoft.security/datascanners/storagedatascanner",
+          "weight": 0.04545
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/providers/microsoft.security/datascanners/storagedatascanner",
+          "weight": 0.04545
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/providers/microsoft.security/datascanners/storagedatascanner",
+          "weight": 0.04545
+        },
+        {
+          "value": "/subscriptions/408bb797-a8dd-42f8-9b4a-66c71f7fa199/providers/microsoft.security/datascanners/storagedatascanner",
+          "weight": 0.04437
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourcegroups/me_zolab-bot-env-botprd-vnet_zolab-bot-botprd_eastus2/providers/microsoft.network/loadbalancers/capp-svc-lb",
+          "weight": 0.04329
+        },
+        {
+          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/providers/microsoft.compute/virtualmachines/win11-01",
+          "weight": 0.03734
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/ctf/providers/microsoft.compute/virtualmachines/ctf25",
+          "weight": 0.02597
+        },
+        {
+          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/mdo-automation-test/providers/microsoft.storage/storageaccounts/tiautosteag5ql",
+          "weight": 0.02327
+        },
+        {
+          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/mdo-automation-test/providers/microsoft.web/sites/tiauto-func-eag5q",
+          "weight": 0.01461
+        },
+        {
+          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/mdo-automation-test/providers/microsoft.keyvault/vaults/tiauto-kv-eag5q",
+          "weight": 0.0119
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/sentinel/providers/microsoft.operationalinsights/workspaces/dibseccom/tables/mdetvmwin11intunesinglehost_cl",
+          "weight": 0.01136
+        },
+        {
+          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/providers/microsoft.recoveryservices/vaults/identitybackup",
+          "weight": 0.00758
+        },
+        {
+          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/mdo-automation-test/providers/microsoft.resources/deployments/main",
+          "weight": 0.00758
+        },
+        {
+          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/mdo-automation-test/providers/microsoft.resources/deployments/tabl-staged",
+          "weight": 0.00541
+        },
+        {
+          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/mdo-automation-test/providers/microsoft.resources/deployments/tabl-func-flex",
+          "weight": 0.00487
+        },
+        {
+          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/azurebackuprg_eastus2_1/providers/microsoft.compute/restorepointcollections/azurebackup_adds01_246290793164466/restorepoints/azurebackup_20260721_055059",
+          "weight": 0.00487
+        },
+        {
+          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/azurebackuprg_eastus2_1/providers/microsoft.compute/restorepointcollections/azurebackup_adds01_246290793164466/restorepoints/azurebackup_20260720_055313",
+          "weight": 0.00487
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/ctf/providers/microsoft.resources/deployments/createvm-microsoftwindowsserver.windowsserver-202-20260723145552",
+          "weight": 0.00433
+        },
+        {
+          "value": "/subscriptions/408bb797-a8dd-42f8-9b4a-66c71f7fa199/resourcegroups/mcapsgovernance/providers/microsoft.resources/deployments/create_easm_resource-20260723095727",
+          "weight": 0.00433
+        },
+        {
+          "value": "/subscriptions/408bb797-a8dd-42f8-9b4a-66c71f7fa199/resourcegroups/mcapsgovernance/providers/microsoft.resources/deployments/create_easm_resource-20260722124835",
+          "weight": 0.00433
+        },
+        {
+          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/providers/microsoft.compute/locations/eastus/placementrecommendations/regular",
+          "weight": 0.00433
+        },
+        {
+          "value": "/subscriptions/408bb797-a8dd-42f8-9b4a-66c71f7fa199",
+          "weight": 0.00433
+        },
+        {
+          "value": "/subscriptions/d84924c6-063a-4990-83e5-919b38903d8f/resourcegroups/rhel-mde-lab/providers/microsoft.compute/virtualmachines/rhel8-mde01",
+          "weight": 0.00379
+        }
+      ],
+      "pattern": null,
+      "minLength": 51.0,
+      "maxLength": 239.0
+    }
+  }
+}

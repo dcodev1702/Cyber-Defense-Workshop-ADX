@@ -1,0 +1,1558 @@
+{
+  "tableName": "OfficeActivity",
+  "sources": [
+    "sample:OfficeActivity-RealTelemetry.csv"
+  ],
+  "sampledRows": 8000.0,
+  "columnCount": 152,
+  "emptyInProd": [
+    "Application",
+    "UserDomain",
+    "Activity",
+    "Scope",
+    "Source_Name",
+    "MachineDomainInfo",
+    "MachineId",
+    "DestinationFileExtension",
+    "UserSharedWith",
+    "SharingType",
+    "CustomEvent",
+    "ModifiedObjectResolvedName",
+    "LogonUserDisplayName",
+    "ClientMachineName",
+    "ClientProcessName",
+    "ClientVersion",
+    "Folder",
+    "DestMailboxId",
+    "DestMailboxOwnerUPN",
+    "DestMailboxOwnerSid",
+    "DestMailboxOwnerMasterAccountSid",
+    "DestFolder",
+    "AffectedItems",
+    "SendAsUserSmtp",
+    "SendAsUserMailboxGuid",
+    "SendOnBehalfOfUserSmtp",
+    "SendonBehalfOfUserMailboxGuid",
+    "ExtendedProperties",
+    "Client",
+    "Actor",
+    "ActorContextId",
+    "ActorIpAddress",
+    "InterSystemsId",
+    "IntraSystemId",
+    "SupportTicketId",
+    "TargetContextId",
+    "EffectiveOrganization",
+    "ElevationApprover",
+    "ElevationRequestId",
+    "ElevationRole",
+    "GenericInfo",
+    "AzureActiveDirectory_EventType",
+    "AADTarget",
+    "Name",
+    "OldValue",
+    "NewValue",
+    "ChatName",
+    "TargetUserId",
+    "SRPolicyId",
+    "SRPolicyName",
+    "UniqueTokenId",
+    "DeviceInformation",
+    "MeetingDetailId",
+    "SensitivityLabelId",
+    "UniqueSharingId",
+    "ActorContextId_",
+    "_ResourceId"
+  ],
+  "generatedUtc": "2026-07-26T01:06:19.3996715Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Application": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UserDomain": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Activity": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UserAgent": {
+      "fillRate": 0.0202,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 111.0,
+      "maxLength": 111.0
+    },
+    "RecordType": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "ExchangeAdmin",
+          "weight": 0.59875
+        },
+        {
+          "value": "SharePointFileOperation",
+          "weight": 0.20062
+        },
+        {
+          "value": "MicrosoftTeams",
+          "weight": 0.10112
+        },
+        {
+          "value": "ExchangeItemAggregated",
+          "weight": 0.0995
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 23.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 7946,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 29.0,
+      "maxLength": 30.0
+    },
+    "Operation": {
+      "fillRate": 1.0,
+      "distinctCount": 9,
+      "topValues": [
+        {
+          "value": "Set-ConditionalAccessPolicy",
+          "weight": 0.19825
+        },
+        {
+          "value": "FileDownloaded",
+          "weight": 0.10138
+        },
+        {
+          "value": "Add-MailboxPermission",
+          "weight": 0.10125
+        },
+        {
+          "value": "MemberAdded",
+          "weight": 0.10112
+        },
+        {
+          "value": "Set-Mailbox",
+          "weight": 0.10112
+        },
+        {
+          "value": "New-InboxRule",
+          "weight": 0.10088
+        },
+        {
+          "value": "MailItemsAccessed",
+          "weight": 0.0995
+        },
+        {
+          "value": "FileAccessed",
+          "weight": 0.09925
+        },
+        {
+          "value": "Add-MailboxLocation",
+          "weight": 0.09725
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 27.0
+    },
+    "OrganizationId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "OrganizationId_": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "UserType": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 7.0
+    },
+    "UserKey": {
+      "fillRate": 1.0,
+      "distinctCount": 4829,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 27.0,
+      "maxLength": 72.0
+    },
+    "OfficeWorkload": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Exchange",
+          "weight": 0.69825
+        },
+        {
+          "value": "SharePoint",
+          "weight": 0.20062
+        },
+        {
+          "value": "MicrosoftTeams",
+          "weight": 0.10112
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 14.0
+    },
+    "ResultStatus": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 0.59875
+        },
+        {
+          "value": "Succeeded",
+          "weight": 0.40125
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 9.0
+    },
+    "ResultReasonType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 0.59875
+        },
+        {
+          "value": "Succeeded",
+          "weight": 0.40125
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 9.0
+    },
+    "OfficeObjectId": {
+      "fillRate": 0.5988,
+      "distinctCount": 120,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 53.0,
+      "maxLength": 53.0
+    },
+    "UserId": {
+      "fillRate": 1.0,
+      "distinctCount": 4829,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 27.0,
+      "maxLength": 72.0
+    },
+    "UserId_": {
+      "fillRate": 1.0,
+      "distinctCount": 4829,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 27.0,
+      "maxLength": 72.0
+    },
+    "ClientIP": {
+      "fillRate": 1.0,
+      "distinctCount": 7917,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 29.0
+    },
+    "ClientIP_": {
+      "fillRate": 1.0,
+      "distinctCount": 7917,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 29.0
+    },
+    "Scope": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Site_": {
+      "fillRate": 0.2006,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ItemType": {
+      "fillRate": 0.2006,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "File",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "EventSource": {
+      "fillRate": 0.2006,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "SharePoint",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "Source_Name": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MachineDomainInfo": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MachineId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Site_Url": {
+      "fillRate": 0.2006,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "url",
+      "sensitive": true,
+      "minLength": 51.0,
+      "maxLength": 51.0
+    },
+    "Site_Url_": {
+      "fillRate": 0.2006,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "url",
+      "sensitive": true,
+      "minLength": 51.0,
+      "maxLength": 51.0
+    },
+    "SourceRelativeUrl": {
+      "fillRate": 0.2006,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 28.0,
+      "maxLength": 28.0
+    },
+    "SourceRelativeUrl_": {
+      "fillRate": 0.2006,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 28.0,
+      "maxLength": 28.0
+    },
+    "SourceFileName": {
+      "fillRate": 0.2006,
+      "distinctCount": 100,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "SourceFileName_": {
+      "fillRate": 0.2006,
+      "distinctCount": 100,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "SourceFileExtension": {
+      "fillRate": 0.2006,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "vsdx",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "DestinationRelativeUrl": {
+      "fillRate": 0.2006,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 24.0,
+      "maxLength": 24.0
+    },
+    "DestinationFileName": {
+      "fillRate": 0.2006,
+      "distinctCount": 100,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "DestinationFileExtension": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UserSharedWith": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SharingType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CustomEvent": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Event_Data": {
+      "fillRate": 0.2006,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "<Group>Site Owners</Group><GroupId>3</GroupId>",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 46.0,
+      "maxLength": 46.0
+    },
+    "ModifiedObjectResolvedName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Parameters": {
+      "fillRate": 0.5988,
+      "distinctCount": 4790,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 103.0,
+      "maxLength": 103.0
+    },
+    "ExternalAccess": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 0.53238
+        },
+        {
+          "value": "False",
+          "weight": 0.46762
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "OriginatingServer": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "DM4PR18MB4318 (15.21.0202.012)",
+          "weight": 0.33512
+        },
+        {
+          "value": "CH2PR18MB3901 (15.21.0202.012)",
+          "weight": 0.33438
+        },
+        {
+          "value": "MN0PR18MB6038 (15.21.0202.012)",
+          "weight": 0.3305
+        }
+      ],
+      "pattern": null,
+      "minLength": 30.0,
+      "maxLength": 30.0
+    },
+    "OrganizationName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "Logon_Type": {
+      "fillRate": 0.3016,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Owner",
+          "weight": 0.66432
+        },
+        {
+          "value": "Admin",
+          "weight": 0.33568
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "InternalLogonType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.89875
+        },
+        {
+          "value": "1",
+          "weight": 0.10125
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "MailboxGuid": {
+      "fillRate": 0.3016,
+      "distinctCount": 2413,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "MailboxOwnerUPN": {
+      "fillRate": 0.3016,
+      "distinctCount": 2413,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 27.0,
+      "maxLength": 37.0
+    },
+    "MailboxOwnerSid": {
+      "fillRate": 0.3016,
+      "distinctCount": 2413,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 46.0,
+      "maxLength": 46.0
+    },
+    "MailboxOwnerMasterAccountSid": {
+      "fillRate": 0.3016,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 8.0
+    },
+    "LogonUserSid": {
+      "fillRate": 0.3016,
+      "distinctCount": 2413,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 46.0,
+      "maxLength": 46.0
+    },
+    "LogonUserDisplayName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ClientInfoString": {
+      "fillRate": 0.3016,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Client=REST;Client=RESTSystem;;",
+          "weight": 0.66556
+        },
+        {
+          "value": "Client=OutlookService;Outlook-iOS/2.0;",
+          "weight": 0.33444
+        }
+      ],
+      "pattern": null,
+      "minLength": 31.0,
+      "maxLength": 38.0
+    },
+    "Client_IPAddress": {
+      "fillRate": 0.3016,
+      "distinctCount": 2371,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 13.0
+    },
+    "ClientMachineName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ClientProcessName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ClientVersion": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Folder": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CrossMailboxOperations": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "DestMailboxId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DestMailboxOwnerUPN": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DestMailboxOwnerSid": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DestMailboxOwnerMasterAccountSid": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DestFolder": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Folders": {
+      "fillRate": 0.3016,
+      "distinctCount": 2413,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 194.0,
+      "maxLength": 194.0
+    },
+    "AffectedItems": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Item": {
+      "fillRate": 0.3016,
+      "distinctCount": 2413,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 114.0,
+      "maxLength": 114.0
+    },
+    "ModifiedProperties": {
+      "fillRate": 0.2006,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 58.0,
+      "maxLength": 58.0
+    },
+    "SendAsUserSmtp": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SendAsUserMailboxGuid": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SendOnBehalfOfUserSmtp": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SendonBehalfOfUserMailboxGuid": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ExtendedProperties": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Client": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "LoginStatus": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "Actor": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ActorContextId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ActorIpAddress": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "InterSystemsId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "IntraSystemId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SupportTicketId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TargetContextId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DataCenterSecurityEventType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "EffectiveOrganization": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ElevationTime": {
+      "fillRate": 1.0,
+      "distinctCount": 7937,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 29.0,
+      "maxLength": 30.0
+    },
+    "ElevationApprover": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ElevationApprovedTime": {
+      "fillRate": 1.0,
+      "distinctCount": 7946,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 29.0,
+      "maxLength": 30.0
+    },
+    "ElevationRequestId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ElevationRole": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ElevationDuration": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "GenericInfo": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "OfficeActivityManager",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 21.0,
+      "maxLength": 21.0
+    },
+    "OfficeId": {
+      "fillRate": 1.0,
+      "distinctCount": 8000,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SourceRecordId": {
+      "fillRate": 1.0,
+      "distinctCount": 8000,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AzureActiveDirectory_EventType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AADTarget": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Start_Time": {
+      "fillRate": 1.0,
+      "distinctCount": 7937,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 29.0,
+      "maxLength": 30.0
+    },
+    "OfficeTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 17.0
+    },
+    "OfficeTenantId_": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 17.0
+    },
+    "TargetUserOrGroupName": {
+      "fillRate": 0.2006,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 17.0
+    },
+    "TargetUserOrGroupType": {
+      "fillRate": 0.2006,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "MessageId": {
+      "fillRate": 0.3016,
+      "distinctCount": 2413,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "Members": {
+      "fillRate": 1.0,
+      "distinctCount": 810,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 144.0
+    },
+    "TeamName": {
+      "fillRate": 0.1011,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Engineering",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 11.0
+    },
+    "TeamGuid": {
+      "fillRate": 0.1011,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ChannelType": {
+      "fillRate": 0.1011,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Standard",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 8.0
+    },
+    "ChannelName": {
+      "fillRate": 0.1011,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "General",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "ChannelGuid": {
+      "fillRate": 0.1011,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "19:e59ea48f2d0548a2b8762f9957575424@thread.tacv2",
+          "weight": 0.34981
+        },
+        {
+          "value": "19:849197f4d132e2c347692946cb0defed@thread.tacv2",
+          "weight": 0.32509
+        },
+        {
+          "value": "19:1a9a4b0663bf26ad3d71d828d33edd67@thread.tacv2",
+          "weight": 0.32509
+        }
+      ],
+      "pattern": null,
+      "minLength": 48.0,
+      "maxLength": 48.0
+    },
+    "ExtraProperties": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "AddOnType": {
+      "fillRate": 0.1011,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Tab",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "AddonName": {
+      "fillRate": 0.1011,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Notes",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "TabType": {
+      "fillRate": 0.1011,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "extension",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 9.0
+    },
+    "Name": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OldValue": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NewValue": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ItemName": {
+      "fillRate": 0.1011,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Engineering",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 11.0
+    },
+    "ChatThreadId": {
+      "fillRate": 0.1011,
+      "distinctCount": 9,
+      "topValues": [
+        {
+          "value": "19:6e718adaa4cfdc71f3db2b1c27794bcb@thread.tacv2",
+          "weight": 0.11867
+        },
+        {
+          "value": "19:a36d3151db89ba7c78d6d3aba360d50e@thread.tacv2",
+          "weight": 0.11619
+        },
+        {
+          "value": "19:047a3dec375c205be9e3d9fe2faa3945@thread.tacv2",
+          "weight": 0.11496
+        },
+        {
+          "value": "19:65874a87932e863a5af0e051bbf39d7c@thread.tacv2",
+          "weight": 0.11248
+        },
+        {
+          "value": "19:cf7e977500a2425064e8316fb3c2b002@thread.tacv2",
+          "weight": 0.11125
+        },
+        {
+          "value": "19:27a163bd4ad351f83d0aecf7d48665ea@thread.tacv2",
+          "weight": 0.11001
+        },
+        {
+          "value": "19:3975e4636e15fe666edf828dab91c288@thread.tacv2",
+          "weight": 0.11001
+        },
+        {
+          "value": "19:9a82f0fec9e86445dfec88e037db26bf@thread.tacv2",
+          "weight": 0.10383
+        },
+        {
+          "value": "19:d868d7c812439887fdd27c3a1f485e51@thread.tacv2",
+          "weight": 0.1026
+        }
+      ],
+      "pattern": null,
+      "minLength": 48.0,
+      "maxLength": 48.0
+    },
+    "ChatName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CommunicationType": {
+      "fillRate": 0.1011,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Team",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "AADGroupId": {
+      "fillRate": 0.1011,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AddOnGuid": {
+      "fillRate": 0.1011,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AppDistributionMode": {
+      "fillRate": 0.1011,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Store",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "TargetUserId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OperationScope": {
+      "fillRate": 0.3018,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Site",
+          "weight": 0.66487
+        },
+        {
+          "value": "Chat",
+          "weight": 0.33513
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "AzureADAppId": {
+      "fillRate": 0.0101,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "OperationProperties": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 80.0
+    },
+    "AppId": {
+      "fillRate": 0.0984,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ClientAppId": {
+      "fillRate": 0.0984,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ApplicationId": {
+      "fillRate": 0.0101,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SRPolicyId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SRPolicyName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SRRuleMatchDetails": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "IsManagedDevice": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "false",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "AppPoolName": {
+      "fillRate": 0.3966,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "MSExchangeAdminApiNetCore",
+          "weight": 0.50678
+        },
+        {
+          "value": "MSExchangeServiceHostNetCore",
+          "weight": 0.49322
+        }
+      ],
+      "pattern": null,
+      "minLength": 25.0,
+      "maxLength": 28.0
+    },
+    "UniqueTokenId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "IssuedAtTime": {
+      "fillRate": 1.0,
+      "distinctCount": 7946,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 29.0,
+      "maxLength": 30.0
+    },
+    "AppAccessContext": {
+      "fillRate": 1.0,
+      "distinctCount": 4832,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 88.0
+    },
+    "Attendees": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "ArtifactsShared": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "IsJoinedFromLobby": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "false",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "JoinTime": {
+      "fillRate": 1.0,
+      "distinctCount": 7946,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 29.0,
+      "maxLength": 30.0
+    },
+    "LeaveTime": {
+      "fillRate": 1.0,
+      "distinctCount": 7946,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 29.0,
+      "maxLength": 30.0
+    },
+    "DeviceInformation": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MeetingDetailId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ListItemUniqueId": {
+      "fillRate": 0.2006,
+      "distinctCount": 1605,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SensitivityLabelId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UniqueSharingId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ActorContextId_": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "OfficeActivity",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 14.0,
+      "maxLength": 14.0
+    },
+    "_ResourceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

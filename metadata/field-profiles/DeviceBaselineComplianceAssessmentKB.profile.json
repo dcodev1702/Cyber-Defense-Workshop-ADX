@@ -1,0 +1,282 @@
+{
+  "tableName": "DeviceBaselineComplianceAssessmentKB",
+  "sources": [
+    "sample:DeviceBaselineComplianceAssessmentKB-RealTelemetry.csv"
+  ],
+  "sampledRows": 1358.0,
+  "columnCount": 15,
+  "emptyInProd": [
+    "TenantId",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:03:27.7833178Z",
+  "columns": {
+    "ConfigurationId": {
+      "fillRate": 1.0,
+      "distinctCount": 1358,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 16.0
+    },
+    "ConfigurationName": {
+      "fillRate": 1.0,
+      "distinctCount": 939,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 14.0,
+      "maxLength": 242.0
+    },
+    "ConfigurationDescription": {
+      "fillRate": 1.0,
+      "distinctCount": 840,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 50.0,
+      "maxLength": 3874.0
+    },
+    "ConfigurationRationale": {
+      "fillRate": 1.0,
+      "distinctCount": 413,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 14.0,
+      "maxLength": 1062.0
+    },
+    "ConfigurationCategory": {
+      "fillRate": 1.0,
+      "distinctCount": 199,
+      "topValues": [
+        {
+          "value": "User Rights Assignment",
+          "weight": 0.03829
+        },
+        {
+          "value": "System Services",
+          "weight": 0.03608
+        },
+        {
+          "value": "SRG-OS-000480-GPOS-00227",
+          "weight": 0.03019
+        },
+        {
+          "value": "Computer Configuration",
+          "weight": 0.02577
+        },
+        {
+          "value": "Removable Data Drives",
+          "weight": 0.02356
+        },
+        {
+          "value": "Internet Communication settings",
+          "weight": 0.02283
+        },
+        {
+          "value": "Operating System Drives",
+          "weight": 0.02135
+        },
+        {
+          "value": "Fixed Data Drives",
+          "weight": 0.01915
+        },
+        {
+          "value": "MSS (Legacy)",
+          "weight": 0.01841
+        },
+        {
+          "value": "SRG-OS-000095-GPOS-00049",
+          "weight": 0.01767
+        },
+        {
+          "value": "Security",
+          "weight": 0.01767
+        },
+        {
+          "value": "Logon",
+          "weight": 0.01694
+        },
+        {
+          "value": "Sleep Settings",
+          "weight": 0.0162
+        },
+        {
+          "value": "SRG-OS-000324-GPOS-00125",
+          "weight": 0.01546
+        },
+        {
+          "value": "Device and Resource Redirection",
+          "weight": 0.01546
+        },
+        {
+          "value": "Search",
+          "weight": 0.01325
+        },
+        {
+          "value": "Cloud Content",
+          "weight": 0.01325
+        },
+        {
+          "value": "Windows Defender Application Guard",
+          "weight": 0.01325
+        },
+        {
+          "value": "Public Profile",
+          "weight": 0.01325
+        },
+        {
+          "value": "Device Guard",
+          "weight": 0.01252
+        },
+        {
+          "value": "LAPS",
+          "weight": 0.01252
+        },
+        {
+          "value": "Data Collection and Preview Builds",
+          "weight": 0.01178
+        },
+        {
+          "value": "Network access",
+          "weight": 0.01178
+        },
+        {
+          "value": "WinRM Service",
+          "weight": 0.01105
+        },
+        {
+          "value": "Network security",
+          "weight": 0.01105
+        },
+        {
+          "value": "Real-time Protection",
+          "weight": 0.01105
+        },
+        {
+          "value": "Store",
+          "weight": 0.01105
+        },
+        {
+          "value": "Domain Profile",
+          "weight": 0.01031
+        },
+        {
+          "value": "User Account Control",
+          "weight": 0.01031
+        },
+        {
+          "value": "Device Installation Restrictions",
+          "weight": 0.01031
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 107.0
+    },
+    "BenchmarkProfileLevels": {
+      "fillRate": 1.0,
+      "distinctCount": 23,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 14.0,
+      "maxLength": 489.0
+    },
+    "CCEReference": {
+      "fillRate": 0.5368,
+      "distinctCount": 312,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 11.0
+    },
+    "RemediationOptions": {
+      "fillRate": 1.0,
+      "distinctCount": 1087,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 37.0,
+      "maxLength": 3264.0
+    },
+    "ConfigurationBenchmark": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "CIS",
+          "weight": 0.68999
+        },
+        {
+          "value": "Microsoft",
+          "weight": 0.15538
+        },
+        {
+          "value": "STIG",
+          "weight": 0.15464
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 9.0
+    },
+    "Source": {
+      "fillRate": 1.0,
+      "distinctCount": 590,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 9.0,
+      "maxLength": 1977.0
+    },
+    "RecommendedValue": {
+      "fillRate": 1.0,
+      "distinctCount": 129,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 14.0,
+      "maxLength": 251.0
+    },
+    "AssessmentMethod": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Automatic",
+          "weight": 0.96834
+        },
+        {
+          "value": "NotSupported",
+          "weight": 0.03166
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 12.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceBaselineComplianceAssessmentKB",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

@@ -1,0 +1,330 @@
+{
+  "tableName": "DeviceTvmSoftwareInventory",
+  "sources": [
+    "sample:DeviceTvmSoftwareInventory-Real.csv"
+  ],
+  "sampledRows": 1485.0,
+  "columnCount": 15,
+  "emptyInProd": [
+    "TenantId",
+    "SourceSystem",
+    "MachineGroup"
+  ],
+  "generatedUtc": "2026-07-26T01:04:35.1018510Z",
+  "columns": {
+    "DeviceId": {
+      "fillRate": 1.0,
+      "distinctCount": 21,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "DeviceName": {
+      "fillRate": 0.9993,
+      "distinctCount": 20,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 60.0
+    },
+    "OSPlatform": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "Linux",
+          "weight": 0.83502
+        },
+        {
+          "value": "Windows11",
+          "weight": 0.09428
+        },
+        {
+          "value": "Windows11WVD",
+          "weight": 0.02626
+        },
+        {
+          "value": "WindowsServer2025",
+          "weight": 0.02492
+        },
+        {
+          "value": "WindowsServer2022",
+          "weight": 0.01886
+        },
+        {
+          "value": "Windows10",
+          "weight": 0.00067
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 17.0
+    },
+    "OSVersion": {
+      "fillRate": 0.9993,
+      "distinctCount": 11,
+      "topValues": [
+        {
+          "value": "ubuntu_linux_24.04",
+          "weight": 0.83491
+        },
+        {
+          "value": "10.0.26200.8246",
+          "weight": 0.07884
+        },
+        {
+          "value": "10.0.26200.8328",
+          "weight": 0.02022
+        },
+        {
+          "value": "10.0.26100.32522",
+          "weight": 0.0155
+        },
+        {
+          "value": "10.0.28000.1896",
+          "weight": 0.0155
+        },
+        {
+          "value": "10.0.20348.5020",
+          "weight": 0.0128
+        },
+        {
+          "value": "10.0.26100.32370",
+          "weight": 0.00943
+        },
+        {
+          "value": "10.0.20348.4893",
+          "weight": 0.00606
+        },
+        {
+          "value": "10.0.26200.7840",
+          "weight": 0.00472
+        },
+        {
+          "value": "10.0.26200.0",
+          "weight": 0.00135
+        },
+        {
+          "value": "10.0.18363.0",
+          "weight": 0.00067
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 18.0
+    },
+    "OSArchitecture": {
+      "fillRate": 0.9987,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "x64",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "SoftwareVendor": {
+      "fillRate": 1.0,
+      "distinctCount": 16,
+      "topValues": [
+        {
+          "value": "ubuntu",
+          "weight": 0.8303
+        },
+        {
+          "value": "microsoft",
+          "weight": 0.13199
+        },
+        {
+          "value": "openssl",
+          "weight": 0.02155
+        },
+        {
+          "value": "tukaani",
+          "weight": 0.00404
+        },
+        {
+          "value": "git-scm",
+          "weight": 0.00202
+        },
+        {
+          "value": "nodejs",
+          "weight": 0.00202
+        },
+        {
+          "value": "axios",
+          "weight": 0.00135
+        },
+        {
+          "value": "mozilla",
+          "weight": 0.00135
+        },
+        {
+          "value": "7-zip",
+          "weight": 0.00067
+        },
+        {
+          "value": "adobe",
+          "weight": 0.00067
+        },
+        {
+          "value": "debian",
+          "weight": 0.00067
+        },
+        {
+          "value": "disa",
+          "weight": 0.00067
+        },
+        {
+          "value": "docker",
+          "weight": 0.00067
+        },
+        {
+          "value": "github",
+          "weight": 0.00067
+        },
+        {
+          "value": "gnu",
+          "weight": 0.00067
+        },
+        {
+          "value": "niwc_atlantic",
+          "weight": 0.00067
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 13.0
+    },
+    "SoftwareName": {
+      "fillRate": 1.0,
+      "distinctCount": 717,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 59.0
+    },
+    "SoftwareVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 575,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 39.0
+    },
+    "EndOfSupportStatus": {
+      "fillRate": 0.0202,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Upcoming EOS Version",
+          "weight": 0.66667
+        },
+        {
+          "value": "EOS Version",
+          "weight": 0.33333
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 20.0
+    },
+    "EndOfSupportDate": {
+      "fillRate": 1.0,
+      "distinctCount": 10,
+      "topValues": [
+        {
+          "value": "Invalid date",
+          "weight": 0.9798
+        },
+        {
+          "value": "Oct 31, 2026 8:00:00 PM",
+          "weight": 0.00606
+        },
+        {
+          "value": "Sep 6, 2026 8:00:00 PM",
+          "weight": 0.00337
+        },
+        {
+          "value": "Apr 8, 2026 8:00:00 PM",
+          "weight": 0.00269
+        },
+        {
+          "value": "Oct 12, 2026 8:00:00 PM",
+          "weight": 0.00202
+        },
+        {
+          "value": "Oct 21, 2026 8:00:00 PM",
+          "weight": 0.00202
+        },
+        {
+          "value": "Apr 8, 2024 8:00:00 PM",
+          "weight": 0.00135
+        },
+        {
+          "value": "Nov 7, 2024 7:00:00 PM",
+          "weight": 0.00135
+        },
+        {
+          "value": "Apr 20, 2026 8:00:00 PM",
+          "weight": 0.00067
+        },
+        {
+          "value": "Sep 10, 2023 8:00:00 PM",
+          "weight": 0.00067
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 23.0
+    },
+    "ProductCodeCpe": {
+      "fillRate": 1.0,
+      "distinctCount": 465,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 63.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceTvmSoftwareInventory",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 26.0,
+      "maxLength": 26.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MachineGroup": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

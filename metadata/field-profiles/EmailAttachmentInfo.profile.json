@@ -1,0 +1,337 @@
+{
+  "tableName": "EmailAttachmentInfo",
+  "sources": [
+    "sample:EmailAttachmentInfo-RealTelemetry.csv"
+  ],
+  "sampledRows": 521.0,
+  "columnCount": 20,
+  "emptyInProd": [
+    "ThreatTypes",
+    "ThreatNames",
+    "DetectionMethods",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:05:11.3181075Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "FileName": {
+      "fillRate": 1.0,
+      "distinctCount": 61,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 37.0
+    },
+    "FileType": {
+      "fillRate": 0.9693,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "png",
+          "weight": 0.95248
+        },
+        {
+          "value": "jpeg",
+          "weight": 0.0198
+        },
+        {
+          "value": "eml;mime",
+          "weight": 0.01188
+        },
+        {
+          "value": "txt;text",
+          "weight": 0.01188
+        },
+        {
+          "value": "docx",
+          "weight": 0.00396
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 8.0
+    },
+    "NetworkMessageId": {
+      "fillRate": 1.0,
+      "distinctCount": 72,
+      "topValues": [],
+      "pattern": "guid",
+      "freeText": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "RecipientEmailAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 13,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 19.0,
+      "maxLength": 40.0
+    },
+    "RecipientObjectId": {
+      "fillRate": 0.9846,
+      "distinctCount": 13,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 261,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 122.0,
+      "maxLength": 124.0
+    },
+    "SHA256": {
+      "fillRate": 1.0,
+      "distinctCount": 39,
+      "topValues": [],
+      "pattern": "sha256",
+      "minLength": 64.0,
+      "maxLength": 64.0
+    },
+    "SenderDisplayName": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 26.0
+    },
+    "SenderObjectId": {
+      "fillRate": 0.7524,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ThreatTypes": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SenderFromAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 32.0,
+      "maxLength": 77.0
+    },
+    "ThreatNames": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DetectionMethods": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "FileSize": {
+      "fillRate": 1.0,
+      "distinctCount": 37,
+      "topValues": [
+        {
+          "value": "4405",
+          "weight": 0.15163
+        },
+        {
+          "value": "905",
+          "weight": 0.07294
+        },
+        {
+          "value": "11947",
+          "weight": 0.04607
+        },
+        {
+          "value": "95584",
+          "weight": 0.04607
+        },
+        {
+          "value": "9473",
+          "weight": 0.04607
+        },
+        {
+          "value": "8545",
+          "weight": 0.04607
+        },
+        {
+          "value": "3213",
+          "weight": 0.04607
+        },
+        {
+          "value": "2675",
+          "weight": 0.04607
+        },
+        {
+          "value": "224",
+          "weight": 0.04607
+        },
+        {
+          "value": "9980",
+          "weight": 0.04607
+        },
+        {
+          "value": "21689",
+          "weight": 0.04607
+        },
+        {
+          "value": "1211",
+          "weight": 0.02687
+        },
+        {
+          "value": "21745",
+          "weight": 0.02687
+        },
+        {
+          "value": "367735",
+          "weight": 0.02687
+        },
+        {
+          "value": "21641",
+          "weight": 0.02687
+        },
+        {
+          "value": "4938",
+          "weight": 0.02687
+        },
+        {
+          "value": "35857",
+          "weight": 0.02687
+        },
+        {
+          "value": "9825",
+          "weight": 0.02303
+        },
+        {
+          "value": "2670",
+          "weight": 0.01919
+        },
+        {
+          "value": "915",
+          "weight": 0.01919
+        },
+        {
+          "value": "212",
+          "weight": 0.01919
+        },
+        {
+          "value": "3066",
+          "weight": 0.01919
+        },
+        {
+          "value": "298",
+          "weight": 0.01919
+        },
+        {
+          "value": "325",
+          "weight": 0.01919
+        },
+        {
+          "value": "560",
+          "weight": 0.00768
+        },
+        {
+          "value": "2877",
+          "weight": 0.00768
+        },
+        {
+          "value": "458",
+          "weight": 0.00768
+        },
+        {
+          "value": "21655",
+          "weight": 0.00384
+        },
+        {
+          "value": "630",
+          "weight": 0.00384
+        },
+        {
+          "value": "2133",
+          "weight": 0.00384
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 6.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 55,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 55,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "FileExtension": {
+      "fillRate": 0.5835,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": ".png",
+          "weight": 0.99342
+        },
+        {
+          "value": ".docx",
+          "weight": 0.00658
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "EmailAttachmentInfo",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 19.0,
+      "maxLength": 19.0
+    }
+  }
+}

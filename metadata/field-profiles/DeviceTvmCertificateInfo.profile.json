@@ -1,0 +1,345 @@
+{
+  "tableName": "DeviceTvmCertificateInfo",
+  "sources": [
+    "sample:DeviceTvmCertificateInfo-Real.csv"
+  ],
+  "sampledRows": 157.0,
+  "columnCount": 18,
+  "emptyInProd": [
+    "TenantId",
+    "SourceSystem",
+    "MachineGroup"
+  ],
+  "generatedUtc": "2026-07-26T01:04:32.1098038Z",
+  "columns": {
+    "DeviceId": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "Thumbprint": {
+      "fillRate": 1.0,
+      "distinctCount": 98,
+      "topValues": [],
+      "pattern": "sha1",
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "Path": {
+      "fillRate": 1.0,
+      "distinctCount": 116,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 99.0,
+      "maxLength": 157.0
+    },
+    "SerialNumber": {
+      "fillRate": 1.0,
+      "distinctCount": 95,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 38.0
+    },
+    "IssuedTo": {
+      "fillRate": 1.0,
+      "distinctCount": 92,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 188.0
+    },
+    "IssuedBy": {
+      "fillRate": 1.0,
+      "distinctCount": 89,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 188.0
+    },
+    "FriendlyName": {
+      "fillRate": 0.5159,
+      "distinctCount": 31,
+      "topValues": [
+        {
+          "value": "DigiCert",
+          "weight": 0.12346
+        },
+        {
+          "value": "TenantEncryptionCert",
+          "weight": 0.04938
+        },
+        {
+          "value": "Sectigo ECC",
+          "weight": 0.04938
+        },
+        {
+          "value": "Sectigo (AAA)",
+          "weight": 0.04938
+        },
+        {
+          "value": "Sectigo",
+          "weight": 0.04938
+        },
+        {
+          "value": "ISRG Root X1",
+          "weight": 0.04938
+        },
+        {
+          "value": "VeriSign Class 3 Public Primary CA",
+          "weight": 0.04938
+        },
+        {
+          "value": "Amazon Services Root Certificate Authority -- G2",
+          "weight": 0.02469
+        },
+        {
+          "value": "Thawte Timestamping CA",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft Timestamp Root",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft Time Stamp Root Certificate Authority 2014",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft RSA Root Certificate Authority 2017",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft Root Certificate Authority 2011",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft Root Certificate Authority 2010",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft Root Certificate Authority",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft Root Authority",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft Flighting Root 2014",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft ECC TS Root Certificate Authority 2018",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft ECC Testing Root Certificate Authority 2017",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft ECC Product Root Certificate Authority 2018",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft ECC Development Root Certificate Authority 2018",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft Authenticode(tm) Root",
+          "weight": 0.02469
+        },
+        {
+          "value": "GlobalSign Root CA - R3",
+          "weight": 0.02469
+        },
+        {
+          "value": "GlobalSign Root CA - R1",
+          "weight": 0.02469
+        },
+        {
+          "value": "DigiCert Trusted Root G4",
+          "weight": 0.02469
+        },
+        {
+          "value": "DigiCert Global Root G3",
+          "weight": 0.02469
+        },
+        {
+          "value": "DigiCert Global Root G2",
+          "weight": 0.02469
+        },
+        {
+          "value": "DigiCert CS RSA4096 Root G5",
+          "weight": 0.02469
+        },
+        {
+          "value": "Microsoft Identity Verification Root Certificate Authority 2020",
+          "weight": 0.02469
+        },
+        {
+          "value": "VeriSign Time Stamping CA",
+          "weight": 0.02469
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 63.0
+    },
+    "SignatureAlgorithm": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [
+        {
+          "value": "sha1RSA",
+          "weight": 0.40127
+        },
+        {
+          "value": "sha256RSA",
+          "weight": 0.25478
+        },
+        {
+          "value": "md5RSA",
+          "weight": 0.10191
+        },
+        {
+          "value": "sha384ECDSA",
+          "weight": 0.10191
+        },
+        {
+          "value": "sha384RSA",
+          "weight": 0.0828
+        },
+        {
+          "value": "md2RSA",
+          "weight": 0.02548
+        },
+        {
+          "value": "sha1DSA",
+          "weight": 0.02548
+        },
+        {
+          "value": "sha256ECDSA",
+          "weight": 0.00637
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 11.0
+    },
+    "KeySize": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "2048",
+          "weight": 0.55414
+        },
+        {
+          "value": "4096",
+          "weight": 0.19745
+        },
+        {
+          "value": "1024",
+          "weight": 0.11465
+        },
+        {
+          "value": "0",
+          "weight": 0.10828
+        },
+        {
+          "value": "1536",
+          "weight": 0.01274
+        },
+        {
+          "value": "512",
+          "weight": 0.01274
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 4.0
+    },
+    "ExpirationDate": {
+      "fillRate": 1.0,
+      "distinctCount": 85,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "IssueDate": {
+      "fillRate": 1.0,
+      "distinctCount": 84,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "SubjectType": {
+      "fillRate": 0.8408,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 10.0
+    },
+    "KeyUsage": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 119.0
+    },
+    "ExtendedKeyUsage": {
+      "fillRate": 1.0,
+      "distinctCount": 10,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 89.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceTvmCertificateInfo",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 24.0,
+      "maxLength": 24.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MachineGroup": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

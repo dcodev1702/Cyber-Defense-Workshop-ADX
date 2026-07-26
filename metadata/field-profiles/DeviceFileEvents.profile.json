@@ -1,0 +1,845 @@
+{
+  "tableName": "DeviceFileEvents",
+  "sources": [
+    "sample:New query (7).csv"
+  ],
+  "sampledRows": 2317.0,
+  "columnCount": 47,
+  "emptyInProd": [
+    "AppGuardContainerId",
+    "TenantId",
+    "SourceSystem",
+    "MachineGroup"
+  ],
+  "generatedUtc": "2026-07-26T01:03:43.5209841Z",
+  "columns": {
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 1333,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 23.0,
+      "maxLength": 24.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 1333,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 23.0,
+      "maxLength": 24.0
+    },
+    "DeviceId": {
+      "fillRate": 1.0,
+      "distinctCount": 12,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "DeviceName": {
+      "fillRate": 1.0,
+      "distinctCount": 12,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 30.0
+    },
+    "ActionType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "ImageLoaded",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 11.0
+    },
+    "FileName": {
+      "fillRate": 1.0,
+      "distinctCount": 288,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 80.0
+    },
+    "FolderPath": {
+      "fillRate": 1.0,
+      "distinctCount": 843,
+      "topValues": [],
+      "pattern": "winpath",
+      "sensitive": true,
+      "minLength": 27.0,
+      "maxLength": 181.0
+    },
+    "SHA1": {
+      "fillRate": 0.9983,
+      "distinctCount": 857,
+      "topValues": [],
+      "pattern": "sha1",
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "SHA256": {
+      "fillRate": 0.9983,
+      "distinctCount": 857,
+      "topValues": [],
+      "pattern": "sha256",
+      "minLength": 64.0,
+      "maxLength": 64.0
+    },
+    "MD5": {
+      "fillRate": 0.9983,
+      "distinctCount": 857,
+      "topValues": [],
+      "pattern": "md5",
+      "minLength": 32.0,
+      "maxLength": 32.0
+    },
+    "FileSize": {
+      "fillRate": 0.9978,
+      "distinctCount": 588,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 9.0
+    },
+    "InitiatingProcessAccountDomain": {
+      "fillRate": 0.9991,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 12.0
+    },
+    "InitiatingProcessAccountName": {
+      "fillRate": 0.9991,
+      "distinctCount": 8,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 15.0
+    },
+    "InitiatingProcessAccountSid": {
+      "fillRate": 0.9991,
+      "distinctCount": 8,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 52.0
+    },
+    "InitiatingProcessAccountUpn": {
+      "fillRate": 0.2011,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 34.0,
+      "maxLength": 36.0
+    },
+    "InitiatingProcessAccountObjectId": {
+      "fillRate": 0.2011,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "InitiatingProcessIntegrityLevel": {
+      "fillRate": 0.9991,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "System",
+          "weight": 0.7905
+        },
+        {
+          "value": "Medium",
+          "weight": 0.14341
+        },
+        {
+          "value": "Low",
+          "weight": 0.03456
+        },
+        {
+          "value": "High",
+          "weight": 0.03067
+        },
+        {
+          "value": "Invalid",
+          "weight": 0.00086
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 7.0
+    },
+    "InitiatingProcessTokenElevation": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "TokenElevationTypeDefault",
+          "weight": 0.79801
+        },
+        {
+          "value": "TokenElevationTypeLimited",
+          "weight": 0.17393
+        },
+        {
+          "value": "TokenElevationTypeFull",
+          "weight": 0.02719
+        },
+        {
+          "value": "None",
+          "weight": 0.00086
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 25.0
+    },
+    "InitiatingProcessSHA1": {
+      "fillRate": 0.9987,
+      "distinctCount": 163,
+      "topValues": [],
+      "pattern": "sha1",
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "InitiatingProcessSHA256": {
+      "fillRate": 0.9987,
+      "distinctCount": 163,
+      "topValues": [],
+      "pattern": "sha256",
+      "minLength": 64.0,
+      "maxLength": 64.0
+    },
+    "InitiatingProcessMD5": {
+      "fillRate": 0.9987,
+      "distinctCount": 163,
+      "topValues": [],
+      "pattern": "md5",
+      "minLength": 32.0,
+      "maxLength": 32.0
+    },
+    "InitiatingProcessFileName": {
+      "fillRate": 0.9991,
+      "distinctCount": 87,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 52.0
+    },
+    "InitiatingProcessFileSize": {
+      "fillRate": 0.9987,
+      "distinctCount": 139,
+      "topValues": [
+        {
+          "value": "454656",
+          "weight": 0.13786
+        },
+        {
+          "value": "139672",
+          "weight": 0.1115
+        },
+        {
+          "value": "128432",
+          "weight": 0.07001
+        },
+        {
+          "value": "151984",
+          "weight": 0.05532
+        },
+        {
+          "value": "88232",
+          "weight": 0.05099
+        },
+        {
+          "value": "125872",
+          "weight": 0.04754
+        },
+        {
+          "value": "105816",
+          "weight": 0.04278
+        },
+        {
+          "value": "117160",
+          "weight": 0.03544
+        },
+        {
+          "value": "507904",
+          "weight": 0.03068
+        },
+        {
+          "value": "1647648",
+          "weight": 0.02809
+        },
+        {
+          "value": "450560",
+          "weight": 0.02636
+        },
+        {
+          "value": "21385504",
+          "weight": 0.01858
+        },
+        {
+          "value": "50496",
+          "weight": 0.01685
+        },
+        {
+          "value": "184320",
+          "weight": 0.01642
+        },
+        {
+          "value": "148976",
+          "weight": 0.01556
+        },
+        {
+          "value": "5688304",
+          "weight": 0.01513
+        },
+        {
+          "value": "101376",
+          "weight": 0.01296
+        },
+        {
+          "value": "92392",
+          "weight": 0.01167
+        },
+        {
+          "value": "50592",
+          "weight": 0.01124
+        },
+        {
+          "value": "81920",
+          "weight": 0.0108
+        },
+        {
+          "value": "20649792",
+          "weight": 0.00951
+        },
+        {
+          "value": "21389600",
+          "weight": 0.00908
+        },
+        {
+          "value": "5631992",
+          "weight": 0.00908
+        },
+        {
+          "value": "160296",
+          "weight": 0.00778
+        },
+        {
+          "value": "73728",
+          "weight": 0.00735
+        },
+        {
+          "value": "1474560",
+          "weight": 0.00691
+        },
+        {
+          "value": "77824",
+          "weight": 0.00648
+        },
+        {
+          "value": "47136",
+          "weight": 0.00519
+        },
+        {
+          "value": "955240",
+          "weight": 0.00475
+        },
+        {
+          "value": "172344",
+          "weight": 0.00475
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 9.0
+    },
+    "InitiatingProcessVersionInfoCompanyName": {
+      "fillRate": 0.9702,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 30.0
+    },
+    "InitiatingProcessVersionInfoProductName": {
+      "fillRate": 0.9659,
+      "distinctCount": 29,
+      "topValues": [
+        {
+          "value": "Microsoft® Windows® Operating System",
+          "weight": 0.52234
+        },
+        {
+          "value": "Microsoft® .NET Framework",
+          "weight": 0.29669
+        },
+        {
+          "value": "Python",
+          "weight": 0.04424
+        },
+        {
+          "value": "Microsoft 365 Copilot",
+          "weight": 0.03843
+        },
+        {
+          "value": "OpenHandleCollector",
+          "weight": 0.02904
+        },
+        {
+          "value": "Windows Azure SDK",
+          "weight": 0.00804
+        },
+        {
+          "value": "Microsoft OneDrive Sync Service",
+          "weight": 0.00581
+        },
+        {
+          "value": "WindowsAzureGuestAgent",
+          "weight": 0.00536
+        },
+        {
+          "value": "Windows® Search",
+          "weight": 0.00492
+        },
+        {
+          "value": "Microsoft OneDrive",
+          "weight": 0.00447
+        },
+        {
+          "value": "CollectGuestLogs",
+          "weight": 0.00402
+        },
+        {
+          "value": "Microsoft Edge Installer",
+          "weight": 0.00402
+        },
+        {
+          "value": "Windows Installer - Unicode",
+          "weight": 0.00357
+        },
+        {
+          "value": "Widgets Platform Runtime",
+          "weight": 0.00357
+        },
+        {
+          "value": "Microsoft® Azure Backup",
+          "weight": 0.00313
+        },
+        {
+          "value": "Microsoft Teams",
+          "weight": 0.00313
+        },
+        {
+          "value": "Office Push Notifications Utility",
+          "weight": 0.00268
+        },
+        {
+          "value": "PowerShell",
+          "weight": 0.00268
+        },
+        {
+          "value": "Microsoft® Intune™",
+          "weight": 0.00223
+        },
+        {
+          "value": "Microsoft Edge",
+          "weight": 0.00223
+        },
+        {
+          "value": "Microsoft Edge WebView2",
+          "weight": 0.00179
+        },
+        {
+          "value": "Geneva Monitoring Agent",
+          "weight": 0.00179
+        },
+        {
+          "value": "Visual Studio Code",
+          "weight": 0.00134
+        },
+        {
+          "value": "Game Bar",
+          "weight": 0.00134
+        },
+        {
+          "value": "Microsoft (R) Windows (R) Operating System",
+          "weight": 0.00089
+        },
+        {
+          "value": "ServiceHub.Host.dotnet.x64",
+          "weight": 0.00089
+        },
+        {
+          "value": "Outlook",
+          "weight": 0.00045
+        },
+        {
+          "value": "Microsoft Office",
+          "weight": 0.00045
+        },
+        {
+          "value": "Microsoft Outlook",
+          "weight": 0.00045
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 42.0
+    },
+    "InitiatingProcessVersionInfoProductVersion": {
+      "fillRate": 0.9715,
+      "distinctCount": 77,
+      "topValues": [
+        {
+          "value": "4.8.9221.0",
+          "weight": 0.18658
+        },
+        {
+          "value": "10.0.26100.5074",
+          "weight": 0.15104
+        },
+        {
+          "value": "4.8.4380.0",
+          "weight": 0.10573
+        },
+        {
+          "value": "10.0.26100.8115",
+          "weight": 0.05242
+        },
+        {
+          "value": "10.0.26100.7705",
+          "weight": 0.04487
+        },
+        {
+          "value": "3.13.11",
+          "weight": 0.04398
+        },
+        {
+          "value": "10.0.28000.1",
+          "weight": 0.03865
+        },
+        {
+          "value": "10.0.26100.7309",
+          "weight": 0.03065
+        },
+        {
+          "value": "1.0.0",
+          "weight": 0.02888
+        },
+        {
+          "value": "10.0.26100.7920",
+          "weight": 0.02843
+        },
+        {
+          "value": "10.0.26100.1",
+          "weight": 0.02266
+        },
+        {
+          "value": "10.0.20348.2849",
+          "weight": 0.01955
+        },
+        {
+          "value": "19.2604.52241.0",
+          "weight": 0.0191
+        },
+        {
+          "value": "10.0.28000.1643",
+          "weight": 0.01777
+        },
+        {
+          "value": "1507.2602.25052.0",
+          "weight": 0.01555
+        },
+        {
+          "value": "10.0.28000.1516",
+          "weight": 0.01422
+        },
+        {
+          "value": "10.0.26100.7019",
+          "weight": 0.01377
+        },
+        {
+          "value": "2.7.41491.1183",
+          "weight": 0.01333
+        },
+        {
+          "value": "19.2604.50081.0",
+          "weight": 0.00977
+        },
+        {
+          "value": "1507.2602.4052.0",
+          "weight": 0.00933
+        },
+        {
+          "value": "19.2604.56051.0",
+          "weight": 0.00933
+        },
+        {
+          "value": "10.0.20348.1",
+          "weight": 0.00888
+        },
+        {
+          "value": "10.0.20348.3451",
+          "weight": 0.00888
+        },
+        {
+          "value": "147.0.3912.86",
+          "weight": 0.00755
+        },
+        {
+          "value": "26.062.0402.0002",
+          "weight": 0.00622
+        },
+        {
+          "value": "3.0.03194.61+d8252a8a14d1333d697832b1e9e6c5bb089c7021",
+          "weight": 0.004
+        },
+        {
+          "value": "7.0.26100.8246",
+          "weight": 0.004
+        },
+        {
+          "value": "10.8805.27858.1000",
+          "weight": 0.004
+        },
+        {
+          "value": "2126.2300.0.0",
+          "weight": 0.00355
+        },
+        {
+          "value": "10.0.26100.8246",
+          "weight": 0.00355
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 113.0
+    },
+    "InitiatingProcessVersionInfoInternalFileName": {
+      "fillRate": 0.9707,
+      "distinctCount": 80,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 3.0,
+      "maxLength": 52.0
+    },
+    "InitiatingProcessVersionInfoOriginalFileName": {
+      "fillRate": 0.9715,
+      "distinctCount": 82,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 52.0
+    },
+    "InitiatingProcessVersionInfoFileDescription": {
+      "fillRate": 0.9607,
+      "distinctCount": 76,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 5.0,
+      "maxLength": 83.0
+    },
+    "InitiatingProcessId": {
+      "fillRate": 1.0,
+      "distinctCount": 1134,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 3.0,
+      "maxLength": 5.0
+    },
+    "InitiatingProcessCommandLine": {
+      "fillRate": 0.9991,
+      "distinctCount": 830,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 1.0,
+      "maxLength": 1035.0
+    },
+    "InitiatingProcessCreationTime": {
+      "fillRate": 1.0,
+      "distinctCount": 1118,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 12.0,
+      "maxLength": 24.0
+    },
+    "InitiatingProcessFolderPath": {
+      "fillRate": 0.9991,
+      "distinctCount": 137,
+      "topValues": [],
+      "pattern": "winpath",
+      "sensitive": true,
+      "minLength": 23.0,
+      "maxLength": 173.0
+    },
+    "InitiatingProcessParentId": {
+      "fillRate": 1.0,
+      "distinctCount": 409,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 5.0
+    },
+    "InitiatingProcessParentFileName": {
+      "fillRate": 0.9991,
+      "distinctCount": 39,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 61.0
+    },
+    "InitiatingProcessParentCreationTime": {
+      "fillRate": 1.0,
+      "distinctCount": 423,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 12.0,
+      "maxLength": 24.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 2282,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 7.0
+    },
+    "AppGuardContainerId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "InitiatingProcessSessionId": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.7855
+        },
+        {
+          "value": "2",
+          "weight": 0.1912
+        },
+        {
+          "value": "4",
+          "weight": 0.0164
+        },
+        {
+          "value": "3",
+          "weight": 0.00518
+        },
+        {
+          "value": "1",
+          "weight": 0.00173
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "IsInitiatingProcessRemoteSession": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.8347
+        },
+        {
+          "value": "1",
+          "weight": 0.1653
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "InitiatingProcessRemoteSessionDeviceName": {
+      "fillRate": 0.1653,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 15.0
+    },
+    "InitiatingProcessRemoteSessionIP": {
+      "fillRate": 0.016,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "ipv4",
+      "minLength": 8.0,
+      "maxLength": 13.0
+    },
+    "InitiatingProcessUniqueId": {
+      "fillRate": 1.0,
+      "distinctCount": 1558,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 17.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceImageLoadEvents",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 21.0,
+      "maxLength": 21.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MachineGroup": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

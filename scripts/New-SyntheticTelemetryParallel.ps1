@@ -79,7 +79,6 @@ $SchemaDirectory = (Resolve-Path $SchemaDirectory).Path
 # from this reduction and runs at the full row count.
 $script:ReferenceTableRowFactor = @{
     DeviceBaselineComplianceProfiles         = 0.05
-    DeviceTvmBrowserExtensionsKB             = 0.10
     DeviceTvmInfoGatheringKB                 = 0.05
     DeviceTvmSecureConfigurationAssessmentKB = 0.10
 }

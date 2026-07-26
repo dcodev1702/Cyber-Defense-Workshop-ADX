@@ -1,0 +1,492 @@
+{
+  "tableName": "AADGraphActivityLogs",
+  "sources": [
+    "sample:AADGraphActivityLogs-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 34,
+  "emptyInProd": [
+    "ResultSignature",
+    "Level",
+    "DeviceId",
+    "SourceSystem",
+    "_ResourceId"
+  ],
+  "generatedUtc": "2026-07-26T01:06:25.8670901Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 1737,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "TimeRequested": {
+      "fillRate": 1.0,
+      "distinctCount": 1181,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "Location": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 14.0
+    },
+    "RequestId": {
+      "fillRate": 1.0,
+      "distinctCount": 1638,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AADTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "OperationName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AAD Graph Activity",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 18.0,
+      "maxLength": 18.0
+    },
+    "ApiVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "1.61-internal",
+          "weight": 0.5115
+        },
+        {
+          "value": "1.6-internal",
+          "weight": 0.4405
+        },
+        {
+          "value": "1.6",
+          "weight": 0.0395
+        },
+        {
+          "value": "1.5-internal",
+          "weight": 0.0055
+        },
+        {
+          "value": "1.42-previewInternal",
+          "weight": 0.0015
+        },
+        {
+          "value": "beta",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 20.0
+    },
+    "Category": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AzureADGraphActivityLogs",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 24.0,
+      "maxLength": 24.0
+    },
+    "ResultSignature": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DurationMs": {
+      "fillRate": 1.0,
+      "distinctCount": 226,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 3.0
+    },
+    "Level": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RequestMethod": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "GET",
+          "weight": 0.6065
+        },
+        {
+          "value": "POST",
+          "weight": 0.374
+        },
+        {
+          "value": "PATCH",
+          "weight": 0.0195
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 5.0
+    },
+    "ResponseStatusCode": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "200",
+          "weight": 0.7755
+        },
+        {
+          "value": "202",
+          "weight": 0.1865
+        },
+        {
+          "value": "204",
+          "weight": 0.0165
+        },
+        {
+          "value": "404",
+          "weight": 0.0125
+        },
+        {
+          "value": "302",
+          "weight": 0.0055
+        },
+        {
+          "value": "201",
+          "weight": 0.002
+        },
+        {
+          "value": "400",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "ResponseSizeBytes": {
+      "fillRate": 1.0,
+      "distinctCount": 251,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 6.0
+    },
+    "SignInActivityId": {
+      "fillRate": 1.0,
+      "distinctCount": 1085,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 24.0,
+      "maxLength": 36.0
+    },
+    "Roles": {
+      "fillRate": 0.0365,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": " RoleManagementPolicy.ReadWrite.Directory, Policy.ReadWrite.ConditionalAccess, Policy.ReadWrite.AuthenticationMethod, RoleEligibilitySchedule.ReadWrite.Directory, User.ReadWrite.All, RoleManagement.Read.Directory, Directory.Read.All, RoleManagement.Read.All, RoleManagementPolicy.Read.Directory, Organization.ReadWrite.All, RoleManagement.ReadWrite.Directory, Policy.Read.All, Application.Read.All, Policy.ReadWrite.Authorization,",
+          "weight": 0.64384
+        },
+        {
+          "value": " _B.AG, _E.AX, _G.AI, Application.Read.All, CustomSecAttributeAssignment.Read.All, CustomSecAttributeDefinition.Read.All, IdentityRiskyUser.Read.All, Organization.Read.All, Policy.Read.All, RoleManagement.Read.Directory, User.ReadBasic.All,",
+          "weight": 0.23288
+        },
+        {
+          "value": " _G.AA, _G.AI, _G.AN, Application.Read.All, AuditLog.Read.All, DeviceManagementConfiguration.Read.All, Domain.Read.All, GroupMember.Read.All, IdentityRiskyUser.ReadWrite.All, Organization.Read.All, OrgSettings-Forms.Read.All, Policy.Read.All, RoleAssignmentSchedule.Read.Directory, RoleManagement.Read.Directory, SensitiveInfoType.Read.All, SharePointTenantSettings.Read.All, User.EnableDisableAccount.All, User.Read.All, User.RevokeSessions.All,",
+          "weight": 0.08219
+        },
+        {
+          "value": " _G.AA, _G.AI, _G.AN, Application.Read.All, AuditLog.Read.All, DeviceManagementConfiguration.Read.All, Domain.Read.All, GroupMember.Read.All, IdentityRiskyUser.ReadWrite.All, Organization.Read.All, OrgSettings-Forms.Read.All, Policy.Read.All, RoleAssignmentSchedule.Read.Directory, RoleManagement.Read.Directory, SensitiveInfoType.Read.All, ServicePrincipal.ReadEnableDisable.All, SharePointTenantSettings.Read.All, User.EnableDisableAccount.All, User.Read.All, User.RevokeSessions.All,",
+          "weight": 0.0411
+        }
+      ],
+      "pattern": null,
+      "minLength": 240.0,
+      "maxLength": 486.0
+    },
+    "TokenIssuedAt": {
+      "fillRate": 1.0,
+      "distinctCount": 867,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "ActorType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Application",
+          "weight": 0.57
+        },
+        {
+          "value": "User",
+          "weight": 0.43
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 11.0
+    },
+    "AppId": {
+      "fillRate": 1.0,
+      "distinctCount": 24,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "UserId": {
+      "fillRate": 0.43,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ServicePrincipalId": {
+      "fillRate": 0.568,
+      "distinctCount": 17,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Scopes": {
+      "fillRate": 0.43,
+      "distinctCount": 11,
+      "topValues": [
+        {
+          "value": "restricted_user_impersonation",
+          "weight": 0.47791
+        },
+        {
+          "value": "user_impersonation",
+          "weight": 0.18023
+        },
+        {
+          "value": "_B.AG _C.A6 _C.AY _E.AN AccessReview.ReadWrite.All AgentCollection.Read.All AgentCollection.Read.Global AgentCollection.Read.Quarantined AgentInstance.Read.All AppGalleryIntegrationRequest.ReadArtifact.All AppGalleryIntegrationRequest.ReadData.All AppGalleryIntegrationRequest.ReadScimTest.All AppGalleryIntegrationRequest.ReadSsoTest.All AppGalleryIntegrationRequest.ReadWrite AppGalleryIntegrationRequest.ReadWriteArtifact.All AppGalleryIntegrationRequest.ReadWriteScimTest.All AppGalleryIntegrationRequest.ReadWriteSsoTest.All AppGalleryIntegrationRequest.Submit Application.Read.All AuditLog.Read.All ChangeManagement.Read.All ConsentRequest.Create ConsentRequest.Read ConsentRequest.ReadApprove.All ConsentRequest.ReadWrite.All CustomSecAttributeAssignment.Read.All CustomSecAttributeAuditLogs.Read.All Device-OrganizationalUnit.ReadWrite.All Directory.AccessAsUser.All Directory.Read.All Directory.ReadWrite.All Directory.Write.Restricted DirectoryRecommendations.Read.All DirectoryRecommendations.ReadWrite.All Domain.ReadWrite.All email EntitlementManagement.Read.All Group.ReadWrite.All HealthMonitoringAlert.ReadWrite.All HealthMonitoringAlertConfig.ReadWrite.All IdentityProvider.ReadWrite.All IdentityRiskEvent.ReadWrite.All IdentityRiskyServicePrincipal.ReadWrite.All IdentityRiskyUser.ReadWrite.All IdentityUserFlow.Read.All LifecycleWorkflows.ReadWrite.All LockboxRequest.Read.All LockboxRequest.ReadWrite.All LockboxSettings.Read.All LockboxSettings.ReadWrite.All OnPremDirectorySynchronization.Read.All openid OrganizationalUnit.ReadWrite.All Policy.Read.All Policy.Read.IdentityProtection Policy.ReadWrite.AuthenticationFlows Policy.ReadWrite.AuthenticationMethod Policy.ReadWrite.Authorization Policy.ReadWrite.ConditionalAccess Policy.ReadWrite.ExternalIdentities Policy.ReadWrite.IdentityProtection Policy.ReadWrite.MobilityManagement PrivilegedEligibilitySchedule.Read.AzureADGroup profile Reports.Read.All RoleEligibilitySchedule.Read.Directory RoleManagement.Read.Applications RoleManagement.ReadWrite.Directory SecurityAlert.Read.All SecurityEvents.ReadWrite.All TrustFrameworkKeySet.Read.All User.Export.All User.ReadWrite.All UserAuthenticationMethod.ReadWrite.All User-OrganizationalUnit.ReadWrite.All",
+          "weight": 0.13256
+        },
+        {
+          "value": "AgentIdentityBlueprint.AddRemoveCreds.All AgentIdentityBlueprint.Create AgentIdentityBlueprintPrincipal.Create AppCatalog.ReadWrite.All Application.Read.All Application.ReadWrite.All Application-RemoteDesktopConfig.ReadWrite.All AppRoleAssignment.ReadWrite.All AuditLog.Read.All Chat.Create Chat.ReadWrite ChatMessage.Send DelegatedPermissionGrant.ReadWrite.All Device.Read.All DeviceManagementConfiguration.Read.All DeviceManagementConfiguration.ReadWrite.All DeviceManagementManagedDevices.Read.All DeviceManagementManagedDevices.ReadWrite.All DeviceManagementRBAC.ReadWrite.All Directory.Read.All Directory.ReadWrite.All Group.Read.All Group.ReadWrite.All GroupMember.Read.All GroupMember.ReadWrite.All openid Organization.Read.All Policy.Read.All Policy.ReadWrite.CrossTenantAccess PrivilegedAccess.Read.AzureADGroup PrivilegedEligibilitySchedule.Read.AzureADGroup profile RoleManagement.Read.All RoleManagement.Read.Defender RoleManagement.Read.Directory RoleManagement.ReadWrite.Directory SecurityEvents.Read.All TeamsAppInstallation.ReadWriteSelfForUser ThreatHunting.Read.All User.Invite.All User.Read User.Read.All User.ReadWrite.All email Policy.ReadWrite.ConditionalAccess",
+          "weight": 0.06163
+        },
+        {
+          "value": "AccessReview.Read.All AdministrativeUnit.Read.All Agreement.Read.All AgreementAcceptance.Read.All Application.Read.All AuditLog.Read.All CloudPC.Read.All CustomDetection.Read.All CustomSecAttributeAssignment.Read.All DelegatedPermissionGrant.Read.All Device.Read.All DeviceManagementApps.Read.All DeviceManagementConfiguration.Read.All DeviceManagementManagedDevices.Read.All DeviceManagementRBAC.Read.All DeviceManagementScripts.Read.All DeviceManagementServiceConfig.Read.All DirectoryRecommendations.Read.All Domain.Read.All email EntitlementManagement.Read.All Files.Read.All Group.Read.All Group.ReadWrite.All GroupMember.Read.All HealthMonitoringAlert.Read.All HealthMonitoringAlertConfig.Read.All IdentityRiskEvent.Read.All IdentityRiskyServicePrincipal.Read.All IdentityRiskyUser.Read.All IdentityRiskyUser.ReadWrite.All LifecycleWorkflows.Read.All Mail.Read NetworkAccess.Read.All openid Organization.Read.All Policy.Read.All Policy.ReadWrite.ConditionalAccess profile Reports.Read.All RoleAssignmentSchedule.Read.Directory RoleEligibilitySchedule.Read.Directory RoleEligibilitySchedule.ReadWrite.Directory RoleManagement.Read.Directory RoleManagement.ReadWrite.Applications RoleManagementPolicy.Read.Directory SecurityAlert.Read.All SecurityEvents.ReadWrite.All SecurityIncident.Read.All ServiceHealth.Read.All ServiceMessage.Read.All Sites.Read.All ThreatHunting.Read.All ThreatIntelligence.Read.All User.Read User.Read.All UserAuthenticationMethod.Read.All User-LifeCycleInfo.Read.All",
+          "weight": 0.0593
+        },
+        {
+          "value": "_B.AG _C.A6 _C.AY _E.AN AccessReview.ReadWrite.All AgentCollection.Read.All AgentCollection.Read.Global AgentCollection.Read.Quarantined AgentInstance.Read.All AppGalleryIntegrationRequest.ReadArtifact.All AppGalleryIntegrationRequest.ReadData.All AppGalleryIntegrationRequest.ReadScimTest.All AppGalleryIntegrationRequest.ReadSsoTest.All AppGalleryIntegrationRequest.ReadWrite AppGalleryIntegrationRequest.ReadWriteArtifact.All AppGalleryIntegrationRequest.ReadWriteScimTest.All AppGalleryIntegrationRequest.ReadWriteSsoTest.All AppGalleryIntegrationRequest.Submit Application.Read.All AuditLog.Read.All ChangeManagement.Read.All ConsentRequest.Create ConsentRequest.Read ConsentRequest.ReadApprove.All ConsentRequest.ReadWrite.All CustomSecAttributeAssignment.Read.All CustomSecAttributeAuditLogs.Read.All Device-OrganizationalUnit.ReadWrite.All Directory.AccessAsUser.All Directory.Read.All Directory.ReadWrite.All Directory.Write.Restricted DirectoryRecommendations.Read.All DirectoryRecommendations.ReadWrite.All Domain.ReadWrite.All email EntitlementManagement.Read.All Group.ReadWrite.All HealthMonitoringAlert.ReadWrite.All HealthMonitoringAlertConfig.ReadWrite.All IdentityProvider.ReadWrite.All IdentityRiskEvent.ReadWrite.All IdentityRiskyServicePrincipal.ReadWrite.All IdentityRiskyUser.ReadWrite.All IdentityUserFlow.Read.All LifecycleWorkflows.ReadWrite.All LockboxRequest.Read.All LockboxRequest.ReadWrite.All LockboxSettings.Read.All LockboxSettings.ReadWrite.All OnPremDirectorySynchronization.Read.All openid OrganizationalUnit.ReadWrite.All Policy.Read.All Policy.Read.IdentityProtection Policy.ReadWrite.AuthenticationFlows Policy.ReadWrite.AuthenticationMethod Policy.ReadWrite.Authorization Policy.ReadWrite.ConditionalAccess Policy.ReadWrite.ExternalIdentities Policy.ReadWrite.IdentityProtection Policy.ReadWrite.MobilityManagement PrivilegedEligibilitySchedule.Read.AzureADGroup profile Reports.Read.All RoleEligibilitySchedule.Read.Directory RoleManagement.ReadWrite.Directory SecurityAlert.Read.All SecurityEvents.ReadWrite.All TrustFrameworkKeySet.Read.All User.Export.All User.ReadWrite.All UserAuthenticationMethod.ReadWrite.All User-OrganizationalUnit.ReadWrite.All",
+          "weight": 0.04186
+        },
+        {
+          "value": "AgentCollection.Read.Global AgentInstance.Read.All Application.Read.All AppRoleAssignment.ReadWrite.All AuditLog.Read.All Channel.ReadBasic.All ChannelMessage.Send DeviceManagementConfiguration.Read.All DeviceManagementManagedDevices.Read.All DeviceManagementManagedDevices.ReadWrite.All Directory.Read.All eDiscovery.Read.All eDiscovery.ReadWrite.All email Group.Read.All IdentityRiskyAgent.Read.All IdentityRiskyUser.Read.All InformationProtectionPolicy.Read MailboxSettings.Read openid People.Read.All Policy.Read.All Policy.ReadWrite.ConditionalAccess profile Reports.Read.All SecurityEvents.ReadWrite.All ServiceHealth.Read.All ServiceMessage.Read.All Sites.Read.All User.Read User.Read.All",
+          "weight": 0.0186
+        },
+        {
+          "value": "AccessReview.ReadWrite.All AdministrativeUnit.ReadWrite.All AgentIdentity.EnableDisable.All AppCatalog.ReadWrite.All Application.ReadWrite.All AttackSimulation.ReadWrite.All AuditLog.Read.All AuditLogsQuery.Read.All AuditLogsQuery-CRM.Read.All AuditLogsQuery-OneDrive.Read.All AuditLogsQuery-SharePoint.Read.All BackupRestore-Configuration.ReadWrite.All BackupRestore-Control.Read.All BackupRestore-Monitor.Read.All BackupRestore-Restore.ReadWrite.All BackupRestore-Search.Read.All Bookings.Manage.All Bookings.Read.All Channel.Create Channel.Delete.All Channel.ReadBasic.All ChannelMember.Read.All ChannelMember.ReadWrite.All ChannelMessage.Send ChannelSettings.Read.All ChannelSettings.ReadWrite.All CloudApp-Discovery.Read.All CloudPC.Read.All CloudPC.ReadWrite.All Contacts.Read Contacts.ReadWrite CrossTenantInformation.ReadBasic.All CustomSecAttributeAssignment.ReadWrite.All CustomSecAttributeDefinition.Read.All CustomSecAttributeDefinition.ReadWrite.All DelegatedAdminRelationship.Read.All Device.Read.All DeviceManagementApps.ReadWrite.All DeviceManagementConfiguration.ReadWrite.All DeviceManagementManagedDevices.PrivilegedOperations.All DeviceManagementManagedDevices.ReadWrite.All DeviceManagementRBAC.Read.All DeviceManagementRBAC.ReadWrite.All DeviceManagementScripts.ReadWrite.All DeviceManagementServiceConfiguration.ReadWrite.All Directory.Read.All Domain.ReadWrite.All email EntitlementManagement.ReadWrite.All ExternalConnection.Read.All ExternalItem.Read.All Group.Read.All Group.ReadWrite.All IdentityRiskyUser.ReadWrite.All InformationProtectionPolicy.Read Mail.ReadWrite.All Mail.Send MultiTenantOrganization.ReadWrite.All NetworkAccess-Reports.Read.All OnPremDirectorySynchronization.Read.All openid People.Read People.ReadWrite PeopleSettings.Read.All PeopleSettings.ReadWrite.All Policy.Read.All Policy.ReadWrite.ApplicationConfiguration Policy.ReadWrite.AuthenticationMethod Policy.ReadWrite.Authorization Policy.ReadWrite.ConditionalAccess Policy.ReadWrite.CrossTenantAccess Policy.ReadWrite.CrossTenantCapability Policy.ReadWrite.MobilityManagement Policy.ReadWrite.PermissionGrant profile Reports.Read.All RoleManagement.Read.Directory RoleManagement.ReadWrite.Directory SecurityEvents.Read.All ServiceActivity-Exchange.Read.All ServiceActivity-Microsoft365Web.Read.All ServiceActivity-OneDrive.Read.All ServiceActivity-Teams.Read.All ServiceHealth.Read.All ServiceMessage.Read.All ServiceMessageViewpoint.Write Sites.FullControl.All Sites.Manage.All Sites.Read.All Sites.ReadWrite.All Tasks.ReadWrite Team.Create Team.ReadBasic.All TeamMember.ReadWrite.All TeamsActivity.Send TeamsAppInstallation.ReadWriteAndConsentForTeam TeamsAppInstallation.ReadWriteForUser TeamSettings.Read.All TeamSettings.ReadWrite.All TeamsTab.Create TeamworkAppSettings.ReadWrite.All TeamworkTag.ReadWrite User.DeleteRestore.All User.ReadWrite User.ReadWrite.All UserAuthenticationMethod.Read UserAuthMethod-Password.ReadWrite.All User-Mail.ReadWrite.All User-PasswordProfile.ReadWrite.All User-Phone.ReadWrite.All",
+          "weight": 0.01279
+        },
+        {
+          "value": "AccessReview.ReadWrite.All AdministrativeUnit.ReadWrite.All AgentIdentity.EnableDisable.All AppCatalog.ReadWrite.All Application.ReadWrite.All AttackSimulation.ReadWrite.All AuditLog.Read.All AuditLogsQuery.Read.All AuditLogsQuery-CRM.Read.All AuditLogsQuery-OneDrive.Read.All AuditLogsQuery-SharePoint.Read.All BackupRestore-Configuration.ReadWrite.All BackupRestore-Control.Read.All BackupRestore-Monitor.Read.All BackupRestore-Restore.ReadWrite.All BackupRestore-Search.Read.All Bookings.Manage.All Bookings.Read.All ChannelMessage.Send CloudApp-Discovery.Read.All CloudPC.Read.All CloudPC.ReadWrite.All Contacts.Read Contacts.ReadWrite CrossTenantInformation.ReadBasic.All CustomSecAttributeAssignment.ReadWrite.All CustomSecAttributeDefinition.Read.All DelegatedAdminRelationship.Read.All Device.Read.All DeviceManagementApps.ReadWrite.All DeviceManagementConfiguration.ReadWrite.All DeviceManagementManagedDevices.PrivilegedOperations.All DeviceManagementManagedDevices.ReadWrite.All DeviceManagementRBAC.Read.All DeviceManagementRBAC.ReadWrite.All DeviceManagementScripts.ReadWrite.All DeviceManagementServiceConfiguration.ReadWrite.All Directory.Read.All Domain.ReadWrite.All email EntitlementManagement.ReadWrite.All ExternalConnection.Read.All ExternalItem.Read.All Group.Read.All Group.ReadWrite.All IdentityRiskyUser.ReadWrite.All InformationProtectionPolicy.Read Mail.ReadWrite.All Mail.Send MultiTenantOrganization.ReadWrite.All OnPremDirectorySynchronization.Read.All openid People.Read People.ReadWrite PeopleSettings.Read.All PeopleSettings.ReadWrite.All Policy.Read.All Policy.ReadWrite.ApplicationConfiguration Policy.ReadWrite.AuthenticationMethod Policy.ReadWrite.Authorization Policy.ReadWrite.ConditionalAccess Policy.ReadWrite.CrossTenantAccess Policy.ReadWrite.CrossTenantCapability Policy.ReadWrite.MobilityManagement Policy.ReadWrite.PermissionGrant profile Reports.Read.All RoleManagement.Read.Directory RoleManagement.ReadWrite.Directory SecurityEvents.Read.All ServiceActivity-Exchange.Read.All ServiceActivity-Microsoft365Web.Read.All ServiceActivity-OneDrive.Read.All ServiceActivity-Teams.Read.All ServiceHealth.Read.All ServiceMessage.Read.All ServiceMessageViewpoint.Write Sites.FullControl.All Sites.Manage.All Sites.Read.All Sites.ReadWrite.All Tasks.ReadWrite TeamMember.ReadWrite.All TeamsActivity.Send TeamsAppInstallation.ReadWriteAndConsentForTeam TeamsAppInstallation.ReadWriteForUser TeamworkAppSettings.ReadWrite.All TeamworkTag.ReadWrite User.DeleteRestore.All User.ReadWrite User.ReadWrite.All UserAuthenticationMethod.Read User-Mail.ReadWrite.All User-PasswordProfile.ReadWrite.All User-Phone.ReadWrite.All",
+          "weight": 0.00581
+        },
+        {
+          "value": "AgentIdentityBlueprint.AddRemoveCreds.All AgentIdentityBlueprint.Create AgentIdentityBlueprintPrincipal.Create AppCatalog.ReadWrite.All Application.Read.All Application.ReadWrite.All Application-RemoteDesktopConfig.ReadWrite.All AppRoleAssignment.ReadWrite.All AuditLog.Read.All Chat.Create Chat.ReadWrite ChatMessage.Send DelegatedPermissionGrant.ReadWrite.All Device.Read.All DeviceManagementConfiguration.Read.All DeviceManagementConfiguration.ReadWrite.All DeviceManagementManagedDevices.Read.All DeviceManagementManagedDevices.ReadWrite.All DeviceManagementRBAC.ReadWrite.All Directory.Read.All Directory.ReadWrite.All Group.Read.All Group.ReadWrite.All GroupMember.Read.All GroupMember.ReadWrite.All openid Organization.Read.All Policy.Read.All Policy.ReadWrite.CrossTenantAccess PrivilegedAccess.Read.AzureADGroup PrivilegedEligibilitySchedule.Read.AzureADGroup profile RoleManagement.Read.All RoleManagement.Read.Defender RoleManagement.Read.Directory RoleManagement.ReadWrite.Directory SecurityEvents.Read.All TeamsAppInstallation.ReadWriteSelfForUser ThreatHunting.Read.All User.Invite.All User.Read User.Read.All User.ReadWrite.All email",
+          "weight": 0.00581
+        },
+        {
+          "value": "Application.ReadWrite.All AppRoleAssignment.ReadWrite.All AuditLog.Read.All DelegatedPermissionGrant.ReadWrite.All Directory.AccessAsUser.All email Group.ReadWrite.All openid profile SubjectNameRegistration.ReadWrite User.Read.All User.ReadWrite.All",
+          "weight": 0.00349
+        }
+      ],
+      "pattern": null,
+      "minLength": 18.0,
+      "maxLength": 3024.0
+    },
+    "IdentityProvider": {
+      "fillRate": 0.5705,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "url",
+      "minLength": 8.0,
+      "maxLength": 61.0
+    },
+    "ClientAuthMethod": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "Wids": {
+      "fillRate": 0.1835,
+      "distinctCount": 10,
+      "topValues": [
+        {
+          "value": " 9f06204d-73c1-4d4c-880a-6edb90606fd8, 62e90394-69f5-4237-9190-012177145e10, b79fbf4d-3ef9-4689-8143-76b194e85509,",
+          "weight": 0.21253
+        },
+        {
+          "value": " 62e90394-69f5-4237-9190-012177145e10, 9f06204d-73c1-4d4c-880a-6edb90606fd8, b79fbf4d-3ef9-4689-8143-76b194e85509,",
+          "weight": 0.17711
+        },
+        {
+          "value": " 62e90394-69f5-4237-9190-012177145e10, 9f06204d-73c1-4d4c-880a-6edb90606fd8, f28a1f50-f6e7-4571-818b-6a12f2af6b6c, b79fbf4d-3ef9-4689-8143-76b194e85509,",
+          "weight": 0.13624
+        },
+        {
+          "value": " 9f06204d-73c1-4d4c-880a-6edb90606fd8, f28a1f50-f6e7-4571-818b-6a12f2af6b6c, 62e90394-69f5-4237-9190-012177145e10, b79fbf4d-3ef9-4689-8143-76b194e85509,",
+          "weight": 0.13351
+        },
+        {
+          "value": " 62e90394-69f5-4237-9190-012177145e10, 0997a1d0-0d1d-4acb-b408-d5ca73121e90,",
+          "weight": 0.12807
+        },
+        {
+          "value": " 17315797-102d-40b4-93e0-432062caca18, 62e90394-69f5-4237-9190-012177145e10, 3f04f91a-4ad7-4bd3-bcfa-49882ea1a88a, b79fbf4d-3ef9-4689-8143-76b194e85509,",
+          "weight": 0.07629
+        },
+        {
+          "value": " 0997a1d0-0d1d-4acb-b408-d5ca73121e90,",
+          "weight": 0.07084
+        },
+        {
+          "value": " 9f06204d-73c1-4d4c-880a-6edb90606fd8, 17315797-102d-40b4-93e0-432062caca18, 62e90394-69f5-4237-9190-012177145e10, 3f04f91a-4ad7-4bd3-bcfa-49882ea1a88a, b79fbf4d-3ef9-4689-8143-76b194e85509,",
+          "weight": 0.03542
+        },
+        {
+          "value": " 62e90394-69f5-4237-9190-012177145e10, 9f06204d-73c1-4d4c-880a-6edb90606fd8, 17315797-102d-40b4-93e0-432062caca18, 3f04f91a-4ad7-4bd3-bcfa-49882ea1a88a, b79fbf4d-3ef9-4689-8143-76b194e85509,",
+          "weight": 0.02452
+        },
+        {
+          "value": " 62e90394-69f5-4237-9190-012177145e10, 17315797-102d-40b4-93e0-432062caca18, 3f04f91a-4ad7-4bd3-bcfa-49882ea1a88a, b79fbf4d-3ef9-4689-8143-76b194e85509,",
+          "weight": 0.00545
+        }
+      ],
+      "pattern": null,
+      "minLength": 38.0,
+      "maxLength": 190.0
+    },
+    "CallerIpAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 207,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 37.0
+    },
+    "UserAgent": {
+      "fillRate": 0.6115,
+      "distinctCount": 10,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 29.0,
+      "maxLength": 132.0
+    },
+    "RequestUri": {
+      "fillRate": 1.0,
+      "distinctCount": 107,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 44.0,
+      "maxLength": 147.0
+    },
+    "SessionId": {
+      "fillRate": 0.43,
+      "distinctCount": 39,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "DeviceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AADGraphActivityLogs",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "_ResourceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

@@ -1,0 +1,244 @@
+{
+  "tableName": "MicrosoftServicePrincipalSignInLogs",
+  "sources": [
+    "sample:MicrosoftServicePrincipalSignInLogs-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 23,
+  "emptyInProd": [
+    "ServicePrincipalCredentialKeyId",
+    "ServicePrincipalCredentialThumbprint"
+  ],
+  "generatedUtc": "2026-07-26T01:06:23.7208391Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AppId": {
+      "fillRate": 1.0,
+      "distinctCount": 87,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AppOwnerTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Category": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "MicrosoftServicePrincipalSignInLogs",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 35.0,
+      "maxLength": 35.0
+    },
+    "CorrelationId": {
+      "fillRate": 1.0,
+      "distinctCount": 1919,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "CreatedDateTime": {
+      "fillRate": 1.0,
+      "distinctCount": 1248,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "DurationMs": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "OperationName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Sign-in activity",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "OperationVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "1.0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "ResourceDisplayName": {
+      "fillRate": 1.0,
+      "distinctCount": 33,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 45.0
+    },
+    "ResourceGroup": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft.AADIAM",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "ResourceIdentity": {
+      "fillRate": 1.0,
+      "distinctCount": 33,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceOwnerTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceServicePrincipalId": {
+      "fillRate": 1.0,
+      "distinctCount": 33,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResultSignature": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "SUCCESS",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "ServicePrincipalCredentialKeyId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ServicePrincipalCredentialThumbprint": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ServicePrincipalId": {
+      "fillRate": 1.0,
+      "distinctCount": 79,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ServicePrincipalName": {
+      "fillRate": 1.0,
+      "distinctCount": 87,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 62.0
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Azure AD",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 8.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "MicrosoftServicePrincipalSignInLogs",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 35.0,
+      "maxLength": 35.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 1795,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "UniqueTokenIdentifier": {
+      "fillRate": 1.0,
+      "distinctCount": 1943,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 22.0,
+      "maxLength": 22.0
+    }
+  }
+}

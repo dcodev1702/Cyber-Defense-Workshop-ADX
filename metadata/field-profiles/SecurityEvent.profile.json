@@ -1,0 +1,2565 @@
+{
+  "tableName": "SecurityEvent",
+  "sources": [
+    "sample:SecurityEvent-RealTelemetry.csv"
+  ],
+  "sampledRows": 5000.0,
+  "columnCount": 234,
+  "emptyInProd": [
+    "PartitionKey",
+    "RowKey",
+    "StorageAccount",
+    "AzureDeploymentID",
+    "AzureTableName",
+    "AccessReason",
+    "AccountDomain",
+    "AccountExpires",
+    "AccountName",
+    "AccountSessionIdentifier",
+    "AllowedToDelegateTo",
+    "Attributes",
+    "AuditPolicyChanges",
+    "AuditsDiscarded",
+    "AuthenticationLevel",
+    "AuthenticationProvider",
+    "AuthenticationServer",
+    "AuthenticationService",
+    "AuthenticationType",
+    "CACertificateHash",
+    "CalledStationID",
+    "CallerProcessId",
+    "CallerProcessName",
+    "CallingStationID",
+    "CAPublicKeyHash",
+    "CategoryId",
+    "CertificateDatabaseHash",
+    "ClassId",
+    "ClassName",
+    "ClientAddress",
+    "ClientIPAddress",
+    "ClientName",
+    "CommandLine",
+    "CompatibleIds",
+    "DCDNSName",
+    "DeviceDescription",
+    "DeviceId",
+    "DisplayName",
+    "Disposition",
+    "DomainBehaviorVersion",
+    "DomainName",
+    "DomainPolicyChanged",
+    "DomainSid",
+    "EAPType",
+    "ErrorCode",
+    "ExtendedQuarantineState",
+    "FailureReason",
+    "FileHash",
+    "FilePath",
+    "FilePathNoUser",
+    "Filter",
+    "ForceLogoff",
+    "Fqbn",
+    "FullyQualifiedSubjectMachineName",
+    "FullyQualifiedSubjectUserName",
+    "GroupMembership",
+    "HardwareIds",
+    "HomeDirectory",
+    "HomePath",
+    "InterfaceUuid",
+    "LocationInformation",
+    "LockoutDuration",
+    "LockoutObservationWindow",
+    "LockoutThreshold",
+    "LoggingResult",
+    "LogonHours",
+    "LogonID",
+    "MachineAccountQuota",
+    "MachineInventory",
+    "MachineLogon",
+    "MandatoryLabel",
+    "MaxPasswordAge",
+    "MemberName",
+    "MemberSid",
+    "MinPasswordAge",
+    "MinPasswordLength",
+    "MixedDomainMode",
+    "NASIdentifier",
+    "NASIPv4Address",
+    "NASIPv6Address",
+    "NASPort",
+    "NASPortType",
+    "NetworkPolicyName",
+    "NewDate",
+    "NewMaxUsers",
+    "NewProcessId",
+    "NewProcessName",
+    "NewRemark",
+    "NewShareFlags",
+    "NewTime",
+    "NewUacValue",
+    "NewValue",
+    "NewValueType",
+    "ObjectValueName",
+    "OemInformation",
+    "OldMaxUsers",
+    "OldRemark",
+    "OldShareFlags",
+    "OldUacValue",
+    "OldValue",
+    "OldValueType",
+    "PackageName",
+    "ParentProcessName",
+    "PasswordHistoryLength",
+    "PasswordLastSet",
+    "PasswordProperties",
+    "PreviousDate",
+    "PreviousTime",
+    "PrimaryGroupId",
+    "PrivateKeyUsageCount",
+    "ProfilePath",
+    "ProtocolSequence",
+    "ProxyPolicyName",
+    "QuarantineHelpURL",
+    "QuarantineSessionID",
+    "QuarantineSessionIdentifier",
+    "QuarantineState",
+    "QuarantineSystemHealthResult",
+    "RelativeTargetName",
+    "RemoteIpAddress",
+    "RemotePort",
+    "Requester",
+    "RequestId",
+    "RowsDeleted",
+    "SamAccountName",
+    "ScriptPath",
+    "SecurityDescriptor",
+    "ServiceAccount",
+    "ServiceFileName",
+    "ServiceStartType",
+    "ServiceType",
+    "SessionName",
+    "ShareLocalPath",
+    "ShareName",
+    "SidHistory",
+    "SubcategoryGuid",
+    "SubcategoryId",
+    "Subject",
+    "SubjectKeyIdentifier",
+    "SubjectMachineName",
+    "SubjectMachineSID",
+    "SubStatus",
+    "TableId",
+    "TargetInfo",
+    "TargetLogonGuid",
+    "TargetServerName",
+    "TargetUser",
+    "TemplateContent",
+    "TemplateDSObjectFQDN",
+    "TemplateInternalName",
+    "TemplateOID",
+    "TemplateSchemaVersion",
+    "TemplateVersion",
+    "TokenElevationType",
+    "UserAccountControl",
+    "UserParameters",
+    "UserPrincipalName",
+    "UserWorkstations",
+    "VendorIds",
+    "Workstation"
+  ],
+  "generatedUtc": "2026-07-26T01:05:35.3624861Z",
+  "columns": {
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 1034,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 23.0,
+      "maxLength": 24.0
+    },
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "OpsManager",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "Account": {
+      "fillRate": 0.9998,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 26.0
+    },
+    "AccountType": {
+      "fillRate": 0.9998,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 7.0
+    },
+    "Computer": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "adds01.dibsec.net",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 17.0,
+      "maxLength": 17.0
+    },
+    "EventSourceName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft-Windows-Security-Auditing",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 35.0,
+      "maxLength": 35.0
+    },
+    "Channel": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Security",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 8.0
+    },
+    "Task": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "12544",
+          "weight": 0.3158
+        },
+        {
+          "value": "12545",
+          "weight": 0.3114
+        },
+        {
+          "value": "12548",
+          "weight": 0.306
+        },
+        {
+          "value": "13056",
+          "weight": 0.048
+        },
+        {
+          "value": "12804",
+          "weight": 0.018
+        },
+        {
+          "value": "14080",
+          "weight": 0.0006
+        },
+        {
+          "value": "14339",
+          "weight": 0.0002
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "Level": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "EventData": {
+      "fillRate": 0.0482,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "<EventData xmlns=\"http://schemas.microsoft.com/win/2004/08/events/event\">\r\n  <Data Name=\"SubjectUserSid\">S-1-5-19</Data>\r\n  <Data Name=\"SubjectUserName\">LOCAL SERVICE</Data>\r\n  <Data Name=\"SubjectDomainName\">NT AUTHORITY</Data>\r\n  <Data Name=\"SubjectLogonId\">0x3e5</Data>\r\n  <Data Name=\"ObjectServer\">LSA</Data>\r\n  <Data Name=\"ObjectType\">-</Data>\r\n  <Data Name=\"ObjectName\">-</Data>\r\n  <Data Name=\"HandleId\">0x0</Data>\r\n  <Data Name=\"AccessMask\">16777216</Data>\r\n  <Data Name=\"PrivilegeList\">SeSecurityPrivilege</Data>\r\n  <Data Name=\"ProcessId\">0x37c</Data>\r\n  <Data Name=\"ProcessName\">C:\\Windows\\System32\\lsass.exe</Data>\r\n</EventData>",
+          "weight": 0.6971
+        },
+        {
+          "value": "<EventData xmlns=\"http://schemas.microsoft.com/win/2004/08/events/event\">\r\n  <Data Name=\"SubjectUserSid\">S-1-5-18</Data>\r\n  <Data Name=\"SubjectUserName\">adds01$</Data>\r\n  <Data Name=\"SubjectDomainName\">DIBSEC</Data>\r\n  <Data Name=\"SubjectLogonId\">0x3e7</Data>\r\n  <Data Name=\"ObjectServer\">NT Local Security Authority / Authentication Service</Data>\r\n  <Data Name=\"Service\">LsaRegisterLogonProcess()</Data>\r\n  <Data Name=\"PrivilegeList\">SeTcbPrivilege</Data>\r\n  <Data Name=\"ProcessId\">0x37c</Data>\r\n  <Data Name=\"ProcessName\">C:\\Windows\\System32\\lsass.exe</Data>\r\n</EventData>",
+          "weight": 0.18672
+        },
+        {
+          "value": "<EventData xmlns=\"http://schemas.microsoft.com/win/2004/08/events/event\">\r\n  <Data Name=\"SubjectUserSid\">S-1-5-21-273413156-312968053-789467739-500</Data>\r\n  <Data Name=\"SubjectUserName\">xadmin</Data>\r\n  <Data Name=\"SubjectDomainName\">DIBSEC</Data>\r\n  <Data Name=\"SubjectLogonId\">0x240085</Data>\r\n  <Data Name=\"ObjectServer\">Security</Data>\r\n  <Data Name=\"Service\">-</Data>\r\n  <Data Name=\"PrivilegeList\">SeTcbPrivilege</Data>\r\n  <Data Name=\"ProcessId\">0x264</Data>\r\n  <Data Name=\"ProcessName\">C:\\Windows\\System32\\svchost.exe</Data>\r\n</EventData>",
+          "weight": 0.11203
+        },
+        {
+          "value": "<EventData xmlns=\"http://schemas.microsoft.com/win/2004/08/events/event\">\r\n  <Data Name=\"TargetUserName\">WIN11-01$</Data>\r\n  <Data Name=\"TargetDomainName\">DIBSEC.NET</Data>\r\n  <Data Name=\"TargetSid\">S-1-5-21-273413156-312968053-789467739-12101</Data>\r\n  <Data Name=\"ServiceName\">krbtgt</Data>\r\n  <Data Name=\"ServiceSid\">S-1-5-21-273413156-312968053-789467739-502</Data>\r\n  <Data Name=\"TicketOptions\">0x40810010</Data>\r\n  <Data Name=\"Status\">0x0</Data>\r\n  <Data Name=\"TicketEncryptionType\">0x12</Data>\r\n  <Data Name=\"PreAuthType\">2</Data>\r\n  <Data Name=\"IpAddress\">::ffff:10.1.2.4</Data>\r\n  <Data Name=\"IpPort\">51872</Data>\r\n  <Data Name=\"CertIssuerName\" />\r\n  <Data Name=\"CertSerialNumber\" />\r\n  <Data Name=\"CertThumbprint\" />\r\n  <Data Name=\"ResponseTicket\">u4PplqFZXetRIyI9dQb2xwj1INYjnFFGGsUJB+rmZLE=</Data>\r\n  <Data Name=\"AccountSupportedEncryptionTypes\">0x1C (RC4, AES128-SHA96, AES256-SHA96)</Data>\r\n  <Data Name=\"AccountAvailableKeys\">RC4, AES128-SHA96, AES256-SHA96, AES128-SHA256, AES256-SHA384</Data>\r\n  <Data Name=\"ServiceSupportedEncryptionTypes\">0x0 (N/A)</Data>\r\n  <Data Name=\"ServiceAvailableKeys\">RC4, AES128-SHA96, AES256-SHA96</Data>\r\n  <Data Name=\"DCSupportedEncryptionTypes\">0x0 (N/A)</Data>\r\n  <Data Name=\"DCAvailableKeys\">RC4, AES128-SHA96, AES256-SHA96</Data>\r\n  <Data Name=\"ClientAdvertizedEncryptionTypes\"> \t\tAES256-CTS-HMAC-SHA1-96 \t\tAES128-CTS-HMAC-SHA1-96 \t\tRC4-HMAC-NT</Data>\r\n  <Data Name=\"SessionKeyEncryptionType\">0x12</Data>\r\n  <Data Name=\"PreAuthEncryptionType\">0x12</Data>\r\n</EventData>",
+          "weight": 0.00415
+        }
+      ],
+      "pattern": null,
+      "minLength": 545.0,
+      "maxLength": 1520.0
+    },
+    "EventID": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "4624",
+          "weight": 0.3158
+        },
+        {
+          "value": "4634",
+          "weight": 0.3114
+        },
+        {
+          "value": "4672",
+          "weight": 0.306
+        },
+        {
+          "value": "4674",
+          "weight": 0.0336
+        },
+        {
+          "value": "4662",
+          "weight": 0.0186
+        },
+        {
+          "value": "4673",
+          "weight": 0.0144
+        },
+        {
+          "value": "4768",
+          "weight": 0.0002
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "Activity": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "4624 - An account was successfully logged on.",
+          "weight": 0.3158
+        },
+        {
+          "value": "4634 - An account was logged off.",
+          "weight": 0.3114
+        },
+        {
+          "value": "4672 - Special privileges assigned to new logon.",
+          "weight": 0.306
+        },
+        {
+          "value": "4674 - An operation was attempted on a privileged object.",
+          "weight": 0.0336
+        },
+        {
+          "value": "4662 - An operation was performed on an object.",
+          "weight": 0.0186
+        },
+        {
+          "value": "4673 - A privileged service was called.",
+          "weight": 0.0144
+        },
+        {
+          "value": "4768 - A Kerberos authentication ticket (TGT) was requested.",
+          "weight": 0.0002
+        }
+      ],
+      "pattern": null,
+      "minLength": 33.0,
+      "maxLength": 60.0
+    },
+    "PartitionKey": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RowKey": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "StorageAccount": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AzureDeploymentID": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AzureTableName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccessList": {
+      "fillRate": 0.0186,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "%%1552 ",
+          "weight": 0.83871
+        },
+        {
+          "value": "%%1552 \t\t\t\t%%1553 \t\t\t\t",
+          "weight": 0.12903
+        },
+        {
+          "value": "%%7688 ",
+          "weight": 0.03226
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 22.0
+    },
+    "AccessMask": {
+      "fillRate": 0.0522,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "16777216",
+          "weight": 0.64368
+        },
+        {
+          "value": "0x1",
+          "weight": 0.29885
+        },
+        {
+          "value": "0x3",
+          "weight": 0.04598
+        },
+        {
+          "value": "0x100",
+          "weight": 0.01149
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 8.0
+    },
+    "AccessReason": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountDomain": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountExpires": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountSessionIdentifier": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AdditionalInfo": {
+      "fillRate": 0.0186,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "Local Read (ExecQuery)",
+          "weight": 0.37634
+        },
+        {
+          "value": "Local Read (GetObject)",
+          "weight": 0.34409
+        },
+        {
+          "value": "Local Execute (ExecMethod)",
+          "weight": 0.12903
+        },
+        {
+          "value": "Local Read (ConnectServer)",
+          "weight": 0.11828
+        },
+        {
+          "value": "-",
+          "weight": 0.03226
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 26.0
+    },
+    "AdditionalInfo2": {
+      "fillRate": 0.018,
+      "distinctCount": 24,
+      "topValues": [
+        {
+          "value": "root\\cimv2\\security\\microsofttpm:__Win32Provider.Name=\"Win32_TpmProvider\"",
+          "weight": 0.08889
+        },
+        {
+          "value": "root\\cimv2\\security\\microsofttpm:references of {__Win32Provider.Name=\"Win32_TpmProvider\"}",
+          "weight": 0.08889
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:references of {__Win32Provider.Name=\"Win32_EncryptableVolumeProvider\"}",
+          "weight": 0.08889
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:__Win32Provider.Name=\"Win32_EncryptableVolumeProvider\"",
+          "weight": 0.08889
+        },
+        {
+          "value": "root\\cimv2\\security\\microsofttpm",
+          "weight": 0.07778
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:Select * from __ClassProviderRegistration",
+          "weight": 0.04444
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption",
+          "weight": 0.04444
+        },
+        {
+          "value": "root\\cimv2\\security\\microsofttpm:Win32_Tpm",
+          "weight": 0.04444
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:__ExtendedStatus",
+          "weight": 0.04444
+        },
+        {
+          "value": "root\\cimv2\\security\\microsofttpm:Select * from __ClassProviderRegistration",
+          "weight": 0.04444
+        },
+        {
+          "value": "root\\cimv2\\security\\microsofttpm:__ExtendedStatus",
+          "weight": 0.04444
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume",
+          "weight": 0.04444
+        },
+        {
+          "value": "root\\CIMV2\\security\\microsofttpm:SELECT ManufacturerIdTxt FROM win32_tpm",
+          "weight": 0.03333
+        },
+        {
+          "value": "root\\cimv2\\security\\microsoftvolumeencryption:SELECT protectionstatus FROM win32_encryptablevolume",
+          "weight": 0.02222
+        },
+        {
+          "value": "root\\cimv2\\security\\microsofttpm:SELECT * FROM Win32_TPM",
+          "weight": 0.02222
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:\\\\adds01\\root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume.DeviceID=\"\\\\\\\\?\\\\Volume{2e50966b-0000-0000-0000-100000000000}\\\\\"::GetConversionStatus",
+          "weight": 0.02222
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:\\\\adds01\\root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume.DeviceID=\"\\\\\\\\?\\\\Volume{2e50966b-0000-0000-0000-100000000000}\\\\\"::GetLockStatus",
+          "weight": 0.02222
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:\\\\adds01\\root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume.DeviceID=\"\\\\\\\\?\\\\Volume{2e50966b-0000-0000-0000-100000000000}\\\\\"::GetProtectionStatus",
+          "weight": 0.02222
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:\\\\adds01\\root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume.DeviceID=\"\\\\\\\\?\\\\Volume{53c47efc-a09c-4106-ae04-f9eda0672381}\\\\\"::GetConversionStatus",
+          "weight": 0.02222
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:\\\\adds01\\root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume.DeviceID=\"\\\\\\\\?\\\\Volume{53c47efc-a09c-4106-ae04-f9eda0672381}\\\\\"::GetLockStatus",
+          "weight": 0.02222
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:\\\\adds01\\root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume.DeviceID=\"\\\\\\\\?\\\\Volume{53c47efc-a09c-4106-ae04-f9eda0672381}\\\\\"::GetProtectionStatus",
+          "weight": 0.02222
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:SELECT * FROM Win32_EncryptableVolume",
+          "weight": 0.02222
+        },
+        {
+          "value": "Root\\CIMV2\\Security\\MicrosoftTpm:SELECT ManufacturerId, ManufacturerIdTxt, ManufacturerVersion, ManufacturerVersionInfo, PhysicalPresenceVersionInfo FROM Win32_Tpm",
+          "weight": 0.01111
+        },
+        {
+          "value": "Root\\CIMV2\\Security\\MicrosoftTpm:SELECT IsActivated_InitialValue, IsEnabled_InitialValue, SpecVersion FROM Win32_Tpm",
+          "weight": 0.01111
+        }
+      ],
+      "pattern": null,
+      "minLength": 32.0,
+      "maxLength": 210.0
+    },
+    "AllowedToDelegateTo": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Attributes": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AuditPolicyChanges": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AuditsDiscarded": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AuthenticationLevel": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AuthenticationPackageName": {
+      "fillRate": 0.3158,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Kerberos",
+          "weight": 0.9829
+        },
+        {
+          "value": "Negotiate",
+          "weight": 0.0171
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 9.0
+    },
+    "AuthenticationProvider": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AuthenticationServer": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AuthenticationService": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AuthenticationType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CACertificateHash": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CalledStationID": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CallerProcessId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CallerProcessName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CallingStationID": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CAPublicKeyHash": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CategoryId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CertificateDatabaseHash": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ClassId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ClassName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ClientAddress": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ClientIPAddress": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ClientName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CommandLine": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CompatibleIds": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DCDNSName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DeviceDescription": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DeviceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DisplayName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Disposition": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DomainBehaviorVersion": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DomainName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DomainPolicyChanged": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DomainSid": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EAPType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ElevatedToken": {
+      "fillRate": 0.3158,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "%%1842",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 6.0
+    },
+    "ErrorCode": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ExtendedQuarantineState": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "FailureReason": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "FileHash": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "FilePath": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "FilePathNoUser": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Filter": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ForceLogoff": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Fqbn": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "FullyQualifiedSubjectMachineName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "FullyQualifiedSubjectUserName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "GroupMembership": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "HandleId": {
+      "fillRate": 0.0522,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0x0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "HardwareIds": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "HomeDirectory": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "HomePath": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ImpersonationLevel": {
+      "fillRate": 0.3158,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "%%1833",
+          "weight": 0.81634
+        },
+        {
+          "value": "%%1840",
+          "weight": 0.18366
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 6.0
+    },
+    "InterfaceUuid": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "IpAddress": {
+      "fillRate": 0.316,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 25.0
+    },
+    "IpPort": {
+      "fillRate": 0.316,
+      "distinctCount": 1391,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 5.0
+    },
+    "KeyLength": {
+      "fillRate": 0.3158,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "LmPackageName": {
+      "fillRate": 0.3158,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "-",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "LocationInformation": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "LockoutDuration": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "LockoutObservationWindow": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "LockoutThreshold": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "LoggingResult": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "LogonGuid": {
+      "fillRate": 0.3158,
+      "distinctCount": 30,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "LogonHours": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "LogonID": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "LogonProcessName": {
+      "fillRate": 0.3158,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Kerberos",
+          "weight": 0.9829
+        },
+        {
+          "value": "Advapi ",
+          "weight": 0.0171
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 8.0
+    },
+    "LogonType": {
+      "fillRate": 0.6272,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "3",
+          "weight": 0.99139
+        },
+        {
+          "value": "5",
+          "weight": 0.00861
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "LogonTypeName": {
+      "fillRate": 0.6272,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "3 - Network",
+          "weight": 0.99139
+        },
+        {
+          "value": "5 - Service",
+          "weight": 0.00861
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 11.0
+    },
+    "MachineAccountQuota": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MachineInventory": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MachineLogon": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MandatoryLabel": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MaxPasswordAge": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MemberName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MemberSid": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MinPasswordAge": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MinPasswordLength": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MixedDomainMode": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NASIdentifier": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NASIPv4Address": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NASIPv6Address": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NASPort": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NASPortType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NetworkPolicyName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NewDate": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NewMaxUsers": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NewProcessId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NewProcessName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NewRemark": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NewShareFlags": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NewTime": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NewUacValue": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NewValue": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NewValueType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ObjectName": {
+      "fillRate": 0.0522,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "-",
+          "weight": 0.64368
+        },
+        {
+          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption",
+          "weight": 0.18391
+        },
+        {
+          "value": "root\\cimv2\\security\\microsofttpm",
+          "weight": 0.16092
+        },
+        {
+          "value": "%{0de8dd0d-7529-4ad2-9b34-37c86045a698}",
+          "weight": 0.01149
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 45.0
+    },
+    "ObjectServer": {
+      "fillRate": 0.0666,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "LSA",
+          "weight": 0.5045
+        },
+        {
+          "value": "WMI",
+          "weight": 0.27027
+        },
+        {
+          "value": "NT Local Security Authority / Authentication Service",
+          "weight": 0.13514
+        },
+        {
+          "value": "Security",
+          "weight": 0.08108
+        },
+        {
+          "value": "DS",
+          "weight": 0.00901
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 52.0
+    },
+    "ObjectType": {
+      "fillRate": 0.0522,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "-",
+          "weight": 0.64368
+        },
+        {
+          "value": "WMI Namespace",
+          "weight": 0.34483
+        },
+        {
+          "value": "%{19195a5b-6da0-11d0-afd3-00c04fd930c9}",
+          "weight": 0.01149
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 39.0
+    },
+    "ObjectValueName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OemInformation": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OldMaxUsers": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OldRemark": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OldShareFlags": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OldUacValue": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OldValue": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OldValueType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OperationType": {
+      "fillRate": 0.0186,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Object Access",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "PackageName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ParentProcessName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "PasswordHistoryLength": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "PasswordLastSet": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "PasswordProperties": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "PreviousDate": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "PreviousTime": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "PrimaryGroupId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "PrivateKeyUsageCount": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "PrivilegeList": {
+      "fillRate": 0.354,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "SeSecurityPrivilege \t\t\tSeBackupPrivilege \t\t\tSeRestorePrivilege \t\t\tSeTakeOwnershipPrivilege \t\t\tSeDebugPrivilege \t\t\tSeSystemEnvironmentPrivilege \t\t\tSeLoadDriverPrivilege \t\t\tSeImpersonatePrivilege \t\t\tSeDelegateSessionUserImpersonatePrivilege \t\t\tSeEnableDelegationPrivilege",
+          "weight": 0.84915
+        },
+        {
+          "value": "SeSecurityPrivilege",
+          "weight": 0.09492
+        },
+        {
+          "value": "SeTcbPrivilege",
+          "weight": 0.04068
+        },
+        {
+          "value": "SeAssignPrimaryTokenPrivilege \t\t\tSeTcbPrivilege \t\t\tSeSecurityPrivilege \t\t\tSeTakeOwnershipPrivilege \t\t\tSeLoadDriverPrivilege \t\t\tSeBackupPrivilege \t\t\tSeRestorePrivilege \t\t\tSeDebugPrivilege \t\t\tSeAuditPrivilege \t\t\tSeSystemEnvironmentPrivilege \t\t\tSeImpersonatePrivilege \t\t\tSeDelegateSessionUserImpersonatePrivilege",
+          "weight": 0.01525
+        }
+      ],
+      "pattern": null,
+      "minLength": 14.0,
+      "maxLength": 309.0
+    },
+    "Process": {
+      "fillRate": 0.3638,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "-",
+          "weight": 0.85322
+        },
+        {
+          "value": "lsass.exe",
+          "weight": 0.1171
+        },
+        {
+          "value": "svchost.exe",
+          "weight": 0.01484
+        },
+        {
+          "value": "services.exe",
+          "weight": 0.01154
+        },
+        {
+          "value": "SenseIR.exe",
+          "weight": 0.0033
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 12.0
+    },
+    "ProcessId": {
+      "fillRate": 0.3638,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 3.0,
+      "maxLength": 6.0
+    },
+    "ProcessName": {
+      "fillRate": 0.3638,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "-",
+          "weight": 0.85322
+        },
+        {
+          "value": "C:\\Windows\\System32\\lsass.exe",
+          "weight": 0.1171
+        },
+        {
+          "value": "C:\\Windows\\System32\\svchost.exe",
+          "weight": 0.01484
+        },
+        {
+          "value": "C:\\Windows\\System32\\services.exe",
+          "weight": 0.01154
+        },
+        {
+          "value": "C:\\Program Files\\Windows Defender Advanced Threat Protection\\SenseIR.exe",
+          "weight": 0.0033
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 72.0
+    },
+    "Properties": {
+      "fillRate": 0.0186,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "-",
+          "weight": 0.96774
+        },
+        {
+          "value": "%%7688 \t\t{1131f6aa-9c07-11d1-f79f-00c04fc2dcd2} \t{19195a5b-6da0-11d0-afd3-00c04fd930c9} ",
+          "weight": 0.03226
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 88.0
+    },
+    "ProfilePath": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ProtocolSequence": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ProxyPolicyName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "QuarantineHelpURL": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "QuarantineSessionID": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "QuarantineSessionIdentifier": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "QuarantineState": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "QuarantineSystemHealthResult": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RelativeTargetName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RemoteIpAddress": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RemotePort": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Requester": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RequestId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RestrictedAdminMode": {
+      "fillRate": 0.3158,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "-",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "RowsDeleted": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SamAccountName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ScriptPath": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SecurityDescriptor": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ServiceAccount": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ServiceFileName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ServiceName": {
+      "fillRate": 0.0002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "krbtgt",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 6.0
+    },
+    "ServiceStartType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ServiceType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SessionName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ShareLocalPath": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ShareName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SidHistory": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Status": {
+      "fillRate": 0.0002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0x0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "SubjectAccount": {
+      "fillRate": 0.6884,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 3.0,
+      "maxLength": 26.0
+    },
+    "SubcategoryGuid": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SubcategoryId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Subject": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SubjectDomainName": {
+      "fillRate": 0.6884,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 12.0
+    },
+    "SubjectKeyIdentifier": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SubjectLogonId": {
+      "fillRate": 0.6884,
+      "distinctCount": 1509,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 3.0,
+      "maxLength": 10.0
+    },
+    "SubjectMachineName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SubjectMachineSID": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SubjectUserName": {
+      "fillRate": 0.6884,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 13.0
+    },
+    "SubjectUserSid": {
+      "fillRate": 0.6884,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 42.0
+    },
+    "SubStatus": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TableId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TargetAccount": {
+      "fillRate": 0.6274,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 14.0,
+      "maxLength": 20.0
+    },
+    "TargetDomainName": {
+      "fillRate": 0.6274,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 12.0
+    },
+    "TargetInfo": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TargetLinkedLogonId": {
+      "fillRate": 0.3158,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0x0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "TargetLogonGuid": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TargetLogonId": {
+      "fillRate": 0.6272,
+      "distinctCount": 1614,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 10.0
+    },
+    "TargetOutboundDomainName": {
+      "fillRate": 0.3158,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "TargetOutboundUserName": {
+      "fillRate": 0.3158,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "TargetServerName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TargetSid": {
+      "fillRate": 0.0002,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 44.0,
+      "maxLength": 44.0
+    },
+    "TargetUser": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TargetUserName": {
+      "fillRate": 0.6274,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 9.0
+    },
+    "TargetUserSid": {
+      "fillRate": 0.6272,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 44.0
+    },
+    "TemplateContent": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TemplateDSObjectFQDN": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TemplateInternalName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TemplateOID": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TemplateSchemaVersion": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TemplateVersion": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TokenElevationType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TransmittedServices": {
+      "fillRate": 0.3158,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "-",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "UserAccountControl": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UserParameters": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UserPrincipalName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UserWorkstations": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "VirtualAccount": {
+      "fillRate": 0.3158,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 6.0
+    },
+    "VendorIds": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Workstation": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "WorkstationName": {
+      "fillRate": 0.3158,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "-",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "EventLevelName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "LogAlways",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 9.0
+    },
+    "SourceComputerId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "EventOriginId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "MG": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeCollected": {
+      "fillRate": 1.0,
+      "distinctCount": 510,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 23.0,
+      "maxLength": 24.0
+    },
+    "ManagementGroupName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "SystemUserId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "Version": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.684
+        },
+        {
+          "value": "3",
+          "weight": 0.3158
+        },
+        {
+          "value": "2",
+          "weight": 0.0002
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "Opcode": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "Keywords": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "0x8020000000000000",
+          "weight": 0.961
+        },
+        {
+          "value": "0x8010000000000000",
+          "weight": 0.039
+        }
+      ],
+      "pattern": null,
+      "minLength": 18.0,
+      "maxLength": 18.0
+    },
+    "Correlation": {
+      "fillRate": 0.1278,
+      "distinctCount": 373,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 38.0,
+      "maxLength": 38.0
+    },
+    "SystemProcessId": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 3.0
+    },
+    "SystemThreadId": {
+      "fillRate": 1.0,
+      "distinctCount": 144,
+      "topValues": [
+        {
+          "value": "3248",
+          "weight": 0.1776
+        },
+        {
+          "value": "6424",
+          "weight": 0.1694
+        },
+        {
+          "value": "2080",
+          "weight": 0.1374
+        },
+        {
+          "value": "9304",
+          "weight": 0.1066
+        },
+        {
+          "value": "8120",
+          "weight": 0.0182
+        },
+        {
+          "value": "3328",
+          "weight": 0.0152
+        },
+        {
+          "value": "108",
+          "weight": 0.0142
+        },
+        {
+          "value": "10384",
+          "weight": 0.014
+        },
+        {
+          "value": "10580",
+          "weight": 0.014
+        },
+        {
+          "value": "1664",
+          "weight": 0.0118
+        },
+        {
+          "value": "2672",
+          "weight": 0.0112
+        },
+        {
+          "value": "9332",
+          "weight": 0.011
+        },
+        {
+          "value": "8124",
+          "weight": 0.0106
+        },
+        {
+          "value": "7020",
+          "weight": 0.01
+        },
+        {
+          "value": "8612",
+          "weight": 0.0098
+        },
+        {
+          "value": "4428",
+          "weight": 0.0086
+        },
+        {
+          "value": "1316",
+          "weight": 0.0082
+        },
+        {
+          "value": "3440",
+          "weight": 0.0082
+        },
+        {
+          "value": "8556",
+          "weight": 0.0082
+        },
+        {
+          "value": "5676",
+          "weight": 0.0074
+        },
+        {
+          "value": "11032",
+          "weight": 0.0074
+        },
+        {
+          "value": "496",
+          "weight": 0.0072
+        },
+        {
+          "value": "2220",
+          "weight": 0.0068
+        },
+        {
+          "value": "4496",
+          "weight": 0.0064
+        },
+        {
+          "value": "11096",
+          "weight": 0.0064
+        },
+        {
+          "value": "10952",
+          "weight": 0.006
+        },
+        {
+          "value": "1444",
+          "weight": 0.0058
+        },
+        {
+          "value": "8972",
+          "weight": 0.005
+        },
+        {
+          "value": "3288",
+          "weight": 0.005
+        },
+        {
+          "value": "10340",
+          "weight": 0.005
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 5.0
+    },
+    "EventRecordId": {
+      "fillRate": 1.0,
+      "distinctCount": 5000,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "SecurityEvent",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "_ResourceId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/providers/microsoft.compute/virtualmachines/adds01",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 122.0,
+      "maxLength": 122.0
+    }
+  }
+}

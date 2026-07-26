@@ -1,0 +1,188 @@
+{
+  "tableName": "UserPeerAnalytics",
+  "sources": [
+    "sample:UserPeerAnalytics-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 13,
+  "emptyInProd": [
+    "UserPrincipalName",
+    "UserName",
+    "PeerUserPrincipalName",
+    "PeerUserName",
+    "_ResourceId"
+  ],
+  "generatedUtc": "2026-07-26T01:06:21.8481648Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 43,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 20.0
+    },
+    "AADTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "UserId": {
+      "fillRate": 1.0,
+      "distinctCount": 33,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "UserPrincipalName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UserName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "PeerUserId": {
+      "fillRate": 1.0,
+      "distinctCount": 34,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "PeerUserPrincipalName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "PeerUserName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Rank": {
+      "fillRate": 1.0,
+      "distinctCount": 14,
+      "topValues": [
+        {
+          "value": "1",
+          "weight": 0.1415
+        },
+        {
+          "value": "2",
+          "weight": 0.126
+        },
+        {
+          "value": "3",
+          "weight": 0.12
+        },
+        {
+          "value": "4",
+          "weight": 0.1125
+        },
+        {
+          "value": "5",
+          "weight": 0.112
+        },
+        {
+          "value": "6",
+          "weight": 0.074
+        },
+        {
+          "value": "7",
+          "weight": 0.06
+        },
+        {
+          "value": "8",
+          "weight": 0.0545
+        },
+        {
+          "value": "9",
+          "weight": 0.0545
+        },
+        {
+          "value": "10",
+          "weight": 0.0495
+        },
+        {
+          "value": "11",
+          "weight": 0.0495
+        },
+        {
+          "value": "12",
+          "weight": 0.035
+        },
+        {
+          "value": "13",
+          "weight": 0.0075
+        },
+        {
+          "value": "14",
+          "weight": 0.0035
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 2.0
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Azure",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "UserPeerAnalytics",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 17.0,
+      "maxLength": 17.0
+    },
+    "_ResourceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

@@ -1,0 +1,209 @@
+{
+  "tableName": "AlertInfo",
+  "sources": [
+    "sample:AlertInfo.csv"
+  ],
+  "sampledRows": 9.0,
+  "columnCount": 12,
+  "emptyInProd": [
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:03:03.7203919Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 27.0,
+      "maxLength": 28.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 27.0,
+      "maxLength": 28.0
+    },
+    "AlertId": {
+      "fillRate": 1.0,
+      "distinctCount": 9,
+      "topValues": [
+        {
+          "value": "sn0f0e982f-e103-43d5-bd9c-6bd0021ad0e5",
+          "weight": 0.11111
+        },
+        {
+          "value": "sn1499a519-0c23-4c27-ad71-607a5df22a0d",
+          "weight": 0.11111
+        },
+        {
+          "value": "sn3526d799-e16d-4d6c-9265-716a53a378ef",
+          "weight": 0.11111
+        },
+        {
+          "value": "sn36a1e4a8-d668-4196-8925-00d70b855ffc",
+          "weight": 0.11111
+        },
+        {
+          "value": "sn416d257c-322a-43bc-9c52-4ec34a676918",
+          "weight": 0.11111
+        },
+        {
+          "value": "sn7665c143-4060-4806-930d-a16c7c675ca6",
+          "weight": 0.11111
+        },
+        {
+          "value": "snc0c843c1-4d34-4eb8-8dba-7609239bf610",
+          "weight": 0.11111
+        },
+        {
+          "value": "snc2f081de-99d2-4729-90e0-fd9166ad45dd",
+          "weight": 0.11111
+        },
+        {
+          "value": "snd556c93d-d6e9-421d-a96a-19bbdf877c3a",
+          "weight": 0.11111
+        }
+      ],
+      "pattern": null,
+      "minLength": 38.0,
+      "maxLength": 38.0
+    },
+    "Title": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "User Added to Admin Role",
+          "weight": 0.44444
+        },
+        {
+          "value": "Authentication Attempt from New Country",
+          "weight": 0.22222
+        },
+        {
+          "value": "New User Assigned to Privileged Role",
+          "weight": 0.22222
+        },
+        {
+          "value": "Azure VM Run Command operation executed during suspicious login window",
+          "weight": 0.11111
+        }
+      ],
+      "pattern": null,
+      "minLength": 24.0,
+      "maxLength": 70.0
+    },
+    "Category": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "PrivilegeEscalation",
+          "weight": 0.44444
+        },
+        {
+          "value": "InitialAccess",
+          "weight": 0.22222
+        },
+        {
+          "value": "Persistence",
+          "weight": 0.22222
+        },
+        {
+          "value": "CredentialAccess",
+          "weight": 0.11111
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 19.0
+    },
+    "Severity": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Low",
+          "weight": 0.44444
+        },
+        {
+          "value": "High",
+          "weight": 0.33333
+        },
+        {
+          "value": "Medium",
+          "weight": 0.22222
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 6.0
+    },
+    "ServiceSource": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft Sentinel",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 18.0,
+      "maxLength": 18.0
+    },
+    "DetectionSource": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Scheduled Alerts",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "AttackTechniques": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 26.0,
+      "maxLength": 78.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AlertInfo",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 9.0
+    }
+  }
+}

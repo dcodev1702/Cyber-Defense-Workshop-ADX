@@ -1,0 +1,213 @@
+{
+  "tableName": "UrlClickEvents",
+  "sources": [
+    "sample:UrlClickEvents-RealTelemetry.csv"
+  ],
+  "sampledRows": 8.0,
+  "columnCount": 19,
+  "emptyInProd": [
+    "ThreatTypes",
+    "DetectionMethods",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:05:11.3572967Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "Url": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "url",
+      "sensitive": true,
+      "minLength": 65.0,
+      "maxLength": 82.0
+    },
+    "ActionType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "ClickAllowed",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 12.0
+    },
+    "AccountUpn": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 34.0,
+      "maxLength": 36.0
+    },
+    "Workload": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Email",
+          "weight": 0.75
+        },
+        {
+          "value": "Teams",
+          "weight": 0.25
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "NetworkMessageId": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "guid",
+      "freeText": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "IPAddress": {
+      "fillRate": 0.75,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "ThreatTypes": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DetectionMethods": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "IsClickedThrough": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "False",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "UrlChain": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 69.0,
+      "maxLength": 86.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AppName": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Mail",
+          "weight": 0.75
+        },
+        {
+          "value": "Teams iOS Client",
+          "weight": 0.25
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 16.0
+    },
+    "AppVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "0.0.0000",
+          "weight": 0.75
+        },
+        {
+          "value": "1417/8.10.77.2026102901",
+          "weight": 0.25
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 23.0
+    },
+    "SourceId": {
+      "fillRate": 0.75,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "UrlClickEvents",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 14.0,
+      "maxLength": 14.0
+    }
+  }
+}

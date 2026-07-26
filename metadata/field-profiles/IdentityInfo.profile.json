@@ -1,0 +1,649 @@
+{
+  "tableName": "IdentityInfo",
+  "sources": [
+    "sample:IdentityInfo.csv"
+  ],
+  "sampledRows": 82.0,
+  "columnCount": 56,
+  "emptyInProd": [
+    "OnPremisesExtensionAttributes",
+    "Tags",
+    "InvestigationPriority",
+    "InvestigationPriorityPercentile",
+    "RiskLevelDetails",
+    "BlastRadius",
+    "Department",
+    "EmployeeId",
+    "JobTitle",
+    "RelatedAccounts",
+    "AdditionalMailAddresses",
+    "Manager",
+    "StreetAddress",
+    "City",
+    "CompanyName",
+    "Country",
+    "State",
+    "IsServiceAccount",
+    "LastSeenDate",
+    "UACFlags",
+    "UserState",
+    "UserStateChangedOn",
+    "ExtensionProperty",
+    "AccountCloudSID",
+    "IsMFARegistered",
+    "Applications",
+    "ServicePrincipals",
+    "EntityRiskScore"
+  ],
+  "generatedUtc": "2026-07-26T01:04:51.6080549Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 82,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 26.0,
+      "maxLength": 28.0
+    },
+    "AccountName": {
+      "fillRate": 0.8902,
+      "distinctCount": 15,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 15.0
+    },
+    "AccountDomain": {
+      "fillRate": 0.2317,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 10.0,
+      "maxLength": 13.0
+    },
+    "AccountUPN": {
+      "fillRate": 0.8902,
+      "distinctCount": 15,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 36.0
+    },
+    "AccountSID": {
+      "fillRate": 0.2317,
+      "distinctCount": 18,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 42.0,
+      "maxLength": 44.0
+    },
+    "AccountObjectId": {
+      "fillRate": 0.7805,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AccountTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AccountDisplayName": {
+      "fillRate": 0.878,
+      "distinctCount": 14,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 24.0
+    },
+    "GivenName": {
+      "fillRate": 0.8171,
+      "distinctCount": 9,
+      "topValues": [
+        {
+          "value": "Michael",
+          "weight": 0.46269
+        },
+        {
+          "value": "Lorenzo",
+          "weight": 0.29851
+        },
+        {
+          "value": "Robert",
+          "weight": 0.1194
+        },
+        {
+          "value": "Noah",
+          "weight": 0.02985
+        },
+        {
+          "value": "Tom",
+          "weight": 0.02985
+        },
+        {
+          "value": "App User",
+          "weight": 0.01493
+        },
+        {
+          "value": "Break",
+          "weight": 0.01493
+        },
+        {
+          "value": "gail",
+          "weight": 0.01493
+        },
+        {
+          "value": "testeme",
+          "weight": 0.01493
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 8.0
+    },
+    "Surname": {
+      "fillRate": 0.7927,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "crane",
+          "weight": 0.49231
+        },
+        {
+          "value": "Ireland",
+          "weight": 0.30769
+        },
+        {
+          "value": "Finn",
+          "weight": 0.12308
+        },
+        {
+          "value": "Grages",
+          "weight": 0.03077
+        },
+        {
+          "value": "Taylor",
+          "weight": 0.03077
+        },
+        {
+          "value": "Glass",
+          "weight": 0.01538
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 7.0
+    },
+    "OnPremisesAccountObjectId": {
+      "fillRate": 0.7805,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "OnPremisesExtensionAttributes": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OnPremisesDistinguishedName": {
+      "fillRate": 0.2317,
+      "distinctCount": 18,
+      "topValues": [
+        {
+          "value": "CN=lorenzo,CN=Users,DC=xdr-lab,DC=local",
+          "weight": 0.10526
+        },
+        {
+          "value": "CN=App User,CN=Users,DC=xdr-lab,DC=local",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=SamiraA,CN=Users,DC=xdr-lab,DC=local",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=RonHD,CN=Users,DC=xdr-lab,DC=local",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=MSOL_fe3a5d9f7db9,CN=Users,DC=dibsec,DC=net",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=MDITestUser\\0ADEL:187f8255-00bd-40bc-9646-ebf349b687e0,CN=Deleted Objects,DC=dibsec,DC=net",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=krbtgt,CN=Users,DC=xdr-lab,DC=local",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=krbtgt,CN=Users,DC=dibsec,DC=net",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=krbtgt_AzureAD,CN=Users,DC=dibsec,DC=net",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=JeffL,CN=Users,DC=xdr-lab,DC=local",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=HoneyTokenTest,CN=Users,DC=xdr-lab,DC=local",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=Guest,CN=Users,DC=xdr-lab,DC=local",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=Guest,CN=Users,DC=dibsec,DC=net",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=gail crane,CN=Users,DC=dibsec,DC=net",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=Break Glass,CN=Users,DC=xdr-lab,DC=local",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=AuditDCTestUser\\0ADEL:e161dde3-1edc-4bba-aa00-bae0e66e3c35,CN=Deleted Objects,DC=dibsec,DC=net",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=testeme,CN=Users,DC=dibsec,DC=net",
+          "weight": 0.05263
+        },
+        {
+          "value": "CN=xadmin,CN=Users,DC=dibsec,DC=net",
+          "weight": 0.05263
+        }
+      ],
+      "pattern": null,
+      "minLength": 34.0,
+      "maxLength": 97.0
+    },
+    "Tags": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountCreationTime": {
+      "fillRate": 1.0,
+      "distinctCount": 18,
+      "topValues": [],
+      "pattern": "datetime",
+      "sensitive": true,
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "InvestigationPriority": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "InvestigationPriorityPercentile": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RiskLevel": {
+      "fillRate": 0.2439,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "None",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "RiskLevelDetails": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RiskState": {
+      "fillRate": 0.2439,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Dismissed",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 9.0
+    },
+    "BlastRadius": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "GroupMembership": {
+      "fillRate": 0.7805,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 112.0
+    },
+    "AssignedRoles": {
+      "fillRate": 0.7805,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 69.0
+    },
+    "Department": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EmployeeId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "JobTitle": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RelatedAccounts": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MailAddress": {
+      "fillRate": 0.7439,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 33.0,
+      "maxLength": 36.0
+    },
+    "AdditionalMailAddresses": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Manager": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "StreetAddress": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "City": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CompanyName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Country": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "State": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Phone": {
+      "fillRate": 0.2439,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 12.0,
+      "maxLength": 12.0
+    },
+    "IsAccountEnabled": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "IsServiceAccount": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DeletedDateTime": {
+      "fillRate": 0.0366,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "LastSeenDate": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UACFlags": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UserState": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UserStateChangedOn": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UserType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 6.0
+    },
+    "ExtensionProperty": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountCloudSID": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "IsMFARegistered": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Applications": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ServicePrincipals": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "AzureActiveDirectory",
+          "weight": 0.76829
+        },
+        {
+          "value": "ActiveDirectory",
+          "weight": 0.21951
+        },
+        {
+          "value": "Hybrid",
+          "weight": 0.0122
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 20.0
+    },
+    "UserAccountControl": {
+      "fillRate": 0.2317,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 80.0
+    },
+    "ChangeSource": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "AzureActiveDirectory",
+          "weight": 0.76829
+        },
+        {
+          "value": "ActiveDirectory",
+          "weight": 0.23171
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 20.0
+    },
+    "EntityRiskScore": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SAMAccountName": {
+      "fillRate": 0.2317,
+      "distinctCount": 16,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 17.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "IdentityInfo",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 12.0
+    }
+  }
+}

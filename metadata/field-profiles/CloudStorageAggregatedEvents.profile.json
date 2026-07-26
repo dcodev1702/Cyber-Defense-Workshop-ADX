@@ -1,0 +1,923 @@
+{
+  "tableName": "CloudStorageAggregatedEvents",
+  "sources": [
+    "sample:CloudStorageAggregatedEvents-RealTelemetry.csv"
+  ],
+  "sampledRows": 1577.0,
+  "columnCount": 37,
+  "emptyInProd": [
+    "SourceSystem",
+    "TenantId"
+  ],
+  "generatedUtc": "2026-07-26T01:06:38.2963816Z",
+  "columns": {
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 1567,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SuccessfulReadOperations": {
+      "fillRate": 0.9531,
+      "distinctCount": 22,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.88822
+        },
+        {
+          "value": "5",
+          "weight": 0.07319
+        },
+        {
+          "value": "1",
+          "weight": 0.01597
+        },
+        {
+          "value": "2",
+          "weight": 0.00865
+        },
+        {
+          "value": "4",
+          "weight": 0.00133
+        },
+        {
+          "value": "3",
+          "weight": 0.00133
+        },
+        {
+          "value": "104",
+          "weight": 0.00133
+        },
+        {
+          "value": "112",
+          "weight": 0.00067
+        },
+        {
+          "value": "19",
+          "weight": 0.00067
+        },
+        {
+          "value": "11",
+          "weight": 0.00067
+        },
+        {
+          "value": "22",
+          "weight": 0.00067
+        },
+        {
+          "value": "94",
+          "weight": 0.00067
+        },
+        {
+          "value": "10",
+          "weight": 0.00067
+        },
+        {
+          "value": "7",
+          "weight": 0.00067
+        },
+        {
+          "value": "82",
+          "weight": 0.00067
+        },
+        {
+          "value": "83",
+          "weight": 0.00067
+        },
+        {
+          "value": "84",
+          "weight": 0.00067
+        },
+        {
+          "value": "85",
+          "weight": 0.00067
+        },
+        {
+          "value": "88",
+          "weight": 0.00067
+        },
+        {
+          "value": "90",
+          "weight": 0.00067
+        },
+        {
+          "value": "110",
+          "weight": 0.00067
+        },
+        {
+          "value": "96",
+          "weight": 0.00067
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 3.0
+    },
+    "OperationsCount": {
+      "fillRate": 1.0,
+      "distinctCount": 22,
+      "topValues": [
+        {
+          "value": "1",
+          "weight": 0.42613
+        },
+        {
+          "value": "2",
+          "weight": 0.37223
+        },
+        {
+          "value": "6",
+          "weight": 0.0799
+        },
+        {
+          "value": "5",
+          "weight": 0.07039
+        },
+        {
+          "value": "3",
+          "weight": 0.03614
+        },
+        {
+          "value": "4",
+          "weight": 0.0038
+        },
+        {
+          "value": "37",
+          "weight": 0.00127
+        },
+        {
+          "value": "104",
+          "weight": 0.00127
+        },
+        {
+          "value": "19",
+          "weight": 0.00063
+        },
+        {
+          "value": "112",
+          "weight": 0.00063
+        },
+        {
+          "value": "110",
+          "weight": 0.00063
+        },
+        {
+          "value": "94",
+          "weight": 0.00063
+        },
+        {
+          "value": "11",
+          "weight": 0.00063
+        },
+        {
+          "value": "7",
+          "weight": 0.00063
+        },
+        {
+          "value": "82",
+          "weight": 0.00063
+        },
+        {
+          "value": "83",
+          "weight": 0.00063
+        },
+        {
+          "value": "84",
+          "weight": 0.00063
+        },
+        {
+          "value": "85",
+          "weight": 0.00063
+        },
+        {
+          "value": "88",
+          "weight": 0.00063
+        },
+        {
+          "value": "90",
+          "weight": 0.00063
+        },
+        {
+          "value": "13",
+          "weight": 0.00063
+        },
+        {
+          "value": "96",
+          "weight": 0.00063
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 3.0
+    },
+    "SuccessfulOperationsCount": {
+      "fillRate": 1.0,
+      "distinctCount": 22,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.79011
+        },
+        {
+          "value": "1",
+          "weight": 0.08751
+        },
+        {
+          "value": "5",
+          "weight": 0.06975
+        },
+        {
+          "value": "2",
+          "weight": 0.03805
+        },
+        {
+          "value": "4",
+          "weight": 0.0019
+        },
+        {
+          "value": "3",
+          "weight": 0.00127
+        },
+        {
+          "value": "37",
+          "weight": 0.00127
+        },
+        {
+          "value": "104",
+          "weight": 0.00127
+        },
+        {
+          "value": "19",
+          "weight": 0.00063
+        },
+        {
+          "value": "112",
+          "weight": 0.00063
+        },
+        {
+          "value": "110",
+          "weight": 0.00063
+        },
+        {
+          "value": "94",
+          "weight": 0.00063
+        },
+        {
+          "value": "11",
+          "weight": 0.00063
+        },
+        {
+          "value": "7",
+          "weight": 0.00063
+        },
+        {
+          "value": "82",
+          "weight": 0.00063
+        },
+        {
+          "value": "83",
+          "weight": 0.00063
+        },
+        {
+          "value": "84",
+          "weight": 0.00063
+        },
+        {
+          "value": "85",
+          "weight": 0.00063
+        },
+        {
+          "value": "88",
+          "weight": 0.00063
+        },
+        {
+          "value": "90",
+          "weight": 0.00063
+        },
+        {
+          "value": "13",
+          "weight": 0.00063
+        },
+        {
+          "value": "96",
+          "weight": 0.00063
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 3.0
+    },
+    "AccountTenantId": {
+      "fillRate": 0.6931,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Location": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 7.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AuthenticationType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "OAuth",
+          "weight": 0.69309
+        },
+        {
+          "value": "TrustedAccess",
+          "weight": 0.30691
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 13.0
+    },
+    "ActionType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Data Aggregation",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "DistinctGetOperations": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.91313
+        },
+        {
+          "value": "2",
+          "weight": 0.07039
+        },
+        {
+          "value": "1",
+          "weight": 0.00951
+        },
+        {
+          "value": "3",
+          "weight": 0.00444
+        },
+        {
+          "value": "50",
+          "weight": 0.00127
+        },
+        {
+          "value": "52",
+          "weight": 0.00127
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 2.0
+    },
+    "StorageFileShare": {
+      "fillRate": 0.0025,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "df10020b-4c08-4a4a-a835-0ea0aba93564-code",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 41.0,
+      "maxLength": 41.0
+    },
+    "ResourceGroup": {
+      "fillRate": 1.0,
+      "distinctCount": 12,
+      "topValues": [
+        {
+          "value": "foundry",
+          "weight": 0.45847
+        },
+        {
+          "value": "zolab-worker-botprd",
+          "weight": 0.11414
+        },
+        {
+          "value": "zolab-ai",
+          "weight": 0.09004
+        },
+        {
+          "value": "mcapsgovernance",
+          "weight": 0.05644
+        },
+        {
+          "value": "cybertriage",
+          "weight": 0.0539
+        },
+        {
+          "value": "rg-cmmc-evidence-agent-ai-flex",
+          "weight": 0.05263
+        },
+        {
+          "value": "playbook",
+          "weight": 0.03614
+        },
+        {
+          "value": "rg-cmmc-evidence-agent-ai-eus2",
+          "weight": 0.03171
+        },
+        {
+          "value": "adx",
+          "weight": 0.03044
+        },
+        {
+          "value": "cloud-shell-storage-eastus",
+          "weight": 0.02727
+        },
+        {
+          "value": "zolab-ai-u49gco",
+          "weight": 0.02663
+        },
+        {
+          "value": "rg-cmmc-evidence-agent-ai",
+          "weight": 0.02219
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 30.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 682,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "AccountUpn": {
+      "fillRate": 0.0019,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SubscriptionId": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "guid",
+      "freeText": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AccountObjectId": {
+      "fillRate": 0.6931,
+      "distinctCount": 13,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Md5Hashes": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "System.Object[]",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 15.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "System.Collections.Hashtable",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 28.0,
+      "maxLength": 28.0
+    },
+    "HasAnonymousResourceNotFoundFailures": {
+      "fillRate": 0.9531,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "OperationNamesList": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "System.Object[]",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 15.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "CloudStorageAggregatedEvents",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 28.0,
+      "maxLength": 28.0
+    },
+    "AccountApplicationId": {
+      "fillRate": 0.6931,
+      "distinctCount": 14,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "IPAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 473,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 14.0
+    },
+    "DataAggregationEndTime": {
+      "fillRate": 1.0,
+      "distinctCount": 515,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "AccountType": {
+      "fillRate": 0.6931,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 3.0,
+      "maxLength": 4.0
+    },
+    "DataSource": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Azure Storage",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "UserAgentHeader": {
+      "fillRate": 0.9664,
+      "distinctCount": 23,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 131.0
+    },
+    "StorageAccount": {
+      "fillRate": 1.0,
+      "distinctCount": 14,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 14.0,
+      "maxLength": 24.0
+    },
+    "TotalResponseLength": {
+      "fillRate": 1.0,
+      "distinctCount": 19,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.91313
+        },
+        {
+          "value": "9514",
+          "weight": 0.06912
+        },
+        {
+          "value": "7310",
+          "weight": 0.00317
+        },
+        {
+          "value": "55363",
+          "weight": 0.00317
+        },
+        {
+          "value": "45708850",
+          "weight": 0.00127
+        },
+        {
+          "value": "623",
+          "weight": 0.00127
+        },
+        {
+          "value": "47192318",
+          "weight": 0.00127
+        },
+        {
+          "value": "6976",
+          "weight": 0.00063
+        },
+        {
+          "value": "65536",
+          "weight": 0.00063
+        },
+        {
+          "value": "1085395",
+          "weight": 0.00063
+        },
+        {
+          "value": "4698",
+          "weight": 0.00063
+        },
+        {
+          "value": "4111",
+          "weight": 0.00063
+        },
+        {
+          "value": "398073",
+          "weight": 0.00063
+        },
+        {
+          "value": "3488",
+          "weight": 0.00063
+        },
+        {
+          "value": "31936",
+          "weight": 0.00063
+        },
+        {
+          "value": "28176",
+          "weight": 0.00063
+        },
+        {
+          "value": "14566",
+          "weight": 0.00063
+        },
+        {
+          "value": "9396",
+          "weight": 0.00063
+        },
+        {
+          "value": "14094",
+          "weight": 0.00063
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 8.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AzureResourceId": {
+      "fillRate": 1.0,
+      "distinctCount": 14,
+      "topValues": [
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/foundry/providers/Microsoft.Storage/storageAccounts/dibsecfoundryst",
+          "weight": 0.45847
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/zolab-worker-botprd/providers/Microsoft.Storage/storageAccounts/zolabworkerstbotprd",
+          "weight": 0.11414
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/zolab-ai/providers/Microsoft.Storage/storageAccounts/zolabaifndrysa",
+          "weight": 0.09004
+        },
+        {
+          "value": "/subscriptions/7dc30735-96eb-4531-939f-e445c31b73f4/resourceGroups/rg-cmmc-evidence-agent-ai-flex/providers/Microsoft.Storage/storageAccounts/stcmmcevidence260552",
+          "weight": 0.05263
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/playbook/providers/Microsoft.Storage/storageAccounts/ctlocal5xdmqg9aw7",
+          "weight": 0.03614
+        },
+        {
+          "value": "/subscriptions/7dc30735-96eb-4531-939f-e445c31b73f4/resourceGroups/rg-cmmc-evidence-agent-ai-eus2/providers/Microsoft.Storage/storageAccounts/stcmmcevidence260550",
+          "weight": 0.03171
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/adx/providers/Microsoft.Storage/storageAccounts/adxdibsecadx09da4d6a",
+          "weight": 0.03044
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/cybertriage/providers/Microsoft.Storage/storageAccounts/stctresultstnxrouvipe2aa",
+          "weight": 0.02917
+        },
+        {
+          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourceGroups/mcapsgovernance/providers/Microsoft.Storage/storageAccounts/mcapsa6b05fb68d13de11",
+          "weight": 0.02854
+        },
+        {
+          "value": "/subscriptions/3c23f774-2e43-4c6d-83f4-41110ccec208/resourceGroups/mcapsgovernance/providers/Microsoft.Storage/storageAccounts/mcaps83f441110ccec208",
+          "weight": 0.0279
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/cloud-shell-storage-eastus/providers/Microsoft.Storage/storageAccounts/cs2100320058eef0b22",
+          "weight": 0.02727
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/zolab-ai-u49gco/providers/Microsoft.Storage/storageAccounts/zolabaifndrysau49gco",
+          "weight": 0.02663
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/cybertriage/providers/Microsoft.Storage/storageAccounts/stctsastnxrouvipe2aa",
+          "weight": 0.02473
+        },
+        {
+          "value": "/subscriptions/7dc30735-96eb-4531-939f-e445c31b73f4/resourceGroups/rg-cmmc-evidence-agent-ai/providers/Microsoft.Storage/storageAccounts/stcmmcevidence260549",
+          "weight": 0.02219
+        }
+      ],
+      "pattern": null,
+      "minLength": 134.0,
+      "maxLength": 162.0
+    },
+    "StorageContainer": {
+      "fillRate": 0.8434,
+      "distinctCount": 10,
+      "topValues": [
+        {
+          "value": "$purview",
+          "weight": 0.34887
+        },
+        {
+          "value": "df10020b-4c08-4a4a-a835-0ea0aba93564-azureml",
+          "weight": 0.23083
+        },
+        {
+          "value": "df10020b-4c08-4a4a-a835-0ea0aba93564-azureml-blobstore",
+          "weight": 0.21805
+        },
+        {
+          "value": "botstate",
+          "weight": 0.10376
+        },
+        {
+          "value": "function-releases",
+          "weight": 0.02782
+        },
+        {
+          "value": "insights-logs-auditevent",
+          "weight": 0.02632
+        },
+        {
+          "value": "insights-metrics-pt1m",
+          "weight": 0.0203
+        },
+        {
+          "value": "adx-backups",
+          "weight": 0.01278
+        },
+        {
+          "value": "cybertriage-results",
+          "weight": 0.00752
+        },
+        {
+          "value": "evidence-state",
+          "weight": 0.00376
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 54.0
+    },
+    "ServiceType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Blob",
+          "weight": 0.95308
+        },
+        {
+          "value": "Files.REST",
+          "weight": 0.04692
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 10.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 682,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "DataAggregationStartTime": {
+      "fillRate": 1.0,
+      "distinctCount": 515,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "FailedOperationsCount": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "1",
+          "weight": 0.36906
+        },
+        {
+          "value": "2",
+          "weight": 0.36525
+        },
+        {
+          "value": "0",
+          "weight": 0.17882
+        },
+        {
+          "value": "6",
+          "weight": 0.0799
+        },
+        {
+          "value": "3",
+          "weight": 0.00507
+        },
+        {
+          "value": "4",
+          "weight": 0.0019
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "AnonymousSuccessfulOperations": {
+      "fillRate": 0.9531,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    }
+  }
+}

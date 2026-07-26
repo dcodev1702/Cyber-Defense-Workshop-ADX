@@ -1,0 +1,771 @@
+{
+  "tableName": "CloudAppEvents",
+  "sources": [
+    "sample:CloudAppEvents.csv"
+  ],
+  "sampledRows": 4315.0,
+  "columnCount": 40,
+  "emptyInProd": [
+    "SessionData",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:03:26.9180015Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AccountId": {
+      "fillRate": 0.9189,
+      "distinctCount": 46,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 11.0,
+      "maxLength": 36.0
+    },
+    "AccountType": {
+      "fillRate": 0.9189,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 11.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 29.0
+    },
+    "RawEventData": {
+      "fillRate": 1.0,
+      "distinctCount": 4311,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 393.0,
+      "maxLength": 17281.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 4311,
+      "topValues": [],
+      "pattern": "sha256",
+      "minLength": 51.0,
+      "maxLength": 64.0
+    },
+    "ObjectId": {
+      "fillRate": 0.7787,
+      "distinctCount": 238,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 30.0,
+      "maxLength": 266.0
+    },
+    "ObjectType": {
+      "fillRate": 0.882,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "Resource",
+          "weight": 0.8773
+        },
+        {
+          "value": "Task",
+          "weight": 0.10037
+        },
+        {
+          "value": "Application",
+          "weight": 0.0092
+        },
+        {
+          "value": "Office 365 Admin Role",
+          "weight": 0.00736
+        },
+        {
+          "value": "Property",
+          "weight": 0.00394
+        },
+        {
+          "value": "Email",
+          "weight": 0.00158
+        },
+        {
+          "value": "Privilege",
+          "weight": 0.00026
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 21.0
+    },
+    "ObjectName": {
+      "fillRate": 0.7866,
+      "distinctCount": 193,
+      "topValues": [
+        {
+          "value": "StorageDataScanner",
+          "weight": 0.24779
+        },
+        {
+          "value": "Set-ConditionalAccessPolicy",
+          "weight": 0.08132
+        },
+        {
+          "value": "dc-xdr-lab-2",
+          "weight": 0.04478
+        },
+        {
+          "value": "azuredeploy-set-cybertriage",
+          "weight": 0.04125
+        },
+        {
+          "value": "zolabai-foundry-u49gco",
+          "weight": 0.03595
+        },
+        {
+          "value": "azuredeploy-check-queue",
+          "weight": 0.033
+        },
+        {
+          "value": "dc-xdr-lab-1",
+          "weight": 0.03241
+        },
+        {
+          "value": "azuremonitorlogs-Check-CyberTriageQueue",
+          "weight": 0.02976
+        },
+        {
+          "value": "capp-svc-lb",
+          "weight": 0.02622
+        },
+        {
+          "value": "manual",
+          "weight": 0.02475
+        },
+        {
+          "value": "Set-CyberTriage",
+          "weight": 0.02298
+        },
+        {
+          "value": "dibsecadx",
+          "weight": 0.01886
+        },
+        {
+          "value": "Check-CyberTriageQueue",
+          "weight": 0.01709
+        },
+        {
+          "value": "ualtimebomb-disarm-deploy",
+          "weight": 0.01179
+        },
+        {
+          "value": "ualtimebomb-arm-deploy",
+          "weight": 0.01179
+        },
+        {
+          "value": "stcybertriage",
+          "weight": 0.00913
+        },
+        {
+          "value": "usm262346",
+          "weight": 0.00884
+        },
+        {
+          "value": "azuresentinel-Set-CyberTriage",
+          "weight": 0.00854
+        },
+        {
+          "value": "Set-Mailbox",
+          "weight": 0.00825
+        },
+        {
+          "value": "dibsecfoundryst",
+          "weight": 0.00825
+        },
+        {
+          "value": "Set-MailboxPlan",
+          "weight": 0.00796
+        },
+        {
+          "value": "MailItemsAccessed",
+          "weight": 0.00766
+        },
+        {
+          "value": "ualtimebomb-arm",
+          "weight": 0.00737
+        },
+        {
+          "value": "ce720fb0-7dcd-45f3-bf9f-5f4e49810f24",
+          "weight": 0.00707
+        },
+        {
+          "value": "ualtimebomb-disarm",
+          "weight": 0.00648
+        },
+        {
+          "value": "azuresentinel-Check-CyberTriageQueue",
+          "weight": 0.00648
+        },
+        {
+          "value": "avdpool-1",
+          "weight": 0.0053
+        },
+        {
+          "value": "CyberTriage-LiveResponse-Collection",
+          "weight": 0.0053
+        },
+        {
+          "value": "dc-xdr-lab-2-nic",
+          "weight": 0.00501
+        },
+        {
+          "value": "ualtimebomb",
+          "weight": 0.00501
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 65.0
+    },
+    "ActivityObjects": {
+      "fillRate": 1.0,
+      "distinctCount": 1163,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 3843.0
+    },
+    "ActivityType": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [
+        {
+          "value": "Basic",
+          "weight": 0.88621
+        },
+        {
+          "value": "Run",
+          "weight": 0.08853
+        },
+        {
+          "value": "Add",
+          "weight": 0.00881
+        },
+        {
+          "value": "Remove",
+          "weight": 0.00649
+        },
+        {
+          "value": "Assignprivilege",
+          "weight": 0.00371
+        },
+        {
+          "value": "Unassignprivilege",
+          "weight": 0.00301
+        },
+        {
+          "value": "Edit",
+          "weight": 0.00185
+        },
+        {
+          "value": "Trash",
+          "weight": 0.00139
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 17.0
+    },
+    "UserAgent": {
+      "fillRate": 0.0123,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 83.0
+    },
+    "ISP": {
+      "fillRate": 0.7905,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "Microsoft Azure",
+          "weight": 0.79595
+        },
+        {
+          "value": "mainzer breitband gmbh",
+          "weight": 0.10965
+        },
+        {
+          "value": "microsoft corporation",
+          "weight": 0.06655
+        },
+        {
+          "value": "Exchange Online server",
+          "weight": 0.02082
+        },
+        {
+          "value": "INTERNAL_NETWORK",
+          "weight": 0.00704
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 22.0
+    },
+    "City": {
+      "fillRate": 0.7849,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 14.0
+    },
+    "CountryCode": {
+      "fillRate": 0.7849,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "IsAnonymousProxy": {
+      "fillRate": 0.7956,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "false",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "IsExternalUser": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "IsImpersonated": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "false",
+          "weight": 0.9993
+        },
+        {
+          "value": "true",
+          "weight": 0.0007
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "IPAddress": {
+      "fillRate": 0.7956,
+      "distinctCount": 99,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 10.0,
+      "maxLength": 28.0
+    },
+    "IPCategory": {
+      "fillRate": 0.6983,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Cloud provider",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 14.0,
+      "maxLength": 14.0
+    },
+    "IPTags": {
+      "fillRate": 0.7038,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 19.0,
+      "maxLength": 61.0
+    },
+    "OSPlatform": {
+      "fillRate": 0.0123,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Unknown",
+          "weight": 0.67925
+        },
+        {
+          "value": "Windows 10",
+          "weight": 0.28302
+        },
+        {
+          "value": "Windows",
+          "weight": 0.03774
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 10.0
+    },
+    "DeviceType": {
+      "fillRate": 0.0123,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Other",
+          "weight": 0.67925
+        },
+        {
+          "value": "Desktop",
+          "weight": 0.32075
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 7.0
+    },
+    "IsAdminOperation": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "false",
+          "weight": 0.99351
+        },
+        {
+          "value": "true",
+          "weight": 0.00649
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "AccountDisplayName": {
+      "fillRate": 0.9189,
+      "distinctCount": 36,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 68.0
+    },
+    "AccountObjectId": {
+      "fillRate": 0.5233,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AppInstanceId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "ApplicationId": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "12260",
+          "weight": 0.77381
+        },
+        {
+          "value": "11161",
+          "weight": 0.13256
+        },
+        {
+          "value": "20893",
+          "weight": 0.09015
+        },
+        {
+          "value": "11522",
+          "weight": 0.00348
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "Application": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "Microsoft Azure",
+          "weight": 0.77381
+        },
+        {
+          "value": "Microsoft 365",
+          "weight": 0.13256
+        },
+        {
+          "value": "Microsoft Exchange Online",
+          "weight": 0.09015
+        },
+        {
+          "value": "Microsoft Viva Engage",
+          "weight": 0.00348
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 25.0
+    },
+    "ActionType": {
+      "fillRate": 1.0,
+      "distinctCount": 147,
+      "topValues": [
+        {
+          "value": "Write Datascanners",
+          "weight": 0.1949
+        },
+        {
+          "value": "Register Microsoft.EventGrid",
+          "weight": 0.06512
+        },
+        {
+          "value": "Set-ConditionalAccessPolicy",
+          "weight": 0.06396
+        },
+        {
+          "value": "Search",
+          "weight": 0.0635
+        },
+        {
+          "value": "Write Deployments",
+          "weight": 0.04774
+        },
+        {
+          "value": "RunCommand VirtualMachines",
+          "weight": 0.03476
+        },
+        {
+          "value": "Validate Deployments",
+          "weight": 0.03198
+        },
+        {
+          "value": "Validate",
+          "weight": 0.02827
+        },
+        {
+          "value": "Listkeys Accounts",
+          "weight": 0.02827
+        },
+        {
+          "value": "Write Workflows",
+          "weight": 0.02549
+        },
+        {
+          "value": "Write Connections",
+          "weight": 0.02457
+        },
+        {
+          "value": "ListCallbackURL Triggers",
+          "weight": 0.02271
+        },
+        {
+          "value": "DynamicInvoke Connections",
+          "weight": 0.02178
+        },
+        {
+          "value": "Read Deployments",
+          "weight": 0.02132
+        },
+        {
+          "value": "Write LoadBalancers",
+          "weight": 0.02063
+        },
+        {
+          "value": "Write GuestConfigurationAssignments",
+          "weight": 0.01669
+        },
+        {
+          "value": "AuditIfNotExists Workflows",
+          "weight": 0.01437
+        },
+        {
+          "value": "AuditIfNotExists VirtualMachines",
+          "weight": 0.01228
+        },
+        {
+          "value": "Read Clusters",
+          "weight": 0.01043
+        },
+        {
+          "value": "RetrieveSasUris RestorePoints",
+          "weight": 0.00973
+        },
+        {
+          "value": "Write NetworkInterfaces",
+          "weight": 0.0095
+        },
+        {
+          "value": "Audit VirtualMachines",
+          "weight": 0.00904
+        },
+        {
+          "value": "ListKeys StorageAccounts",
+          "weight": 0.00881
+        },
+        {
+          "value": "Start VirtualMachines",
+          "weight": 0.00834
+        },
+        {
+          "value": "Write WatchlistItems",
+          "weight": 0.00788
+        },
+        {
+          "value": "GetEntities Microsoft.Management",
+          "weight": 0.00788
+        },
+        {
+          "value": "NotifyResourceJobs Microsoft.Resources",
+          "weight": 0.00695
+        },
+        {
+          "value": "Set-Mailbox",
+          "weight": 0.00649
+        },
+        {
+          "value": "Set-MailboxPlan",
+          "weight": 0.00626
+        },
+        {
+          "value": "MailItemsAccessed",
+          "weight": 0.00603
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 45.0
+    },
+    "UserAgentTags": {
+      "fillRate": 0.0016,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 17.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 3908,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 24.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 3908,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 24.0
+    },
+    "AuditSource": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Defender for Cloud Apps app connector",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 37.0,
+      "maxLength": 37.0
+    },
+    "LastSeenForUser": {
+      "fillRate": 0.5993,
+      "distinctCount": 87,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 32.0,
+      "maxLength": 91.0
+    },
+    "OAuthAppId": {
+      "fillRate": 0.7831,
+      "distinctCount": 44,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 27.0,
+      "maxLength": 36.0
+    },
+    "SessionData": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UncommonForUser": {
+      "fillRate": 0.5993,
+      "distinctCount": 10,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 66.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "CloudAppEvents",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 14.0,
+      "maxLength": 14.0
+    }
+  }
+}

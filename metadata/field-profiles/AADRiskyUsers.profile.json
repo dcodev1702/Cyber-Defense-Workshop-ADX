@@ -1,0 +1,195 @@
+{
+  "tableName": "AADRiskyUsers",
+  "sources": [
+    "sample:AADRiskyUsers-RealTelemetry.csv"
+  ],
+  "sampledRows": 12.0,
+  "columnCount": 15,
+  "emptyInProd": [
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:06:25.9053284Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Id": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "IsDeleted": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "False",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "IsProcessing": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "False",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "RiskDetail": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "none",
+          "weight": 0.66667
+        },
+        {
+          "value": "adminConfirmedAccountSafe",
+          "weight": 0.16667
+        },
+        {
+          "value": "userPerformedSecuredPasswordReset",
+          "weight": 0.16667
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 33.0
+    },
+    "RiskLastUpdatedDateTime": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "RiskLevel": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "none",
+          "weight": 0.66667
+        },
+        {
+          "value": "medium",
+          "weight": 0.33333
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 6.0
+    },
+    "RiskState": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "atRisk",
+          "weight": 0.33333
+        },
+        {
+          "value": "dismissed",
+          "weight": 0.33333
+        },
+        {
+          "value": "confirmedSafe",
+          "weight": 0.16667
+        },
+        {
+          "value": "remediated",
+          "weight": 0.16667
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 13.0
+    },
+    "UserDisplayName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 15.0,
+      "maxLength": 15.0
+    },
+    "UserPrincipalName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 10,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "OperationName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Risky user",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "CorrelationId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AADRiskyUsers",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    }
+  }
+}

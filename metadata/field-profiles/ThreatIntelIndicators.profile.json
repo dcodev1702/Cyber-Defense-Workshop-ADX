@@ -1,0 +1,266 @@
+{
+  "tableName": "ThreatIntelIndicators",
+  "sources": [
+    "sample:ThreatIntelIndicators-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 23,
+  "emptyInProd": [
+    "Revoked",
+    "_ResourceId"
+  ],
+  "generatedUtc": "2026-07-26T01:05:40.2642838Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 1761,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "WorkspaceId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AzureTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Id": {
+      "fillRate": 1.0,
+      "distinctCount": 1267,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 102.0,
+      "maxLength": 102.0
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft Defender Threat Intelligence",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 38.0,
+      "maxLength": 38.0
+    },
+    "LastUpdateMethod": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "BasicMDTIConnector",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 18.0,
+      "maxLength": 18.0
+    },
+    "IsDeleted": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "False",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "Data": {
+      "fillRate": 1.0,
+      "distinctCount": 1960,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 958.0,
+      "maxLength": 8179.0
+    },
+    "IsActive": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 0.997
+        },
+        {
+          "value": "False",
+          "weight": 0.003
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "Revoked": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ValidUntil": {
+      "fillRate": 1.0,
+      "distinctCount": 1260,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "ValidFrom": {
+      "fillRate": 1.0,
+      "distinctCount": 760,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "Created": {
+      "fillRate": 1.0,
+      "distinctCount": 1177,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 22.0
+    },
+    "Modified": {
+      "fillRate": 1.0,
+      "distinctCount": 760,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "Tags": {
+      "fillRate": 0.9995,
+      "distinctCount": 970,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 68.0,
+      "maxLength": 6636.0
+    },
+    "Confidence": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "100",
+          "weight": 0.928
+        },
+        {
+          "value": "75",
+          "weight": 0.0705
+        },
+        {
+          "value": "60",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 3.0
+    },
+    "Pattern": {
+      "fillRate": 1.0,
+      "distinctCount": 1267,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 32.0,
+      "maxLength": 92.0
+    },
+    "ObservableKey": {
+      "fillRate": 0.9985,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "network-traffic:src_ref.value",
+          "weight": 0.9309
+        },
+        {
+          "value": "file:hashes.'SHA-256'",
+          "weight": 0.03405
+        },
+        {
+          "value": "domain-name:value",
+          "weight": 0.01753
+        },
+        {
+          "value": "file:hashes.MD5",
+          "weight": 0.00701
+        },
+        {
+          "value": "url:value",
+          "weight": 0.00551
+        },
+        {
+          "value": "file:hashes.'SHA-1'",
+          "weight": 0.00501
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 29.0
+    },
+    "ObservableValue": {
+      "fillRate": 0.9985,
+      "distinctCount": 1265,
+      "topValues": [],
+      "pattern": "ipv4",
+      "minLength": 8.0,
+      "maxLength": 70.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "ThreatIntelIndicators",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 21.0,
+      "maxLength": 21.0
+    },
+    "_ResourceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

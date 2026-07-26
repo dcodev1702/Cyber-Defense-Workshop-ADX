@@ -1,0 +1,833 @@
+{
+  "tableName": "SecurityIncident",
+  "sources": [
+    "sample:SecurityIncident-Real.csv"
+  ],
+  "sampledRows": 198.0,
+  "columnCount": 31,
+  "emptyInProd": [
+    "Description",
+    "ClassificationComment"
+  ],
+  "generatedUtc": "2026-07-26T01:03:04.1160388Z",
+  "columns": {
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 170,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "IncidentName": {
+      "fillRate": 1.0,
+      "distinctCount": 68,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Title": {
+      "fillRate": 1.0,
+      "distinctCount": 41,
+      "topValues": [
+        {
+          "value": "Suspicious activity incident on multiple endpoints reported by multiple sources",
+          "weight": 0.27273
+        },
+        {
+          "value": "User Added to Admin Role involving multiple users",
+          "weight": 0.13131
+        },
+        {
+          "value": "Hands-on keyboard attack was launched from a compromised account (attack disruption)",
+          "weight": 0.08081
+        },
+        {
+          "value": "Probable AdFind Recon Tool Usage",
+          "weight": 0.07576
+        },
+        {
+          "value": "Multi-stage incident involving Persistence & Privilege escalation involving multiple users",
+          "weight": 0.03535
+        },
+        {
+          "value": "Suspicious activity incident on one endpoint reported by multiple sources",
+          "weight": 0.03535
+        },
+        {
+          "value": "Multi-stage incident involving Privilege escalation & Lateral movement involving multiple users reported by multiple sources",
+          "weight": 0.02525
+        },
+        {
+          "value": "Multi-stage incident involving Privilege escalation involving multiple users reported by multiple sources",
+          "weight": 0.02525
+        },
+        {
+          "value": "New User Assigned to Privileged Role involving multiple users",
+          "weight": 0.02525
+        },
+        {
+          "value": "Process Execution Frequency Anomaly",
+          "weight": 0.02525
+        },
+        {
+          "value": "User Added to Admin Role involving one user",
+          "weight": 0.02525
+        },
+        {
+          "value": "Suspicious Azure role assignment detected (Preview) involving one user",
+          "weight": 0.02525
+        },
+        {
+          "value": "Multi-stage incident involving Privilege escalation involving multiple users",
+          "weight": 0.0202
+        },
+        {
+          "value": "Azure VM Run Command operation executed during suspicious login window involving one user",
+          "weight": 0.01515
+        },
+        {
+          "value": "Authentication Attempt from New Country involving one user",
+          "weight": 0.01515
+        },
+        {
+          "value": "Sensitive Azure Key Vault operations involving one user",
+          "weight": 0.01515
+        },
+        {
+          "value": "Suspicious download of Microsoft 365 Defender offboarding package involving one user",
+          "weight": 0.0101
+        },
+        {
+          "value": "Multiple threat families detected including Ransomware on one endpoint",
+          "weight": 0.0101
+        },
+        {
+          "value": "User account created and deleted within 10 mins",
+          "weight": 0.0101
+        },
+        {
+          "value": "Rare RDP Connections",
+          "weight": 0.0101
+        },
+        {
+          "value": "'EICAR_Test_File' detected on multiple endpoints reported by multiple sources",
+          "weight": 0.0101
+        },
+        {
+          "value": "Multi-stage incident involving Privilege escalation & Credential access involving multiple users",
+          "weight": 0.00505
+        },
+        {
+          "value": "A malicious URL was detected in an AI agent’s tool response (Preview) involving one user",
+          "weight": 0.00505
+        },
+        {
+          "value": "Azure RunScript used to deploy malicious code",
+          "weight": 0.00505
+        },
+        {
+          "value": "Defender AV active on adds01.dibsec.net",
+          "weight": 0.00505
+        },
+        {
+          "value": "Defender AV active on adsync01.dibsec.net",
+          "weight": 0.00505
+        },
+        {
+          "value": "Defender AV active on attackiq01",
+          "weight": 0.00505
+        },
+        {
+          "value": "Defender AV active on avdpool-1",
+          "weight": 0.00505
+        },
+        {
+          "value": "Defender AV active on cyberlorianhp",
+          "weight": 0.00505
+        },
+        {
+          "value": "Security principal reconnaissance (LDAP)",
+          "weight": 0.00505
+        }
+      ],
+      "pattern": null,
+      "minLength": 20.0,
+      "maxLength": 124.0
+    },
+    "Description": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Severity": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "Informational",
+          "weight": 0.38889
+        },
+        {
+          "value": "High",
+          "weight": 0.28283
+        },
+        {
+          "value": "Low",
+          "weight": 0.18687
+        },
+        {
+          "value": "Medium",
+          "weight": 0.14141
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 13.0
+    },
+    "Status": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "New",
+          "weight": 0.84848
+        },
+        {
+          "value": "Closed",
+          "weight": 0.15152
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 6.0
+    },
+    "Classification": {
+      "fillRate": 0.1515,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Undetermined",
+          "weight": 0.86667
+        },
+        {
+          "value": "BenignPositive",
+          "weight": 0.13333
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 14.0
+    },
+    "ClassificationComment": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ClassificationReason": {
+      "fillRate": 0.0202,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "SuspiciousButExpected",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 21.0,
+      "maxLength": 21.0
+    },
+    "Owner": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 73.0,
+      "maxLength": 182.0
+    },
+    "ProviderName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft XDR",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "ProviderIncidentId": {
+      "fillRate": 1.0,
+      "distinctCount": 68,
+      "topValues": [
+        {
+          "value": "225",
+          "weight": 0.22727
+        },
+        {
+          "value": "214",
+          "weight": 0.17172
+        },
+        {
+          "value": "179",
+          "weight": 0.0303
+        },
+        {
+          "value": "197",
+          "weight": 0.02525
+        },
+        {
+          "value": "228",
+          "weight": 0.0202
+        },
+        {
+          "value": "203",
+          "weight": 0.0202
+        },
+        {
+          "value": "236",
+          "weight": 0.0202
+        },
+        {
+          "value": "205",
+          "weight": 0.01515
+        },
+        {
+          "value": "230",
+          "weight": 0.01515
+        },
+        {
+          "value": "238",
+          "weight": 0.01515
+        },
+        {
+          "value": "199",
+          "weight": 0.01515
+        },
+        {
+          "value": "192",
+          "weight": 0.01515
+        },
+        {
+          "value": "235",
+          "weight": 0.0101
+        },
+        {
+          "value": "242",
+          "weight": 0.0101
+        },
+        {
+          "value": "210",
+          "weight": 0.0101
+        },
+        {
+          "value": "212",
+          "weight": 0.0101
+        },
+        {
+          "value": "213",
+          "weight": 0.0101
+        },
+        {
+          "value": "216",
+          "weight": 0.0101
+        },
+        {
+          "value": "218",
+          "weight": 0.0101
+        },
+        {
+          "value": "223",
+          "weight": 0.0101
+        },
+        {
+          "value": "232",
+          "weight": 0.0101
+        },
+        {
+          "value": "233",
+          "weight": 0.0101
+        },
+        {
+          "value": "239",
+          "weight": 0.0101
+        },
+        {
+          "value": "167",
+          "weight": 0.0101
+        },
+        {
+          "value": "211",
+          "weight": 0.0101
+        },
+        {
+          "value": "175",
+          "weight": 0.0101
+        },
+        {
+          "value": "200",
+          "weight": 0.0101
+        },
+        {
+          "value": "178",
+          "weight": 0.0101
+        },
+        {
+          "value": "198",
+          "weight": 0.0101
+        },
+        {
+          "value": "181",
+          "weight": 0.0101
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "FirstActivityTime": {
+      "fillRate": 1.0,
+      "distinctCount": 93,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "LastActivityTime": {
+      "fillRate": 1.0,
+      "distinctCount": 158,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "FirstModifiedTime": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "Invalid date",
+          "weight": 0.96465
+        },
+        {
+          "value": "Apr 22, 2026 7:50:31 PM",
+          "weight": 0.01515
+        },
+        {
+          "value": "Apr 27, 2026 2:18:33 PM",
+          "weight": 0.0101
+        },
+        {
+          "value": "Apr 27, 2026 2:19:11 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 27, 2026 2:19:53 PM",
+          "weight": 0.00505
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 23.0
+    },
+    "LastModifiedTime": {
+      "fillRate": 1.0,
+      "distinctCount": 170,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "CreatedTime": {
+      "fillRate": 1.0,
+      "distinctCount": 59,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "ClosedTime": {
+      "fillRate": 1.0,
+      "distinctCount": 27,
+      "topValues": [
+        {
+          "value": "Invalid date",
+          "weight": 0.84848
+        },
+        {
+          "value": "Apr 22, 2026 7:52:55 PM",
+          "weight": 0.01515
+        },
+        {
+          "value": "Apr 27, 2026 2:22:51 PM",
+          "weight": 0.0101
+        },
+        {
+          "value": "Apr 27, 2026 2:19:55 PM",
+          "weight": 0.0101
+        },
+        {
+          "value": "Apr 14, 2026 4:25:57 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 5, 2026 1:25:51 AM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 4, 2026 8:26:00 AM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 4, 2026 11:01:56 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 30, 2026 7:25:51 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 30, 2026 4:19:52 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 30, 2026 3:28:54 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 3, 2026 7:57:29 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 28, 2026 4:13:53 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 14, 2026 4:04:52 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 24, 2026 4:04:53 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 22, 2026 7:07:56 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 22, 2026 2:10:53 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 21, 2026 4:13:52 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 2, 2026 7:03:53 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 2, 2026 7:03:52 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 18, 2026 4:07:54 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 17, 2026 4:10:52 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 16, 2026 4:01:54 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 14, 2026 5:37:55 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 14, 2026 4:58:58 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 8, 2026 3:58:56 PM",
+          "weight": 0.00505
+        },
+        {
+          "value": "Apr 10, 2026 3:49:51 PM",
+          "weight": 0.00505
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 23.0
+    },
+    "IncidentNumber": {
+      "fillRate": 1.0,
+      "distinctCount": 68,
+      "topValues": [
+        {
+          "value": "129",
+          "weight": 0.22727
+        },
+        {
+          "value": "124",
+          "weight": 0.17172
+        },
+        {
+          "value": "93",
+          "weight": 0.0303
+        },
+        {
+          "value": "108",
+          "weight": 0.02525
+        },
+        {
+          "value": "137",
+          "weight": 0.0202
+        },
+        {
+          "value": "130",
+          "weight": 0.0202
+        },
+        {
+          "value": "114",
+          "weight": 0.0202
+        },
+        {
+          "value": "138",
+          "weight": 0.01515
+        },
+        {
+          "value": "104",
+          "weight": 0.01515
+        },
+        {
+          "value": "116",
+          "weight": 0.01515
+        },
+        {
+          "value": "132",
+          "weight": 0.01515
+        },
+        {
+          "value": "111",
+          "weight": 0.01515
+        },
+        {
+          "value": "133",
+          "weight": 0.0101
+        },
+        {
+          "value": "125",
+          "weight": 0.0101
+        },
+        {
+          "value": "126",
+          "weight": 0.0101
+        },
+        {
+          "value": "128",
+          "weight": 0.0101
+        },
+        {
+          "value": "83",
+          "weight": 0.0101
+        },
+        {
+          "value": "136",
+          "weight": 0.0101
+        },
+        {
+          "value": "139",
+          "weight": 0.0101
+        },
+        {
+          "value": "141",
+          "weight": 0.0101
+        },
+        {
+          "value": "134",
+          "weight": 0.0101
+        },
+        {
+          "value": "122",
+          "weight": 0.0101
+        },
+        {
+          "value": "123",
+          "weight": 0.0101
+        },
+        {
+          "value": "110",
+          "weight": 0.0101
+        },
+        {
+          "value": "103",
+          "weight": 0.0101
+        },
+        {
+          "value": "96",
+          "weight": 0.0101
+        },
+        {
+          "value": "106",
+          "weight": 0.0101
+        },
+        {
+          "value": "121",
+          "weight": 0.0101
+        },
+        {
+          "value": "109",
+          "weight": 0.0101
+        },
+        {
+          "value": "102",
+          "weight": 0.0101
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 3.0
+    },
+    "RelatedAnalyticRuleIds": {
+      "fillRate": 1.0,
+      "distinctCount": 16,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 118.0
+    },
+    "AlertIds": {
+      "fillRate": 1.0,
+      "distinctCount": 105,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 1249.0
+    },
+    "BookmarkIds": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "Comments": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 382.0
+    },
+    "Tasks": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "Labels": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 61.0
+    },
+    "IncidentUrl": {
+      "fillRate": 1.0,
+      "distinctCount": 68,
+      "topValues": [],
+      "pattern": "url",
+      "sensitive": true,
+      "minLength": 294.0,
+      "maxLength": 294.0
+    },
+    "AdditionalData": {
+      "fillRate": 1.0,
+      "distinctCount": 129,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 225.0,
+      "maxLength": 518.0
+    },
+    "ModifiedBy": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "Microsoft Defender XDR - alert correlation",
+          "weight": 0.60101
+        },
+        {
+          "value": "Incident created from alert",
+          "weight": 0.31818
+        },
+        {
+          "value": "Microsoft XDR",
+          "weight": 0.04545
+        },
+        {
+          "value": "mcrane@DibSecurity.onmicrosoft.com",
+          "weight": 0.0303
+        },
+        {
+          "value": "Playbook - Notify-User-On-Incident",
+          "weight": 0.00505
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 42.0
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Azure",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "SecurityIncident",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    }
+  }
+}

@@ -1,0 +1,277 @@
+{
+  "tableName": "AADUserRiskEvents",
+  "sources": [
+    "sample:AADRiskUserEvents.csv"
+  ],
+  "sampledRows": 11.0,
+  "columnCount": 25,
+  "emptyInProd": [
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:03:21.3674735Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Activity": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "signin",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 6.0
+    },
+    "ActivityDateTime": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 24.0,
+      "maxLength": 24.0
+    },
+    "AdditionalInfo": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 201.0,
+      "maxLength": 201.0
+    },
+    "CorrelationId": {
+      "fillRate": 1.0,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "DetectedDateTime": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 24.0,
+      "maxLength": 24.0
+    },
+    "DetectionTimingType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "realtime",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 8.0
+    },
+    "Id": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "sha256",
+      "minLength": 64.0,
+      "maxLength": 64.0
+    },
+    "IpAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 12.0,
+      "maxLength": 12.0
+    },
+    "LastUpdatedDateTime": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 24.0,
+      "maxLength": 24.0
+    },
+    "Location": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 135.0,
+      "maxLength": 135.0
+    },
+    "RequestId": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "RiskDetail": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "userPassedMFADrivenByRiskBasedPolicy",
+          "weight": 0.90909
+        },
+        {
+          "value": "aiConfirmedSigninSafe",
+          "weight": 0.09091
+        }
+      ],
+      "pattern": null,
+      "minLength": 21.0,
+      "maxLength": 36.0
+    },
+    "RiskEventType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "anonymizedIPAddress",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "RiskLevel": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "low",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "RiskState": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "remediated",
+          "weight": 0.90909
+        },
+        {
+          "value": "dismissed",
+          "weight": 0.09091
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 10.0
+    },
+    "Source": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "IdentityProtection",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 18.0,
+      "maxLength": 18.0
+    },
+    "TokenIssuerType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AzureAD",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "UserDisplayName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 15.0,
+      "maxLength": 15.0
+    },
+    "UserId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "UserPrincipalName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 24.0,
+      "maxLength": 24.0
+    },
+    "OperationName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "User Risk Detection",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AADUserRiskEvents",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 17.0,
+      "maxLength": 17.0
+    }
+  }
+}

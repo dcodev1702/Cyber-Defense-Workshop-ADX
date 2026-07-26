@@ -1,0 +1,1733 @@
+{
+  "tableName": "ASimDnsActivityLogs",
+  "sources": [
+    "sample:ASimDnsActivityLogs-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 144,
+  "emptyInProd": [
+    "SrcGeoRegion",
+    "SrcGeoCity",
+    "DstGeoRegion",
+    "DstGeoCity",
+    "DstDescription",
+    "DstDvcScope",
+    "DstOriginalRiskLevel",
+    "DstRiskLevel",
+    "DvcDescription",
+    "DvcInterface",
+    "DvcOriginalAction",
+    "DvcScope",
+    "DvcScopeId",
+    "EventOriginalSeverity",
+    "NetworkProtocolVersion",
+    "RuleName",
+    "RuleNumber",
+    "SrcDescription",
+    "SrcDvcScope",
+    "SrcDvcScopeId",
+    "SrcOriginalRiskLevel",
+    "SrcUserScope",
+    "SrcUserScopeId",
+    "SrcUserSessionId",
+    "ThreatId",
+    "ThreatIpAddr",
+    "ThreatField",
+    "UrlCategory",
+    "ThreatCategory",
+    "ThreatName",
+    "ThreatConfidence",
+    "ThreatOriginalConfidence",
+    "ThreatRiskLevel",
+    "ThreatOriginalRiskLevel_s",
+    "ThreatOriginalRiskLevel",
+    "ThreatIsActive",
+    "ThreatFirstReportedTime",
+    "ThreatFirstReportedTime_d",
+    "ThreatLastReportedTime",
+    "ThreatLastReportedTime_d",
+    "EventMessage",
+    "EventOriginalUid",
+    "EventReportUrl",
+    "EventSchemaVersion",
+    "Dvc",
+    "DvcFQDN",
+    "DvcId",
+    "DvcIdType",
+    "DvcMacAddr",
+    "DvcZone",
+    "DnsResponseIpCity",
+    "DnsResponseIpRegion",
+    "EventOwner",
+    "EventProductVersion",
+    "EventSeverity",
+    "Src",
+    "SrcHostname",
+    "SrcDomain",
+    "SrcDomainType",
+    "SrcFQDN",
+    "SrcDvcId",
+    "SrcDvcIdType",
+    "SrcDeviceType",
+    "SrcRiskLevel",
+    "SrcUserId",
+    "SrcUserIdType",
+    "SrcUsername",
+    "SrcUsernameType",
+    "SrcUserType",
+    "SrcOriginalUserType",
+    "SrcProcessName",
+    "SrcProcessId",
+    "SrcProcessGuid",
+    "Dst",
+    "DstPortNumber",
+    "DstHostname",
+    "DstDomain",
+    "DstDomainType",
+    "DstFQDN",
+    "DstDvcId",
+    "DstDvcScopeId",
+    "DstDvcIdType",
+    "DstDeviceType",
+    "DvcAction",
+    "DnsFlagsCheckingDisabled",
+    "DnsFlagsZ",
+    "SrcSystemEntityKey",
+    "SrcUserEntityKey",
+    "SrcProcessEntityKey",
+    "DstSystemEntityKey",
+    "DvcEntityKey",
+    "SrcUserAdditionalIds",
+    "AdditionalEntities",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:05:51.3834130Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 286,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "EventCount": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "1",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "EventType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Query",
+          "weight": 0.974
+        },
+        {
+          "value": "Update",
+          "weight": 0.026
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 6.0
+    },
+    "EventSubType": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "NA",
+          "weight": 0.3395
+        },
+        {
+          "value": "request",
+          "weight": 0.3305
+        },
+        {
+          "value": "response",
+          "weight": 0.33
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 8.0
+    },
+    "EventResult": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "NA",
+          "weight": 0.814
+        },
+        {
+          "value": "Success",
+          "weight": 0.186
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 7.0
+    },
+    "EventResultDetails": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "NA",
+          "weight": 0.814
+        },
+        {
+          "value": "NOERROR",
+          "weight": 0.175
+        },
+        {
+          "value": "NXDOMAIN",
+          "weight": 0.011
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 8.0
+    },
+    "EventOriginalType": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [
+        {
+          "value": "279",
+          "weight": 0.3125
+        },
+        {
+          "value": "256",
+          "weight": 0.1735
+        },
+        {
+          "value": "257",
+          "weight": 0.173
+        },
+        {
+          "value": "260",
+          "weight": 0.144
+        },
+        {
+          "value": "261",
+          "weight": 0.144
+        },
+        {
+          "value": "280",
+          "weight": 0.027
+        },
+        {
+          "value": "263",
+          "weight": 0.013
+        },
+        {
+          "value": "264",
+          "weight": 0.013
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "EventProduct": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DNS Server",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "EventVendor": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 9.0
+    },
+    "DvcIpAddr": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "ipv4",
+      "minLength": 8.0,
+      "maxLength": 8.0
+    },
+    "DvcHostname": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 6.0
+    },
+    "DvcDomain": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "DvcDomainType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "DvcOs": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Windows",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "DvcOsVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "10.0.26100.0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 12.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 287,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 15.0
+    },
+    "SrcIpAddr": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "ipv4",
+      "minLength": 8.0,
+      "maxLength": 13.0
+    },
+    "SrcPortNumber": {
+      "fillRate": 0.987,
+      "distinctCount": 27,
+      "topValues": [
+        {
+          "value": "59033",
+          "weight": 0.61854
+        },
+        {
+          "value": "0",
+          "weight": 0.29179
+        },
+        {
+          "value": "58666",
+          "weight": 0.05876
+        },
+        {
+          "value": "56860",
+          "weight": 0.01165
+        },
+        {
+          "value": "60744",
+          "weight": 0.00608
+        },
+        {
+          "value": "59039",
+          "weight": 0.00253
+        },
+        {
+          "value": "53300",
+          "weight": 0.00051
+        },
+        {
+          "value": "64533",
+          "weight": 0.00051
+        },
+        {
+          "value": "64234",
+          "weight": 0.00051
+        },
+        {
+          "value": "64042",
+          "weight": 0.00051
+        },
+        {
+          "value": "62977",
+          "weight": 0.00051
+        },
+        {
+          "value": "62839",
+          "weight": 0.00051
+        },
+        {
+          "value": "62783",
+          "weight": 0.00051
+        },
+        {
+          "value": "62438",
+          "weight": 0.00051
+        },
+        {
+          "value": "62342",
+          "weight": 0.00051
+        },
+        {
+          "value": "62250",
+          "weight": 0.00051
+        },
+        {
+          "value": "61659",
+          "weight": 0.00051
+        },
+        {
+          "value": "61436",
+          "weight": 0.00051
+        },
+        {
+          "value": "64569",
+          "weight": 0.00051
+        },
+        {
+          "value": "60593",
+          "weight": 0.00051
+        },
+        {
+          "value": "60478",
+          "weight": 0.00051
+        },
+        {
+          "value": "59156",
+          "weight": 0.00051
+        },
+        {
+          "value": "49419",
+          "weight": 0.00051
+        },
+        {
+          "value": "50740",
+          "weight": 0.00051
+        },
+        {
+          "value": "51063",
+          "weight": 0.00051
+        },
+        {
+          "value": "52545",
+          "weight": 0.00051
+        },
+        {
+          "value": "64780",
+          "weight": 0.00051
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 5.0
+    },
+    "SrcGeoCountry": {
+      "fillRate": 0.144,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "SrcGeoRegion": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcGeoCity": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcGeoLatitude": {
+      "fillRate": 0.144,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "SrcGeoLongitude": {
+      "fillRate": 0.144,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "DstIpAddr": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "ipv4",
+      "minLength": 8.0,
+      "maxLength": 13.0
+    },
+    "DstGeoCountry": {
+      "fillRate": 0.144,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "DstGeoRegion": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstGeoCity": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstGeoLatitude": {
+      "fillRate": 0.144,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "DstGeoLongitude": {
+      "fillRate": 0.144,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "DnsQuery": {
+      "fillRate": 1.0,
+      "distinctCount": 121,
+      "topValues": [
+        {
+          "value": "eus2-oi-ods.trafficmanager.net",
+          "weight": 0.18
+        },
+        {
+          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977.ods.opinsights.azure.com",
+          "weight": 0.1785
+        },
+        {
+          "value": "edr-cus3.us.endpoint.security.microsoft.com",
+          "weight": 0.066
+        },
+        {
+          "value": "ipv4-eus2-oi-ods-cses-a.eastus2.cloudapp.azure.com",
+          "weight": 0.0625
+        },
+        {
+          "value": "ipv4-eus2-oi-ods-cses-b.eastus2.cloudapp.azure.com",
+          "weight": 0.0525
+        },
+        {
+          "value": "md-prod-simcon-ip193.centralus.cloudapp.azure.com",
+          "weight": 0.032
+        },
+        {
+          "value": "ipv4-eus2-oi-ods-cses-d.eastus2.cloudapp.azure.com",
+          "weight": 0.03
+        },
+        {
+          "value": "adds01.dibsec.net",
+          "weight": 0.0275
+        },
+        {
+          "value": "md-prod-simcon-geoedr-tm-centralus3.trafficmanager.net",
+          "weight": 0.0265
+        },
+        {
+          "value": "us-v20.events.data.trafficmanager.net",
+          "weight": 0.024
+        },
+        {
+          "value": "md-prod-simcon-ip192.centralus.cloudapp.azure.com",
+          "weight": 0.0225
+        },
+        {
+          "value": "us-v20.events.endpoint.security.microsoft.com",
+          "weight": 0.02
+        },
+        {
+          "value": "dibsec.net",
+          "weight": 0.017
+        },
+        {
+          "value": "eastus2-gas.guestconfiguration.azure.com",
+          "weight": 0.014
+        },
+        {
+          "value": "global.handler.control.monitor.azure.com",
+          "weight": 0.013
+        },
+        {
+          "value": "_msdcs.dibsec.net",
+          "weight": 0.012
+        },
+        {
+          "value": "amcs-prod-global-handler.trafficmanager.net",
+          "weight": 0.0115
+        },
+        {
+          "value": "afd-eus2-guestagentsvc-prod.trafficmanager.net",
+          "weight": 0.0115
+        },
+        {
+          "value": "wpad.reddog.microsoft.com",
+          "weight": 0.009
+        },
+        {
+          "value": "wpad.dibsec.net",
+          "weight": 0.009
+        },
+        {
+          "value": "global.handler.control.privatelink.monitor.azure.com",
+          "weight": 0.0065
+        },
+        {
+          "value": "v10.events.data.microsoft.com",
+          "weight": 0.006
+        },
+        {
+          "value": "v20.events.data.microsoft.com",
+          "weight": 0.006
+        },
+        {
+          "value": "wpad.bhzqr4qrlaiebar5vwlmefj2da.cx.internal.cloudapp.net",
+          "weight": 0.006
+        },
+        {
+          "value": "eastus2-gas.privatelink.guestconfiguration.azure.com",
+          "weight": 0.0055
+        },
+        {
+          "value": "eus2-gas-guestconfiguration-azure-com.arc-0001.arc-msedge.net",
+          "weight": 0.0055
+        },
+        {
+          "value": "arc-0001.arc-msedge.net",
+          "weight": 0.0055
+        },
+        {
+          "value": "ctldl.windowsupdate.com",
+          "weight": 0.005
+        },
+        {
+          "value": "login.microsoftonline.com",
+          "weight": 0.005
+        },
+        {
+          "value": "login.mso.msidentity.com",
+          "weight": 0.005
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 110.0
+    },
+    "DnsQueryType": {
+      "fillRate": 0.974,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "1",
+          "weight": 0.94969
+        },
+        {
+          "value": "6",
+          "weight": 0.02823
+        },
+        {
+          "value": "28",
+          "weight": 0.01386
+        },
+        {
+          "value": "33",
+          "weight": 0.00616
+        },
+        {
+          "value": "2",
+          "weight": 0.00103
+        },
+        {
+          "value": "5",
+          "weight": 0.00103
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 2.0
+    },
+    "DnsQueryTypeName": {
+      "fillRate": 0.974,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "A",
+          "weight": 0.94969
+        },
+        {
+          "value": "SOA",
+          "weight": 0.02823
+        },
+        {
+          "value": "AAAA",
+          "weight": 0.01386
+        },
+        {
+          "value": "SRV",
+          "weight": 0.00616
+        },
+        {
+          "value": "CNAME",
+          "weight": 0.00103
+        },
+        {
+          "value": "NS",
+          "weight": 0.00103
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 5.0
+    },
+    "DnsResponseCode": {
+      "fillRate": 0.186,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.94086
+        },
+        {
+          "value": "3",
+          "weight": 0.05914
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "DnsResponseName": {
+      "fillRate": 1.0,
+      "distinctCount": 51,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 135.0
+    },
+    "TransactionIdHex": {
+      "fillRate": 1.0,
+      "distinctCount": 660,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 4.0
+    },
+    "DstDescription": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstDvcScope": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstOriginalRiskLevel": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstRiskLevel": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DvcDescription": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DvcInterface": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DvcOriginalAction": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DvcScope": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DvcScopeId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EventOriginalSeverity": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NetworkProtocolVersion": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RuleName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RuleNumber": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DnsResponseIpCountry": {
+      "fillRate": 0.1475,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 13.0
+    },
+    "DnsResponseIpLatitude": {
+      "fillRate": 0.1475,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "DnsResponseIpLongitude": {
+      "fillRate": 0.1475,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 7.0
+    },
+    "NetworkProtocol": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "UDP",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "DnsQueryClass": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "1",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "DnsQueryClassName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "IN",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "DnsNetworkDuration": {
+      "fillRate": 0.173,
+      "distinctCount": 19,
+      "topValues": [
+        {
+          "value": "3",
+          "weight": 0.35549
+        },
+        {
+          "value": "4",
+          "weight": 0.21098
+        },
+        {
+          "value": "0",
+          "weight": 0.15318
+        },
+        {
+          "value": "2",
+          "weight": 0.15318
+        },
+        {
+          "value": "5",
+          "weight": 0.02601
+        },
+        {
+          "value": "1",
+          "weight": 0.01734
+        },
+        {
+          "value": "9",
+          "weight": 0.01445
+        },
+        {
+          "value": "8",
+          "weight": 0.01156
+        },
+        {
+          "value": "11",
+          "weight": 0.01156
+        },
+        {
+          "value": "10",
+          "weight": 0.00867
+        },
+        {
+          "value": "6",
+          "weight": 0.00867
+        },
+        {
+          "value": "7",
+          "weight": 0.00578
+        },
+        {
+          "value": "15",
+          "weight": 0.00578
+        },
+        {
+          "value": "17",
+          "weight": 0.00289
+        },
+        {
+          "value": "18",
+          "weight": 0.00289
+        },
+        {
+          "value": "14",
+          "weight": 0.00289
+        },
+        {
+          "value": "12",
+          "weight": 0.00289
+        },
+        {
+          "value": "78",
+          "weight": 0.00289
+        },
+        {
+          "value": "19",
+          "weight": 0.00289
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 2.0
+    },
+    "DnsFlagsAuthenticated": {
+      "fillRate": 0.317,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "False",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "DnsFlagsAuthoritative": {
+      "fillRate": 0.317,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "False",
+          "weight": 0.93691
+        },
+        {
+          "value": "True",
+          "weight": 0.06309
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "DnsFlagsRecursionDesired": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 0.657
+        },
+        {
+          "value": "False",
+          "weight": 0.343
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "DnsSessionId": {
+      "fillRate": 0.974,
+      "distinctCount": 347,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 38.0,
+      "maxLength": 38.0
+    },
+    "SrcDescription": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcDvcScope": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcDvcScopeId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcOriginalRiskLevel": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcUserScope": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcUserScopeId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcUserSessionId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatIpAddr": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatField": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UrlCategory": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatCategory": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatConfidence": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatOriginalConfidence": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatRiskLevel": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatOriginalRiskLevel_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatOriginalRiskLevel": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatIsActive": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatFirstReportedTime": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatFirstReportedTime_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatLastReportedTime": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatLastReportedTime_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EventStartTime": {
+      "fillRate": 1.0,
+      "distinctCount": 286,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "EventEndTime": {
+      "fillRate": 1.0,
+      "distinctCount": 286,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "EventMessage": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EventOriginalUid": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EventReportUrl": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EventSchemaVersion": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Dvc": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DvcFQDN": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DvcId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DvcIdType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DvcMacAddr": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DvcZone": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DnsResponseIpCity": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DnsResponseIpRegion": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EventOwner": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EventProductVersion": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EventSeverity": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Src": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcHostname": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcDomain": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcDomainType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcFQDN": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcDvcId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcDvcIdType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcDeviceType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcRiskLevel": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcUserId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcUserIdType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcUsername": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcUsernameType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcUserType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcOriginalUserType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcProcessName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcProcessId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcProcessGuid": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Dst": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstPortNumber": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstHostname": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstDomain": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstDomainType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstFQDN": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstDvcId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstDvcScopeId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstDvcIdType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstDeviceType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DvcAction": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DnsFlags": {
+      "fillRate": 0.987,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "33,152",
+          "weight": 0.6074
+        },
+        {
+          "value": "256",
+          "weight": 0.32168
+        },
+        {
+          "value": "34,176",
+          "weight": 0.04255
+        },
+        {
+          "value": "10,240",
+          "weight": 0.01317
+        },
+        {
+          "value": "33,155",
+          "weight": 0.00963
+        },
+        {
+          "value": "34,179",
+          "weight": 0.00557
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 6.0
+    },
+    "DnsFlagsCheckingDisabled": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DnsFlagsRecursionAvailable": {
+      "fillRate": 0.987,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 0.66515
+        },
+        {
+          "value": "False",
+          "weight": 0.33485
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "DnsFlagsTruncated": {
+      "fillRate": 0.987,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "False",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "DnsFlagsZ": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcSystemEntityKey": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcUserEntityKey": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcProcessEntityKey": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DstSystemEntityKey": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DvcEntityKey": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SrcUserAdditionalIds": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AdditionalEntities": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "ASimDnsActivityLogs",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "_ResourceId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/providers/microsoft.compute/virtualmachines/adds01",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 122.0,
+      "maxLength": 122.0
+    }
+  }
+}

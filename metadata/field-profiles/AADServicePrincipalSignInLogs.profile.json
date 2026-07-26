@@ -1,0 +1,446 @@
+{
+  "tableName": "AADServicePrincipalSignInLogs",
+  "sources": [
+    "sample:AADServicePrincipalSignInLogs.csv"
+  ],
+  "sampledRows": 251.0,
+  "columnCount": 45,
+  "emptyInProd": [
+    "ResultDescription",
+    "Identity",
+    "Level",
+    "ConditionalAccessPoliciesV2",
+    "ServicePrincipalCredentialKeyId",
+    "ServicePrincipalCredentialThumbprint"
+  ],
+  "generatedUtc": "2026-07-26T01:03:21.3081928Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Azure AD",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 8.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 250,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 25.0,
+      "maxLength": 28.0
+    },
+    "OperationName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Sign-in activity",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "OperationVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "1.0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "Category": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "ServicePrincipalSignInLogs",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 26.0,
+      "maxLength": 26.0
+    },
+    "ResultType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "ResultSignature": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "SUCCESS",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "ResultDescription": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DurationMs": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "CorrelationId": {
+      "fillRate": 1.0,
+      "distinctCount": 243,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceGroup": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft.aadiam",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "Identity": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Level": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Location": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "AppId": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AppOwnerTenantId": {
+      "fillRate": 0.9283,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AuthenticationContextClassReferences": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "AutonomousSystemNumber": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "8075",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "AuthenticationProcessingDetails": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 144.0,
+      "maxLength": 319.0
+    },
+    "ClientCredentialType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "federatedIdentityCredential",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 27.0,
+      "maxLength": 27.0
+    },
+    "ConditionalAccessAudiences": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 40.0,
+      "maxLength": 157.0
+    },
+    "ConditionalAccessPolicies": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 207.0,
+      "maxLength": 606.0
+    },
+    "ConditionalAccessPoliciesV2": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ConditionalAccessStatus": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "notApplied",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "CreatedDateTime": {
+      "fillRate": 1.0,
+      "distinctCount": 243,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 25.0,
+      "maxLength": 28.0
+    },
+    "FederatedCredentialId": {
+      "fillRate": 1.0,
+      "distinctCount": 19,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Id": {
+      "fillRate": 1.0,
+      "distinctCount": 243,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "IPAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 23,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 11.0,
+      "maxLength": 14.0
+    },
+    "LocationDetails": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 140.0,
+      "maxLength": 142.0
+    },
+    "NetworkLocationDetails": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 59.0,
+      "maxLength": 59.0
+    },
+    "ResourceDisplayName": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 15.0,
+      "maxLength": 35.0
+    },
+    "ResourceIdentity": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceOwnerTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceServicePrincipalId": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ServicePrincipalCredentialKeyId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ServicePrincipalCredentialThumbprint": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ServicePrincipalId": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ServicePrincipalName": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 18.0,
+      "maxLength": 65.0
+    },
+    "SessionId": {
+      "fillRate": 1.0,
+      "distinctCount": 243,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "UniqueTokenIdentifier": {
+      "fillRate": 1.0,
+      "distinctCount": 243,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 22.0,
+      "maxLength": 22.0
+    },
+    "Agent": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 58.0,
+      "maxLength": 119.0
+    },
+    "UserAgent": {
+      "fillRate": 0.8088,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 69.0,
+      "maxLength": 69.0
+    },
+    "AADTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AADServicePrincipalSignInLogs",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 29.0,
+      "maxLength": 29.0
+    }
+  }
+}

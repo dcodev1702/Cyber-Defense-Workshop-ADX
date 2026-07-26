@@ -1,0 +1,802 @@
+{
+  "tableName": "IdentityAccountInfo",
+  "sources": [
+    "sample:IdentityAccountInfo-RealTelemetry.csv"
+  ],
+  "sampledRows": 328.0,
+  "columnCount": 47,
+  "emptyInProd": [
+    "IdentityLinkReason",
+    "IdentityLinkBy",
+    "CriticalityLevel",
+    "EmployeeId",
+    "Department",
+    "JobTitle",
+    "City",
+    "Manager",
+    "SourceProviderInstanceId",
+    "SourceProviderInstanceDisplayName",
+    "AuthenticationMethod",
+    "AuthenticationSourceAccountId",
+    "EnrolledMfas",
+    "EligibleRoles",
+    "TenantMembershipType",
+    "SourceProviderRiskLevelDetails",
+    "AdditionalFields",
+    "TenantId",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:04:50.6563976Z",
+  "columns": {
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 65,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 65,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 328,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SourceProviderAccountId": {
+      "fillRate": 1.0,
+      "distinctCount": 45,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AccountId": {
+      "fillRate": 1.0,
+      "distinctCount": 45,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 83.0,
+      "maxLength": 90.0
+    },
+    "IdentityId": {
+      "fillRate": 1.0,
+      "distinctCount": 44,
+      "topValues": [
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_a9043c2d-d4c4-4277-a36b-a9c7dbebe60f",
+          "weight": 0.08841
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_db1d7718-bf4b-4d45-a4e3-ecd733a3545c",
+          "weight": 0.04573
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_8f74680f-327a-4e6d-b8e4-faae569c0d5b",
+          "weight": 0.03354
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_ffd8ce1a-0d22-4f89-b730-97fe0f5ce79d",
+          "weight": 0.03354
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_054e6651-520a-4eab-b490-0038d6e33427",
+          "weight": 0.03049
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_d4846550-a5e8-445d-b373-6c3a25db0002",
+          "weight": 0.03049
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_652bb4a7-9aad-47ce-a953-8a94b575c21a",
+          "weight": 0.03049
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_b52deda3-0f31-43d2-9433-e20964df6b67",
+          "weight": 0.03049
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_b598cca7-e216-47b2-bd12-365988c6013b",
+          "weight": 0.02744
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_1279daf3-8707-4fad-b702-8d108f8cb5ce",
+          "weight": 0.02744
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_e1c873a0-6de2-40ac-ad19-ad25907ee4fc",
+          "weight": 0.02439
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_dbc67bed-ea32-4264-ac06-437c3ee7aef0",
+          "weight": 0.02439
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_25ff088f-4ffd-40b3-8e22-dbe5c365a8e6",
+          "weight": 0.02439
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_d032a58e-d59a-4559-b70c-3e56e0a9f4f6",
+          "weight": 0.02439
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_6b7413e3-4c3c-4f23-b5a1-6f001f8cbc11",
+          "weight": 0.02439
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_6e451d5c-3cc1-47ac-8d17-072c8c6e6d29",
+          "weight": 0.02439
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_9b3fcdce-6272-41aa-8bd7-7f8e6423fb48",
+          "weight": 0.02439
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_f3d2cb42-25fb-4229-862d-74307bbc83d0",
+          "weight": 0.02439
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_d920f1c8-06f8-41c0-8e81-20e6d8dbef7e",
+          "weight": 0.02134
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_8cbbe62b-e522-41d4-b6c8-43a7bcd821ab",
+          "weight": 0.02134
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_1bbfd626-d1d7-4d6d-a0fa-a4c20529cce1",
+          "weight": 0.02134
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_2075de81-1a48-4b0b-9393-050c73422c1f",
+          "weight": 0.02134
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_0d89f94f-9cc2-4ca3-803d-9f5674b1e95a",
+          "weight": 0.01829
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_28da8cdf-fc55-4280-9838-87e06aa7f40f",
+          "weight": 0.01829
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_84e2077b-dc61-4cd2-929f-9800bbf6860d",
+          "weight": 0.01524
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_f17790c5-fc8c-4c54-8546-fab35c3a640b",
+          "weight": 0.01524
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_ef63fbc5-b1e6-48f4-af05-c2a94a34c355",
+          "weight": 0.01524
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_e8122690-9ab8-48a2-a0d8-5028ddd45dc1",
+          "weight": 0.01524
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_e3177b9c-4c30-482c-abda-61d2d6c1184c",
+          "weight": 0.01524
+        },
+        {
+          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_1d76707c-494e-47ae-870e-7587f9515e62",
+          "weight": 0.01524
+        }
+      ],
+      "pattern": null,
+      "minLength": 78.0,
+      "maxLength": 78.0
+    },
+    "IsPrimary": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "1",
+          "weight": 0.91768
+        },
+        {
+          "value": "0",
+          "weight": 0.08232
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "IdentityLinkType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "StrongId",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 8.0
+    },
+    "IdentityLinkReason": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "IdentityLinkTime": {
+      "fillRate": 1.0,
+      "distinctCount": 13,
+      "topValues": [
+        {
+          "value": "Invalid date",
+          "weight": 0.82622
+        },
+        {
+          "value": "Feb 19, 2026 2:14:38 PM",
+          "weight": 0.03049
+        },
+        {
+          "value": "Mar 26, 2026 10:03:10 PM",
+          "weight": 0.03049
+        },
+        {
+          "value": "Apr 1, 2026 11:14:22 AM",
+          "weight": 0.01524
+        },
+        {
+          "value": "Apr 4, 2026 6:05:45 AM",
+          "weight": 0.01524
+        },
+        {
+          "value": "Feb 5, 2026 9:15:51 AM",
+          "weight": 0.01524
+        },
+        {
+          "value": "Feb 5, 2026 9:18:15 AM",
+          "weight": 0.01524
+        },
+        {
+          "value": "Feb 5, 2026 9:22:47 AM",
+          "weight": 0.01524
+        },
+        {
+          "value": "Jan 28, 2026 5:15:15 PM",
+          "weight": 0.01524
+        },
+        {
+          "value": "Mar 25, 2026 9:00:32 AM",
+          "weight": 0.00915
+        },
+        {
+          "value": "Apr 1, 2026 11:14:20 AM",
+          "weight": 0.0061
+        },
+        {
+          "value": "Apr 16, 2026 9:10:23 AM",
+          "weight": 0.00305
+        },
+        {
+          "value": "Apr 8, 2026 7:10:50 PM",
+          "weight": 0.00305
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 24.0
+    },
+    "IdentityLinkBy": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DisplayName": {
+      "fillRate": 0.6707,
+      "distinctCount": 29,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 61.0
+    },
+    "AccountUpn": {
+      "fillRate": 0.7043,
+      "distinctCount": 33,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 89.0
+    },
+    "EmailAddress": {
+      "fillRate": 0.2348,
+      "distinctCount": 8,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 33.0,
+      "maxLength": 38.0
+    },
+    "CriticalityLevel": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "User",
+          "weight": 0.96951
+        },
+        {
+          "value": "ServiceAccount",
+          "weight": 0.03049
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 14.0
+    },
+    "GivenName": {
+      "fillRate": 0.4177,
+      "distinctCount": 15,
+      "topValues": [
+        {
+          "value": "Michael",
+          "weight": 0.21168
+        },
+        {
+          "value": "gail",
+          "weight": 0.10949
+        },
+        {
+          "value": "DIB",
+          "weight": 0.08759
+        },
+        {
+          "value": "Lorenzo",
+          "weight": 0.08029
+        },
+        {
+          "value": "Rob",
+          "weight": 0.06569
+        },
+        {
+          "value": "App User",
+          "weight": 0.05839
+        },
+        {
+          "value": "Break",
+          "weight": 0.05839
+        },
+        {
+          "value": "Destinry",
+          "weight": 0.05109
+        },
+        {
+          "value": "testeme",
+          "weight": 0.05109
+        },
+        {
+          "value": "Noah",
+          "weight": 0.0438
+        },
+        {
+          "value": "Emergency",
+          "weight": 0.0365
+        },
+        {
+          "value": "JJ",
+          "weight": 0.0365
+        },
+        {
+          "value": "Robert",
+          "weight": 0.0365
+        },
+        {
+          "value": "System",
+          "weight": 0.0365
+        },
+        {
+          "value": "Tom",
+          "weight": 0.0365
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 9.0
+    },
+    "Surname": {
+      "fillRate": 0.372,
+      "distinctCount": 13,
+      "topValues": [
+        {
+          "value": "Crane",
+          "weight": 0.36066
+        },
+        {
+          "value": "Ireland",
+          "weight": 0.09016
+        },
+        {
+          "value": "Barker",
+          "weight": 0.07377
+        },
+        {
+          "value": "Glass",
+          "weight": 0.06557
+        },
+        {
+          "value": "sec01",
+          "weight": 0.05738
+        },
+        {
+          "value": "Staton",
+          "weight": 0.05738
+        },
+        {
+          "value": "Taylor",
+          "weight": 0.04918
+        },
+        {
+          "value": "Access",
+          "weight": 0.04098
+        },
+        {
+          "value": "Administrator",
+          "weight": 0.04098
+        },
+        {
+          "value": "BOTTLES",
+          "weight": 0.04098
+        },
+        {
+          "value": "Finn",
+          "weight": 0.04098
+        },
+        {
+          "value": "Grages",
+          "weight": 0.04098
+        },
+        {
+          "value": "LR",
+          "weight": 0.04098
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 13.0
+    },
+    "EmployeeId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Department": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "JobTitle": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Address": {
+      "fillRate": 0.0152,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 15.0,
+      "maxLength": 15.0
+    },
+    "City": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Country": {
+      "fillRate": 0.0152,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "Phone": {
+      "fillRate": 0.0488,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 12.0,
+      "maxLength": 12.0
+    },
+    "Manager": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Sid": {
+      "fillRate": 1.0,
+      "distinctCount": 45,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 42.0,
+      "maxLength": 52.0
+    },
+    "AccountStatus": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 8.0
+    },
+    "SourceProvider": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "ActiveDirectory",
+          "weight": 0.56098
+        },
+        {
+          "value": "AzureActiveDirectory",
+          "weight": 0.43902
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 20.0
+    },
+    "SourceProviderInstanceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SourceProviderInstanceDisplayName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AuthenticationMethod": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AuthenticationSourceAccountId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EnrolledMfas": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "LastPasswordChangeTime": {
+      "fillRate": 1.0,
+      "distinctCount": 18,
+      "topValues": [
+        {
+          "value": "Invalid date",
+          "weight": 0.57012
+        },
+        {
+          "value": "Mar 25, 2026 8:54:21 AM",
+          "weight": 0.09756
+        },
+        {
+          "value": "Apr 1, 2026 9:01:23 AM",
+          "weight": 0.03354
+        },
+        {
+          "value": "Apr 1, 2026 11:06:51 AM",
+          "weight": 0.03049
+        },
+        {
+          "value": "Jan 31, 2026 3:40:10 PM",
+          "weight": 0.03049
+        },
+        {
+          "value": "Mar 23, 2026 10:09:29 AM",
+          "weight": 0.02744
+        },
+        {
+          "value": "Mar 23, 2026 5:14:04 PM",
+          "weight": 0.02439
+        },
+        {
+          "value": "Mar 23, 2026 8:41:37 PM",
+          "weight": 0.02439
+        },
+        {
+          "value": "Mar 25, 2026 3:25:33 AM",
+          "weight": 0.02439
+        },
+        {
+          "value": "Feb 16, 2026 1:29:09 PM",
+          "weight": 0.02134
+        },
+        {
+          "value": "Mar 26, 2026 8:19:39 PM",
+          "weight": 0.02134
+        },
+        {
+          "value": "Apr 4, 2026 5:53:37 AM",
+          "weight": 0.01524
+        },
+        {
+          "value": "Apr 1, 2026 4:10:32 PM",
+          "weight": 0.01524
+        },
+        {
+          "value": "Mar 26, 2026 7:14:32 PM",
+          "weight": 0.01524
+        },
+        {
+          "value": "Mar 26, 2026 8:12:51 PM",
+          "weight": 0.01524
+        },
+        {
+          "value": "Apr 16, 2026 9:17:21 AM",
+          "weight": 0.01524
+        },
+        {
+          "value": "Mar 3, 2026 12:45:37 PM",
+          "weight": 0.01524
+        },
+        {
+          "value": "Apr 16, 2026 9:07:15 AM",
+          "weight": 0.00305
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 24.0
+    },
+    "GroupMembership": {
+      "fillRate": 1.0,
+      "distinctCount": 18,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 112.0
+    },
+    "AssignedRoles": {
+      "fillRate": 0.439,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 96.0
+    },
+    "EligibleRoles": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TenantMembershipType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CreatedDateTime": {
+      "fillRate": 1.0,
+      "distinctCount": 38,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "DeletedDateTime": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Invalid date",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 12.0
+    },
+    "Tags": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 13.0
+    },
+    "SourceProviderRiskLevel": {
+      "fillRate": 0.0335,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "None",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "SourceProviderRiskLevelDetails": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AdditionalFields": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

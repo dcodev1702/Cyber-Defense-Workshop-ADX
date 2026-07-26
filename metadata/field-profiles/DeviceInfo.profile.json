@@ -1,0 +1,1346 @@
+{
+  "tableName": "DeviceInfo",
+  "sources": [
+    "sample:DeviceInfo-RealTelemetry.csv"
+  ],
+  "sampledRows": 8000.0,
+  "columnCount": 54,
+  "emptyInProd": [
+    "RegistryDeviceTag",
+    "AdditionalFields",
+    "IsInternetFacing",
+    "AssetValue",
+    "GcpFullResourceName",
+    "AwsResourceName",
+    "HostDeviceId",
+    "MitigationStatus",
+    "TenantId",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:03:57.7506955Z",
+  "columns": {
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 6595,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 6595,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "DeviceId": {
+      "fillRate": 1.0,
+      "distinctCount": 64,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "DeviceName": {
+      "fillRate": 0.9674,
+      "distinctCount": 56,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 60.0
+    },
+    "ClientVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 19,
+      "topValues": [
+        {
+          "value": "1.0",
+          "weight": 0.595
+        },
+        {
+          "value": "10.8821.26200.8246",
+          "weight": 0.14538
+        },
+        {
+          "value": "10.8805.26100.32522",
+          "weight": 0.07
+        },
+        {
+          "value": "10.8821.28000.1836",
+          "weight": 0.04438
+        },
+        {
+          "value": "10.8821.20348.4893",
+          "weight": 0.04125
+        },
+        {
+          "value": "10.8821.26200.8039",
+          "weight": 0.01938
+        },
+        {
+          "value": "10.8821.26200.8117",
+          "weight": 0.01288
+        },
+        {
+          "value": "10.8805.26100.32370",
+          "weight": 0.01238
+        },
+        {
+          "value": "30.126021.2.0",
+          "weight": 0.01188
+        },
+        {
+          "value": "10.8821.28000.1764",
+          "weight": 0.01138
+        },
+        {
+          "value": "10.8821.26200.8037",
+          "weight": 0.00775
+        },
+        {
+          "value": "10.8821.20348.5020",
+          "weight": 0.0075
+        },
+        {
+          "value": "10.8805.26200.7840",
+          "weight": 0.00675
+        },
+        {
+          "value": "10.8821.28000.1896",
+          "weight": 0.00462
+        },
+        {
+          "value": "10.8821.26200.8328",
+          "weight": 0.00325
+        },
+        {
+          "value": "30.126012.7.0",
+          "weight": 0.0025
+        },
+        {
+          "value": "30.126032.0.0",
+          "weight": 0.00188
+        },
+        {
+          "value": "30.125122.4.0",
+          "weight": 0.001
+        },
+        {
+          "value": "1.1500",
+          "weight": 0.00088
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 19.0
+    },
+    "PublicIP": {
+      "fillRate": 0.4041,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "ipv4",
+      "minLength": 13.0,
+      "maxLength": 14.0
+    },
+    "OSArchitecture": {
+      "fillRate": 0.4371,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "64-bit",
+          "weight": 0.92594
+        },
+        {
+          "value": "32-bit",
+          "weight": 0.07406
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 6.0
+    },
+    "OSPlatform": {
+      "fillRate": 0.9398,
+      "distinctCount": 8,
+      "topValues": [
+        {
+          "value": "Windows11",
+          "weight": 0.39372
+        },
+        {
+          "value": "Linux",
+          "weight": 0.30088
+        },
+        {
+          "value": "WindowsServer2025",
+          "weight": 0.08766
+        },
+        {
+          "value": "Android",
+          "weight": 0.0826
+        },
+        {
+          "value": "WindowsServer2022",
+          "weight": 0.05188
+        },
+        {
+          "value": "Windows10",
+          "weight": 0.0423
+        },
+        {
+          "value": "Windows11WVD",
+          "weight": 0.03951
+        },
+        {
+          "value": "Windows",
+          "weight": 0.00146
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 17.0
+    },
+    "OSBuild": {
+      "fillRate": 0.69,
+      "distinctCount": 10,
+      "topValues": [
+        {
+          "value": "26200",
+          "weight": 0.43116
+        },
+        {
+          "value": "26100",
+          "weight": 0.20091
+        },
+        {
+          "value": "28000",
+          "weight": 0.08949
+        },
+        {
+          "value": "4",
+          "weight": 0.08315
+        },
+        {
+          "value": "20348",
+          "weight": 0.07065
+        },
+        {
+          "value": "2",
+          "weight": 0.03279
+        },
+        {
+          "value": "18363",
+          "weight": 0.02862
+        },
+        {
+          "value": "22621",
+          "weight": 0.02772
+        },
+        {
+          "value": "0",
+          "weight": 0.02591
+        },
+        {
+          "value": "3",
+          "weight": 0.0096
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 5.0
+    },
+    "IsAzureADJoined": {
+      "fillRate": 0.4041,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.76028
+        },
+        {
+          "value": "1",
+          "weight": 0.23972
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "JoinType": {
+      "fillRate": 0.3665,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Domain Joined",
+          "weight": 0.73568
+        },
+        {
+          "value": "AAD Joined",
+          "weight": 0.26432
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 13.0
+    },
+    "AadDeviceId": {
+      "fillRate": 0.224,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "LoggedOnUsers": {
+      "fillRate": 1.0,
+      "distinctCount": 19,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 330.0
+    },
+    "RegistryDeviceTag": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OSVersion": {
+      "fillRate": 0.8571,
+      "distinctCount": 15,
+      "topValues": [
+        {
+          "value": "10.0",
+          "weight": 0.67435
+        },
+        {
+          "value": "15",
+          "weight": 0.05615
+        },
+        {
+          "value": "15.1.4",
+          "weight": 0.05454
+        },
+        {
+          "value": "12",
+          "weight": 0.03165
+        },
+        {
+          "value": "11",
+          "weight": 0.0264
+        },
+        {
+          "value": "257.08.02",
+          "weight": 0.0264
+        },
+        {
+          "value": "SAYAWLPP1N002.2551C.00",
+          "weight": 0.02304
+        },
+        {
+          "value": "13-8",
+          "weight": 0.02115
+        },
+        {
+          "value": "4.0.0",
+          "weight": 0.02085
+        },
+        {
+          "value": "24.4",
+          "weight": 0.02013
+        },
+        {
+          "value": "0.9",
+          "weight": 0.01692
+        },
+        {
+          "value": "9",
+          "weight": 0.01138
+        },
+        {
+          "value": "10",
+          "weight": 0.00875
+        },
+        {
+          "value": "SAYAWLPP1N002.2450A.00",
+          "weight": 0.00438
+        },
+        {
+          "value": "1.5",
+          "weight": 0.00394
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 22.0
+    },
+    "MachineGroup": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 39.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 7992,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 18.0,
+      "maxLength": 18.0
+    },
+    "OnboardingStatus": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "Onboarded",
+          "weight": 0.40475
+        },
+        {
+          "value": "Unsupported",
+          "weight": 0.3815
+        },
+        {
+          "value": "Can be onboarded",
+          "weight": 0.17075
+        },
+        {
+          "value": "Insufficient info",
+          "weight": 0.043
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 17.0
+    },
+    "AdditionalFields": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DeviceCategory": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "Endpoint",
+          "weight": 0.58175
+        },
+        {
+          "value": "IoT",
+          "weight": 0.27187
+        },
+        {
+          "value": "Unknown",
+          "weight": 0.0865
+        },
+        {
+          "value": "NetworkDevice",
+          "weight": 0.05988
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 13.0
+    },
+    "DeviceType": {
+      "fillRate": 1.0,
+      "distinctCount": 9,
+      "topValues": [
+        {
+          "value": "Workstation",
+          "weight": 0.42688
+        },
+        {
+          "value": "AudioAndVideo",
+          "weight": 0.22638
+        },
+        {
+          "value": "Server",
+          "weight": 0.14975
+        },
+        {
+          "value": "Unknown",
+          "weight": 0.0865
+        },
+        {
+          "value": "NetworkDevice",
+          "weight": 0.05988
+        },
+        {
+          "value": "Printer",
+          "weight": 0.0235
+        },
+        {
+          "value": "Miscellaneous",
+          "weight": 0.01762
+        },
+        {
+          "value": "Mobile",
+          "weight": 0.00512
+        },
+        {
+          "value": "SmartAppliance",
+          "weight": 0.00438
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 14.0
+    },
+    "DeviceSubtype": {
+      "fillRate": 0.8582,
+      "distinctCount": 12,
+      "topValues": [
+        {
+          "value": "Workstation",
+          "weight": 0.49738
+        },
+        {
+          "value": "Server",
+          "weight": 0.17448
+        },
+        {
+          "value": "SmartTV",
+          "weight": 0.09569
+        },
+        {
+          "value": "Streamer",
+          "weight": 0.08695
+        },
+        {
+          "value": "GamingConsole",
+          "weight": 0.03729
+        },
+        {
+          "value": "Router",
+          "weight": 0.03321
+        },
+        {
+          "value": "AllInOne",
+          "weight": 0.02738
+        },
+        {
+          "value": "WLANAccessPoint",
+          "weight": 0.02214
+        },
+        {
+          "value": "Hub",
+          "weight": 0.01442
+        },
+        {
+          "value": "Smartphone",
+          "weight": 0.00597
+        },
+        {
+          "value": "SmartLight",
+          "weight": 0.00422
+        },
+        {
+          "value": "MediaPlayer",
+          "weight": 0.00087
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 15.0
+    },
+    "Model": {
+      "fillRate": 0.2944,
+      "distinctCount": 20,
+      "topValues": [
+        {
+          "value": "STR-AN1000",
+          "weight": 0.12527
+        },
+        {
+          "value": "4801RW",
+          "weight": 0.09809
+        },
+        {
+          "value": "7000",
+          "weight": 0.07983
+        },
+        {
+          "value": "5530",
+          "weight": 0.07813
+        },
+        {
+          "value": "AE2",
+          "weight": 0.07558
+        },
+        {
+          "value": "SmartTV 4K",
+          "weight": 0.07219
+        },
+        {
+          "value": "XboxSeriesX",
+          "weight": 0.06242
+        },
+        {
+          "value": "AFTOLCBC82",
+          "weight": 0.06157
+        },
+        {
+          "value": "OLED42C48LA.DEUQLJP",
+          "weight": 0.06072
+        },
+        {
+          "value": "VMB4540",
+          "weight": 0.0552
+        },
+        {
+          "value": "4670X",
+          "weight": 0.05265
+        },
+        {
+          "value": "OLED42C48LA",
+          "weight": 0.04926
+        },
+        {
+          "value": "U6-Mesh",
+          "weight": 0.04883
+        },
+        {
+          "value": "Xbox One",
+          "weight": 0.02548
+        },
+        {
+          "value": "K-77XR80C",
+          "weight": 0.01656
+        },
+        {
+          "value": "U6-Pro",
+          "weight": 0.01401
+        },
+        {
+          "value": "3930RW",
+          "weight": 0.01231
+        },
+        {
+          "value": "XboxOneS",
+          "weight": 0.00552
+        },
+        {
+          "value": "Renderer",
+          "weight": 0.00467
+        },
+        {
+          "value": "AP4102",
+          "weight": 0.0017
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 19.0
+    },
+    "Vendor": {
+      "fillRate": 0.558,
+      "distinctCount": 22,
+      "topValues": [
+        {
+          "value": "Microsoft",
+          "weight": 0.27778
+        },
+        {
+          "value": "Roku",
+          "weight": 0.08602
+        },
+        {
+          "value": "Guangzhou Shiyuan Electronic Technology Company Limited",
+          "weight": 0.07101
+        },
+        {
+          "value": "Universal Global Scientific Industrial Co., Ltd.",
+          "weight": 0.06608
+        },
+        {
+          "value": "Amazon Technologies Inc.",
+          "weight": 0.06183
+        },
+        {
+          "value": "LG Electronics",
+          "weight": 0.05802
+        },
+        {
+          "value": "Sony",
+          "weight": 0.04861
+        },
+        {
+          "value": "HP",
+          "weight": 0.04211
+        },
+        {
+          "value": "AVM",
+          "weight": 0.04122
+        },
+        {
+          "value": "Wistron Corporation",
+          "weight": 0.04032
+        },
+        {
+          "value": "Hisense",
+          "weight": 0.03808
+        },
+        {
+          "value": "Ubiquiti",
+          "weight": 0.03315
+        },
+        {
+          "value": "Amazon",
+          "weight": 0.03248
+        },
+        {
+          "value": "Ubiquiti Inc",
+          "weight": 0.03181
+        },
+        {
+          "value": "Arlo",
+          "weight": 0.02912
+        },
+        {
+          "value": "CLOUD NETWORK TECHNOLOGY SINGAPORE PTE. LTD.",
+          "weight": 0.01501
+        },
+        {
+          "value": "Espressif Inc.",
+          "weight": 0.00896
+        },
+        {
+          "value": "Nintendo",
+          "weight": 0.00806
+        },
+        {
+          "value": "LG Innotek",
+          "weight": 0.00605
+        },
+        {
+          "value": "SmartTV",
+          "weight": 0.00246
+        },
+        {
+          "value": "Enterasys",
+          "weight": 0.0009
+        },
+        {
+          "value": "Texas Instruments",
+          "weight": 0.0009
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 55.0
+    },
+    "OSDistribution": {
+      "fillRate": 0.9954,
+      "distinctCount": 22,
+      "topValues": [
+        {
+          "value": "Windows11",
+          "weight": 0.37034
+        },
+        {
+          "value": "Linux",
+          "weight": 0.10737
+        },
+        {
+          "value": "WindowsServer2025",
+          "weight": 0.08276
+        },
+        {
+          "value": "Android",
+          "weight": 0.06053
+        },
+        {
+          "value": "WindowsServer2022",
+          "weight": 0.04898
+        },
+        {
+          "value": "OpenWRT",
+          "weight": 0.04835
+        },
+        {
+          "value": "RokuOS",
+          "weight": 0.04822
+        },
+        {
+          "value": "Windows10",
+          "weight": 0.03993
+        },
+        {
+          "value": "Windows11WVD",
+          "weight": 0.0373
+        },
+        {
+          "value": "WebOs",
+          "weight": 0.03253
+        },
+        {
+          "value": "EmbeddedOs",
+          "weight": 0.02361
+        },
+        {
+          "value": "FRITZOS",
+          "weight": 0.02311
+        },
+        {
+          "value": "XTOS",
+          "weight": 0.01771
+        },
+        {
+          "value": "FireOS",
+          "weight": 0.01746
+        },
+        {
+          "value": "Ubuntu",
+          "weight": 0.01733
+        },
+        {
+          "value": "XboxOS",
+          "weight": 0.00753
+        },
+        {
+          "value": "UnifiOS",
+          "weight": 0.00553
+        },
+        {
+          "value": "Nintendo3DS",
+          "weight": 0.00452
+        },
+        {
+          "value": "Pcbsd",
+          "weight": 0.00339
+        },
+        {
+          "value": "ChromeOS",
+          "weight": 0.00163
+        },
+        {
+          "value": "Windows",
+          "weight": 0.00138
+        },
+        {
+          "value": "Haiku",
+          "weight": 0.0005
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 17.0
+    },
+    "OSVersionInfo": {
+      "fillRate": 0.7954,
+      "distinctCount": 19,
+      "topValues": [
+        {
+          "value": "25H2",
+          "weight": 0.37404
+        },
+        {
+          "value": "24H2",
+          "weight": 0.16486
+        },
+        {
+          "value": "21H2",
+          "weight": 0.06129
+        },
+        {
+          "value": "15",
+          "weight": 0.06051
+        },
+        {
+          "value": "15.1.4",
+          "weight": 0.05878
+        },
+        {
+          "value": "12",
+          "weight": 0.0341
+        },
+        {
+          "value": "257.08.02",
+          "weight": 0.02845
+        },
+        {
+          "value": "11",
+          "weight": 0.02845
+        },
+        {
+          "value": "SAYAWLPP1N002.2551C.00",
+          "weight": 0.02483
+        },
+        {
+          "value": "1909",
+          "weight": 0.02483
+        },
+        {
+          "value": "22H2",
+          "weight": 0.02405
+        },
+        {
+          "value": "13-8",
+          "weight": 0.02279
+        },
+        {
+          "value": "4.0.0",
+          "weight": 0.02247
+        },
+        {
+          "value": "24.4",
+          "weight": 0.02169
+        },
+        {
+          "value": "0.9",
+          "weight": 0.01823
+        },
+        {
+          "value": "9",
+          "weight": 0.01226
+        },
+        {
+          "value": "10",
+          "weight": 0.00943
+        },
+        {
+          "value": "SAYAWLPP1N002.2450A.00",
+          "weight": 0.00471
+        },
+        {
+          "value": "1.5",
+          "weight": 0.00424
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 22.0
+    },
+    "MergedDeviceIds": {
+      "fillRate": 0.2242,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 44.0,
+      "maxLength": 87.0
+    },
+    "MergedToDeviceId": {
+      "fillRate": 0.0055,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "IsInternetFacing": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SensorHealthState": {
+      "fillRate": 0.405,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Active",
+          "weight": 0.9358
+        },
+        {
+          "value": "Inactive",
+          "weight": 0.0642
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 8.0
+    },
+    "IsExcluded": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.9945
+        },
+        {
+          "value": "1",
+          "weight": 0.0055
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "ExclusionReason": {
+      "fillRate": 0.0055,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "SystemMerged",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 12.0
+    },
+    "ExposureLevel": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "None",
+          "weight": 0.58262
+        },
+        {
+          "value": "Medium",
+          "weight": 0.3485
+        },
+        {
+          "value": "Low",
+          "weight": 0.06825
+        },
+        {
+          "value": "High",
+          "weight": 0.00062
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 6.0
+    },
+    "AssetValue": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DeviceManualTags": {
+      "fillRate": 0.0139,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 11.0,
+      "maxLength": 41.0
+    },
+    "DeviceDynamicTags": {
+      "fillRate": 0.6859,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 14.0,
+      "maxLength": 28.0
+    },
+    "HardwareUuid": {
+      "fillRate": 0.4036,
+      "distinctCount": 19,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "CloudPlatforms": {
+      "fillRate": 0.2682,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 9.0,
+      "maxLength": 9.0
+    },
+    "AzureVmId": {
+      "fillRate": 0.2682,
+      "distinctCount": 17,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AzureResourceId": {
+      "fillRate": 0.2682,
+      "distinctCount": 16,
+      "topValues": [
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/des-lab-rg/providers/Microsoft.Compute/virtualMachines/win11-des-lab-2",
+          "weight": 0.19571
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/des-lab-rg/providers/Microsoft.Compute/virtualMachines/win11-des-lab-1",
+          "weight": 0.16869
+        },
+        {
+          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourceGroups/AVD/providers/Microsoft.Compute/virtualMachines/avdpool-1",
+          "weight": 0.1384
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/XDR-LAB-RG/providers/Microsoft.Compute/virtualMachines/dc-xdr-lab-1",
+          "weight": 0.1123
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/DES-LAB-RG/providers/Microsoft.Compute/virtualMachines/dc-des-lab-1",
+          "weight": 0.0657
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/atomic/providers/Microsoft.Compute/virtualMachines/usm262346",
+          "weight": 0.05033
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/atomic/providers/Microsoft.Compute/virtualMachines/vm-atomic-01",
+          "weight": 0.04846
+        },
+        {
+          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourceGroups/adds/providers/Microsoft.Compute/virtualMachines/adds01",
+          "weight": 0.04613
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/atomic/providers/Microsoft.Compute/virtualMachines/attackiq01",
+          "weight": 0.03448
+        },
+        {
+          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourceGroups/ADDS/providers/Microsoft.Compute/virtualMachines/adsync01",
+          "weight": 0.02889
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/LINUX/providers/Microsoft.Compute/virtualMachines/ubuntu01",
+          "weight": 0.0247
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/DES-LAB-RG/providers/Microsoft.Compute/virtualMachines/linux-des-lab-1",
+          "weight": 0.0233
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/xdr-lab-rg/providers/Microsoft.Compute/virtualMachines/win11-xdr-lab-1",
+          "weight": 0.02237
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/xdr-lab-rg/providers/Microsoft.Compute/virtualMachines/win11-xdr-lab-2",
+          "weight": 0.02144
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/XDR-LAB-RG/providers/Microsoft.Compute/virtualMachines/linux-xdr-lab-1",
+          "weight": 0.01631
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/xdr-lab-rg/providers/Microsoft.Compute/virtualMachines/dc-xdr-lab-2",
+          "weight": 0.0028
+        }
+      ],
+      "pattern": null,
+      "minLength": 122.0,
+      "maxLength": 137.0
+    },
+    "AzureVmSubscriptionId": {
+      "fillRate": 0.1605,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "guid",
+      "freeText": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "GcpFullResourceName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AwsResourceName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "IsTransient": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.90188
+        },
+        {
+          "value": "1",
+          "weight": 0.09812
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "OsBuildRevision": {
+      "fillRate": 0.3869,
+      "distinctCount": 13,
+      "topValues": [
+        {
+          "value": "8246",
+          "weight": 0.37577
+        },
+        {
+          "value": "32522",
+          "weight": 0.18094
+        },
+        {
+          "value": "1836",
+          "weight": 0.1147
+        },
+        {
+          "value": "4893",
+          "weight": 0.10662
+        },
+        {
+          "value": "8039",
+          "weight": 0.05008
+        },
+        {
+          "value": "8117",
+          "weight": 0.03328
+        },
+        {
+          "value": "32370",
+          "weight": 0.03199
+        },
+        {
+          "value": "1764",
+          "weight": 0.0294
+        },
+        {
+          "value": "8037",
+          "weight": 0.02003
+        },
+        {
+          "value": "5020",
+          "weight": 0.01939
+        },
+        {
+          "value": "7840",
+          "weight": 0.01745
+        },
+        {
+          "value": "1896",
+          "weight": 0.01195
+        },
+        {
+          "value": "8328",
+          "weight": 0.0084
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "HostDeviceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MitigationStatus": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ConnectivityType": {
+      "fillRate": 0.4036,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Streamlined",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 11.0
+    },
+    "DiscoverySources": {
+      "fillRate": 0.9984,
+      "distinctCount": 180,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 35.0,
+      "maxLength": 75.0
+    },
+    "FirmwareVersions": {
+      "fillRate": 0.1159,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "15.1.4",
+          "weight": 0.40345
+        },
+        {
+          "value": "1.6.18",
+          "weight": 0.23409
+        },
+        {
+          "value": "SAYAWLPP1N002.2551C.00",
+          "weight": 0.17044
+        },
+        {
+          "value": "6.8.2.15592",
+          "weight": 0.15965
+        },
+        {
+          "value": "SAYAWLPP1N002.2450A.00",
+          "weight": 0.03236
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 22.0
+    },
+    "DlpInfo": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 243.0,
+      "maxLength": 282.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceInfo",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

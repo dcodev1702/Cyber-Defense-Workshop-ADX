@@ -1,0 +1,160 @@
+{
+  "tableName": "AppGenAIContent",
+  "categories": [
+    "GenAI",
+    "Agents",
+    "AzureMonitor"
+  ],
+  "sourceProduct": "Azure Monitor",
+  "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/appgenaicontent",
+  "schemaSource": "Microsoft Learn",
+  "columns": [
+    {
+      "name": "TenantId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The Log Analytics workspace ID"
+    },
+    {
+      "name": "Id",
+      "type": "string",
+      "sourceType": "string",
+      "description": "A unique identifier for the record"
+    },
+    {
+      "name": "TimeGenerated",
+      "type": "datetime",
+      "sourceType": "datetime",
+      "description": "Date and time when the GenAI content was captured"
+    },
+    {
+      "name": "TraceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier of the trace this record belongs to"
+    },
+    {
+      "name": "SpanId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier of the span this content is associated with"
+    },
+    {
+      "name": "ParentSpanId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The identifier of the parent of the associated span"
+    },
+    {
+      "name": "AgentName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The name of the GenAI agent"
+    },
+    {
+      "name": "AgentId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The unique identifier of the GenAI agent"
+    },
+    {
+      "name": "ModelName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The name of the GenAI model the request is being made to"
+    },
+    {
+      "name": "InputMessages",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The chat history provided to the model as an input"
+    },
+    {
+      "name": "OutputMessages",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Messages returned by the model where each message represents a specific model response"
+    },
+    {
+      "name": "SystemInstructions",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The system message or instructions provided to the GenAI model separately from the chat history"
+    },
+    {
+      "name": "ToolDefinitions",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The list of source system tool definitions available to the GenAI agent or model"
+    },
+    {
+      "name": "ToolCallArguments",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Parameters passed to the tool call"
+    },
+    {
+      "name": "ToolCallResult",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The result returned by the tool call, if any and if execution was successful"
+    },
+    {
+      "name": "EvaluationExplanation",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The explanation or reasoning provided by an evaluation of the GenAI interaction"
+    },
+    {
+      "name": "ServiceNamespace",
+      "type": "string",
+      "sourceType": "string",
+      "description": "A namespace for ServiceName, from the 'service.namespace' resource attribute"
+    },
+    {
+      "name": "ServiceName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "Logical name of the service, from the 'service.name' resource attribute"
+    },
+    {
+      "name": "ServiceInstanceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "A unique identifier for the instance of the service"
+    },
+    {
+      "name": "RoleName",
+      "type": "string",
+      "sourceType": "string",
+      "description": "A simplified service identifier combining ServiceNamespace and ServiceName"
+    },
+    {
+      "name": "Attributes",
+      "type": "dynamic",
+      "sourceType": "dynamic",
+      "description": "A property bag of additional key-value pairs associated with this record"
+    },
+    {
+      "name": "SourceSystem",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The type of agent the event was collected by"
+    },
+    {
+      "name": "Type",
+      "type": "string",
+      "sourceType": "string",
+      "description": "The name of the table"
+    },
+    {
+      "name": "_ResourceId",
+      "type": "string",
+      "sourceType": "string",
+      "description": "A unique identifier for the resource that the record is associated with"
+    }
+  ],
+  "adx": {
+    "mappingName": "AppGenAIContent_JsonMapping"
+  }
+}

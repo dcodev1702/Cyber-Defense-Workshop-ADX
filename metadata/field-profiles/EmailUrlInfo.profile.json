@@ -1,0 +1,120 @@
+{
+  "tableName": "EmailUrlInfo",
+  "sources": [
+    "sample:EmailUrlInfo-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 12,
+  "emptyInProd": [
+    "UrlChainId",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:05:10.8835900Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "NetworkMessageId": {
+      "fillRate": 1.0,
+      "distinctCount": 256,
+      "topValues": [],
+      "pattern": "guid",
+      "freeText": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 1006,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 55.0,
+      "maxLength": 57.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 143,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 143,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "Url": {
+      "fillRate": 1.0,
+      "distinctCount": 43,
+      "topValues": [],
+      "pattern": "url",
+      "sensitive": true,
+      "minLength": 22.0,
+      "maxLength": 497.0
+    },
+    "UrlLocation": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "UrlDomain": {
+      "fillRate": 1.0,
+      "distinctCount": 22,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 31.0
+    },
+    "UrlChainId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UrlChainPosition": {
+      "fillRate": 0.086,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "EmailUrlInfo",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 12.0
+    }
+  }
+}

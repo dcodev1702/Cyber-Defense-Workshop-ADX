@@ -1,0 +1,648 @@
+{
+  "tableName": "AuditLogs",
+  "sources": [
+    "sample:AuditLogs.csv"
+  ],
+  "sampledRows": 320.0,
+  "columnCount": 30,
+  "emptyInProd": [
+    "ResultType",
+    "ResourceProvider",
+    "Level",
+    "Location"
+  ],
+  "generatedUtc": "2026-07-26T01:03:04.5786313Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Azure AD",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 8.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 295,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 26.0,
+      "maxLength": 28.0
+    },
+    "ResourceId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "/tenants/b22dee98-83da-4207-b9ab-5ba931866f44/providers/Microsoft.aadiam",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 72.0,
+      "maxLength": 72.0
+    },
+    "OperationName": {
+      "fillRate": 1.0,
+      "distinctCount": 21,
+      "topValues": [
+        {
+          "value": "Hard delete service principal",
+          "weight": 0.12812
+        },
+        {
+          "value": "Add member to role completed (PIM activation)",
+          "weight": 0.10938
+        },
+        {
+          "value": "Add member to role requested (PIM activation)",
+          "weight": 0.10938
+        },
+        {
+          "value": "Remove member from role (PIM activation expired)",
+          "weight": 0.10312
+        },
+        {
+          "value": "Add member to group",
+          "weight": 0.0625
+        },
+        {
+          "value": "Add service principal",
+          "weight": 0.0625
+        },
+        {
+          "value": "Add app role assignment to service principal",
+          "weight": 0.05938
+        },
+        {
+          "value": "Remove member from group",
+          "weight": 0.05
+        },
+        {
+          "value": "Add member to role",
+          "weight": 0.04688
+        },
+        {
+          "value": "Remove member from role",
+          "weight": 0.04688
+        },
+        {
+          "value": "Get CIAM directory resources in a subscription",
+          "weight": 0.04375
+        },
+        {
+          "value": "Get Guest Usages resources in a subscription",
+          "weight": 0.04375
+        },
+        {
+          "value": "Remove service principal",
+          "weight": 0.0375
+        },
+        {
+          "value": "Validate user authentication",
+          "weight": 0.02188
+        },
+        {
+          "value": "Hard Delete application",
+          "weight": 0.01875
+        },
+        {
+          "value": "Update device",
+          "weight": 0.01562
+        },
+        {
+          "value": "Update user",
+          "weight": 0.0125
+        },
+        {
+          "value": "Update service principal",
+          "weight": 0.0125
+        },
+        {
+          "value": "Get B2C directory resources in a subscription",
+          "weight": 0.00625
+        },
+        {
+          "value": "Add member to role in PIM requested (timebound)",
+          "weight": 0.00625
+        },
+        {
+          "value": "GroupLifecyclePolicies_Get",
+          "weight": 0.00312
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 48.0
+    },
+    "OperationVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "1.0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "Category": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [
+        {
+          "value": "ApplicationManagement",
+          "weight": 0.31875
+        },
+        {
+          "value": "GroupManagement",
+          "weight": 0.29063
+        },
+        {
+          "value": "RoleManagement",
+          "weight": 0.24688
+        },
+        {
+          "value": "Authorization",
+          "weight": 0.04688
+        },
+        {
+          "value": "ResourceManagement",
+          "weight": 0.04688
+        },
+        {
+          "value": "Authentication",
+          "weight": 0.02188
+        },
+        {
+          "value": "Device",
+          "weight": 0.01562
+        },
+        {
+          "value": "UserManagement",
+          "weight": 0.0125
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 21.0
+    },
+    "ResultType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ResultSignature": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "None",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "ResultDescription": {
+      "fillRate": 0.3469,
+      "distinctCount": 27,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 2.0,
+      "maxLength": 89.0
+    },
+    "DurationMs": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "CorrelationId": {
+      "fillRate": 1.0,
+      "distinctCount": 200,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Resource": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft.aadiam",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "ResourceGroup": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft.aadiam",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "ResourceProvider": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Identity": {
+      "fillRate": 0.9375,
+      "distinctCount": 17,
+      "topValues": [
+        {
+          "value": "MS-PIM",
+          "weight": 0.22
+        },
+        {
+          "value": "Microsoft Online Services Garbage Collector",
+          "weight": 0.15
+        },
+        {
+          "value": "Azure AD PIM",
+          "weight": 0.11
+        },
+        {
+          "value": "Michael Crane",
+          "weight": 0.11
+        },
+        {
+          "value": "Managed Service Identity",
+          "weight": 0.1
+        },
+        {
+          "value": "Lorenzo Ireland",
+          "weight": 0.08333
+        },
+        {
+          "value": "1d78a85d-813d-46f0-b496-dd72f50a3ec0",
+          "weight": 0.08
+        },
+        {
+          "value": "Robert Finn",
+          "weight": 0.02667
+        },
+        {
+          "value": "mcrane@DibSecurity.onmicrosoft.com",
+          "weight": 0.02
+        },
+        {
+          "value": "Undefined user",
+          "weight": 0.02
+        },
+        {
+          "value": "Device Registration Service",
+          "weight": 0.01667
+        },
+        {
+          "value": "Microsoft Online Services",
+          "weight": 0.01333
+        },
+        {
+          "value": "Azure Resource Manager",
+          "weight": 0.01333
+        },
+        {
+          "value": "Noah Taylor",
+          "weight": 0.01333
+        },
+        {
+          "value": "Azure MFA StrongAuthenticationService",
+          "weight": 0.01333
+        },
+        {
+          "value": "Tom Grages",
+          "weight": 0.00667
+        },
+        {
+          "value": "lireland@DibSecurity.onmicrosoft.com",
+          "weight": 0.00333
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 43.0
+    },
+    "Level": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Location": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AdditionalDetails": {
+      "fillRate": 1.0,
+      "distinctCount": 185,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 1310.0
+    },
+    "Id": {
+      "fillRate": 1.0,
+      "distinctCount": 296,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 57.0,
+      "maxLength": 96.0
+    },
+    "InitiatedBy": {
+      "fillRate": 1.0,
+      "distinctCount": 33,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 151.0,
+      "maxLength": 241.0
+    },
+    "LoggedByService": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "Core Directory",
+          "weight": 0.55312
+        },
+        {
+          "value": "PIM",
+          "weight": 0.32812
+        },
+        {
+          "value": "B2C",
+          "weight": 0.11562
+        },
+        {
+          "value": "Self-service Group Management",
+          "weight": 0.00312
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 29.0
+    },
+    "Result": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "success",
+          "weight": 0.99062
+        },
+        {
+          "value": "failure",
+          "weight": 0.00938
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "ResultReason": {
+      "fillRate": 0.3469,
+      "distinctCount": 27,
+      "topValues": [
+        {
+          "value": "User Authorization: User was successfully verified for 'Subscription Admin' access rights",
+          "weight": 0.13514
+        },
+        {
+          "value": "NA",
+          "weight": 0.13514
+        },
+        {
+          "value": "Testing",
+          "weight": 0.07207
+        },
+        {
+          "value": "Token is valid",
+          "weight": 0.06306
+        },
+        {
+          "value": "adsfd",
+          "weight": 0.05405
+        },
+        {
+          "value": "YAAAS QUEEN!",
+          "weight": 0.05405
+        },
+        {
+          "value": "adfd",
+          "weight": 0.03604
+        },
+        {
+          "value": "YO",
+          "weight": 0.03604
+        },
+        {
+          "value": "asdfd",
+          "weight": 0.03604
+        },
+        {
+          "value": "YES",
+          "weight": 0.03604
+        },
+        {
+          "value": "HEY",
+          "weight": 0.03604
+        },
+        {
+          "value": "YUP",
+          "weight": 0.03604
+        },
+        {
+          "value": "test",
+          "weight": 0.03604
+        },
+        {
+          "value": "adf",
+          "weight": 0.01802
+        },
+        {
+          "value": "xdfgff",
+          "weight": 0.01802
+        },
+        {
+          "value": "testing xdr and intune",
+          "weight": 0.01802
+        },
+        {
+          "value": "sdfgff",
+          "weight": 0.01802
+        },
+        {
+          "value": "sfdgf",
+          "weight": 0.01802
+        },
+        {
+          "value": "RoleAssignmentExists",
+          "weight": 0.01802
+        },
+        {
+          "value": "GA ALL DAY!",
+          "weight": 0.01802
+        },
+        {
+          "value": "ASDS",
+          "weight": 0.01802
+        },
+        {
+          "value": "asdgdd",
+          "weight": 0.01802
+        },
+        {
+          "value": "adsf",
+          "weight": 0.01802
+        },
+        {
+          "value": "sxcvcc",
+          "weight": 0.01802
+        },
+        {
+          "value": "zxcvc",
+          "weight": 0.01802
+        },
+        {
+          "value": "OK",
+          "weight": 0.00901
+        },
+        {
+          "value": "Microsoft.Online.DirectoryServices.DirectoryObjectNotFoundException",
+          "weight": 0.00901
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 89.0
+    },
+    "TargetResources": {
+      "fillRate": 1.0,
+      "distinctCount": 205,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 153.0,
+      "maxLength": 12156.0
+    },
+    "AADTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ActivityDisplayName": {
+      "fillRate": 1.0,
+      "distinctCount": 21,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 11.0,
+      "maxLength": 48.0
+    },
+    "ActivityDateTime": {
+      "fillRate": 1.0,
+      "distinctCount": 295,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 26.0,
+      "maxLength": 28.0
+    },
+    "AADOperationType": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "Delete",
+          "weight": 0.2875
+        },
+        {
+          "value": "Assign",
+          "weight": 0.16875
+        },
+        {
+          "value": "Update",
+          "weight": 0.15313
+        },
+        {
+          "value": "Create",
+          "weight": 0.11562
+        },
+        {
+          "value": "Read",
+          "weight": 0.11562
+        },
+        {
+          "value": "Unassign",
+          "weight": 0.09688
+        },
+        {
+          "value": "Add",
+          "weight": 0.0625
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 8.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AuditLogs",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 9.0
+    }
+  }
+}

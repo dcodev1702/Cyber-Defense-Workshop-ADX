@@ -1,0 +1,833 @@
+{
+  "tableName": "GraphAPIAuditEvents",
+  "sources": [
+    "sample:GraphAPIAuditEvents-Real.csv"
+  ],
+  "sampledRows": 184.0,
+  "columnCount": 25,
+  "emptyInProd": [
+    "TenantId",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:04:50.0745627Z",
+  "columns": {
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 172,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "ApplicationId": {
+      "fillRate": 1.0,
+      "distinctCount": 184,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "IdentityProvider": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AAD",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "ApiVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "v1.0",
+          "weight": 0.70652
+        },
+        {
+          "value": "beta",
+          "weight": 0.28804
+        },
+        {
+          "value": "rp",
+          "weight": 0.00543
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 4.0
+    },
+    "ClientRequestId": {
+      "fillRate": 1.0,
+      "distinctCount": 182,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 32.0,
+      "maxLength": 38.0
+    },
+    "OperationId": {
+      "fillRate": 1.0,
+      "distinctCount": 184,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AccountObjectId": {
+      "fillRate": 0.3533,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Location": {
+      "fillRate": 1.0,
+      "distinctCount": 17,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 20.0
+    },
+    "RequestDuration": {
+      "fillRate": 1.0,
+      "distinctCount": 184,
+      "topValues": [
+        {
+          "value": "1007398",
+          "weight": 0.00543
+        },
+        {
+          "value": "609794",
+          "weight": 0.00543
+        },
+        {
+          "value": "612704",
+          "weight": 0.00543
+        },
+        {
+          "value": "628021",
+          "weight": 0.00543
+        },
+        {
+          "value": "636039",
+          "weight": 0.00543
+        },
+        {
+          "value": "636679",
+          "weight": 0.00543
+        },
+        {
+          "value": "638050",
+          "weight": 0.00543
+        },
+        {
+          "value": "658260",
+          "weight": 0.00543
+        },
+        {
+          "value": "680501",
+          "weight": 0.00543
+        },
+        {
+          "value": "691982",
+          "weight": 0.00543
+        },
+        {
+          "value": "6921263",
+          "weight": 0.00543
+        },
+        {
+          "value": "699739",
+          "weight": 0.00543
+        },
+        {
+          "value": "699745",
+          "weight": 0.00543
+        },
+        {
+          "value": "703612",
+          "weight": 0.00543
+        },
+        {
+          "value": "703968",
+          "weight": 0.00543
+        },
+        {
+          "value": "708063",
+          "weight": 0.00543
+        },
+        {
+          "value": "725754",
+          "weight": 0.00543
+        },
+        {
+          "value": "727345",
+          "weight": 0.00543
+        },
+        {
+          "value": "731764",
+          "weight": 0.00543
+        },
+        {
+          "value": "7335095",
+          "weight": 0.00543
+        },
+        {
+          "value": "5905652",
+          "weight": 0.00543
+        },
+        {
+          "value": "734767",
+          "weight": 0.00543
+        },
+        {
+          "value": "5851955",
+          "weight": 0.00543
+        },
+        {
+          "value": "575193",
+          "weight": 0.00543
+        },
+        {
+          "value": "4282863",
+          "weight": 0.00543
+        },
+        {
+          "value": "435070",
+          "weight": 0.00543
+        },
+        {
+          "value": "444172",
+          "weight": 0.00543
+        },
+        {
+          "value": "4655329",
+          "weight": 0.00543
+        },
+        {
+          "value": "4706505",
+          "weight": 0.00543
+        },
+        {
+          "value": "481409",
+          "weight": 0.00543
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 9.0
+    },
+    "RequestMethod": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "GET",
+          "weight": 0.78804
+        },
+        {
+          "value": "POST",
+          "weight": 0.18478
+        },
+        {
+          "value": "PATCH",
+          "weight": 0.02174
+        },
+        {
+          "value": "DELETE",
+          "weight": 0.00543
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 6.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 172,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "ResponseStatusCode": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [
+        {
+          "value": "200",
+          "weight": 0.8913
+        },
+        {
+          "value": "404",
+          "weight": 0.04891
+        },
+        {
+          "value": "204",
+          "weight": 0.02174
+        },
+        {
+          "value": "201",
+          "weight": 0.01087
+        },
+        {
+          "value": "401",
+          "weight": 0.01087
+        },
+        {
+          "value": "304",
+          "weight": 0.00543
+        },
+        {
+          "value": "403",
+          "weight": 0.00543
+        },
+        {
+          "value": "412",
+          "weight": 0.00543
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "Scopes": {
+      "fillRate": 0.3587,
+      "distinctCount": 66,
+      "topValues": [
+        {
+          "value": "_A.B7 _A.BZ _B.BK _C.A7 _D.A7 AgentIdentity.ReadWrite.All AgentIdentityBlueprint.ReadWrite.All AgentIdentityBlueprintPrincipal.ReadWrite.All Application.ReadWrite.All AppRoleAssignment.ReadWrite.All AuditLog.Read.All DelegatedPermissionGrant.ReadWrite.All email EntraBackup.Read.All EntraBackup.ReadWrite.Preview EntraBackup.ReadWrite.Recovery Group.ReadWrite.All LicenseAssignment.Read.All openid Organization.Read.All Policy.Read.All Policy.ReadWrite.Authorization Policy.ReadWrite.ConditionalAccess Policy.ReadWrite.CrossTenantAccess profile User.DeleteRestore.All User.EnableDisableAccount.All User.ReadWrite.All User-Mail.ReadWrite.All User-Phone.ReadWrite.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "Calendars.Read Contacts.Read email Family.Read Files.ReadWrite.All FileStorageContainer.Selected GroupMember.Read.All InformationProtectionPolicy.Read Notes.Create openid Organization.Read.All People.Read Presence.Read.All profile SensitivityLabel.Read Sites.Read.All Tasks.ReadWrite User.Read User.ReadBasic.All User.ReadWrite",
+          "weight": 0.01515
+        },
+        {
+          "value": "Calendars.Read Content.Process.User email Files.ReadWrite Files.ReadWrite.All Notes.Create Notes.ReadWrite Notes.ReadWrite.All openid People.Read profile ProtectionScopes.Compute.User User.Read User.ReadBasic.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "Calendars.ReadBasic Contacts.Read email Family.Read Files.ReadWrite.All FileStorageContainer.Selected GroupMember.Read.All InformationProtectionPolicy.Read Notes.Create Notes.ReadWrite.All openid Organization.Read.All People.Read Presence.Read Presence.Read.All profile SensitivityLabel.Read Tasks.ReadWrite User.Read User.ReadBasic.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "Channel.ReadBasic.All email Files.ReadWrite.All FileStorageContainer.Selected openid Organization.Read.All profile Tasks.ReadWrite Team.ReadBasic.All User.Read",
+          "weight": 0.01515
+        },
+        {
+          "value": "ChannelMessage.Send Chat.Create Chat.ReadWrite ChatMessage.Send Contacts.Read Family.Read Files.ReadWrite Files.ReadWrite.All Group.Read.All Mail.ReadWrite Mail.Send People.Read ProfilePhoto.Read.All Sites.ReadWrite.All User.Read User.Read.All User.ReadBasic.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "CloudPC.Read.All CloudPC.ReadWrite.All DeviceManagementApps.ReadWrite.All DeviceManagementCloudCA.Read.All DeviceManagementCloudCA.ReadWrite.All DeviceManagementConfiguration.ReadWrite.All DeviceManagementManagedDevices.PrivilegedOperations.All DeviceManagementManagedDevices.ReadWrite.All DeviceManagementRBAC.ReadWrite.All DeviceManagementScripts.ReadWrite.All DeviceManagementServiceConfiguration.ReadWrite.All Directory.AccessAsUser.All email openid profile",
+          "weight": 0.01515
+        },
+        {
+          "value": "CloudPC.Read.All email openid profile User.Read",
+          "weight": 0.01515
+        },
+        {
+          "value": "Contacts.ReadWrite email GroupMember.Read.All openid Organization.Read.All profile User.Read User.ReadBasic.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "CustomSecAttributeDefinition.Read.All CustomSecAttributeDefinition.ReadWrite.All email MS-RemoteTenantGroups.Read.All openid Organization.Read.All profile User.Invite.All User.Read.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "Device.Read.All User.Read",
+          "weight": 0.01515
+        },
+        {
+          "value": "DeviceManagementConfiguration.Read.All DeviceManagementConfiguration.ReadWrite.All Directory.Read.All email Group.Read.All GroupMember.Read.All openid Organization.Read.All profile",
+          "weight": 0.01515
+        },
+        {
+          "value": "Directory.Read.All email Group.Read.All InformationProtectionPolicy.Read openid profile User.ReadBasic.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "Directory.Read.All email LicenseAssignment.ReadWrite.All MailboxSettings.Read openid Organization.Read.All profile RoleManagement.Read.Directory Sites.Create.All Sites.Selected Team.ReadBasic.All User.ReadWrite.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "email EntraBackup.Read.All EntraBackup.ReadWrite.Preview EntraBackup.ReadWrite.Recovery openid Organization.Read.All profile User.Read",
+          "weight": 0.01515
+        },
+        {
+          "value": "email Files.Read openid profile Sites.Read.All User.Read",
+          "weight": 0.01515
+        },
+        {
+          "value": "email Files.ReadWrite openid profile User.ReadWrite",
+          "weight": 0.01515
+        },
+        {
+          "value": "email Files.ReadWrite.All FileStorageContainer.Selected Mail.Read Mail.Read.Shared openid People.Read People.Read.All Presence.Read.All profile Sites.ReadWrite.All User.Read User.ReadBasic.All UserAuthenticationMethod.ReadWrite",
+          "weight": 0.01515
+        },
+        {
+          "value": "email GroupMember.Read.All IdentityRiskEvent.Read.All IdentityRiskyUser.ReadWrite.All openid profile User.EnableDisableAccount.All User.Read.All User.RevokeSessions.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "email GroupMember.Read.All openid profile Reports.Read.All User.ReadBasic.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "email openid Organization.Read.All Policy.ReadWrite.ApplicationConfiguration profile User.Read",
+          "weight": 0.01515
+        },
+        {
+          "value": "email openid Organization.Read.All profile User.Read",
+          "weight": 0.01515
+        },
+        {
+          "value": "email openid Organization.Read.All profile User.Read User.Read.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "email openid Organization.Read.All profile UserAuthenticationMethod.Read UserAuthenticationMethod.ReadWrite UserAuthMethodAuthApp-MSAuthApp.Delete UserAuthMethodAuthApp-Passkey.Create UserAuthMethodAuthApp-Passkey.Delete UserAuthMethodAuthApp-Policy.Read",
+          "weight": 0.01515
+        },
+        {
+          "value": "email openid profile RoleManagement.ReadWrite.Directory",
+          "weight": 0.01515
+        },
+        {
+          "value": "email openid profile User.Read",
+          "weight": 0.01515
+        },
+        {
+          "value": "Files.Read.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "MCP.AccessReview.Read.All MCP.AdministrativeUnit.Read.All MCP.Application.Read.All MCP.AuditLog.Read.All MCP.AuthenticationContext.Read.All MCP.DelegatedPermissionGrant.Read.All MCP.Device.Read.All MCP.DirectoryRecommendations.Read.All MCP.Domain.Read.All MCP.EntitlementManagement.Read.All MCP.Group.Read.All MCP.GroupMember.Read.All MCP.HealthMonitoringAlert.Read.All MCP.IdentityRiskEvent.Read.All MCP.IdentityRiskyServicePrincipal.Read.All MCP.IdentityRiskyUser.Read.All MCP.LicenseAssignment.Read.All MCP.LifecycleWorkflows.Read.All MCP.LifecycleWorkflows-CustomExt.Read.All MCP.LifecycleWorkflows-Reports.Read.All MCP.LifecycleWorkflows-Workflow.Read.All MCP.LifecycleWorkflows-Workflow.ReadBasic.All MCP.NetworkAccess.Read.All MCP.NetworkAccess-Reports.Read.All MCP.Organization.Read.All MCP.OrgContact.Read.All MCP.Policy.Read.All MCP.Policy.Read.ConditionalAccess MCP.ProvisioningLog.Read.All MCP.Reports.Read.All MCP.RoleAssignmentSchedule.Read.Directory MCP.RoleEligibilitySchedule.Read.Directory MCP.RoleManagement.Read.Directory MCP.Synchronization.Read.All MCP.User.Read.All MCP.UserAuthenticationMethod.Read.All",
+          "weight": 0.01515
+        },
+        {
+          "value": "Organization.Read.All User.Read",
+          "weight": 0.01515
+        },
+        {
+          "value": "profile User.Read User.ReadWrite",
+          "weight": 0.01515
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 2654.0
+    },
+    "EntityType": {
+      "fillRate": 0.9946,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "app",
+          "weight": 0.64481
+        },
+        {
+          "value": "user",
+          "weight": 0.35519
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 4.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 184,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "RequestUri": {
+      "fillRate": 1.0,
+      "distinctCount": 149,
+      "topValues": [],
+      "pattern": "url",
+      "sensitive": true,
+      "minLength": 35.0,
+      "maxLength": 2765.0
+    },
+    "UniqueTokenIdentifier": {
+      "fillRate": 0.9946,
+      "distinctCount": 182,
+      "topValues": [
+        {
+          "value": "MOEqKpG2yUihcVg99pMvAA",
+          "weight": 0.01093
+        },
+        {
+          "value": "_5EeCgCHQEmzFMz1BG0UAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "Q3S4YJjCo0uh-4hnMQYOAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "qbhzIvzd0kO7LgdiKcU-AA",
+          "weight": 0.00546
+        },
+        {
+          "value": "Qi2z1WZj406LLJGBRGjSAQ",
+          "weight": 0.00546
+        },
+        {
+          "value": "QjGSoeZ4N0GrN9V_7lR9AA",
+          "weight": 0.00546
+        },
+        {
+          "value": "QSsui6PbRUWYLtmprVMRAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "QvcnvZE_HE6zNeDYGLUGAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "r2ClV1lo7UmwDXzE8ZF2AA",
+          "weight": 0.00546
+        },
+        {
+          "value": "rdCSpA5iTkuDnbtH_mAPAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "rHaPKg3Mk0qYjxrUEpI1AA",
+          "weight": 0.00546
+        },
+        {
+          "value": "RjTUindOdk-7AX12RhcOAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "RmkaY0vfckyi4z2EbpQUAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "sc_jrKad7UO7MNGG8AL7AA",
+          "weight": 0.00546
+        },
+        {
+          "value": "SFF5b_nQrEOtg6x2l-iHAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "sLnm0Tlkt0yfEdzw_y1EAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "SNPtCp6a00uEicuxgvv4AA",
+          "weight": 0.00546
+        },
+        {
+          "value": "SNXiexz4K0K6Xx3IIqwbAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "sQHbVFhyv0mYsU9VwF8BAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "sWRf8p8caU6z5xFHOZcMAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "q-bdzs13jkGYN0vSBXFqAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "purkiZt4G0qjiYjHtnAZAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "Ptcl-__lDUSDXTpkz-S4AA",
+          "weight": 0.00546
+        },
+        {
+          "value": "pmeCpBT3rUuwITYUFs-rAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "nGl4ubKy_Eaa3r2pRJS8AA",
+          "weight": 0.00546
+        },
+        {
+          "value": "NIjQKLlgCkymFCjH2ksCAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "NKIxThaVZkeDsLO7BsUZAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "NMLCkWYGkkWszD5aZoAYAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "Nqsp9qrv1ka5tfuO1p0FAA",
+          "weight": 0.00546
+        },
+        {
+          "value": "nuakVgwt4Eq_Mk9E5fZBAA",
+          "weight": 0.00546
+        }
+      ],
+      "pattern": null,
+      "minLength": 22.0,
+      "maxLength": 22.0
+    },
+    "RequestId": {
+      "fillRate": 1.0,
+      "distinctCount": 184,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "IpAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 143,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 11.0,
+      "maxLength": 29.0
+    },
+    "ServicePrincipalId": {
+      "fillRate": 0.3533,
+      "distinctCount": 22,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TargetWorkload": {
+      "fillRate": 0.9457,
+      "distinctCount": 12,
+      "topValues": [
+        {
+          "value": "Microsoft.DirectoryServices",
+          "weight": 0.8046
+        },
+        {
+          "value": "Microsoft.Identity.AuxiliaryStore",
+          "weight": 0.04598
+        },
+        {
+          "value": "Microsoft.DataClassificationService",
+          "weight": 0.03448
+        },
+        {
+          "value": "Microsoft.ESTS",
+          "weight": 0.03448
+        },
+        {
+          "value": "Microsoft.People",
+          "weight": 0.03448
+        },
+        {
+          "value": "Microsoft.FileServices",
+          "weight": 0.01149
+        },
+        {
+          "value": "Microsoft.IdentityProtectionServices",
+          "weight": 0.00575
+        },
+        {
+          "value": "Microsoft.Intune.Rbac",
+          "weight": 0.00575
+        },
+        {
+          "value": "Microsoft.MCP.Enterprise",
+          "weight": 0.00575
+        },
+        {
+          "value": "Microsoft.O365Reporting",
+          "weight": 0.00575
+        },
+        {
+          "value": "Microsoft.PIM.AzureRBAC",
+          "weight": 0.00575
+        },
+        {
+          "value": "Microsoft.SecurityDetectionsAndIncidents",
+          "weight": 0.00575
+        }
+      ],
+      "pattern": null,
+      "minLength": 14.0,
+      "maxLength": 40.0
+    },
+    "ResponseSize": {
+      "fillRate": 1.0,
+      "distinctCount": 130,
+      "topValues": [
+        {
+          "value": "39994",
+          "weight": 0.05435
+        },
+        {
+          "value": "97",
+          "weight": 0.04348
+        },
+        {
+          "value": "141",
+          "weight": 0.03804
+        },
+        {
+          "value": "0",
+          "weight": 0.03804
+        },
+        {
+          "value": "252",
+          "weight": 0.02717
+        },
+        {
+          "value": "412",
+          "weight": 0.02174
+        },
+        {
+          "value": "341",
+          "weight": 0.02174
+        },
+        {
+          "value": "294",
+          "weight": 0.0163
+        },
+        {
+          "value": "29223",
+          "weight": 0.0163
+        },
+        {
+          "value": "37578",
+          "weight": 0.0163
+        },
+        {
+          "value": "39543",
+          "weight": 0.01087
+        },
+        {
+          "value": "174",
+          "weight": 0.01087
+        },
+        {
+          "value": "210",
+          "weight": 0.01087
+        },
+        {
+          "value": "66688",
+          "weight": 0.01087
+        },
+        {
+          "value": "27316",
+          "weight": 0.01087
+        },
+        {
+          "value": "284",
+          "weight": 0.01087
+        },
+        {
+          "value": "469",
+          "weight": 0.01087
+        },
+        {
+          "value": "296",
+          "weight": 0.01087
+        },
+        {
+          "value": "2",
+          "weight": 0.01087
+        },
+        {
+          "value": "103",
+          "weight": 0.01087
+        },
+        {
+          "value": "4098",
+          "weight": 0.00543
+        },
+        {
+          "value": "40552",
+          "weight": 0.00543
+        },
+        {
+          "value": "40074",
+          "weight": 0.00543
+        },
+        {
+          "value": "1",
+          "weight": 0.00543
+        },
+        {
+          "value": "398",
+          "weight": 0.00543
+        },
+        {
+          "value": "4265",
+          "weight": 0.00543
+        },
+        {
+          "value": "37274",
+          "weight": 0.00543
+        },
+        {
+          "value": "37566",
+          "weight": 0.00543
+        },
+        {
+          "value": "367",
+          "weight": 0.00543
+        },
+        {
+          "value": "36635",
+          "weight": 0.00543
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 6.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "GraphAPIAuditEvents",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

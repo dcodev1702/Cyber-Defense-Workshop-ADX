@@ -1,0 +1,534 @@
+{
+  "tableName": "DeviceTvmSoftwareVulnerabilities",
+  "sources": [
+    "sample:DeviceTvmSoftwareVulnerabilities-Real.csv"
+  ],
+  "sampledRows": 2265.0,
+  "columnCount": 19,
+  "emptyInProd": [
+    "CveMitigationStatus",
+    "TenantId",
+    "SourceSystem",
+    "MachineGroup"
+  ],
+  "generatedUtc": "2026-07-26T01:04:36.3312458Z",
+  "columns": {
+    "DeviceId": {
+      "fillRate": 1.0,
+      "distinctCount": 19,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "DeviceName": {
+      "fillRate": 1.0,
+      "distinctCount": 19,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 60.0
+    },
+    "OSPlatform": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "Windows11",
+          "weight": 0.47638
+        },
+        {
+          "value": "WindowsServer2025",
+          "weight": 0.23091
+        },
+        {
+          "value": "WindowsServer2022",
+          "weight": 0.12009
+        },
+        {
+          "value": "Linux",
+          "weight": 0.11876
+        },
+        {
+          "value": "Windows11WVD",
+          "weight": 0.04283
+        },
+        {
+          "value": "Windows10",
+          "weight": 0.01104
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 17.0
+    },
+    "OSVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [
+        {
+          "value": "10.0.26200.0",
+          "weight": 0.20088
+        },
+        {
+          "value": "10.0.26200.8246",
+          "weight": 0.17395
+        },
+        {
+          "value": "10.0.26100.32522",
+          "weight": 0.13201
+        },
+        {
+          "value": "ubuntu_linux_24.04",
+          "weight": 0.11876
+        },
+        {
+          "value": "10.0.20348.4893",
+          "weight": 0.09978
+        },
+        {
+          "value": "10.0.26100.32370",
+          "weight": 0.0989
+        },
+        {
+          "value": "10.0.26200.7840",
+          "weight": 0.08168
+        },
+        {
+          "value": "10.0.26200.8328",
+          "weight": 0.04547
+        },
+        {
+          "value": "10.0.20348.5020",
+          "weight": 0.02031
+        },
+        {
+          "value": "10.0.28000.1896",
+          "weight": 0.01722
+        },
+        {
+          "value": "10.0.18363.0",
+          "weight": 0.01104
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 18.0
+    },
+    "OSArchitecture": {
+      "fillRate": 0.989,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "x64",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "SoftwareVendor": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "microsoft",
+          "weight": 0.70022
+        },
+        {
+          "value": "openssl",
+          "weight": 0.15717
+        },
+        {
+          "value": "ubuntu",
+          "weight": 0.11876
+        },
+        {
+          "value": "mozilla",
+          "weight": 0.01987
+        },
+        {
+          "value": "nodejs",
+          "weight": 0.00309
+        },
+        {
+          "value": "adobe",
+          "weight": 0.00088
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 9.0
+    },
+    "SoftwareName": {
+      "fillRate": 1.0,
+      "distinctCount": 60,
+      "topValues": [
+        {
+          "value": "windows_11",
+          "weight": 0.27152
+        },
+        {
+          "value": "edge_chromium-based",
+          "weight": 0.19426
+        },
+        {
+          "value": "windows_server_2025",
+          "weight": 0.17969
+        },
+        {
+          "value": "openssl",
+          "weight": 0.15717
+        },
+        {
+          "value": "windows_server_2022",
+          "weight": 0.05077
+        },
+        {
+          "value": "firefox",
+          "weight": 0.01987
+        },
+        {
+          "value": "xxd_for_linux",
+          "weight": 0.00795
+        },
+        {
+          "value": "vim-common_for_linux",
+          "weight": 0.00795
+        },
+        {
+          "value": "vim-runtime_for_linux",
+          "weight": 0.00795
+        },
+        {
+          "value": "vim-tiny_for_linux",
+          "weight": 0.00795
+        },
+        {
+          "value": "vim_for_linux",
+          "weight": 0.00795
+        },
+        {
+          "value": "openssl_for_linux",
+          "weight": 0.00618
+        },
+        {
+          "value": "libssl3t64_for_linux",
+          "weight": 0.00618
+        },
+        {
+          "value": "openssh-sftp-server_for_linux",
+          "weight": 0.00574
+        },
+        {
+          "value": "openssh-client_for_linux",
+          "weight": 0.00574
+        },
+        {
+          "value": "openssh-server_for_linux",
+          "weight": 0.00574
+        },
+        {
+          "value": "jq_for_linux",
+          "weight": 0.0053
+        },
+        {
+          "value": "libjq1_for_linux",
+          "weight": 0.0053
+        },
+        {
+          "value": "libarchive13t64_for_linux",
+          "weight": 0.00397
+        },
+        {
+          "value": "nodejs",
+          "weight": 0.00309
+        },
+        {
+          "value": "powershell",
+          "weight": 0.00221
+        },
+        {
+          "value": "curl_for_linux",
+          "weight": 0.00221
+        },
+        {
+          "value": "libcurl3t64-gnutls_for_linux",
+          "weight": 0.00221
+        },
+        {
+          "value": "libcurl4t64_for_linux",
+          "weight": 0.00221
+        },
+        {
+          "value": "ntfs-3g_for_linux",
+          "weight": 0.00177
+        },
+        {
+          "value": "bind9-dnsutils_for_linux",
+          "weight": 0.00177
+        },
+        {
+          "value": "bind9-host_for_linux",
+          "weight": 0.00177
+        },
+        {
+          "value": "bind9-libs_for_linux",
+          "weight": 0.00177
+        },
+        {
+          "value": "libpolkit-gobject-1-0_for_linux",
+          "weight": 0.00177
+        },
+        {
+          "value": "libpolkit-agent-1-0_for_linux",
+          "weight": 0.00177
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 31.0
+    },
+    "SoftwareVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 48,
+      "topValues": [
+        {
+          "value": "10.0.26200.0",
+          "weight": 0.20088
+        },
+        {
+          "value": "10.0.26100.32522",
+          "weight": 0.10861
+        },
+        {
+          "value": "147.0.3912.86",
+          "weight": 0.10155
+        },
+        {
+          "value": "10.0.26100.32370",
+          "weight": 0.07108
+        },
+        {
+          "value": "10.0.26200.7840",
+          "weight": 0.07064
+        },
+        {
+          "value": "10.0.20348.4893",
+          "weight": 0.05077
+        },
+        {
+          "value": "146.0.3856.109",
+          "weight": 0.04768
+        },
+        {
+          "value": "3.5.4.0",
+          "weight": 0.03179
+        },
+        {
+          "value": "2:9.1.0016-1ubuntu7.9",
+          "weight": 0.0287
+        },
+        {
+          "value": "3.0.18.0",
+          "weight": 0.02472
+        },
+        {
+          "value": "147.0.3912.60",
+          "weight": 0.02296
+        },
+        {
+          "value": "147.0.3912.72",
+          "weight": 0.02208
+        },
+        {
+          "value": "149.0.2.0",
+          "weight": 0.01987
+        },
+        {
+          "value": "3.3.2.0",
+          "weight": 0.01854
+        },
+        {
+          "value": "3.3.3.0",
+          "weight": 0.01678
+        },
+        {
+          "value": "3.6.0.0",
+          "weight": 0.01678
+        },
+        {
+          "value": "3.6.1.0",
+          "weight": 0.01545
+        },
+        {
+          "value": "3.5.5.0",
+          "weight": 0.01325
+        },
+        {
+          "value": "3.0.13-0ubuntu3.7",
+          "weight": 0.01236
+        },
+        {
+          "value": "2:9.1.0016-1ubuntu7.10",
+          "weight": 0.01104
+        },
+        {
+          "value": "1:9.6p1-3ubuntu13.14",
+          "weight": 0.0106
+        },
+        {
+          "value": "1.7.1-3ubuntu0.24.04.1",
+          "weight": 0.0106
+        },
+        {
+          "value": "3.5.1.0",
+          "weight": 0.00927
+        },
+        {
+          "value": "3.4.4.0",
+          "weight": 0.00795
+        },
+        {
+          "value": "3.12.3-1ubuntu0.11",
+          "weight": 0.00662
+        },
+        {
+          "value": "1:9.6p1-3ubuntu13.15",
+          "weight": 0.00662
+        },
+        {
+          "value": "8.5.0-2ubuntu10.7",
+          "weight": 0.00662
+        },
+        {
+          "value": "1:9.18.39-0ubuntu0.24.04.2",
+          "weight": 0.0053
+        },
+        {
+          "value": "255.4-1ubuntu8.12",
+          "weight": 0.00442
+        },
+        {
+          "value": "3.7.2-2ubuntu0.5",
+          "weight": 0.00397
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 26.0
+    },
+    "CveId": {
+      "fillRate": 1.0,
+      "distinctCount": 720,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 14.0
+    },
+    "VulnerabilitySeverityLevel": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "High",
+          "weight": 0.63311
+        },
+        {
+          "value": "Medium",
+          "weight": 0.24106
+        },
+        {
+          "value": "Low",
+          "weight": 0.08389
+        },
+        {
+          "value": "Critical",
+          "weight": 0.04194
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 8.0
+    },
+    "RecommendedSecurityUpdate": {
+      "fillRate": 0.6216,
+      "distinctCount": 34,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 27.0,
+      "maxLength": 62.0
+    },
+    "RecommendedSecurityUpdateId": {
+      "fillRate": 0.6216,
+      "distinctCount": 36,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 10.0
+    },
+    "CveTags": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "CveMitigationStatus": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AadDeviceId": {
+      "fillRate": 0.1744,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceTvmSoftwareVulnerabilities",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 32.0,
+      "maxLength": 32.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MachineGroup": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

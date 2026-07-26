@@ -1,0 +1,316 @@
+{
+  "tableName": "IdentityDirectoryEvents",
+  "sources": [
+    "sample:IdentityDirectoryEvents-RealTelemetry.csv"
+  ],
+  "sampledRows": 865.0,
+  "columnCount": 27,
+  "emptyInProd": [
+    "AccountObjectId",
+    "AccountDisplayName",
+    "Port",
+    "DestinationIPAddress",
+    "DestinationPort",
+    "TargetAccountDisplayName",
+    "Location",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:04:51.3744649Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 383,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 383,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "ActionType": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [
+        {
+          "value": "Directory Services replication",
+          "weight": 0.60462
+        },
+        {
+          "value": "Domain trusts discovery",
+          "weight": 0.19191
+        },
+        {
+          "value": "Service creation",
+          "weight": 0.16763
+        },
+        {
+          "value": "PowerShell execution",
+          "weight": 0.02081
+        },
+        {
+          "value": "Account Path changed",
+          "weight": 0.00578
+        },
+        {
+          "value": "Account Password changed",
+          "weight": 0.00231
+        },
+        {
+          "value": "Group Policy was created",
+          "weight": 0.00231
+        },
+        {
+          "value": "Account Supported Encryption Types changed",
+          "weight": 0.00116
+        },
+        {
+          "value": "Device Account Created",
+          "weight": 0.00116
+        },
+        {
+          "value": "Device Operating System changed",
+          "weight": 0.00116
+        },
+        {
+          "value": "Security Group Created",
+          "weight": 0.00116
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 42.0
+    },
+    "Application": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Active Directory",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "Protocol": {
+      "fillRate": 0.985,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "Drsr",
+          "weight": 0.61385
+        },
+        {
+          "value": "Netlogon",
+          "weight": 0.19484
+        },
+        {
+          "value": "SvcCtl",
+          "weight": 0.17019
+        },
+        {
+          "value": "WinRm",
+          "weight": 0.02113
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 8.0
+    },
+    "AccountName": {
+      "fillRate": 0.022,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "AccountDomain": {
+      "fillRate": 0.022,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 17.0
+    },
+    "AccountUpn": {
+      "fillRate": 0.022,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 25.0,
+      "maxLength": 25.0
+    },
+    "AccountSid": {
+      "fillRate": 0.6289,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 42.0,
+      "maxLength": 46.0
+    },
+    "AccountObjectId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountDisplayName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DeviceName": {
+      "fillRate": 0.1792,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 19.0,
+      "maxLength": 29.0
+    },
+    "IPAddress": {
+      "fillRate": 0.8173,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 13.0
+    },
+    "Port": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DestinationDeviceName": {
+      "fillRate": 0.822,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 24.0
+    },
+    "DestinationIPAddress": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DestinationPort": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TargetDeviceName": {
+      "fillRate": 0.1746,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 28.0
+    },
+    "TargetAccountUpn": {
+      "fillRate": 0.0046,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 21.0,
+      "maxLength": 25.0
+    },
+    "TargetAccountDisplayName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Location": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ISP": {
+      "fillRate": 0.4081,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "INTERNAL_NETWORK",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 511,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 176,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 216.0,
+      "maxLength": 1086.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "IdentityDirectoryEvents",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 23.0,
+      "maxLength": 23.0
+    }
+  }
+}

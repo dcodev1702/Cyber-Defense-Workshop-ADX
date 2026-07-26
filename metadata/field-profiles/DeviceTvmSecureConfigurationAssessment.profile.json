@@ -1,0 +1,448 @@
+{
+  "tableName": "DeviceTvmSecureConfigurationAssessment",
+  "sources": [
+    "sample:DeviceTvmSecureConfigurationAssessment-Real.csv"
+  ],
+  "sampledRows": 3027.0,
+  "columnCount": 17,
+  "emptyInProd": [
+    "TenantId",
+    "SourceSystem",
+    "MachineGroup"
+  ],
+  "generatedUtc": "2026-07-26T01:04:33.7669400Z",
+  "columns": {
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 25,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "DeviceId": {
+      "fillRate": 1.0,
+      "distinctCount": 25,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "DeviceName": {
+      "fillRate": 0.9987,
+      "distinctCount": 24,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 60.0
+    },
+    "OSPlatform": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "Windows11",
+          "weight": 0.4635
+        },
+        {
+          "value": "Linux",
+          "weight": 0.16981
+        },
+        {
+          "value": "WindowsServer2025",
+          "weight": 0.16452
+        },
+        {
+          "value": "WindowsServer2022",
+          "weight": 0.14106
+        },
+        {
+          "value": "Windows11WVD",
+          "weight": 0.05616
+        },
+        {
+          "value": "Android",
+          "weight": 0.0033
+        },
+        {
+          "value": "Windows10",
+          "weight": 0.00165
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 17.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 25,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "ConfigurationId": {
+      "fillRate": 1.0,
+      "distinctCount": 174,
+      "topValues": [
+        {
+          "value": "scid-20000",
+          "weight": 0.00793
+        },
+        {
+          "value": "scid-100",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5094",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5092",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5091",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5090",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5014",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5013",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5011",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5010",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5009",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5007",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5006",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5005",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5004",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5003",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5002",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5001",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-98",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-3003",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-3002",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-3001",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-30",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-28",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-5095",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-53",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-54",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-55",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-97",
+          "weight": 0.00628
+        },
+        {
+          "value": "scid-92",
+          "weight": 0.00628
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 10.0
+    },
+    "ConfigurationCategory": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "Security controls",
+          "weight": 0.41328
+        },
+        {
+          "value": "OS",
+          "weight": 0.23323
+        },
+        {
+          "value": "Network",
+          "weight": 0.13776
+        },
+        {
+          "value": "Application",
+          "weight": 0.13181
+        },
+        {
+          "value": "Accounts",
+          "weight": 0.08127
+        },
+        {
+          "value": "Firmware",
+          "weight": 0.00264
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 17.0
+    },
+    "ConfigurationSubcategory": {
+      "fillRate": 0.5847,
+      "distinctCount": 17,
+      "topValues": [
+        {
+          "value": "Antivirus",
+          "weight": 0.20452
+        },
+        {
+          "value": "Attack Surface Reduction",
+          "weight": 0.18418
+        },
+        {
+          "value": "EDR",
+          "weight": 0.11695
+        },
+        {
+          "value": "Firewall",
+          "weight": 0.09831
+        },
+        {
+          "value": "Adobe Acrobat",
+          "weight": 0.09661
+        },
+        {
+          "value": "Google Chrome",
+          "weight": 0.06441
+        },
+        {
+          "value": "Services",
+          "weight": 0.05367
+        },
+        {
+          "value": "Microsoft Office",
+          "weight": 0.0322
+        },
+        {
+          "value": "Shares",
+          "weight": 0.03107
+        },
+        {
+          "value": "Bitlocker",
+          "weight": 0.02712
+        },
+        {
+          "value": "SmartScreen",
+          "weight": 0.02147
+        },
+        {
+          "value": "Internet Explorer",
+          "weight": 0.02147
+        },
+        {
+          "value": "Onboard Devices",
+          "weight": 0.01356
+        },
+        {
+          "value": "Security Control",
+          "weight": 0.01073
+        },
+        {
+          "value": "Exploit Guard",
+          "weight": 0.0096
+        },
+        {
+          "value": "Credential Guard",
+          "weight": 0.0096
+        },
+        {
+          "value": "UEFI",
+          "weight": 0.00452
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 24.0
+    },
+    "ConfigurationImpact": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "5",
+          "weight": 0.30856
+        },
+        {
+          "value": "8",
+          "weight": 0.27651
+        },
+        {
+          "value": "9",
+          "weight": 0.20086
+        },
+        {
+          "value": "10",
+          "weight": 0.09283
+        },
+        {
+          "value": "7",
+          "weight": 0.05021
+        },
+        {
+          "value": "6",
+          "weight": 0.03667
+        },
+        {
+          "value": "2",
+          "weight": 0.03436
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 2.0
+    },
+    "IsCompliant": {
+      "fillRate": 0.5484,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "1",
+          "weight": 0.53614
+        },
+        {
+          "value": "0",
+          "weight": 0.46386
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "IsApplicable": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "1",
+          "weight": 0.5484
+        },
+        {
+          "value": "0",
+          "weight": 0.4516
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "Context": {
+      "fillRate": 1.0,
+      "distinctCount": 27,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 143.0
+    },
+    "IsExpectedUserImpact": {
+      "fillRate": 0.0258,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceTvmSecureConfigurationAssessment",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 38.0,
+      "maxLength": 38.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MachineGroup": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

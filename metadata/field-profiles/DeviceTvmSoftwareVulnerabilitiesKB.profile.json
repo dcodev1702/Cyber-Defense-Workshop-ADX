@@ -1,0 +1,170 @@
+{
+  "tableName": "DeviceTvmSoftwareVulnerabilitiesKB",
+  "sources": [
+    "sample:DeviceTvmSoftwareVulnerabilitiesKB-Real.csv"
+  ],
+  "sampledRows": 8000.0,
+  "columnCount": 14,
+  "emptyInProd": [
+    "TenantId",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:04:40.0804932Z",
+  "columns": {
+    "CveId": {
+      "fillRate": 1.0,
+      "distinctCount": 8000,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 16.0
+    },
+    "CvssScore": {
+      "fillRate": 1.0,
+      "distinctCount": 88,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 1.0,
+      "maxLength": 3.0
+    },
+    "CvssVector": {
+      "fillRate": 0.9605,
+      "distinctCount": 1794,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 26.0,
+      "maxLength": 178.0
+    },
+    "CveSupportability": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "NotSupported",
+          "weight": 0.53388
+        },
+        {
+          "value": "Supported",
+          "weight": 0.46312
+        },
+        {
+          "value": "SupportedInPremium",
+          "weight": 0.003
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 18.0
+    },
+    "IsExploitAvailable": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.9145
+        },
+        {
+          "value": "1",
+          "weight": 0.0855
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "VulnerabilitySeverityLevel": {
+      "fillRate": 0.9995,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "Medium",
+          "weight": 0.51888
+        },
+        {
+          "value": "High",
+          "weight": 0.35305
+        },
+        {
+          "value": "Critical",
+          "weight": 0.06941
+        },
+        {
+          "value": "Low",
+          "weight": 0.05865
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 8.0
+    },
+    "LastModifiedTime": {
+      "fillRate": 1.0,
+      "distinctCount": 4637,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "PublishedDate": {
+      "fillRate": 1.0,
+      "distinctCount": 4871,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "VulnerabilityDescription": {
+      "fillRate": 1.0,
+      "distinctCount": 7953,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 234.0,
+      "maxLength": 1884.0
+    },
+    "AffectedSoftware": {
+      "fillRate": 1.0,
+      "distinctCount": 6094,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 9.0,
+      "maxLength": 85724.0
+    },
+    "EpssScore": {
+      "fillRate": 0.9971,
+      "distinctCount": 2528,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 7.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceTvmSoftwareVulnerabilitiesKB",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 34.0,
+      "maxLength": 34.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

@@ -1,0 +1,288 @@
+{
+  "tableName": "BehaviorInfo",
+  "sources": [
+    "sample:BehaviorInfo-RealTelemetry.csv"
+  ],
+  "sampledRows": 10.0,
+  "columnCount": 28,
+  "emptyInProd": [
+    "_ItemId",
+    "_SubscriptionId",
+    "_TimeReceived",
+    "_IsBillable",
+    "Title",
+    "Insights",
+    "SourceSystem",
+    "MachineGroup",
+    "AccountObjectId",
+    "TenantId",
+    "_BilledSize",
+    "_ResourceId"
+  ],
+  "generatedUtc": "2026-07-26T01:05:11.4011234Z",
+  "columns": {
+    "_ItemId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "_SubscriptionId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "BehaviorInfo",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 12.0
+    },
+    "DeviceId": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "_TimeReceived": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "_IsBillable": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ActionType": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Title": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Description": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 11.0,
+      "maxLength": 45.0
+    },
+    "StartTime": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "Insights": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "BehaviorId": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "dad895f7-eaf2-4929-983f-586aa25f3260_1",
+          "weight": 0.3
+        },
+        {
+          "value": "0fb0ab50-0107-435b-ba2e-be5a9151d3d7_1",
+          "weight": 0.2
+        },
+        {
+          "value": "0e229173-24b7-477c-9993-059e50966c2e_1",
+          "weight": 0.1
+        },
+        {
+          "value": "4fcc4352-5dfc-47ee-b57a-8b964202da95_1",
+          "weight": 0.1
+        },
+        {
+          "value": "6cf10eac-0df3-4a4b-9d43-9cc01cfc48aa_1",
+          "weight": 0.1
+        },
+        {
+          "value": "80b1efb9-4834-42b3-af3e-5927987e829e_1",
+          "weight": 0.1
+        },
+        {
+          "value": "92ce1931-4ce3-4635-a70e-fb1e697c4ba8_1",
+          "weight": 0.1
+        }
+      ],
+      "pattern": null,
+      "minLength": 38.0,
+      "maxLength": 38.0
+    },
+    "AttackTechniques": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 356.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 177.0,
+      "maxLength": 189.0
+    },
+    "Categories": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 13.0
+    },
+    "AccountUpn": {
+      "fillRate": 0.3,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "ServiceSource": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft Defender for Endpoint",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 31.0,
+      "maxLength": 31.0
+    },
+    "MachineGroup": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountObjectId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DetectionSource": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "EDR",
+          "weight": 0.6
+        },
+        {
+          "value": "Antivirus",
+          "weight": 0.4
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 9.0
+    },
+    "EndTime": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "_BilledSize": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "_ResourceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "DataSources": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 35.0,
+      "maxLength": 35.0
+    }
+  }
+}

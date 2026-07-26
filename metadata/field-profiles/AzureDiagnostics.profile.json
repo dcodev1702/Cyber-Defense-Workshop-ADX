@@ -1,0 +1,2540 @@
+{
+  "tableName": "AzureDiagnostics",
+  "sources": [
+    "sample:AzureDiagnostics-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 170,
+  "emptyInProd": [
+    "ResultDescription",
+    "Tenant_g",
+    "JobId_g",
+    "RunbookName_s",
+    "StreamType_s",
+    "Caller_s",
+    "LogicalServerName_s",
+    "Message",
+    "userAgent_s",
+    "ruleName_s",
+    "identity_claim_http_schemas_xmlsoap_org_ws_2005_05_identity_claims_upn_s",
+    "systemId_g",
+    "isAccessPolicyMatch_b",
+    "EventName_s",
+    "httpMethod_s",
+    "subnetId_s",
+    "type_s",
+    "instanceId_s",
+    "macAddress_s",
+    "vnetResourceGuid_g",
+    "direction_s",
+    "subnetPrefix_s",
+    "primaryIPv4Address_s",
+    "conditions_sourcePortRange_s",
+    "priority_d",
+    "conditions_destinationPortRange_s",
+    "conditions_destinationIP_s",
+    "conditions_None_s",
+    "conditions_sourceIP_s",
+    "httpVersion_s",
+    "matchedConnections_d",
+    "DatabaseName_s",
+    "clientIP_s",
+    "host_s",
+    "requestQuery_s",
+    "sslEnabled_s",
+    "clientPort_d",
+    "httpStatus_d",
+    "receivedBytes_d",
+    "sentBytes_d",
+    "timeTaken_d",
+    "resultDescription_ErrorJobs_s",
+    "resultDescription_ChildJobs_s",
+    "identity_claim_http_schemas_microsoft_com_identity_claims_scope_s",
+    "resultDescription_Summary_MachineId_s",
+    "resultDescription_Summary_ScheduleName_s",
+    "resultDescription_Summary_Status_s",
+    "resultDescription_Summary_StatusDescription_s",
+    "resultDescription_Summary_MachineName_s",
+    "resultDescription_Summary_TotalUpdatesInstalled_d",
+    "resultDescription_Summary_RebootRequired_b",
+    "resultDescription_Summary_TotalUpdatesFailed_d",
+    "resultDescription_Summary_InstallPercentage_d",
+    "resultDescription_Summary_StartDateTimeUtc_t",
+    "resultDescription_Summary_InitialRequiredUpdatesCount_d",
+    "resultDescription_Summary_EndDateTimeUtc_s",
+    "resultDescription_Summary_DurationInMinutes_s",
+    "resultDescription_Summary_EndDateTimeUtc_t",
+    "resultDescription_Summary_DurationInMinutes_d",
+    "conditions_protocols_s",
+    "identity_claim_ipaddr_s",
+    "ElasticPoolName_s",
+    "identity_claim_http_schemas_microsoft_com_claims_authnmethodsreferences_s",
+    "RunOn_s",
+    "query_hash_s",
+    "MG",
+    "ManagementGroupName",
+    "Computer",
+    "RawData",
+    "retryHistory_s",
+    "identity_claim_xms_az_rid_s",
+    "identity_claim_scp_s",
+    "identity_claim_upn_s",
+    "identity_claim_unique_name_s",
+    "identity_claim_amr_s",
+    "identity_claim_sid_g",
+    "properties_networkAcls_bypass_s",
+    "properties_networkAcls_defaultAction_s",
+    "identity_claim_http_schemas_xmlsoap_org_ws_2005_05_identity_claims_name_s",
+    "identity_claim_oid_g",
+    "identity_claim_appidacr_s",
+    "identity_claim_iss_s",
+    "identity_claim_xms_mirid_s",
+    "identity_claim_xms_az_tm_s",
+    "identity_claim_xms_az_nwperimid_s",
+    "identity_claim_idtyp_s",
+    "identity_claim_uti_s",
+    "identity_claim_iat_s",
+    "identity_claim_exp_s",
+    "identity_claim_aud_g",
+    "identity_claim_nbf_s",
+    "isRbacAuthorized_b",
+    "appliedAssignmentId_g",
+    "trustedService_s",
+    "tlsVersion_s",
+    "AssetIdentity_g",
+    "AdditionalFields"
+  ],
+  "generatedUtc": "2026-07-26T01:06:34.4338351Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 144,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "ResourceId": {
+      "fillRate": 1.0,
+      "distinctCount": 487,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 126.0,
+      "maxLength": 216.0
+    },
+    "Category": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "WorkflowRuntime",
+          "weight": 0.985
+        },
+        {
+          "value": "RequestResponse",
+          "weight": 0.0125
+        },
+        {
+          "value": "AuditEvent",
+          "weight": 0.002
+        },
+        {
+          "value": "AzurePolicyEvaluationDetails",
+          "weight": 0.0005
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 28.0
+    },
+    "ResourceGroup": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "PLAYBOOK",
+          "weight": 0.926
+        },
+        {
+          "value": "A365-WORKSHOP",
+          "weight": 0.059
+        },
+        {
+          "value": "ZOLAB-AI",
+          "weight": 0.006
+        },
+        {
+          "value": "ZOLAB-AI-U49GCO",
+          "weight": 0.005
+        },
+        {
+          "value": "ZOLAB-BOT-BOTPRD",
+          "weight": 0.0025
+        },
+        {
+          "value": "ZOLAB-AI900",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 16.0
+    },
+    "SubscriptionId": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "guid",
+      "freeText": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceProvider": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "MICROSOFT.LOGIC",
+          "weight": 0.985
+        },
+        {
+          "value": "MICROSOFT.COGNITIVESERVICES",
+          "weight": 0.0125
+        },
+        {
+          "value": "MICROSOFT.KEYVAULT",
+          "weight": 0.0025
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 27.0
+    },
+    "Resource": {
+      "fillRate": 1.0,
+      "distinctCount": 66,
+      "topValues": [
+        {
+          "value": "GET_MDE_DEVICE",
+          "weight": 0.0465
+        },
+        {
+          "value": "QUERY_DEVICEINFO",
+          "weight": 0.0455
+        },
+        {
+          "value": "IF_ROW_ELIGIBLE",
+          "weight": 0.0455
+        },
+        {
+          "value": "IF_DISARM_LR_SUCCEEDED",
+          "weight": 0.045
+        },
+        {
+          "value": "PARSE_LR_DISARM_RESPONSE",
+          "weight": 0.045
+        },
+        {
+          "value": "POLL_DISARM_UNTIL_DONE",
+          "weight": 0.045
+        },
+        {
+          "value": "QUERY_ACTIVE_LIVE_RESPONSE_ACTIONS",
+          "weight": 0.045
+        },
+        {
+          "value": "REMOVE_DETONATED_TAG",
+          "weight": 0.045
+        },
+        {
+          "value": "REMOVE_DISARMED_TAG",
+          "weight": 0.045
+        },
+        {
+          "value": "REMOVE_LEGACY_DETONATED_TAG",
+          "weight": 0.045
+        },
+        {
+          "value": "REMOVE_DISARM_TAG",
+          "weight": 0.045
+        },
+        {
+          "value": "ADD_DISARM_FAILED_TAG",
+          "weight": 0.045
+        },
+        {
+          "value": "UPDATE_WATCHLIST_BLOCKED_LIVE_RESPONSE",
+          "weight": 0.045
+        },
+        {
+          "value": "RUN_LR_DISARM",
+          "weight": 0.045
+        },
+        {
+          "value": "UPDATE_WATCHLIST_DISARM_FAILED",
+          "weight": 0.045
+        },
+        {
+          "value": "UPDATE_WATCHLIST_DISARMED",
+          "weight": 0.045
+        },
+        {
+          "value": "IF_ACTIVE_LIVE_RESPONSE_EXISTS",
+          "weight": 0.0445
+        },
+        {
+          "value": "IF_DEVICE_READY",
+          "weight": 0.0445
+        },
+        {
+          "value": "UPDATE_WATCHLIST_DEVICE_NOT_READY",
+          "weight": 0.044
+        },
+        {
+          "value": "RUN_QUEUE_QUERY",
+          "weight": 0.019
+        },
+        {
+          "value": "RECURRENCE",
+          "weight": 0.017
+        },
+        {
+          "value": "FOR_EACH_QUEUE_ROW",
+          "weight": 0.017
+        },
+        {
+          "value": "FOR_EACH_USER",
+          "weight": 0.015
+        },
+        {
+          "value": "GET_WORKSHOP_USERS",
+          "weight": 0.015
+        },
+        {
+          "value": "EVERY_HOUR",
+          "weight": 0.015
+        },
+        {
+          "value": "ZOLAB1702-AI-FOUNDRY",
+          "weight": 0.0045
+        },
+        {
+          "value": "ZOLABAI-FOUNDRY-U49GCO",
+          "weight": 0.004
+        },
+        {
+          "value": "ZOLAB-BOT-LLM-BOTPRD",
+          "weight": 0.0025
+        },
+        {
+          "value": "ZOLABAIFNDRYKV",
+          "weight": 0.0015
+        },
+        {
+          "value": "ZOLAB-AI900-RESOURCE",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 38.0
+    },
+    "ResourceType": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "WORKFLOWS/RUNS/ACTIONS",
+          "weight": 0.9215
+        },
+        {
+          "value": "WORKFLOWS/RUNS/TRIGGERS",
+          "weight": 0.032
+        },
+        {
+          "value": "WORKFLOWS/RUNS",
+          "weight": 0.0315
+        },
+        {
+          "value": "ACCOUNTS",
+          "weight": 0.0125
+        },
+        {
+          "value": "VAULTS",
+          "weight": 0.0025
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 23.0
+    },
+    "OperationName": {
+      "fillRate": 1.0,
+      "distinctCount": 10,
+      "topValues": [
+        {
+          "value": "Microsoft.Logic/workflows/workflowActionStarted",
+          "weight": 0.4635
+        },
+        {
+          "value": "Microsoft.Logic/workflows/workflowActionCompleted",
+          "weight": 0.458
+        },
+        {
+          "value": "Microsoft.Logic/workflows/workflowRunStarted",
+          "weight": 0.016
+        },
+        {
+          "value": "Microsoft.Logic/workflows/workflowTriggerCompleted",
+          "weight": 0.016
+        },
+        {
+          "value": "Microsoft.Logic/workflows/workflowTriggerStarted",
+          "weight": 0.016
+        },
+        {
+          "value": "Microsoft.Logic/workflows/workflowRunCompleted",
+          "weight": 0.0155
+        },
+        {
+          "value": "Projects_Wildcard_Get",
+          "weight": 0.0065
+        },
+        {
+          "value": "List_Vector_Stores",
+          "weight": 0.006
+        },
+        {
+          "value": "VaultGet",
+          "weight": 0.002
+        },
+        {
+          "value": "AzurePolicyEvaulation",
+          "weight": 0.0005
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 50.0
+    },
+    "ResultType": {
+      "fillRate": 0.0025,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Success",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "CorrelationId": {
+      "fillRate": 0.0145,
+      "distinctCount": 29,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResultDescription": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Tenant_g": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "JobId_g": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RunbookName_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "StreamType_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Caller_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "requestUri_s": {
+      "fillRate": 0.002,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "url",
+      "sensitive": true,
+      "minLength": 218.0,
+      "maxLength": 234.0
+    },
+    "Level": {
+      "fillRate": 0.985,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Information",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 11.0
+    },
+    "DurationMs": {
+      "fillRate": 0.015,
+      "distinctCount": 29,
+      "topValues": [
+        {
+          "value": "12",
+          "weight": 0.06667
+        },
+        {
+          "value": "1012",
+          "weight": 0.03333
+        },
+        {
+          "value": "81",
+          "weight": 0.03333
+        },
+        {
+          "value": "78",
+          "weight": 0.03333
+        },
+        {
+          "value": "736",
+          "weight": 0.03333
+        },
+        {
+          "value": "627",
+          "weight": 0.03333
+        },
+        {
+          "value": "5735",
+          "weight": 0.03333
+        },
+        {
+          "value": "550",
+          "weight": 0.03333
+        },
+        {
+          "value": "5475",
+          "weight": 0.03333
+        },
+        {
+          "value": "509",
+          "weight": 0.03333
+        },
+        {
+          "value": "380",
+          "weight": 0.03333
+        },
+        {
+          "value": "367",
+          "weight": 0.03333
+        },
+        {
+          "value": "360",
+          "weight": 0.03333
+        },
+        {
+          "value": "344",
+          "weight": 0.03333
+        },
+        {
+          "value": "331",
+          "weight": 0.03333
+        },
+        {
+          "value": "298",
+          "weight": 0.03333
+        },
+        {
+          "value": "261",
+          "weight": 0.03333
+        },
+        {
+          "value": "26",
+          "weight": 0.03333
+        },
+        {
+          "value": "15",
+          "weight": 0.03333
+        },
+        {
+          "value": "139",
+          "weight": 0.03333
+        },
+        {
+          "value": "1314",
+          "weight": 0.03333
+        },
+        {
+          "value": "13",
+          "weight": 0.03333
+        },
+        {
+          "value": "129",
+          "weight": 0.03333
+        },
+        {
+          "value": "1178",
+          "weight": 0.03333
+        },
+        {
+          "value": "117",
+          "weight": 0.03333
+        },
+        {
+          "value": "115",
+          "weight": 0.03333
+        },
+        {
+          "value": "108",
+          "weight": 0.03333
+        },
+        {
+          "value": "82",
+          "weight": 0.03333
+        },
+        {
+          "value": "83",
+          "weight": 0.03333
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 4.0
+    },
+    "CallerIPAddress": {
+      "fillRate": 0.0145,
+      "distinctCount": 8,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 11.0,
+      "maxLength": 14.0
+    },
+    "OperationVersion": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "ResultSignature": {
+      "fillRate": 0.0145,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "200",
+          "weight": 0.75862
+        },
+        {
+          "value": "OK",
+          "weight": 0.13793
+        },
+        {
+          "value": "400",
+          "weight": 0.10345
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 3.0
+    },
+    "id_s": {
+      "fillRate": 0.002,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "url",
+      "minLength": 39.0,
+      "maxLength": 45.0
+    },
+    "status_s": {
+      "fillRate": 0.985,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Running",
+          "weight": 0.50305
+        },
+        {
+          "value": "Skipped",
+          "weight": 0.41015
+        },
+        {
+          "value": "Succeeded",
+          "weight": 0.0868
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 9.0
+    },
+    "LogicalServerName_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Message": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "clientInfo_s": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AzureResourceGraph.IngestionWorkerService.global/1.26.1.776",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 59.0,
+      "maxLength": 59.0
+    },
+    "httpStatusCode_d": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "200",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "identity_claim_appid_g": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "identity_claim_http_schemas_microsoft_com_identity_claims_objectidentifier_g": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "userAgent_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ruleName_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_http_schemas_xmlsoap_org_ws_2005_05_identity_claims_upn_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "systemId_g": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "isAccessPolicyMatch_b": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EventName_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "httpMethod_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "subnetId_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "type_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "instanceId_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "macAddress_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "vnetResourceGuid_g": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "direction_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "subnetPrefix_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "primaryIPv4Address_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "conditions_sourcePortRange_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "priority_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "conditions_destinationPortRange_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "conditions_destinationIP_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "conditions_None_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "conditions_sourceIP_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "httpVersion_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "matchedConnections_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "startTime_t": {
+      "fillRate": 0.985,
+      "distinctCount": 105,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "endTime_t": {
+      "fillRate": 0.4895,
+      "distinctCount": 116,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "DatabaseName_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "clientIP_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "host_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "requestQuery_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "sslEnabled_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "clientPort_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "httpStatus_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "receivedBytes_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "sentBytes_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "timeTaken_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_ErrorJobs_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_ChildJobs_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_http_schemas_microsoft_com_identity_claims_scope_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "workflowId_s": {
+      "fillRate": 0.985,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "/SUBSCRIPTIONS/192AD012-896E-4F14-8525-C37A2A9640F9/RESOURCEGROUPS/PLAYBOOK/PROVIDERS/MICROSOFT.LOGIC/WORKFLOWS/UALTIMEBOMB-DISARM",
+          "weight": 0.9401
+        },
+        {
+          "value": "/SUBSCRIPTIONS/1FB89F47-9F73-480D-A6B0-5FB68D13DE11/RESOURCEGROUPS/A365-WORKSHOP/PROVIDERS/MICROSOFT.LOGIC/WORKFLOWS/A365-WORKSHOP-CLEANUP",
+          "weight": 0.0599
+        }
+      ],
+      "pattern": null,
+      "minLength": 130.0,
+      "maxLength": 138.0
+    },
+    "resource_location_s": {
+      "fillRate": 0.985,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "resource_workflowId_g": {
+      "fillRate": 0.985,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "resource_resourceGroupName_s": {
+      "fillRate": 0.985,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 13.0
+    },
+    "resource_subscriptionId_g": {
+      "fillRate": 0.985,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "freeText": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "resource_runId_s": {
+      "fillRate": 0.985,
+      "distinctCount": 41,
+      "topValues": [
+        {
+          "value": "08584168219886369423587117955CU21",
+          "weight": 0.06193
+        },
+        {
+          "value": "08584166383653678557769043934CU31",
+          "weight": 0.06193
+        },
+        {
+          "value": "08584168039865839319137700997CU20",
+          "weight": 0.06193
+        },
+        {
+          "value": "08584168075868083377331112753CU59",
+          "weight": 0.06193
+        },
+        {
+          "value": "08584166167636396609625626836CU26",
+          "weight": 0.06193
+        },
+        {
+          "value": "08584168111871158527556442856CU16",
+          "weight": 0.06193
+        },
+        {
+          "value": "08584166203640194248357163008CU60",
+          "weight": 0.06193
+        },
+        {
+          "value": "08584168183881978506437928495CU23",
+          "weight": 0.06193
+        },
+        {
+          "value": "08584168147874742474821861982CU31",
+          "weight": 0.06193
+        },
+        {
+          "value": "08584166419657857024630780519CU22",
+          "weight": 0.06142
+        },
+        {
+          "value": "08584165987617431976849616467CU55",
+          "weight": 0.06091
+        },
+        {
+          "value": "08584166023619410362061617417CU52",
+          "weight": 0.06091
+        },
+        {
+          "value": "08584168003860371055569710995CU19",
+          "weight": 0.06041
+        },
+        {
+          "value": "08584166275645528424107663360CU26",
+          "weight": 0.04213
+        },
+        {
+          "value": "08584165915612908530916139419CU17",
+          "weight": 0.02284
+        },
+        {
+          "value": "08584166491664268578063097212CU53",
+          "weight": 0.02234
+        },
+        {
+          "value": "08584167931852879954716269087CU26",
+          "weight": 0.02081
+        },
+        {
+          "value": "08584167859842658863839166796CU19",
+          "weight": 0.0203
+        },
+        {
+          "value": "08584168170897060562797226172CU54",
+          "weight": 0.00406
+        },
+        {
+          "value": "08584167895849281724840050302CU51",
+          "weight": 0.00406
+        },
+        {
+          "value": "08584168098892220497682046253CU20",
+          "weight": 0.00406
+        },
+        {
+          "value": "08584167918882019520039975463CU31",
+          "weight": 0.00406
+        },
+        {
+          "value": "08584168062889992317100898447CU58",
+          "weight": 0.00406
+        },
+        {
+          "value": "08584168134895301050313327882CU56",
+          "weight": 0.00406
+        },
+        {
+          "value": "08584167522852060918806979511CU48",
+          "weight": 0.00406
+        },
+        {
+          "value": "08584167558854018282312363857CU27",
+          "weight": 0.00406
+        },
+        {
+          "value": "08584168206900736644514174889CU27",
+          "weight": 0.00406
+        },
+        {
+          "value": "08584166298747302768629693629CU24",
+          "weight": 0.00406
+        },
+        {
+          "value": "08584166190742208494104636246CU61",
+          "weight": 0.00406
+        },
+        {
+          "value": "08584166154739456347235136254CU26",
+          "weight": 0.00406
+        }
+      ],
+      "pattern": null,
+      "minLength": 33.0,
+      "maxLength": 33.0
+    },
+    "resource_workflowName_s": {
+      "fillRate": 0.985,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "ualtimebomb-disarm",
+          "weight": 0.9401
+        },
+        {
+          "value": "A365-Workshop-Cleanup",
+          "weight": 0.0599
+        }
+      ],
+      "pattern": null,
+      "minLength": 18.0,
+      "maxLength": 21.0
+    },
+    "_schema_s": {
+      "fillRate": 0.985,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "correlation_clientTrackingId_s": {
+      "fillRate": 0.969,
+      "distinctCount": 41,
+      "topValues": [
+        {
+          "value": "08584168219886369423587117955CU21",
+          "weight": 0.06244
+        },
+        {
+          "value": "08584166383653678557769043934CU31",
+          "weight": 0.06244
+        },
+        {
+          "value": "08584168039865839319137700997CU20",
+          "weight": 0.06244
+        },
+        {
+          "value": "08584168075868083377331112753CU59",
+          "weight": 0.06244
+        },
+        {
+          "value": "08584166167636396609625626836CU26",
+          "weight": 0.06244
+        },
+        {
+          "value": "08584168111871158527556442856CU16",
+          "weight": 0.06244
+        },
+        {
+          "value": "08584166203640194248357163008CU60",
+          "weight": 0.06244
+        },
+        {
+          "value": "08584168183881978506437928495CU23",
+          "weight": 0.06244
+        },
+        {
+          "value": "08584168147874742474821861982CU31",
+          "weight": 0.06244
+        },
+        {
+          "value": "08584166419657857024630780519CU22",
+          "weight": 0.06192
+        },
+        {
+          "value": "08584166023619410362061617417CU52",
+          "weight": 0.06192
+        },
+        {
+          "value": "08584165987617431976849616467CU55",
+          "weight": 0.0614
+        },
+        {
+          "value": "08584168003860371055569710995CU19",
+          "weight": 0.0614
+        },
+        {
+          "value": "08584166275645528424107663360CU26",
+          "weight": 0.04231
+        },
+        {
+          "value": "08584165915612908530916139419CU17",
+          "weight": 0.02322
+        },
+        {
+          "value": "08584166491664268578063097212CU53",
+          "weight": 0.02219
+        },
+        {
+          "value": "08584167931852879954716269087CU26",
+          "weight": 0.02116
+        },
+        {
+          "value": "08584167859842658863839166796CU19",
+          "weight": 0.02012
+        },
+        {
+          "value": "08584168170897060562797226172CU54",
+          "weight": 0.00361
+        },
+        {
+          "value": "08584167895849281724840050302CU51",
+          "weight": 0.00361
+        },
+        {
+          "value": "08584168098892220497682046253CU20",
+          "weight": 0.00361
+        },
+        {
+          "value": "08584167918882019520039975463CU31",
+          "weight": 0.00361
+        },
+        {
+          "value": "08584168062889992317100898447CU58",
+          "weight": 0.00361
+        },
+        {
+          "value": "08584168134895301050313327882CU56",
+          "weight": 0.00361
+        },
+        {
+          "value": "08584167522852060918806979511CU48",
+          "weight": 0.00361
+        },
+        {
+          "value": "08584167558854018282312363857CU27",
+          "weight": 0.00361
+        },
+        {
+          "value": "08584168206900736644514174889CU27",
+          "weight": 0.00361
+        },
+        {
+          "value": "08584166298747302768629693629CU24",
+          "weight": 0.00361
+        },
+        {
+          "value": "08584166190742208494104636246CU61",
+          "weight": 0.00361
+        },
+        {
+          "value": "08584166154739456347235136254CU26",
+          "weight": 0.00361
+        }
+      ],
+      "pattern": null,
+      "minLength": 33.0,
+      "maxLength": 33.0
+    },
+    "properties_sku_Family_s": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "A",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "properties_sku_Name_s": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "standard",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 8.0
+    },
+    "properties_tenantId_g": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "properties_enabledForDeployment_b": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "code_s": {
+      "fillRate": 0.437,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "ActionSkipped",
+          "weight": 0.92449
+        },
+        {
+          "value": "OK",
+          "weight": 0.07551
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 13.0
+    },
+    "resultDescription_Summary_MachineId_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_Summary_ScheduleName_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_Summary_Status_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_Summary_StatusDescription_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_Summary_MachineName_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_Summary_TotalUpdatesInstalled_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_Summary_RebootRequired_b": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_Summary_TotalUpdatesFailed_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_Summary_InstallPercentage_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_Summary_StartDateTimeUtc_t": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resource_triggerName_s": {
+      "fillRate": 0.032,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Recurrence",
+          "weight": 0.53125
+        },
+        {
+          "value": "Every_hour",
+          "weight": 0.46875
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "resultDescription_Summary_InitialRequiredUpdatesCount_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "properties_enabledForTemplateDeployment_b": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "resultDescription_Summary_EndDateTimeUtc_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_Summary_DurationInMinutes_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resource_originRunId_s": {
+      "fillRate": 0.0315,
+      "distinctCount": 35,
+      "topValues": [
+        {
+          "value": "08584167522852060918806979511CU48",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584168183881978506437928495CU23",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584168170897060562797226172CU54",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584168147874742474821861982CU31",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584168134895301050313327882CU56",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584168111871158527556442856CU16",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584168098892220497682046253CU20",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584168075868083377331112753CU59",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584168062889992317100898447CU58",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584168039865839319137700997CU20",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584167918882019520039975463CU31",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584167859842658863839166796CU19",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584167558854018282312363857CU27",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584168206900736644514174889CU27",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584166455659510247167909673CU31",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584168219886369423587117955CU21",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584166190742208494104636246CU61",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584166383653678557769043934CU31",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584166370750011445160335756CU18",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584166298747302768629693629CU24",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584165974726368791424670488CU26",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584166275645528424107663360CU26",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584166010728135783976789867CU21",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584166203640194248357163008CU60",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584166419657857024630780519CU22",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584166167636396609625626836CU26",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584166154739456347235136254CU26",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584166023619410362061617417CU52",
+          "weight": 0.03175
+        },
+        {
+          "value": "08584165951615373549153300642CU58",
+          "weight": 0.01587
+        },
+        {
+          "value": "08584166491664268578063097212CU53",
+          "weight": 0.01587
+        }
+      ],
+      "pattern": null,
+      "minLength": 33.0,
+      "maxLength": 33.0
+    },
+    "properties_enabledForDiskEncryption_b": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "resource_actionName_s": {
+      "fillRate": 0.9215,
+      "distinctCount": 23,
+      "topValues": [
+        {
+          "value": "Get_MDE_Device",
+          "weight": 0.05046
+        },
+        {
+          "value": "If_Row_Eligible",
+          "weight": 0.04938
+        },
+        {
+          "value": "Query_DeviceInfo",
+          "weight": 0.04938
+        },
+        {
+          "value": "Add_Disarm_Failed_Tag",
+          "weight": 0.04883
+        },
+        {
+          "value": "Update_Watchlist_Blocked_Live_Response",
+          "weight": 0.04883
+        },
+        {
+          "value": "Run_LR_Disarm",
+          "weight": 0.04883
+        },
+        {
+          "value": "Remove_Legacy_Detonated_Tag",
+          "weight": 0.04883
+        },
+        {
+          "value": "Remove_Disarmed_Tag",
+          "weight": 0.04883
+        },
+        {
+          "value": "Remove_Disarm_Tag",
+          "weight": 0.04883
+        },
+        {
+          "value": "Remove_Detonated_Tag",
+          "weight": 0.04883
+        },
+        {
+          "value": "Update_Watchlist_Disarm_Failed",
+          "weight": 0.04883
+        },
+        {
+          "value": "Query_Active_Live_Response_Actions",
+          "weight": 0.04883
+        },
+        {
+          "value": "Parse_LR_Disarm_Response",
+          "weight": 0.04883
+        },
+        {
+          "value": "If_Disarm_LR_Succeeded",
+          "weight": 0.04883
+        },
+        {
+          "value": "Poll_Disarm_Until_Done",
+          "weight": 0.04883
+        },
+        {
+          "value": "Update_Watchlist_Disarmed",
+          "weight": 0.04883
+        },
+        {
+          "value": "If_Device_Ready",
+          "weight": 0.04829
+        },
+        {
+          "value": "If_Active_Live_Response_Exists",
+          "weight": 0.04829
+        },
+        {
+          "value": "Update_Watchlist_Device_Not_Ready",
+          "weight": 0.04775
+        },
+        {
+          "value": "Run_Queue_Query",
+          "weight": 0.02062
+        },
+        {
+          "value": "For_Each_Queue_Row",
+          "weight": 0.01845
+        },
+        {
+          "value": "Get_workshop_users",
+          "weight": 0.01628
+        },
+        {
+          "value": "For_each_user",
+          "weight": 0.01628
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 38.0
+    },
+    "correlation_actionTrackingId_g": {
+      "fillRate": 0.9215,
+      "distinctCount": 1152,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "resultDescription_Summary_EndDateTimeUtc_t": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "resultDescription_Summary_DurationInMinutes_d": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "conditions_protocols_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_ipaddr_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ElasticPoolName_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_http_schemas_microsoft_com_claims_authnmethodsreferences_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RunOn_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "query_hash_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Azure",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "MG": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ManagementGroupName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Computer": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RawData": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "retryHistory_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "tags_purpose_s": {
+      "fillRate": 0.926,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "security-playbook",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 17.0,
+      "maxLength": 17.0
+    },
+    "tags_tool_s": {
+      "fillRate": 0.926,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "ualtimebomb",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 11.0
+    },
+    "tags_component_s": {
+      "fillRate": 0.926,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "user-access-lockout-disarm",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 26.0,
+      "maxLength": 26.0
+    },
+    "tags_trigger_model_s": {
+      "fillRate": 0.926,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "recurrence-watchlist",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "executionClusterType_s": {
+      "fillRate": 0.969,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AppService",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "isV2Threshold_b": {
+      "fillRate": 0.9535,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "False",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "metadataOverflowContentLength_d": {
+      "fillRate": 0.985,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 1.0,
+      "maxLength": 2.0
+    },
+    "actionCount_d": {
+      "fillRate": 0.985,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.96802
+        },
+        {
+          "value": "-1",
+          "weight": 0.01624
+        },
+        {
+          "value": "31",
+          "weight": 0.00863
+        },
+        {
+          "value": "8",
+          "weight": 0.00711
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 2.0
+    },
+    "error_code_s": {
+      "fillRate": 0.404,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "ActionConditionFailed",
+          "weight": 0.61015
+        },
+        {
+          "value": "ActionDependencyFailed",
+          "weight": 0.33292
+        },
+        {
+          "value": "ActionBranchingConditionNotSatisfied",
+          "weight": 0.05693
+        }
+      ],
+      "pattern": null,
+      "minLength": 21.0,
+      "maxLength": 36.0
+    },
+    "error_message_s": {
+      "fillRate": 0.404,
+      "distinctCount": 18,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 116.0,
+      "maxLength": 236.0
+    },
+    "fired_b": {
+      "fillRate": 0.016,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "identity_claim_xms_az_rid_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_scp_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_upn_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_unique_name_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_amr_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_sid_g": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "properties_networkAcls_bypass_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "properties_networkAcls_defaultAction_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_http_schemas_xmlsoap_org_ws_2005_05_identity_claims_name_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "properties_enableSoftDelete_b": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "properties_softDeleteRetentionInDays_d": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "7",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "properties_enableRbacAuthorization_b": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "properties_enablePurgeProtection_b": {
+      "fillRate": 0.002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "ObjectName_s": {
+      "fillRate": 0.0005,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "99e7ee49-9f24-4f9e-8430-74413b000edf-appinsightsconnection3763",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 62.0,
+      "maxLength": 62.0
+    },
+    "ObjectType_s": {
+      "fillRate": 0.0005,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Secret",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 6.0
+    },
+    "IsComplianceCheck_b": {
+      "fillRate": 0.0005,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "True",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "EvaluationDetails_s": {
+      "fillRate": 0.0005,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 1275.0,
+      "maxLength": 1275.0
+    },
+    "identity_claim_oid_g": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_appidacr_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_iss_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_xms_mirid_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_xms_az_tm_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_xms_az_nwperimid_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_idtyp_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_uti_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_iat_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_exp_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_aud_g": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "identity_claim_nbf_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "isRbacAuthorized_b": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "appliedAssignmentId_g": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "trustedService_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "tlsVersion_s": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EnqueueTime_t": {
+      "fillRate": 0.0125,
+      "distinctCount": 17,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "event_s": {
+      "fillRate": 0.0125,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "ShoeboxCallResult",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 17.0,
+      "maxLength": 17.0
+    },
+    "location_s": {
+      "fillRate": 0.9975,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 11.0
+    },
+    "Tenant_s": {
+      "fillRate": 0.0125,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 11.0
+    },
+    "properties_s": {
+      "fillRate": 0.0125,
+      "distinctCount": 25,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 225.0,
+      "maxLength": 247.0
+    },
+    "AssetIdentity_g": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AdditionalFields": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AzureDiagnostics",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "_ResourceId": {
+      "fillRate": 1.0,
+      "distinctCount": 89,
+      "topValues": [
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168075868083377331112753cu59/actions/run_queue_query",
+          "weight": 0.06
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166203640194248357163008cu60/actions/run_queue_query",
+          "weight": 0.06
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166023619410362061617417cu52/actions/run_queue_query",
+          "weight": 0.059
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168003860371055569710995cu19/actions/run_queue_query",
+          "weight": 0.0585
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168183881978506437928495cu23/actions/if_row_eligible",
+          "weight": 0.057
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168219886369423587117955cu21/actions/run_queue_query",
+          "weight": 0.0405
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584165987617431976849616467cu55/actions/run_queue_query",
+          "weight": 0.0405
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166275645528424107663360cu26/actions/run_queue_query",
+          "weight": 0.0395
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166167636396609625626836cu26/actions/if_row_eligible",
+          "weight": 0.039
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168147874742474821861982cu31/actions/if_row_eligible",
+          "weight": 0.0385
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166419657857024630780519cu22/actions/if_row_eligible",
+          "weight": 0.038
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168111871158527556442856cu16/actions/run_queue_query",
+          "weight": 0.0375
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168039865839319137700997cu20/actions/if_active_live_response_exists",
+          "weight": 0.034
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166383653678557769043934cu31/actions/if_disarm_lr_succeeded",
+          "weight": 0.0295
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584165915612908530916139419cu17/actions/run_queue_query",
+          "weight": 0.0225
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168111871158527556442856cu16/actions/update_watchlist_disarm_failed",
+          "weight": 0.0225
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166167636396609625626836cu26/actions/run_queue_query",
+          "weight": 0.022
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168039865839319137700997cu20/actions/run_queue_query",
+          "weight": 0.022
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166491664268578063097212cu53/actions/run_queue_query",
+          "weight": 0.021
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168219886369423587117955cu21",
+          "weight": 0.0205
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166383653678557769043934cu31/actions/run_queue_query",
+          "weight": 0.0205
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166419657857024630780519cu22/actions/run_queue_query",
+          "weight": 0.0205
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584167931852879954716269087cu26/actions/run_queue_query",
+          "weight": 0.0205
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168147874742474821861982cu31/actions/run_queue_query",
+          "weight": 0.0205
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584167859842658863839166796cu19/triggers/recurrence",
+          "weight": 0.0195
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584165987617431976849616467cu55/actions/if_row_eligible",
+          "weight": 0.019
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166383653678557769043934cu31/actions/get_mde_device",
+          "weight": 0.008
+        },
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourcegroups/zolab-ai/providers/microsoft.cognitiveservices/accounts/zolab1702-ai-foundry",
+          "weight": 0.0045
+        },
+        {
+          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/a365-workshop/providers/microsoft.logic/workflows/a365-workshop-cleanup/runs/08584166154739456347235136254cu26/actions/get_workshop_users",
+          "weight": 0.004
+        },
+        {
+          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/a365-workshop/providers/microsoft.logic/workflows/a365-workshop-cleanup/runs/08584168134895301050313327882cu56/actions/get_workshop_users",
+          "weight": 0.004
+        }
+      ],
+      "pattern": null,
+      "minLength": 126.0,
+      "maxLength": 208.0
+    }
+  }
+}

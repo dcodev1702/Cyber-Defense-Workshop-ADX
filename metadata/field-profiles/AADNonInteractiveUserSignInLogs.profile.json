@@ -1,0 +1,950 @@
+{
+  "tableName": "AADNonInteractiveUserSignInLogs",
+  "sources": [
+    "sample:AADNonInteractiveUserSignInLogs.csv"
+  ],
+  "sampledRows": 5000.0,
+  "columnCount": 84,
+  "emptyInProd": [
+    "Level",
+    "AlternateSignInName",
+    "AppliedEventListeners",
+    "AuthenticationMethodsUsed",
+    "AuthenticatorAppLocation",
+    "ConditionalAccessPoliciesV2",
+    "HomeTenantName",
+    "IsRisky",
+    "MfaDetail",
+    "RiskEventTypes_V2",
+    "TokenIssuerName"
+  ],
+  "generatedUtc": "2026-07-26T01:03:20.7300644Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Azure AD",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 8.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 4999,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 24.0,
+      "maxLength": 28.0
+    },
+    "OperationName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Sign-in activity",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "OperationVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "1.0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "Category": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "NonInteractiveUserSignInLogs",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 28.0,
+      "maxLength": 28.0
+    },
+    "ResultType": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.9874
+        },
+        {
+          "value": "50011",
+          "weight": 0.0088
+        },
+        {
+          "value": "65002",
+          "weight": 0.0026
+        },
+        {
+          "value": "50177",
+          "weight": 0.0012
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 5.0
+    },
+    "ResultSignature": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "SUCCESS",
+          "weight": 0.9874
+        },
+        {
+          "value": "FAILURE",
+          "weight": 0.0126
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "ResultDescription": {
+      "fillRate": 0.0126,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 260.0,
+      "maxLength": 320.0
+    },
+    "DurationMs": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "CorrelationId": {
+      "fillRate": 1.0,
+      "distinctCount": 4273,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceGroup": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft.aadiam",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "Identity": {
+      "fillRate": 1.0,
+      "distinctCount": 10,
+      "topValues": [
+        {
+          "value": "Lorenzo Ireland",
+          "weight": 0.328
+        },
+        {
+          "value": "Michael Crane",
+          "weight": 0.2734
+        },
+        {
+          "value": "Robert Finn",
+          "weight": 0.2078
+        },
+        {
+          "value": "SecurityCopilotAgentUser-6eab514e-ae15-4e9c-9da4-8c3c6b234fbc",
+          "weight": 0.0618
+        },
+        {
+          "value": "SecurityCopilotAgentUser-b379352d-0748-4fd6-b1f4-4d2232fe334c",
+          "weight": 0.0512
+        },
+        {
+          "value": "Destiny Staton",
+          "weight": 0.0246
+        },
+        {
+          "value": "Rob Barker",
+          "weight": 0.0244
+        },
+        {
+          "value": "Tom Grages",
+          "weight": 0.0122
+        },
+        {
+          "value": "Noah Taylor",
+          "weight": 0.0092
+        },
+        {
+          "value": "SecurityCopilotAgentUser-9105dce2-230d-4f6c-b885-79e7cfd55dc7",
+          "weight": 0.0074
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 61.0
+    },
+    "Level": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Location": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "AADTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Agent": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 58.0,
+      "maxLength": 182.0
+    },
+    "AlternateSignInName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AppDisplayName": {
+      "fillRate": 1.0,
+      "distinctCount": 64,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 65.0
+    },
+    "AppId": {
+      "fillRate": 1.0,
+      "distinctCount": 64,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AppliedEventListeners": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AppOwnerTenantId": {
+      "fillRate": 0.9606,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AuthenticationContextClassReferences": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 135.0
+    },
+    "AuthenticationDetails": {
+      "fillRate": 1.0,
+      "distinctCount": 3897,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 317.0
+    },
+    "AuthenticationMethodsUsed": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AuthenticationProcessingDetails": {
+      "fillRate": 1.0,
+      "distinctCount": 168,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 145.0,
+      "maxLength": 3155.0
+    },
+    "AuthenticationProtocol": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "none",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "AuthenticationRequirement": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "multiFactorAuthentication",
+          "weight": 0.8034
+        },
+        {
+          "value": "singleFactorAuthentication",
+          "weight": 0.1966
+        }
+      ],
+      "pattern": null,
+      "minLength": 25.0,
+      "maxLength": 26.0
+    },
+    "AuthenticationRequirementPolicies": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 168.0
+    },
+    "AuthenticatorAppLocation": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AutonomousSystemNumber": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "8075",
+          "weight": 0.6738
+        },
+        {
+          "value": "205769",
+          "weight": 0.3126
+        },
+        {
+          "value": "5650",
+          "weight": 0.008
+        },
+        {
+          "value": "7922",
+          "weight": 0.0038
+        },
+        {
+          "value": "7018",
+          "weight": 0.0016
+        },
+        {
+          "value": "3320",
+          "weight": 0.0002
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 6.0
+    },
+    "ClientAppUsed": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Browser",
+          "weight": 0.576
+        },
+        {
+          "value": "Mobile Apps and Desktop clients",
+          "weight": 0.4228
+        },
+        {
+          "value": "Unknown",
+          "weight": 0.0012
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 31.0
+    },
+    "ClientCredentialType": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "clientAssertion",
+          "weight": 0.4996
+        },
+        {
+          "value": "none",
+          "weight": 0.4582
+        },
+        {
+          "value": "federatedIdentityCredential",
+          "weight": 0.0418
+        },
+        {
+          "value": "clientSecret",
+          "weight": 0.0004
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 27.0
+    },
+    "ConditionalAccessAudiences": {
+      "fillRate": 1.0,
+      "distinctCount": 164,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 937.0
+    },
+    "ConditionalAccessPolicies": {
+      "fillRate": 1.0,
+      "distinctCount": 39,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 3779.0
+    },
+    "ConditionalAccessPoliciesV2": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ConditionalAccessStatus": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "success",
+          "weight": 0.862
+        },
+        {
+          "value": "notApplied",
+          "weight": 0.138
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 10.0
+    },
+    "CreatedDateTime": {
+      "fillRate": 1.0,
+      "distinctCount": 4867,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 25.0,
+      "maxLength": 28.0
+    },
+    "CrossTenantAccessType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 11.0
+    },
+    "DeviceDetail": {
+      "fillRate": 1.0,
+      "distinctCount": 66,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 92.0,
+      "maxLength": 218.0
+    },
+    "FederatedCredentialId": {
+      "fillRate": 0.0418,
+      "distinctCount": 182,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "GlobalSecureAccessIpAddress": {
+      "fillRate": 0.089,
+      "distinctCount": 96,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 10.0,
+      "maxLength": 13.0
+    },
+    "HomeTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "HomeTenantName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Id": {
+      "fillRate": 1.0,
+      "distinctCount": 4867,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "IncomingTokenType": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "primaryRefreshToken",
+          "weight": 0.3724
+        },
+        {
+          "value": "none",
+          "weight": 0.3178
+        },
+        {
+          "value": "refreshToken",
+          "weight": 0.3092
+        },
+        {
+          "value": "remoteDesktopToken",
+          "weight": 0.0006
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 19.0
+    },
+    "IPAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 21,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 11.0,
+      "maxLength": 37.0
+    },
+    "IsInteractive": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "false",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "IsRisky": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "IsTenantRestricted": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "IsThroughGlobalSecureAccess": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "false",
+          "weight": 0.911
+        },
+        {
+          "value": "true",
+          "weight": 0.089
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "LocationDetails": {
+      "fillRate": 1.0,
+      "distinctCount": 15,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 131.0,
+      "maxLength": 156.0
+    },
+    "MfaDetail": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NetworkLocationDetails": {
+      "fillRate": 0.9988,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 59.0,
+      "maxLength": 1379.0
+    },
+    "OriginalRequestId": {
+      "fillRate": 1.0,
+      "distinctCount": 4867,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "OriginalTransferMethod": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "none",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "ProcessingTimeInMs": {
+      "fillRate": 1.0,
+      "distinctCount": 354,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 4.0
+    },
+    "ResourceDisplayName": {
+      "fillRate": 0.9966,
+      "distinctCount": 80,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 45.0
+    },
+    "ResourceIdentity": {
+      "fillRate": 1.0,
+      "distinctCount": 82,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceOwnerTenantId": {
+      "fillRate": 0.7354,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceServicePrincipalId": {
+      "fillRate": 0.7354,
+      "distinctCount": 51,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "RiskDetail": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "none",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "RiskEventTypes": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "RiskEventTypes_V2": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RiskLevelAggregated": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "none",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "RiskLevelDuringSignIn": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "RiskState": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "none",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "ServicePrincipalId": {
+      "fillRate": 1.0,
+      "distinctCount": 28,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SessionId": {
+      "fillRate": 1.0,
+      "distinctCount": 221,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SessionLifetimePolicies": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "SignInEventTypes": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 22.0,
+      "maxLength": 22.0
+    },
+    "SignInIdentifierType": {
+      "fillRate": 0.0002,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "TokenProtectionStatusDetails": {
+      "fillRate": 1.0,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 58.0,
+      "maxLength": 64.0
+    },
+    "Status": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 15.0,
+      "maxLength": 428.0
+    },
+    "TokenIssuerName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TokenIssuerType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AzureAD",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "UniqueTokenIdentifier": {
+      "fillRate": 1.0,
+      "distinctCount": 4867,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 22.0,
+      "maxLength": 22.0
+    },
+    "UserAgent": {
+      "fillRate": 0.4916,
+      "distinctCount": 15,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 12.0,
+      "maxLength": 129.0
+    },
+    "UserDisplayName": {
+      "fillRate": 1.0,
+      "distinctCount": 10,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 10.0,
+      "maxLength": 61.0
+    },
+    "UserId": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "UserPrincipalName": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 33.0,
+      "maxLength": 89.0
+    },
+    "UserType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 6.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AADNonInteractiveUserSignInLogs",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 31.0,
+      "maxLength": 31.0
+    }
+  }
+}

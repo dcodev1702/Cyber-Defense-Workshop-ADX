@@ -1,0 +1,574 @@
+{
+  "tableName": "IdentityLogonEvents",
+  "sources": [
+    "sample:IdentityLogonEvents-Real.csv"
+  ],
+  "sampledRows": 8000.0,
+  "columnCount": 32,
+  "emptyInProd": [
+    "TargetAccountDisplayName",
+    "TenantId",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:04:58.5093627Z",
+  "columns": {
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 7911,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 7911,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 24.0
+    },
+    "ActionType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "LogonSuccess",
+          "weight": 0.98988
+        },
+        {
+          "value": "LogonFailed",
+          "weight": 0.01012
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 12.0
+    },
+    "Application": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Microsoft Azure",
+          "weight": 0.94975
+        },
+        {
+          "value": "Microsoft 365",
+          "weight": 0.03537
+        },
+        {
+          "value": "Active Directory",
+          "weight": 0.01488
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 16.0
+    },
+    "LogonType": {
+      "fillRate": 1.0,
+      "distinctCount": 13,
+      "topValues": [
+        {
+          "value": "OAuth2:Authorize",
+          "weight": 0.97038
+        },
+        {
+          "value": "Login:reprocess",
+          "weight": 0.00562
+        },
+        {
+          "value": "Credentials validation",
+          "weight": 0.0055
+        },
+        {
+          "value": "Login:login",
+          "weight": 0.005
+        },
+        {
+          "value": "Kmsi:kmsi",
+          "weight": 0.00312
+        },
+        {
+          "value": "Failed logon",
+          "weight": 0.0025
+        },
+        {
+          "value": "Resource access",
+          "weight": 0.0025
+        },
+        {
+          "value": "Interactive",
+          "weight": 0.00238
+        },
+        {
+          "value": "Failed logon with certificate",
+          "weight": 0.00162
+        },
+        {
+          "value": "Rdp:rdp",
+          "weight": 0.0005
+        },
+        {
+          "value": "Cmsi:Cmsi",
+          "weight": 0.00038
+        },
+        {
+          "value": "Remote desktop",
+          "weight": 0.00038
+        },
+        {
+          "value": "OAuth2:ApproveSession",
+          "weight": 0.00012
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 29.0
+    },
+    "Protocol": {
+      "fillRate": 0.0149,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Ntlm",
+          "weight": 0.67227
+        },
+        {
+          "value": "Kerberos",
+          "weight": 0.32773
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 8.0
+    },
+    "FailureReason": {
+      "fillRate": 0.0101,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "This occurred due to Keep me signed in interrupt when the user was signing in.",
+          "weight": 0.38272
+        },
+        {
+          "value": "WrongPassword",
+          "weight": 0.24691
+        },
+        {
+          "value": "General failure",
+          "weight": 0.17284
+        },
+        {
+          "value": "Generic",
+          "weight": 0.16049
+        },
+        {
+          "value": "The user or administrator has not consented to use the application. Send an interactive authorization request for this user and resource.",
+          "weight": 0.02469
+        },
+        {
+          "value": "Administrator consent is required. The actual message content is runtime specific. Please see returned exception message for details.",
+          "weight": 0.01235
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 137.0
+    },
+    "AccountName": {
+      "fillRate": 0.9988,
+      "distinctCount": 15,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 17.0
+    },
+    "AccountDomain": {
+      "fillRate": 0.9988,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 29.0
+    },
+    "AccountUpn": {
+      "fillRate": 0.9948,
+      "distinctCount": 12,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 25.0,
+      "maxLength": 37.0
+    },
+    "AccountSid": {
+      "fillRate": 0.0122,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 42.0,
+      "maxLength": 46.0
+    },
+    "AccountObjectId": {
+      "fillRate": 0.9844,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AccountDisplayName": {
+      "fillRate": 0.9854,
+      "distinctCount": 10,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 15.0
+    },
+    "DeviceName": {
+      "fillRate": 0.0149,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 30.0
+    },
+    "DeviceType": {
+      "fillRate": 0.9851,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Desktop",
+          "weight": 0.99886
+        },
+        {
+          "value": "Tablet",
+          "weight": 0.00102
+        },
+        {
+          "value": "Mobile",
+          "weight": 0.00013
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 7.0
+    },
+    "OSPlatform": {
+      "fillRate": 0.9851,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "OS X",
+          "weight": 0.92577
+        },
+        {
+          "value": "Windows 10",
+          "weight": 0.0741
+        },
+        {
+          "value": "iOS",
+          "weight": 0.00013
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 10.0
+    },
+    "IPAddress": {
+      "fillRate": 0.9911,
+      "distinctCount": 22,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 14.0
+    },
+    "Port": {
+      "fillRate": 0.0045,
+      "distinctCount": 31,
+      "topValues": [
+        {
+          "value": "49689",
+          "weight": 0.08333
+        },
+        {
+          "value": "49690",
+          "weight": 0.08333
+        },
+        {
+          "value": "49684",
+          "weight": 0.05556
+        },
+        {
+          "value": "49679",
+          "weight": 0.02778
+        },
+        {
+          "value": "60532",
+          "weight": 0.02778
+        },
+        {
+          "value": "60359",
+          "weight": 0.02778
+        },
+        {
+          "value": "60346",
+          "weight": 0.02778
+        },
+        {
+          "value": "59755",
+          "weight": 0.02778
+        },
+        {
+          "value": "59178",
+          "weight": 0.02778
+        },
+        {
+          "value": "58161",
+          "weight": 0.02778
+        },
+        {
+          "value": "57674",
+          "weight": 0.02778
+        },
+        {
+          "value": "55693",
+          "weight": 0.02778
+        },
+        {
+          "value": "55502",
+          "weight": 0.02778
+        },
+        {
+          "value": "52710",
+          "weight": 0.02778
+        },
+        {
+          "value": "52430",
+          "weight": 0.02778
+        },
+        {
+          "value": "51717",
+          "weight": 0.02778
+        },
+        {
+          "value": "49922",
+          "weight": 0.02778
+        },
+        {
+          "value": "61020",
+          "weight": 0.02778
+        },
+        {
+          "value": "49882",
+          "weight": 0.02778
+        },
+        {
+          "value": "49858",
+          "weight": 0.02778
+        },
+        {
+          "value": "49857",
+          "weight": 0.02778
+        },
+        {
+          "value": "49826",
+          "weight": 0.02778
+        },
+        {
+          "value": "49768",
+          "weight": 0.02778
+        },
+        {
+          "value": "49760",
+          "weight": 0.02778
+        },
+        {
+          "value": "49742",
+          "weight": 0.02778
+        },
+        {
+          "value": "49691",
+          "weight": 0.02778
+        },
+        {
+          "value": "49686",
+          "weight": 0.02778
+        },
+        {
+          "value": "49685",
+          "weight": 0.02778
+        },
+        {
+          "value": "49682",
+          "weight": 0.02778
+        },
+        {
+          "value": "50488",
+          "weight": 0.02778
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "DestinationDeviceName": {
+      "fillRate": 0.0149,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 26.0
+    },
+    "DestinationIPAddress": {
+      "fillRate": 0.0045,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 14.0
+    },
+    "DestinationPort": {
+      "fillRate": 0.0044,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "TargetDeviceName": {
+      "fillRate": 0.0028,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 30.0
+    },
+    "TargetAccountDisplayName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Location": {
+      "fillRate": 0.9851,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "ISP": {
+      "fillRate": 0.9909,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "mainzer breitband gmbh",
+          "weight": 0.72032
+        },
+        {
+          "value": "packethub s.a.",
+          "weight": 0.22606
+        },
+        {
+          "value": "Microsoft Azure",
+          "weight": 0.04365
+        },
+        {
+          "value": "INTERNAL_NETWORK",
+          "weight": 0.0058
+        },
+        {
+          "value": "comcast cable communications  inc.",
+          "weight": 0.00227
+        },
+        {
+          "value": "microsoft corporation",
+          "weight": 0.00189
+        }
+      ],
+      "pattern": null,
+      "minLength": 14.0,
+      "maxLength": 34.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 8000,
+      "topValues": [],
+      "pattern": "sha256",
+      "minLength": 36.0,
+      "maxLength": 64.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 7976,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 182.0,
+      "maxLength": 1606.0
+    },
+    "UncommonForUser": {
+      "fillRate": 0.9844,
+      "distinctCount": 9,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 74.0
+    },
+    "LastSeenForUser": {
+      "fillRate": 0.9844,
+      "distinctCount": 82,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 100.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "IdentityLogonEvents",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

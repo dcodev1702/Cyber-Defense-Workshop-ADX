@@ -1,0 +1,580 @@
+{
+  "tableName": "BehaviorEntities",
+  "sources": [
+    "sample:BehaviorEntities-RealTelemetry.csv"
+  ],
+  "sampledRows": 71.0,
+  "columnCount": 53,
+  "emptyInProd": [
+    "SourceSystem",
+    "RegistryValueData",
+    "MachineGroup",
+    "CloudResourceId",
+    "TenantId",
+    "RemoteUrl",
+    "RegistryKey",
+    "_BilledSize",
+    "_IsBillable",
+    "_TimeReceived",
+    "EmailSubject",
+    "Application",
+    "EmailClusterId",
+    "_SubscriptionId",
+    "CloudResource",
+    "RegistryValueName",
+    "AccountObjectId",
+    "ApplicationId",
+    "CloudSubscriptionId",
+    "CloudResourceType",
+    "_ItemId",
+    "CloudPlatform",
+    "_ResourceId",
+    "NetworkMessageId",
+    "OAuthApplicationId"
+  ],
+  "generatedUtc": "2026-07-26T01:05:11.6155044Z",
+  "columns": {
+    "Categories": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 13.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RegistryValueData": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MachineGroup": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DeviceId": {
+      "fillRate": 0.1408,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "CloudResourceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EntityRole": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Related",
+          "weight": 0.8169
+        },
+        {
+          "value": "Impacted",
+          "weight": 0.1831
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 8.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RemoteIP": {
+      "fillRate": 0.338,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "::1",
+          "weight": 0.25
+        },
+        {
+          "value": "127.0.0.1",
+          "weight": 0.25
+        },
+        {
+          "value": "10.1.2.4",
+          "weight": 0.125
+        },
+        {
+          "value": "192.168.1.179",
+          "weight": 0.125
+        },
+        {
+          "value": "192.168.1.80",
+          "weight": 0.125
+        },
+        {
+          "value": "fe80::873d:a305:9291:1635",
+          "weight": 0.125
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 25.0
+    },
+    "FileName": {
+      "fillRate": 0.4648,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 30.0
+    },
+    "RemoteUrl": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DataSources": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 35.0,
+      "maxLength": 35.0
+    },
+    "ServiceSource": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft Defender for Endpoint",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 31.0,
+      "maxLength": 31.0
+    },
+    "LocalIP": {
+      "fillRate": 0.0845,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "ipv4",
+      "minLength": 8.0,
+      "maxLength": 13.0
+    },
+    "RegistryKey": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "_BilledSize": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "_IsBillable": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "_TimeReceived": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EntityType": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "Ip",
+          "weight": 0.33803
+        },
+        {
+          "value": "Process",
+          "weight": 0.29577
+        },
+        {
+          "value": "File",
+          "weight": 0.1831
+        },
+        {
+          "value": "Machine",
+          "weight": 0.14085
+        },
+        {
+          "value": "User",
+          "weight": 0.04225
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 7.0
+    },
+    "FolderPath": {
+      "fillRate": 0.4648,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "winpath",
+      "sensitive": true,
+      "minLength": 19.0,
+      "maxLength": 59.0
+    },
+    "SHA1": {
+      "fillRate": 0.4648,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "sha1",
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "EmailSubject": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "FileSize": {
+      "fillRate": 0.4507,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "348160",
+          "weight": 0.375
+        },
+        {
+          "value": "81920",
+          "weight": 0.25
+        },
+        {
+          "value": "450560",
+          "weight": 0.1875
+        },
+        {
+          "value": "647168",
+          "weight": 0.09375
+        },
+        {
+          "value": "68",
+          "weight": 0.09375
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 6.0
+    },
+    "Application": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EmailClusterId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ActionType": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "_SubscriptionId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CloudResource": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountSid": {
+      "fillRate": 0.0423,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 45.0,
+      "maxLength": 45.0
+    },
+    "DetailedEntityRole": {
+      "fillRate": 0.1408,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "PrimaryDevice",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "DeviceName": {
+      "fillRate": 0.1408,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 19.0,
+      "maxLength": 22.0
+    },
+    "RegistryValueName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "BehaviorEntities",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 55,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 39.0,
+      "maxLength": 6734.0
+    },
+    "AccountObjectId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ApplicationId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CloudSubscriptionId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "BehaviorId": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "4fcc4352-5dfc-47ee-b57a-8b964202da95_1",
+          "weight": 0.26761
+        },
+        {
+          "value": "92ce1931-4ce3-4635-a70e-fb1e697c4ba8_1",
+          "weight": 0.25352
+        },
+        {
+          "value": "dad895f7-eaf2-4929-983f-586aa25f3260_1",
+          "weight": 0.25352
+        },
+        {
+          "value": "0e229173-24b7-477c-9993-059e50966c2e_1",
+          "weight": 0.15493
+        },
+        {
+          "value": "0fb0ab50-0107-435b-ba2e-be5a9151d3d7_1",
+          "weight": 0.02817
+        },
+        {
+          "value": "80b1efb9-4834-42b3-af3e-5927987e829e_1",
+          "weight": 0.02817
+        },
+        {
+          "value": "6cf10eac-0df3-4a4b-9d43-9cc01cfc48aa_1",
+          "weight": 0.01408
+        }
+      ],
+      "pattern": null,
+      "minLength": 38.0,
+      "maxLength": 38.0
+    },
+    "CloudResourceType": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "_ItemId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "CloudPlatform": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatFamily": {
+      "fillRate": 0.0563,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "EICAR_Test_File",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 15.0
+    },
+    "DetectionSource": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "EDR",
+          "weight": 0.71831
+        },
+        {
+          "value": "Antivirus",
+          "weight": 0.28169
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 9.0
+    },
+    "_ResourceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NetworkMessageId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountUpn": {
+      "fillRate": 0.0423,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "OAuthApplicationId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountDomain": {
+      "fillRate": 0.0423,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 6.0
+    },
+    "ProcessCommandLine": {
+      "fillRate": 0.2817,
+      "distinctCount": 13,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 17.0,
+      "maxLength": 52.0
+    },
+    "AccountName": {
+      "fillRate": 0.0423,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "SHA256": {
+      "fillRate": 0.4507,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "sha256",
+      "minLength": 64.0,
+      "maxLength": 64.0
+    }
+  }
+}

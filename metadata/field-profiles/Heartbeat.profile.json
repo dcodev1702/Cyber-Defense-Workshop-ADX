@@ -1,0 +1,388 @@
+{
+  "tableName": "Heartbeat",
+  "sources": [
+    "sample:Heartbeat-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 31,
+  "emptyInProd": [
+    "IsGatewayInstalled"
+  ],
+  "generatedUtc": "2026-07-26T01:06:36.4721836Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "OpsManager",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 2000,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "MG": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ManagementGroupName": {
+      "fillRate": 0.9985,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "SourceComputerId": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ComputerIP": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "ipv4",
+      "minLength": 13.0,
+      "maxLength": 14.0
+    },
+    "Computer": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "adds01.dibsec.net",
+          "weight": 0.9985
+        },
+        {
+          "value": "ubuntu01",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 8.0,
+      "maxLength": 17.0
+    },
+    "Category": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Azure Monitor Agent",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "OSType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Windows",
+          "weight": 0.9985
+        },
+        {
+          "value": "Linux",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 7.0
+    },
+    "OSName": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Microsoft Windows Server 2025 Datacenter",
+          "weight": 0.9985
+        },
+        {
+          "value": "Ubuntu",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 40.0
+    },
+    "OSMajorVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "10",
+          "weight": 0.9985
+        },
+        {
+          "value": "24",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "OSMinorVersion": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.9985
+        },
+        {
+          "value": "04",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 2.0
+    },
+    "Version": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "ipv4",
+      "minLength": 6.0,
+      "maxLength": 8.0
+    },
+    "SCAgentChannel": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Direct",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 6.0
+    },
+    "IsGatewayInstalled": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RemoteIPLongitude": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 6.0
+    },
+    "RemoteIPLatitude": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "RemoteIPCountry": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "SubscriptionId": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "freeText": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceGroup": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "adds",
+          "weight": 0.9985
+        },
+        {
+          "value": "linux",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "ResourceProvider": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft.Compute",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 17.0,
+      "maxLength": 17.0
+    },
+    "Resource": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "adds01",
+          "weight": 0.9985
+        },
+        {
+          "value": "ubuntu01",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 8.0
+    },
+    "ResourceId": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourceGroups/adds/providers/Microsoft.Compute/virtualMachines/adds01",
+          "weight": 0.9985
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/linux/providers/Microsoft.Compute/virtualMachines/ubuntu01",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 122.0,
+      "maxLength": 125.0
+    },
+    "ResourceType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "virtualMachines",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 15.0
+    },
+    "ComputerEnvironment": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Azure",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "Solutions": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "\"SecurityInsights\", \"BehaviorAnalyticsInsights\", \"SecurityCenterFree\", \"Security\", \"AzureResources\"",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 99.0,
+      "maxLength": 99.0
+    },
+    "VMUUID": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ComputerPrivateIPs": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 12.0,
+      "maxLength": 12.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Heartbeat",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 9.0
+    },
+    "_ResourceId": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/providers/microsoft.compute/virtualmachines/adds01",
+          "weight": 0.9985
+        },
+        {
+          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/linux/providers/microsoft.compute/virtualmachines/ubuntu01",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 122.0,
+      "maxLength": 125.0
+    }
+  }
+}

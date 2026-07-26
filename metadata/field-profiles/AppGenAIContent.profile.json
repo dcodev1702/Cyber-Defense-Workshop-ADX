@@ -1,0 +1,506 @@
+{
+  "tableName": "AppGenAIContent",
+  "sources": [
+    "sample:AppGenAIContent-RealTelemetry.csv"
+  ],
+  "sampledRows": 214.0,
+  "columnCount": 24,
+  "emptyInProd": [
+    "ToolDefinitions",
+    "EvaluationExplanation",
+    "ServiceNamespace",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:04:31.9225078Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Id": {
+      "fillRate": 1.0,
+      "distinctCount": 214,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 182,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 24.0,
+      "maxLength": 25.0
+    },
+    "TraceId": {
+      "fillRate": 1.0,
+      "distinctCount": 61,
+      "topValues": [],
+      "pattern": "md5",
+      "minLength": 32.0,
+      "maxLength": 32.0
+    },
+    "SpanId": {
+      "fillRate": 1.0,
+      "distinctCount": 214,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "ParentSpanId": {
+      "fillRate": 1.0,
+      "distinctCount": 156,
+      "topValues": [
+        {
+          "value": "50762658dfbf938b",
+          "weight": 0.02336
+        },
+        {
+          "value": "b2393d2b85ec3057",
+          "weight": 0.02336
+        },
+        {
+          "value": "3f0a0297184081f8",
+          "weight": 0.01402
+        },
+        {
+          "value": "2b7b345117734db2",
+          "weight": 0.01402
+        },
+        {
+          "value": "2db6d10db6d234d2",
+          "weight": 0.01402
+        },
+        {
+          "value": "cf222760c1bb7731",
+          "weight": 0.01402
+        },
+        {
+          "value": "45711ce2b932ee71",
+          "weight": 0.01402
+        },
+        {
+          "value": "caadd380a2550bea",
+          "weight": 0.01402
+        },
+        {
+          "value": "c2b409bbcd6ceca1",
+          "weight": 0.01402
+        },
+        {
+          "value": "bcd56e66f454f200",
+          "weight": 0.01402
+        },
+        {
+          "value": "667c403c01bdb402",
+          "weight": 0.01402
+        },
+        {
+          "value": "b45876a64253dd21",
+          "weight": 0.01402
+        },
+        {
+          "value": "b29a9e40b953ac55",
+          "weight": 0.01402
+        },
+        {
+          "value": "6f901e168f74fb45",
+          "weight": 0.01402
+        },
+        {
+          "value": "702d23a378731d96",
+          "weight": 0.01402
+        },
+        {
+          "value": "ab39466bfdcfc3d9",
+          "weight": 0.01402
+        },
+        {
+          "value": "72fea65aa3b2f61b",
+          "weight": 0.01402
+        },
+        {
+          "value": "78ab1339e3a1a934",
+          "weight": 0.01402
+        },
+        {
+          "value": "7cd03bb1c37c358a",
+          "weight": 0.01402
+        },
+        {
+          "value": "996b51a890fa1518",
+          "weight": 0.01402
+        },
+        {
+          "value": "d4c84d32ddcdaa78",
+          "weight": 0.01402
+        },
+        {
+          "value": "236a241ccd55512c",
+          "weight": 0.01402
+        },
+        {
+          "value": "8cdb80e7ac933984",
+          "weight": 0.01402
+        },
+        {
+          "value": "20fbf325f21d4c6f",
+          "weight": 0.01402
+        },
+        {
+          "value": "f7e7f2a8a8413b4d",
+          "weight": 0.01402
+        },
+        {
+          "value": "f7d5a1d5e798ced0",
+          "weight": 0.01402
+        },
+        {
+          "value": "ee7bf17089ed9d13",
+          "weight": 0.01402
+        },
+        {
+          "value": "e9b4bdeea746f831",
+          "weight": 0.00467
+        },
+        {
+          "value": "b8485330d99ed1c4",
+          "weight": 0.00467
+        },
+        {
+          "value": "b60f938055e729bd",
+          "weight": 0.00467
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "AgentName": {
+      "fillRate": 0.7804,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "ZoDEfendersAgent-1702-sentinel",
+          "weight": 0.43713
+        },
+        {
+          "value": "ZoDEfendersAgent-1702",
+          "weight": 0.42515
+        },
+        {
+          "value": "agent-007-01",
+          "weight": 0.13772
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 30.0
+    },
+    "AgentId": {
+      "fillRate": 1.0,
+      "distinctCount": 15,
+      "topValues": [
+        {
+          "value": "agent-007-01:6",
+          "weight": 0.1028
+        },
+        {
+          "value": "ZoDEfendersAgent-1702-sentinel:21",
+          "weight": 0.09813
+        },
+        {
+          "value": "ZoDEfendersAgent-1702-sentinel:26",
+          "weight": 0.09346
+        },
+        {
+          "value": "ZoDEfendersAgent-1702-sentinel:23",
+          "weight": 0.08879
+        },
+        {
+          "value": "ZoDEfendersAgent-1702-sentinel:24",
+          "weight": 0.08879
+        },
+        {
+          "value": "ZoDEfendersAgent-1702-sentinel:27",
+          "weight": 0.08879
+        },
+        {
+          "value": "ZoDEfendersAgent-1702:23",
+          "weight": 0.08411
+        },
+        {
+          "value": "ZoDEfendersAgent-1702:24",
+          "weight": 0.07944
+        },
+        {
+          "value": "ZoDEfendersAgent-1702:28",
+          "weight": 0.07944
+        },
+        {
+          "value": "ZoDEfendersAgent-1702:22",
+          "weight": 0.06542
+        },
+        {
+          "value": "ZoDEfendersAgent-1702:26",
+          "weight": 0.06075
+        },
+        {
+          "value": "ZoDEfendersAgent-1702:29",
+          "weight": 0.05607
+        },
+        {
+          "value": "agent-007-01:4",
+          "weight": 0.00467
+        },
+        {
+          "value": "ZoDEfendersAgent-1702-sentinel:22",
+          "weight": 0.00467
+        },
+        {
+          "value": "ZoDEfendersAgent-1702-sentinel:25",
+          "weight": 0.00467
+        }
+      ],
+      "pattern": null,
+      "minLength": 14.0,
+      "maxLength": 33.0
+    },
+    "ModelName": {
+      "fillRate": 0.6262,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "gpt-5.4-mini-2026-03-17",
+          "weight": 0.85075
+        },
+        {
+          "value": "gpt-5.4",
+          "weight": 0.14925
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 23.0
+    },
+    "InputMessages": {
+      "fillRate": 0.729,
+      "distinctCount": 81,
+      "topValues": [],
+      "pattern": "json",
+      "freeText": true,
+      "minLength": 234.0,
+      "maxLength": 72388.0
+    },
+    "OutputMessages": {
+      "fillRate": 0.7243,
+      "distinctCount": 123,
+      "topValues": [],
+      "pattern": "json",
+      "freeText": true,
+      "minLength": 2.0,
+      "maxLength": 2968.0
+    },
+    "SystemInstructions": {
+      "fillRate": 0.0935,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "json",
+      "freeText": true,
+      "minLength": 505.0,
+      "maxLength": 708.0
+    },
+    "ToolDefinitions": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ToolCallArguments": {
+      "fillRate": 0.1542,
+      "distinctCount": 28,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 62.0,
+      "maxLength": 615.0
+    },
+    "ToolCallResult": {
+      "fillRate": 0.1589,
+      "distinctCount": 21,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 25.0,
+      "maxLength": 66772.0
+    },
+    "EvaluationExplanation": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ServiceNamespace": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ServiceName": {
+      "fillRate": 0.4907,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "responsesapi",
+          "weight": 0.75238
+        },
+        {
+          "value": "foundry-agent-demo.foundry-agent-framework-demo",
+          "weight": 0.24762
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 47.0
+    },
+    "ServiceInstanceId": {
+      "fillRate": 0.4907,
+      "distinctCount": 16,
+      "topValues": [
+        {
+          "value": "otlptoappinsights-597d4f6f5-6l98x",
+          "weight": 0.15238
+        },
+        {
+          "value": "otlptoappinsights-66c4b879b4-wsdjn",
+          "weight": 0.11429
+        },
+        {
+          "value": "4851140f-0aa7-4e1e-afae-fca85bf8e413",
+          "weight": 0.10476
+        },
+        {
+          "value": "otlptoappinsights-66c4b879b4-6rq8s",
+          "weight": 0.09524
+        },
+        {
+          "value": "9afc2f5d-5b92-4691-b50c-7727c966fe26",
+          "weight": 0.08571
+        },
+        {
+          "value": "otlptoappinsights-597d4f6f5-svt7w",
+          "weight": 0.07619
+        },
+        {
+          "value": "otlptoappinsights-66c4b879b4-bm4cg",
+          "weight": 0.06667
+        },
+        {
+          "value": "25d804d0-dc32-4f13-9bca-e068277da40b",
+          "weight": 0.05714
+        },
+        {
+          "value": "otlptoappinsights-597d4f6f5-jv8tf",
+          "weight": 0.05714
+        },
+        {
+          "value": "otlptoappinsights-66c4b879b4-cbmrx",
+          "weight": 0.04762
+        },
+        {
+          "value": "otlptoappinsights-597d4f6f5-bn7rx",
+          "weight": 0.0381
+        },
+        {
+          "value": "otlptoappinsights-66c4b879b4-gcj5z",
+          "weight": 0.0381
+        },
+        {
+          "value": "otlptoappinsights-597d4f6f5-hrb8p",
+          "weight": 0.02857
+        },
+        {
+          "value": "otlptoappinsights-f4c9b9c59-qq5ns",
+          "weight": 0.01905
+        },
+        {
+          "value": "otlptoappinsights-6dd856c9f5-c2tdk",
+          "weight": 0.00952
+        },
+        {
+          "value": "otlptoappinsights-f4c9b9c59-5l4m4",
+          "weight": 0.00952
+        }
+      ],
+      "pattern": null,
+      "minLength": 33.0,
+      "maxLength": 36.0
+    },
+    "RoleName": {
+      "fillRate": 0.4907,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "responsesapi",
+          "weight": 0.75238
+        },
+        {
+          "value": "foundry-agent-demo.foundry-agent-framework-demo",
+          "weight": 0.24762
+        }
+      ],
+      "pattern": null,
+      "minLength": 12.0,
+      "maxLength": 47.0
+    },
+    "Attributes": {
+      "fillRate": 1.0,
+      "distinctCount": 214,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 200.0,
+      "maxLength": 753.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AppGenAIContent",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 15.0
+    },
+    "_ResourceId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourcegroups/zolab-ai-u49gco/providers/microsoft.insights/components/zolabaifndryaiu49gco",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 143.0,
+      "maxLength": 143.0
+    }
+  }
+}

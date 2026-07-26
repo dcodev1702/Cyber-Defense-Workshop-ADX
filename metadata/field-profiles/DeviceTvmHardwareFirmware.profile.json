@@ -1,0 +1,185 @@
+{
+  "tableName": "DeviceTvmHardwareFirmware",
+  "sources": [
+    "sample:DeviceTvmHardwareFirmware-Real.csv"
+  ],
+  "sampledRows": 21.0,
+  "columnCount": 12,
+  "emptyInProd": [
+    "TenantId",
+    "SourceSystem",
+    "MachineGroup"
+  ],
+  "generatedUtc": "2026-07-26T01:04:32.1584648Z",
+  "columns": {
+    "DeviceId": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "DeviceName": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 60.0
+    },
+    "ComponentType": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Bios",
+          "weight": 0.38095
+        },
+        {
+          "value": "Hardware",
+          "weight": 0.38095
+        },
+        {
+          "value": "Processor",
+          "weight": 0.2381
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 9.0
+    },
+    "Manufacturer": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "microsoft",
+          "weight": 0.7619
+        },
+        {
+          "value": "intel",
+          "weight": 0.14286
+        },
+        {
+          "value": "amd",
+          "weight": 0.09524
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 9.0
+    },
+    "ComponentName": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "virtual_machine",
+          "weight": 0.38095
+        },
+        {
+          "value": "virtual_machine_firmware",
+          "weight": 0.38095
+        },
+        {
+          "value": "AMD EPYC 9V45 96-Core Processor ",
+          "weight": 0.09524
+        },
+        {
+          "value": "Intel(R) Xeon(R) Platinum 8272CL CPU @ 2.60GHz",
+          "weight": 0.09524
+        },
+        {
+          "value": "Intel(R) Xeon(R) Platinum 8171M CPU @ 2.60GHz",
+          "weight": 0.04762
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 46.0
+    },
+    "ComponentFamily": {
+      "fillRate": 0.619,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Virtual Machine",
+          "weight": 0.61538
+        },
+        {
+          "value": "Intel(R) Xeon Processors",
+          "weight": 0.23077
+        },
+        {
+          "value": "AMD(R) Processors",
+          "weight": 0.15385
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 24.0
+    },
+    "ComponentVersion": {
+      "fillRate": 0.7619,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "4.1.0.0",
+          "weight": 0.5
+        },
+        {
+          "value": "Hyper-V UEFI Release v4.1",
+          "weight": 0.5
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 25.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 14,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 47.0,
+      "maxLength": 214.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceTvmHardwareFirmware",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 25.0,
+      "maxLength": 25.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MachineGroup": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

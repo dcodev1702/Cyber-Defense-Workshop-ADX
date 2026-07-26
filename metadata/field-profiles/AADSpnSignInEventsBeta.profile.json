@@ -1,0 +1,482 @@
+{
+  "tableName": "AADSpnSignInEventsBeta",
+  "sources": [
+    "sample:AADSpnSignInEventsBeta-RealTelemetry.csv"
+  ],
+  "sampledRows": 7767.0,
+  "columnCount": 28,
+  "emptyInProd": [
+    "TenantId",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:03:02.5664016Z",
+  "columns": {
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 7717,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 29.0,
+      "maxLength": 30.0
+    },
+    "Application": {
+      "fillRate": 1.0,
+      "distinctCount": 47,
+      "topValues": [
+        {
+          "value": "Workshop Managed Identity",
+          "weight": 0.02137
+        },
+        {
+          "value": "Hybrid Identity Health Agent",
+          "weight": 0.02137
+        },
+        {
+          "value": "Purview Label Synchronizer",
+          "weight": 0.02137
+        },
+        {
+          "value": "Exchange Transport Rule Auditor",
+          "weight": 0.02137
+        },
+        {
+          "value": "Security Score Exporter",
+          "weight": 0.02137
+        },
+        {
+          "value": "DevOps Release Service Connection",
+          "weight": 0.02137
+        },
+        {
+          "value": "Storage Malware Scan Worker",
+          "weight": 0.02137
+        },
+        {
+          "value": "Database Credential Scanner",
+          "weight": 0.02137
+        },
+        {
+          "value": "Vulnerability Intake Processor",
+          "weight": 0.02137
+        },
+        {
+          "value": "Terraform Deployment Principal",
+          "weight": 0.02137
+        },
+        {
+          "value": "Backup Vault Managed Identity",
+          "weight": 0.02137
+        },
+        {
+          "value": "Cloud App Discovery Uploader",
+          "weight": 0.02137
+        },
+        {
+          "value": "Teams Recording Processor",
+          "weight": 0.02124
+        },
+        {
+          "value": "Oracle Backup Exporter",
+          "weight": 0.02124
+        },
+        {
+          "value": "PIM Eligibility Auditor",
+          "weight": 0.02124
+        },
+        {
+          "value": "Policy Remediation Task",
+          "weight": 0.02124
+        },
+        {
+          "value": "Power BI Dataset Refresher",
+          "weight": 0.02124
+        },
+        {
+          "value": "Privileged Access Review Bot",
+          "weight": 0.02124
+        },
+        {
+          "value": "USAG Cyber Sync Helper",
+          "weight": 0.02124
+        },
+        {
+          "value": "Sentinel SOAR Playbook",
+          "weight": 0.02124
+        },
+        {
+          "value": "MDI Sensor Deployment",
+          "weight": 0.02124
+        },
+        {
+          "value": "ServiceNow Ticket Sync",
+          "weight": 0.02124
+        },
+        {
+          "value": "SharePoint Migration Worker",
+          "weight": 0.02124
+        },
+        {
+          "value": "Storage Lifecycle Manager",
+          "weight": 0.02124
+        },
+        {
+          "value": "Virtual Machine Patch Agent",
+          "weight": 0.02124
+        },
+        {
+          "value": "MDE Device Tagger",
+          "weight": 0.02124
+        },
+        {
+          "value": "Linux Package Inventory Collector",
+          "weight": 0.02124
+        },
+        {
+          "value": "Logic App Incident Router",
+          "weight": 0.02124
+        },
+        {
+          "value": "Arc Server Onboarding",
+          "weight": 0.02124
+        },
+        {
+          "value": "Azure Automation Runbook",
+          "weight": 0.02124
+        }
+      ],
+      "pattern": null,
+      "minLength": 17.0,
+      "maxLength": 34.0
+    },
+    "ApplicationId": {
+      "fillRate": 1.0,
+      "distinctCount": 141,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "IsManagedIdentity": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "true",
+          "weight": 0.85889
+        },
+        {
+          "value": "false",
+          "weight": 0.14111
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "ErrorCode": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "CorrelationId": {
+      "fillRate": 1.0,
+      "distinctCount": 7767,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ServicePrincipalName": {
+      "fillRate": 1.0,
+      "distinctCount": 47,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 34.0
+    },
+    "ServicePrincipalId": {
+      "fillRate": 0.1411,
+      "distinctCount": 282,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceDisplayName": {
+      "fillRate": 1.0,
+      "distinctCount": 14,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 26.0
+    },
+    "ResourceId": {
+      "fillRate": 1.0,
+      "distinctCount": 14,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "IPAddress": {
+      "fillRate": 0.1411,
+      "distinctCount": 55,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "Country": {
+      "fillRate": 0.1411,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "State": {
+      "fillRate": 0.1411,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "Hesse",
+          "weight": 0.33303
+        },
+        {
+          "value": "Bavaria",
+          "weight": 0.16788
+        },
+        {
+          "value": "Hamburg",
+          "weight": 0.16788
+        },
+        {
+          "value": "Berlin",
+          "weight": 0.16606
+        },
+        {
+          "value": "North Rhine-Westphalia",
+          "weight": 0.16515
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 22.0
+    },
+    "City": {
+      "fillRate": 0.1411,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 17.0
+    },
+    "Latitude": {
+      "fillRate": 0.1411,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "Longitude": {
+      "fillRate": 0.1411,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": "datetime",
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 7.0
+    },
+    "RequestId": {
+      "fillRate": 1.0,
+      "distinctCount": 7767,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 7767,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 7717,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 29.0,
+      "maxLength": 30.0
+    },
+    "IsConfidentialClient": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "true",
+          "weight": 0.93923
+        },
+        {
+          "value": "false",
+          "weight": 0.06077
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "GatewayJA4": {
+      "fillRate": 1.0,
+      "distinctCount": 16,
+      "topValues": [
+        {
+          "value": "t13d0002h2_590168a989b5_b7c62abeb314",
+          "weight": 0.0627
+        },
+        {
+          "value": "t13d0001h2_2405c23252fb_ecc1d135e9ce",
+          "weight": 0.06257
+        },
+        {
+          "value": "t13d0013h2_529dfd9324d8_202c1d5a5028",
+          "weight": 0.06257
+        },
+        {
+          "value": "t13d0014h2_1da2571cee1e_813929f5abfa",
+          "weight": 0.06257
+        },
+        {
+          "value": "t13d0015h2_e8a6b0a5b764_b634d06ce2b4",
+          "weight": 0.06257
+        },
+        {
+          "value": "t13d0016h2_b3ab0a2e80aa_1741dd073e86",
+          "weight": 0.06257
+        },
+        {
+          "value": "t13d0003h2_8dfd0f20c06f_82ca84477c5a",
+          "weight": 0.06244
+        },
+        {
+          "value": "t13d0004h2_1b1b81df415a_f5ac1188fb70",
+          "weight": 0.06244
+        },
+        {
+          "value": "t13d0005h2_501728567814_c0b06b11c4b6",
+          "weight": 0.06244
+        },
+        {
+          "value": "t13d0006h2_8512cecdaece_8bb4c49a8dfc",
+          "weight": 0.06244
+        },
+        {
+          "value": "t13d0007h2_ba0e7544e587_56b91e235742",
+          "weight": 0.06244
+        },
+        {
+          "value": "t13d0008h2_96e74f73d210_79e043f46ab9",
+          "weight": 0.06244
+        },
+        {
+          "value": "t13d0009h2_cbe2f5ea08ca_44e49d7d33ff",
+          "weight": 0.06244
+        },
+        {
+          "value": "t13d0010h2_f190f0f8c905_5527c3d186e2",
+          "weight": 0.06244
+        },
+        {
+          "value": "t13d0011h2_bc954a81924c_8a236a48bd9c",
+          "weight": 0.06244
+        },
+        {
+          "value": "t13d0012h2_8799a40a5b92_eb3076e3196e",
+          "weight": 0.06244
+        }
+      ],
+      "pattern": null,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SessionId": {
+      "fillRate": 0.1411,
+      "distinctCount": 1096,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "UserAgent": {
+      "fillRate": 0.2554,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 18.0,
+      "maxLength": 69.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AADSpnSignInEventsBeta",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 22.0,
+      "maxLength": 22.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UniqueTokenId": {
+      "fillRate": 1.0,
+      "distinctCount": 7767,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    }
+  }
+}

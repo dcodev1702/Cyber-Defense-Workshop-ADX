@@ -1,0 +1,130 @@
+{
+  "tableName": "DeviceTvmInfoGathering",
+  "sources": [
+    "sample:DeviceTvmInfoGathering-RealTelemetry.csv"
+  ],
+  "sampledRows": 24.0,
+  "columnCount": 10,
+  "emptyInProd": [
+    "MachineGroup",
+    "TenantId",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:04:32.1957465Z",
+  "columns": {
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceTvmInfoGathering",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 22.0,
+      "maxLength": 22.0
+    },
+    "DeviceId": {
+      "fillRate": 1.0,
+      "distinctCount": 24,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "MachineGroup": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OSPlatform": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "Windows11",
+          "weight": 0.375
+        },
+        {
+          "value": "Linux",
+          "weight": 0.20833
+        },
+        {
+          "value": "WindowsServer2025",
+          "weight": 0.20833
+        },
+        {
+          "value": "Windows10",
+          "weight": 0.125
+        },
+        {
+          "value": "Android",
+          "weight": 0.04167
+        },
+        {
+          "value": "Windows11WVD",
+          "weight": 0.04167
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 17.0
+    },
+    "LastSeenTime": {
+      "fillRate": 1.0,
+      "distinctCount": 24,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 21.0,
+      "maxLength": 21.0
+    },
+    "DeviceName": {
+      "fillRate": 0.9167,
+      "distinctCount": 22,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 63.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "System.Collections.Hashtable",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 28.0,
+      "maxLength": 28.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

@@ -1,0 +1,516 @@
+{
+  "tableName": "AlertEvidence",
+  "sources": [
+    "sample:AlertEvidence.csv"
+  ],
+  "sampledRows": 962.0,
+  "columnCount": 43,
+  "emptyInProd": [
+    "EvidenceDirection",
+    "FileName",
+    "FolderPath",
+    "SHA1",
+    "SHA256",
+    "FileSize",
+    "ThreatFamily",
+    "RemoteUrl",
+    "AccountDomain",
+    "LocalIP",
+    "NetworkMessageId",
+    "EmailSubject",
+    "ApplicationId",
+    "Application",
+    "OAuthApplicationId",
+    "ProcessCommandLine",
+    "RegistryKey",
+    "RegistryValueName",
+    "RegistryValueData",
+    "CloudPlatform",
+    "CloudResource",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:03:03.6774296Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 247,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 26.0,
+      "maxLength": 28.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 247,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 26.0,
+      "maxLength": 28.0
+    },
+    "AlertId": {
+      "fillRate": 1.0,
+      "distinctCount": 13,
+      "topValues": [
+        {
+          "value": "ea639125005266497124_716672442",
+          "weight": 0.44283
+        },
+        {
+          "value": "ed639125005223177584_-1798533118",
+          "weight": 0.43659
+        },
+        {
+          "value": "ea639125005327221596_-1424370864",
+          "weight": 0.04782
+        },
+        {
+          "value": "ed639125005288524099_1327316201",
+          "weight": 0.04782
+        },
+        {
+          "value": "snc0c843c1-4d34-4eb8-8dba-7609239bf610",
+          "weight": 0.00624
+        },
+        {
+          "value": "sn36a1e4a8-d668-4196-8925-00d70b855ffc",
+          "weight": 0.00312
+        },
+        {
+          "value": "snc2f081de-99d2-4729-90e0-fd9166ad45dd",
+          "weight": 0.00312
+        },
+        {
+          "value": "sn0f0e982f-e103-43d5-bd9c-6bd0021ad0e5",
+          "weight": 0.00208
+        },
+        {
+          "value": "sn1499a519-0c23-4c27-ad71-607a5df22a0d",
+          "weight": 0.00208
+        },
+        {
+          "value": "sn3526d799-e16d-4d6c-9265-716a53a378ef",
+          "weight": 0.00208
+        },
+        {
+          "value": "sn416d257c-322a-43bc-9c52-4ec34a676918",
+          "weight": 0.00208
+        },
+        {
+          "value": "sn7665c143-4060-4806-930d-a16c7c675ca6",
+          "weight": 0.00208
+        },
+        {
+          "value": "snd556c93d-d6e9-421d-a96a-19bbdf877c3a",
+          "weight": 0.00208
+        }
+      ],
+      "pattern": null,
+      "minLength": 30.0,
+      "maxLength": 38.0
+    },
+    "Title": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [
+        {
+          "value": "ZZ-WatchlistTest-B watchlist - 168.63.129.16 on avdpool-1",
+          "weight": 0.44283
+        },
+        {
+          "value": "ZZ-WatchlistTest-A control - hardcoded IP 168.63.129.16 on avdpool-1",
+          "weight": 0.43659
+        },
+        {
+          "value": "ZZ-WatchlistTest-A control - hardcoded IP 168.63.129.16 on attackiq01",
+          "weight": 0.04782
+        },
+        {
+          "value": "ZZ-WatchlistTest-B watchlist - 168.63.129.16 on attackiq01",
+          "weight": 0.04782
+        },
+        {
+          "value": "User Added to Admin Role",
+          "weight": 0.0104
+        },
+        {
+          "value": "Azure VM Run Command operation executed during suspicious login window",
+          "weight": 0.00624
+        },
+        {
+          "value": "Authentication Attempt from New Country",
+          "weight": 0.00416
+        },
+        {
+          "value": "New User Assigned to Privileged Role",
+          "weight": 0.00416
+        }
+      ],
+      "pattern": null,
+      "minLength": 24.0,
+      "maxLength": 70.0
+    },
+    "Categories": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 15.0,
+      "maxLength": 23.0
+    },
+    "AttackTechniques": {
+      "fillRate": 0.0249,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 26.0,
+      "maxLength": 78.0
+    },
+    "ServiceSource": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Microsoft Defender XDR",
+          "weight": 0.49064
+        },
+        {
+          "value": "Microsoft Defender for Endpoint",
+          "weight": 0.48441
+        },
+        {
+          "value": "Microsoft Sentinel",
+          "weight": 0.02495
+        }
+      ],
+      "pattern": null,
+      "minLength": 18.0,
+      "maxLength": 31.0
+    },
+    "DetectionSource": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Custom detection",
+          "weight": 0.97505
+        },
+        {
+          "value": "Scheduled Alerts",
+          "weight": 0.02495
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "EntityType": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Ip",
+          "weight": 0.4948
+        },
+        {
+          "value": "Machine",
+          "weight": 0.48753
+        },
+        {
+          "value": "User",
+          "weight": 0.01767
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 7.0
+    },
+    "EvidenceRole": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Impacted",
+          "weight": 0.5052
+        },
+        {
+          "value": "Related",
+          "weight": 0.4948
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 8.0
+    },
+    "EvidenceDirection": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "FileName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "FolderPath": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SHA1": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SHA256": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "FileSize": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ThreatFamily": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RemoteIP": {
+      "fillRate": 0.4948,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "ipv4",
+      "minLength": 12.0,
+      "maxLength": 14.0
+    },
+    "RemoteUrl": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountName": {
+      "fillRate": 0.0156,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 8.0
+    },
+    "AccountDomain": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountSid": {
+      "fillRate": 0.0156,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": "sid",
+      "sensitive": true,
+      "minLength": 50.0,
+      "maxLength": 52.0
+    },
+    "AccountObjectId": {
+      "fillRate": 0.0177,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AccountUpn": {
+      "fillRate": 0.0156,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 33.0,
+      "maxLength": 36.0
+    },
+    "DeviceId": {
+      "fillRate": 0.4875,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "DeviceName": {
+      "fillRate": 0.4875,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 10.0
+    },
+    "LocalIP": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "NetworkMessageId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EmailSubject": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ApplicationId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Application": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OAuthApplicationId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ProcessCommandLine": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 32,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 165.0,
+      "maxLength": 841.0
+    },
+    "RegistryKey": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RegistryValueName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RegistryValueData": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CloudPlatform": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "CloudResource": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Severity": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "Informational",
+          "weight": 0.97505
+        },
+        {
+          "value": "High",
+          "weight": 0.0104
+        },
+        {
+          "value": "Low",
+          "weight": 0.0104
+        },
+        {
+          "value": "Medium",
+          "weight": 0.00416
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 13.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AlertEvidence",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    }
+  }
+}

@@ -1,0 +1,695 @@
+{
+  "tableName": "IntuneDevices",
+  "sources": [
+    "sample:IntuneDevices.csv"
+  ],
+  "sampledRows": 129.0,
+  "columnCount": 47,
+  "emptyInProd": [
+    "IMEI",
+    "PhoneNumber",
+    "CategoryName",
+    "SubscriberCarrierNetwork",
+    "AndroidPatchLevel",
+    "MEID"
+  ],
+  "generatedUtc": "2026-07-26T01:05:38.7125932Z",
+  "columns": {
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 129,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 22.0,
+      "maxLength": 23.0
+    },
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "OperationName": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Devices",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "Result": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "None",
+          "weight": 0.76744
+        },
+        {
+          "value": "Completed",
+          "weight": 0.23256
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 9.0
+    },
+    "SourceSystem": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft Intune",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "DeviceId": {
+      "fillRate": 0.7674,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "DeviceName": {
+      "fillRate": 0.7674,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 13.0
+    },
+    "UPN": {
+      "fillRate": 0.6977,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 34.0,
+      "maxLength": 36.0
+    },
+    "LastContact": {
+      "fillRate": 0.7674,
+      "distinctCount": 36,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "OSVersion": {
+      "fillRate": 0.7674,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "10.0.26200.8655",
+          "weight": 0.59596
+        },
+        {
+          "value": "10.0.28000.2340",
+          "weight": 0.20202
+        },
+        {
+          "value": "10.0.28000.2525",
+          "weight": 0.10101
+        },
+        {
+          "value": "10.0.22631.7376",
+          "weight": 0.09091
+        },
+        {
+          "value": "10.0.26200.8893",
+          "weight": 0.0101
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 15.0
+    },
+    "OS": {
+      "fillRate": 0.7674,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Windows",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "CompliantState": {
+      "fillRate": 0.7674,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Compliant",
+          "weight": 0.78788
+        },
+        {
+          "value": "Noncompliant",
+          "weight": 0.12121
+        },
+        {
+          "value": "Not Evaluated",
+          "weight": 0.09091
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 13.0
+    },
+    "Ownership": {
+      "fillRate": 0.7674,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 9.0
+    },
+    "ManagedBy": {
+      "fillRate": 0.7674,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Intune",
+          "weight": 0.90909
+        },
+        {
+          "value": "MDE",
+          "weight": 0.09091
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 6.0
+    },
+    "Model": {
+      "fillRate": 0.7674,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Virtual Machine",
+          "weight": 0.39394
+        },
+        {
+          "value": "SER9",
+          "weight": 0.30303
+        },
+        {
+          "value": "HP Laptop 17-cp0xxx",
+          "weight": 0.30303
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 19.0
+    },
+    "SerialNumber": {
+      "fillRate": 0.6977,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 10.0,
+      "maxLength": 32.0
+    },
+    "Manufacturer": {
+      "fillRate": 0.7674,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Microsoft Corporation",
+          "weight": 0.39394
+        },
+        {
+          "value": "HP",
+          "weight": 0.30303
+        },
+        {
+          "value": "AZW",
+          "weight": 0.30303
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 21.0
+    },
+    "CreatedDate": {
+      "fillRate": 0.7674,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "DeviceState": {
+      "fillRate": 0.7674,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Managed",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "UserEmail": {
+      "fillRate": 0.6977,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 34.0,
+      "maxLength": 36.0
+    },
+    "UserName": {
+      "fillRate": 0.6977,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 15.0
+    },
+    "IMEI": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "PhoneNumber": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DeviceRegistrationState": {
+      "fillRate": 0.7674,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Registered",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "ReferenceId": {
+      "fillRate": 0.7674,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ManagedDeviceName": {
+      "fillRate": 0.7674,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 34.0
+    },
+    "GraphDeviceIsManaged": {
+      "fillRate": 0.6977,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "true",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "CategoryName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "EncryptionStatusString": {
+      "fillRate": 0.7674,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "False",
+          "weight": 0.69697
+        },
+        {
+          "value": "True",
+          "weight": 0.30303
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "SubscriberCarrierNetwork": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "JoinType": {
+      "fillRate": 0.7674,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Azure AD joined",
+          "weight": 0.60606
+        },
+        {
+          "value": "Azure AD registered",
+          "weight": 0.30303
+        },
+        {
+          "value": "Unknown",
+          "weight": 0.09091
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 19.0
+    },
+    "SupervisedStatusString": {
+      "fillRate": 0.7674,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "False",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "WifiMacAddress": {
+      "fillRate": 0.4651,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 12.0,
+      "maxLength": 12.0
+    },
+    "StorageTotal": {
+      "fillRate": 0.7674,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "952752",
+          "weight": 0.30303
+        },
+        {
+          "value": "952933",
+          "weight": 0.30303
+        },
+        {
+          "value": "129124",
+          "weight": 0.20202
+        },
+        {
+          "value": "129043",
+          "weight": 0.10101
+        },
+        {
+          "value": "0",
+          "weight": 0.09091
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 6.0
+    },
+    "StorageFree": {
+      "fillRate": 0.7674,
+      "distinctCount": 35,
+      "topValues": [
+        {
+          "value": "810446",
+          "weight": 0.30303
+        },
+        {
+          "value": "721863",
+          "weight": 0.28283
+        },
+        {
+          "value": "0",
+          "weight": 0.09091
+        },
+        {
+          "value": "53958",
+          "weight": 0.0101
+        },
+        {
+          "value": "720755",
+          "weight": 0.0101
+        },
+        {
+          "value": "701389",
+          "weight": 0.0101
+        },
+        {
+          "value": "59151",
+          "weight": 0.0101
+        },
+        {
+          "value": "58990",
+          "weight": 0.0101
+        },
+        {
+          "value": "58141",
+          "weight": 0.0101
+        },
+        {
+          "value": "57604",
+          "weight": 0.0101
+        },
+        {
+          "value": "57505",
+          "weight": 0.0101
+        },
+        {
+          "value": "57335",
+          "weight": 0.0101
+        },
+        {
+          "value": "57329",
+          "weight": 0.0101
+        },
+        {
+          "value": "57189",
+          "weight": 0.0101
+        },
+        {
+          "value": "56674",
+          "weight": 0.0101
+        },
+        {
+          "value": "56313",
+          "weight": 0.0101
+        },
+        {
+          "value": "56280",
+          "weight": 0.0101
+        },
+        {
+          "value": "56161",
+          "weight": 0.0101
+        },
+        {
+          "value": "56124",
+          "weight": 0.0101
+        },
+        {
+          "value": "52212",
+          "weight": 0.0101
+        },
+        {
+          "value": "56063",
+          "weight": 0.0101
+        },
+        {
+          "value": "56047",
+          "weight": 0.0101
+        },
+        {
+          "value": "56030",
+          "weight": 0.0101
+        },
+        {
+          "value": "55983",
+          "weight": 0.0101
+        },
+        {
+          "value": "55599",
+          "weight": 0.0101
+        },
+        {
+          "value": "55596",
+          "weight": 0.0101
+        },
+        {
+          "value": "55505",
+          "weight": 0.0101
+        },
+        {
+          "value": "55266",
+          "weight": 0.0101
+        },
+        {
+          "value": "55147",
+          "weight": 0.0101
+        },
+        {
+          "value": "55086",
+          "weight": 0.0101
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 6.0
+    },
+    "AndroidPatchLevel": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "MEID": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "InGracePeriodUntil": {
+      "fillRate": 0.7674,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "JailBroken": {
+      "fillRate": 0.7674,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Unknown",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 7.0
+    },
+    "SkuFamily": {
+      "fillRate": 0.6977,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Enterprise",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 10.0,
+      "maxLength": 10.0
+    },
+    "EasID": {
+      "fillRate": 0.6977,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "md5",
+      "sensitive": true,
+      "minLength": 32.0,
+      "maxLength": 32.0
+    },
+    "PrimaryUser": {
+      "fillRate": 0.7674,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "BatchId": {
+      "fillRate": 1.0,
+      "distinctCount": 73,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "IntuneAccountId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AADTenantId": {
+      "fillRate": 0.7674,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Stats": {
+      "fillRate": 0.2326,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 17.0,
+      "maxLength": 17.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "IntuneDevices",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    }
+  }
+}

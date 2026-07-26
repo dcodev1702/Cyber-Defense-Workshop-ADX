@@ -1,0 +1,606 @@
+{
+  "tableName": "DeviceTvmSecureConfigurationAssessmentKB",
+  "sources": [
+    "sample:DeviceTvmSecureConfigurationAssessmentKB-RealTelemetry.csv"
+  ],
+  "sampledRows": 140.0,
+  "columnCount": 13,
+  "emptyInProd": [
+    "TenantId",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:04:33.9268446Z",
+  "columns": {
+    "ConfigurationId": {
+      "fillRate": 1.0,
+      "distinctCount": 140,
+      "topValues": [
+        {
+          "value": "scid-10000",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-6001",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-60",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-59",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-58",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-57",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-55",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-54",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-53",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-52",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-51",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-50",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-49",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-46",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-45",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-44",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-43",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-42",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-32",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-33",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-34",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-35",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-36",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-37",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-6002",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-38",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-40",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-4000",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-4001",
+          "weight": 0.00714
+        },
+        {
+          "value": "scid-4002",
+          "weight": 0.00714
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 10.0
+    },
+    "ConfigurationImpact": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "8",
+          "weight": 0.32857
+        },
+        {
+          "value": "5",
+          "weight": 0.25714
+        },
+        {
+          "value": "9",
+          "weight": 0.22857
+        },
+        {
+          "value": "10",
+          "weight": 0.07857
+        },
+        {
+          "value": "2",
+          "weight": 0.03571
+        },
+        {
+          "value": "6",
+          "weight": 0.03571
+        },
+        {
+          "value": "7",
+          "weight": 0.03571
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 2.0
+    },
+    "ConfigurationName": {
+      "fillRate": 1.0,
+      "distinctCount": 140,
+      "topValues": [
+        {
+          "value": "Block abuse of exploited vulnerable signed drivers",
+          "weight": 0.00714
+        },
+        {
+          "value": "Secure Microsoft Defender Firewall domain profile",
+          "weight": 0.00714
+        },
+        {
+          "value": "Resume BitLocker protection on all drives",
+          "weight": 0.00714
+        },
+        {
+          "value": "Restrict anonymous access to named pipes and Shares",
+          "weight": 0.00714
+        },
+        {
+          "value": "Require LDAP server signing to ensure integrity of directory traffic",
+          "weight": 0.00714
+        },
+        {
+          "value": "Require LDAP client signing to prevent tampering and protect directory authentication",
+          "weight": 0.00714
+        },
+        {
+          "value": "Require authentication for VNC management interface",
+          "weight": 0.00714
+        },
+        {
+          "value": "Require authentication for Telnet management interface",
+          "weight": 0.00714
+        },
+        {
+          "value": "Remove shares from the root folder",
+          "weight": 0.00714
+        },
+        {
+          "value": "Remove share write permission set to ‘Everyone’",
+          "weight": 0.00714
+        },
+        {
+          "value": "Remove insecure administration protocols SNMP V1 and SNMP V2",
+          "weight": 0.00714
+        },
+        {
+          "value": "Reduce unnecessary inbound internet exposure on internet-facing devices",
+          "weight": 0.00714
+        },
+        {
+          "value": "Prohibit use of Internet Connection Sharing on your DNS domain network",
+          "weight": 0.00714
+        },
+        {
+          "value": "Onboard devices to Microsoft Defender for Endpoint",
+          "weight": 0.00714
+        },
+        {
+          "value": "Fix Windows Defender Antivirus cloud service connectivity",
+          "weight": 0.00714
+        },
+        {
+          "value": "Fix unquoted service path for Windows services",
+          "weight": 0.00714
+        },
+        {
+          "value": "Fix Microsoft Defender for Endpoint sensor data collection for Linux",
+          "weight": 0.00714
+        },
+        {
+          "value": "Fix Microsoft Defender for Endpoint sensor data collection",
+          "weight": 0.00714
+        },
+        {
+          "value": "Enable Microsoft Defender Antivirus cloud-delivered protection for Linux",
+          "weight": 0.00714
+        },
+        {
+          "value": "Enable Microsoft Defender Antivirus email scanning",
+          "weight": 0.00714
+        },
+        {
+          "value": "Enable Microsoft Defender Antivirus real-time behavior monitoring",
+          "weight": 0.00714
+        },
+        {
+          "value": "Enable Microsoft Defender Antivirus scanning of downloaded files and attachments",
+          "weight": 0.00714
+        },
+        {
+          "value": "Enable scanning of removable drives during a full scan",
+          "weight": 0.00714
+        },
+        {
+          "value": "Enable Set 'Domain member: Digitally encrypt secure channel data (when possible)'",
+          "weight": 0.00714
+        },
+        {
+          "value": "Secure Microsoft Defender firewall private profile",
+          "weight": 0.00714
+        },
+        {
+          "value": "Enable UEFI Secure Boot mode",
+          "weight": 0.00714
+        },
+        {
+          "value": "Encrypt LDAP client traffic to protect sensitive data in transit",
+          "weight": 0.00714
+        },
+        {
+          "value": "Enforce LDAP channel binding to protect authentication sessions from interception",
+          "weight": 0.00714
+        },
+        {
+          "value": "Ensure BitLocker drive compatibility",
+          "weight": 0.00714
+        },
+        {
+          "value": "Ensure devices are updated to Secure Boot 2023 certificates and boot manager",
+          "weight": 0.00714
+        }
+      ],
+      "pattern": null,
+      "minLength": 20.0,
+      "maxLength": 125.0
+    },
+    "ConfigurationDescription": {
+      "fillRate": 1.0,
+      "distinctCount": 131,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 48.0,
+      "maxLength": 1519.0
+    },
+    "RiskDescription": {
+      "fillRate": 1.0,
+      "distinctCount": 122,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 58.0,
+      "maxLength": 779.0
+    },
+    "ConfigurationCategory": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "Security controls",
+          "weight": 0.41429
+        },
+        {
+          "value": "OS",
+          "weight": 0.26429
+        },
+        {
+          "value": "Network",
+          "weight": 0.19286
+        },
+        {
+          "value": "Accounts",
+          "weight": 0.08571
+        },
+        {
+          "value": "Application",
+          "weight": 0.03571
+        },
+        {
+          "value": "Firmware",
+          "weight": 0.00714
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 17.0
+    },
+    "ConfigurationSubcategory": {
+      "fillRate": 0.5357,
+      "distinctCount": 16,
+      "topValues": [
+        {
+          "value": "Attack Surface Reduction",
+          "weight": 0.24
+        },
+        {
+          "value": "Antivirus",
+          "weight": 0.2
+        },
+        {
+          "value": "Firewall",
+          "weight": 0.12
+        },
+        {
+          "value": "EDR",
+          "weight": 0.10667
+        },
+        {
+          "value": "Services",
+          "weight": 0.06667
+        },
+        {
+          "value": "Shares",
+          "weight": 0.06667
+        },
+        {
+          "value": "Bitlocker",
+          "weight": 0.04
+        },
+        {
+          "value": "Microsoft Office",
+          "weight": 0.04
+        },
+        {
+          "value": "SmartScreen",
+          "weight": 0.02667
+        },
+        {
+          "value": "Adobe Acrobat",
+          "weight": 0.01333
+        },
+        {
+          "value": "Credential Guard",
+          "weight": 0.01333
+        },
+        {
+          "value": "Exploit Guard",
+          "weight": 0.01333
+        },
+        {
+          "value": "Internet-facing assets / attack surface",
+          "weight": 0.01333
+        },
+        {
+          "value": "Onboard Devices",
+          "weight": 0.01333
+        },
+        {
+          "value": "Security Control",
+          "weight": 0.01333
+        },
+        {
+          "value": "UEFI",
+          "weight": 0.01333
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 39.0
+    },
+    "ConfigurationBenchmarks": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 19.0
+    },
+    "Tags": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 52.0
+    },
+    "RemediationOptions": {
+      "fillRate": 1.0,
+      "distinctCount": 140,
+      "topValues": [
+        {
+          "value": "<b> Windows Server 2012 R2 and 2016 </b> <br/> <br/> If you’re currently running the legacy Microsoft Defender for Endpoint agent solution (based on the Microsoft Monitoring Agent - MMA) with MsSenseS.exe version 10.3720.*, please skip directly to <b> Update path 2.</b><br/><br/><br/><u>Update path 1 </u><br/><br/>Update the latest EDR sensor version described in <a href='https://support.microsoft.com/topic/microsoft-defender-for-endpoint-update-for-edr-sensor-f8f69773-f17f-420f-91f4-a8e5167284ac' target='_blank'>Microsoft Defender for Endpoint update for EDR Sensor</a> using one of the following methods: <ul>    <li>Windows Update</li>    <li>A patch management solution such as WSUS</li>    <li>Downloading and applying the package from the <a href='https://www.catalog.update.microsoft.com/Search.aspx?q=KB5005292' target='_blank'>Microsoft Update Catalog</a>.</li></ul><br/><u>Update path 2 </u><br/><br/>This option only applies if you’re currently running the legacy Microsoft Defender for Endpoint agent solution (based on the Microsoft Monitoring Agent - MMA) with MsSenseS.exe version 10.3720.*, in which case you will first need to upgrade to the new solution by following these steps: <br/><ol>    <li>Go to the <a href='https://security.microsoft.com/preferences2/onboarding' target='_blank'> onboarding page</a> in the M365 Defender portal</li>    <li>Select the <b>‘Windows Server 2012 R2 and 2016 (Preview)’</b>  operating systems</li>    <li>Choose your preferred deployment method</li>    <li>Download the installation and onboarding packages</li> <li>Install the package and apply the onboarding script via your chosen deployment channel</li>    <li>Once the new solution has been installed, future updates should be done by following the instructions described in <b>Update path 1</b>.</li></ol>For additional information on what’s new and how to install, including applying Defender Antivirus passive mode configuration if you’re using a non-Microsoft antimalware solution,please refer to <a href='https://docs.microsoft.com/en-us/defender-endpoint/onboard-server?view=o365-worldwide#functionality-in-the-modern-unified-solution-for-windows-server-2016-and-windows-server-2012-r2' target='_blank'>Onboard Windows servers to the Microsoft Defender for Endpoint service | Microsoft Docs</a>.<br/> <br/><br/><br/> <b> Linux and macOS </b> <br/> <br/>To ensure continued protection, ensure that the MDE agent is in the 3 latest versions. However, it is recommended to update to the latest Microsoft Defender for Endpoint version listed in <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/mac-whatsnew' target='_blank'>What's new in Microsoft Defender for Endpoint on Mac</a> or <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/linux-whatsnew' target='_blank'>What's new in Microsoft Defender for Endpoint on Linux</a> using one of the following methods: <ul> <li><b> MacOS: </b>  Microsoft Auto Update. More details at  <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/mac-updates' target='_blank'>Deploy updates for Microsoft Defender for Endpoint on macOS</a> </li>  <li><b> Linux: </b>  Using the update command based on your distributions package manager. More details at  <a href='https://learn.microsoft.com/en-us/microsoft-365/security/defender-endpoint/linux-updates' target='_blank'>Deploy updates for Microsoft Defender for Endpoint on Linux</a> </li>   <li>Downloading and applying the package from the onboarding section of the security center portal for your respective OS. </li>  </ul><br/> For additional information on what’s new and how to install, please refer to <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/configure-endpoints-non-windows' target='_blank'>Onboard non-Windows devices</a>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Make sure there are no other users than root with unrestricted access using the command: awk -F: '$3 == 0 {print $1}' /etc/passwd.",
+          "weight": 0.00714
+        },
+        {
+          "value": "Important: In centrally managed environments, locally created firewall rules may not be applied if local firewall rules are not allowed or local policy merge is disabled. If firewall policies are managed through Intune, MDM, or Group Policy, deploy the outbound block rule using the same centralized management channel.<p><strong>Option 1: Using Intune for managed environments</strong></p><ol><li>Go to Microsoft Intune admin center https://intune.microsoft.com</li><li>Navigate to Endpoint security &gt; Firewall &gt; Firewall Policies &gt; Create Policy</li><li>Configure:<ol type=\\\"a\\\"><li>Platform: windows</li><li>Profile: Windows Firewall Rules</li><li>Click Create</li></ol></li><li>In Basic Tab:<ol type=\\\"a\\\"><li>Enter a name for the rule (e.g., &quot;Block mshta.exe outbound connections&quot;) and optional description.</li></ol></li><li>Click Next for Configuration Settings:<ol type=\\\"a\\\"><li>Click on Add for a new firewall rule and provide name</li><li>Select Action as Block</li><li>Select Edit instance and configure the following:<ol type=\\\"i\\\"><li>Enabled -&gt; Enabled</li><li>Interface -&gt; All</li><li>File Path -&gt; toggle to configured and add the path &quot;%SystemRoot%\\System32\\mshta.exe&quot;</li><li>Direction -&gt; Select &quot;This rule applies to Outbound traffic&quot;</li><li>Leave all other fields as is &quot;not configured&quot;</li><li>And Save</li></ol></li><li>For 64-bit systems, repeat steps (a) through (c) under the same policy. While doing so, update the FilePath in step (c)(iii) to: %systemroot%\\syswow64\\mshta.exe</li></ol></li><li>Click Next to select scope tags (Optional)</li><li>Click Next to select applicable Groups</li><li>Click Next to Review and Create -&gt; to review the information entered earlier is correct</li><li>Save to add the rule.</li></ol><p><strong>Option 2: Using Group Policy Object (GPO) for domain environments</strong></p><ol><li>Open the &quot;Group Policy Management&quot; console (gpmc.msc).</li><li>Create a new GPO or edit an existing GPO that is linked to the Organizational Units (OUs) containing the computers you want to configure.</li><li>Navigate to Computer Configuration &gt; Policies &gt; Windows Settings &gt; Security Settings &gt; Windows Defender Firewall with Advanced Security &gt; &quot;Windows Defender Firewall with Advanced Security - Local Group Policy Object&quot; &gt; &quot;Outbound Rules&quot;.</li><li>Right click Outbound Rules and select New Rule...</li><li>Select Program as the rule type and click Next.</li><li>Select This program path, %systemroot%\\System32\\mshta.exe, and select Next.</li><li>Select Block the connection and select Next.</li><li>For the Profile step, ensure Domain, Private, and Public are checked. Select Next.</li><li>Type a name for the rule (for example, Block mshta.exe outbound via GPO) and an optional description. Select Finish.</li><li>Ensure the GPO is linked and enforced on the desired OUs.</li><li>For 64-bit systems, repeat steps 2-10 with this program path: %systemroot%\\SysWOW64\\mshta.exe in step 6.</li><li>Type: gpupdate /force.</li></ol><p><strong>Option 3: Using Windows Defender Firewall GUI Console (per machine)</strong></p>Use this option only for standalone devices or environments where locally created firewall rules are allowed.<ol><li>Open &quot;Windows Defender Firewall with Advanced Security&quot;. You can search for it in the Start menu.</li><li>In the left pane, click on &quot;Outbound Rules&quot;.</li><li>In the right pane, click on &quot;New Rule...&quot;.</li><li>Select &quot;Program&quot; as the rule type and click &quot;Next&quot;.</li><li>Select &quot;This program path&quot; and enter or browse to %systemroot%\\System32\\mshta.exe. Click &quot;Next&quot;.</li><li>Select &quot;Block the connection&quot; and click &quot;Next&quot;.</li><li>Ensure all profiles (Domain, Private, Public) are checked. Click &quot;Next&quot;.</li><li>Enter a name for the rule (e.g., &quot;Block mshta.exe outbound connections&quot;) and an optional description. Click &quot;Finish&quot;.</li><li>For 64-bit systems, repeat steps 3-8 with this program path: %systemroot%\\SysWOW64\\mshta.exe in step 5.</li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "If devices in your network use Telnet, either switch to a more secure protocol such as SSH, disable the server altogether, or apply network access restrictions if the first two options aren’t possible.",
+          "weight": 0.00714
+        },
+        {
+          "value": "If devices in your network use SNMP V1 or V2, either switch to a more secure protocol such as SNMP V3, or disable them altogether. If neither of those option are feasible, apply network access restrictions",
+          "weight": 0.00714
+        },
+        {
+          "value": "Following the following steps and guidelines:<ul><li>Remove write permission from ‘Everyone’<li>Ensure that shares permissions to groups follow the \"need-to-know\" basis.<li>It is recommended to grant permission to groups and not  to specific user accounts</ul>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Following the following steps and guidelines:<ul><li>Remove all root folder shares<li>Share on a per-folder basis, with the least required permissions.</ul>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Following the following steps and guidelines:<ul><li>Launch <b>SERVER MANAGER</b> (Server 2012 and above)<li>Click on <b>FILE AND STORAGE SERVICES</b><li>Click on <b>SHARES</b><li>Right click on each share you want to set Access-Based-Enumeration, select <b>PROPERTIES</b><li>Click <b>SETTINGS</b><li>Click <b>ENABLE ACCESS BASED ENUMERATION</b>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Open <b>computer management console</b> (Start-> Run-> compmgmt.msc).</li><li>Expand System Tools-> Shared Folders-> Shares.</li><li>Open the misconfigured share's properties (Select the share from the list, click the right mouse button, and click <b>Properties</b>).</li><li>Click <b>Offine Settings</b>.</li><li>Choose <b>No files or programs from the shared folder are avilable offline</b>.</li><li>Press OK button.</li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that system prerequisites are met as described in <a href='https://docs.microsoft.com/windows/security/identity-protection/credential-guard/credential-guard-requirements' target='_blank'>Hardware and software requirements</a>.</li><li>Enable Microsoft Defender Credential Guard using either <a href='https://docs.microsoft.com/windows/security/identity-protection/credential-guard/credential-guard-manage#enable-windows-defender-credential-guard-by-using-intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/identity-protection/credential-guard/credential-guard-manage#enable-windows-defender-credential-guard' target='_blank'>Group Policy</a>, <a href='https://docs.microsoft.com/windows/security/identity-protection/credential-guard/credential-guard-manage#enable-windows-defender-credential-guard-by-using-the-registry' target='_blank'>registry settings</a> or <a href='https://docs.microsoft.com/windows/security/identity-protection/credential-guard/credential-guard-manage#enable-windows-defender-credential-guard-by-using-the-windows-defender-device-guard-and-windows-defender-credential-guard-hardware-readiness-tool' target='_blank'>hardware readiness tool</a>.</li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that Microsoft Defender Antivirus is turned on with passive mode <b>disabled</b> and that Real-Time Protection is enabled.</li><li>Enable PUA protection in <b>Block</b> mode using one of the <a href='https://docs.microsoft.com//windows/security/threat-protection/microsoft-defender-atp/linux-pua' target='_blank'>methods described in this documentation</a>.</li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='https://learn.microsoft.com/en-us/defender-endpoint/configure-real-time-protection-microsoft-defender-antivirus' target='_blank'>Microsoft Defender Antivirus real-time protection</a>, <a href='https://learn.microsoft.com/en-us/defender-endpoint/behavior-monitor' target='_blank'>Behavior Monitoring</a> and <a href='https://learn.microsoft.com/en-us/defender-endpoint/enable-cloud-protection-microsoft-defender-antivirus' target='_blank'>Cloud-delivered Protection</a> are enabled (active)</li><li>Enable <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-network-protection' target='_blank'>Network Protection</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-network-protection#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-network-protection#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-network-protection#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Ensure that <a href='https://docs.microsoft.com/windows/security/threat-protection/windows-defender-antivirus/enable-cloud-protection-windows-defender-antivirus' target='_blank'>Cloud-delivered protection</a> is enabled</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#use-advanced-protection-against-ransomware' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Ensure that <a href='https://docs.microsoft.com/windows/security/threat-protection/windows-defender-antivirus/enable-cloud-protection-windows-defender-antivirus' target='_blank'>Cloud-delivered protection</a> is enabled</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-executable-files-from-running-unless-they-meet-a-prevalence-age-or-trusted-list-criterion' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable PUA protection in <b>Block</b> mode using one of the <a href='https://docs.microsoft.com/windows/security/threat-protection/windows-defender-antivirus/detect-block-potentially-unwanted-apps-windows-defender-antivirus#configure-pua-protection-in-windows-defender-antivirus' target='_blank'>methods described in this documentation</a>.</li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-win32-api-calls-from-office-macros' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-use-of-copied-or-impersonated-system-tools' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-untrusted-and-unsigned-processes-that-run-from-usb' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow steps described <a href='https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/disabling-secure-boot?view=windows-11#re-enable-secure-boot' target='_blank'>Re-enable Secure Boot.</a>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><br/><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-all-office-applications-from-creating-child-processes' target='_blank'>this ASR rule</a> in <b>Block</b> mode by creating a new ASR policy in <a href='https://security.microsoft.com/policy-inventory' target='_blank'>Endpoint Security Policies</a> (admin access required).<br/>You could also use <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a>.</li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-abuse-of-exploited-vulnerable-signed-drivers' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-adobe-reader-from-creating-child-processes' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-credential-stealing-from-the-windows-local-security-authority-subsystem-lsassexe' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-executable-content-from-email-client-and-webmail' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "MDE plug-in for WSL is turned off by registry key. Delete the key at location 'HKLM\\SOFTWARE\\Microsoft\\Microsoft Defender for Endpoint plug-in for WSL\\Turnedoff' and restart WSL service to re-allow the MDE plug-in for WSL to start monitoring WSL2 activity.",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-execution-of-potentially-obfuscated-scripts' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-office-applications-from-creating-executable-content' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-office-applications-from-injecting-code-into-other-processes' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-office-communication-application-from-creating-child-processes' target='_blank'>this ASR rule</a> in <b>Block</b> mode using either <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#intune' target='_blank'>Intune (Windows 10 only)</a>, <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a> or <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#mdm' target='_blank'>MDM</a></li></ol>",
+          "weight": 0.00714
+        },
+        {
+          "value": "Follow these steps:<br/><ol><li>Ensure that <a href='/security-recommendations?recommendationId=sca-_-scid-2010&filters=status%3DActive&search=scid-2010' target='_blank'>Microsoft Defender Antivirus is turned on</a> as the <b>primary</b> antivirus solution, with <a href='/security-recommendations?recommendationId=sca-_-scid-2012&filters=status%3DActive&search=scid-2012' target='_blank'>Real-Time Protection</a> enabled.</li><li>Enable <a href='https://docs.microsoft.com/microsoft-365/security/defender-endpoint/attack-surface-reduction-rules?view=o365-worldwide#block-persistence-through-wmi-event-subscription' target='_blank'>this ASR rule</a> in <b>Block</b> mode using <a href='https://docs.microsoft.com/windows/security/threat-protection/microsoft-defender-atp/enable-attack-surface-reduction#group-policy' target='_blank'>Group Policy</a>.</li></ol>",
+          "weight": 0.00714
+        }
+      ],
+      "pattern": null,
+      "minLength": 73.0,
+      "maxLength": 4167.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceTvmSecureConfigurationAssessmentKB",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

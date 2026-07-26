@@ -1,0 +1,525 @@
+{
+  "tableName": "BehaviorAnalytics",
+  "sources": [
+    "sample:BehaviorAnalytics-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 30,
+  "emptyInProd": [
+    "DestinationIPAddress",
+    "DestinationIPLocation",
+    "ActorPrincipalName",
+    "NativeTableName",
+    "_ResourceId"
+  ],
+  "generatedUtc": "2026-07-26T01:06:21.1009746Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SourceRecordId": {
+      "fillRate": 1.0,
+      "distinctCount": 1999,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 1758,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "TimeProcessed": {
+      "fillRate": 1.0,
+      "distinctCount": 1837,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "ActivityType": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "Logon",
+          "weight": 0.9505
+        },
+        {
+          "value": "Administrative",
+          "weight": 0.045
+        },
+        {
+          "value": "Policy",
+          "weight": 0.0025
+        },
+        {
+          "value": "FailedLogOn",
+          "weight": 0.002
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 14.0
+    },
+    "ActionType": {
+      "fillRate": 0.9525,
+      "distinctCount": 5,
+      "topValues": [
+        {
+          "value": "Logon_Success",
+          "weight": 0.94593
+        },
+        {
+          "value": "Sign-in",
+          "weight": 0.04094
+        },
+        {
+          "value": "ResourceAccess",
+          "weight": 0.01102
+        },
+        {
+          "value": "This error occurred due to 'Keep me signed in' interrupt when the user was signing-in",
+          "weight": 0.00157
+        },
+        {
+          "value": "Other",
+          "weight": 0.00052
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 85.0
+    },
+    "UserName": {
+      "fillRate": 0.0745,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 8.0
+    },
+    "UserPrincipalName": {
+      "fillRate": 0.07,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 25.0,
+      "maxLength": 36.0
+    },
+    "EventSource": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "Authentication",
+          "weight": 0.901
+        },
+        {
+          "value": "Azure",
+          "weight": 0.0475
+        },
+        {
+          "value": "Azure AD",
+          "weight": 0.041
+        },
+        {
+          "value": "SecurityEvent",
+          "weight": 0.0105
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 14.0
+    },
+    "SourceIPAddress": {
+      "fillRate": 0.1745,
+      "distinctCount": 42,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 14.0
+    },
+    "SourceIPLocation": {
+      "fillRate": 0.164,
+      "distinctCount": 8,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 14.0,
+      "maxLength": 26.0
+    },
+    "SourceDevice": {
+      "fillRate": 0.03,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "DESKTOP-QKDGCC1",
+          "weight": 0.81667
+        },
+        {
+          "value": "avdpool-1",
+          "weight": 0.18333
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 15.0
+    },
+    "DestinationIPAddress": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DestinationIPLocation": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DestinationDevice": {
+      "fillRate": 0.042,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "dc25-1",
+          "weight": 0.55952
+        },
+        {
+          "value": "adds01.dibsec.net",
+          "weight": 0.25
+        },
+        {
+          "value": "win11-ent-2",
+          "weight": 0.07143
+        },
+        {
+          "value": "avdpool-1",
+          "weight": 0.05952
+        },
+        {
+          "value": "win11-intune",
+          "weight": 0.04762
+        },
+        {
+          "value": "win11-wsl2",
+          "weight": 0.0119
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 17.0
+    },
+    "EventVendor": {
+      "fillRate": 0.901,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Microsoft",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 9.0
+    },
+    "EventProductVersion": {
+      "fillRate": 0.8695,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "1.0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 3.0
+    },
+    "ActorName": {
+      "fillRate": 0.0315,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "nt authority\\system",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "ActorPrincipalName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TargetName": {
+      "fillRate": 0.901,
+      "distinctCount": 26,
+      "topValues": [
+        {
+          "value": "CloudPosture/securityOperators/DefenderCSPMSecurityOperator",
+          "weight": 0.30133
+        },
+        {
+          "value": "zolab-bot-mi-botprd",
+          "weight": 0.27636
+        },
+        {
+          "value": "mi-tvm-graph-ingest",
+          "weight": 0.10599
+        },
+        {
+          "value": "ME-SecurityScanner",
+          "weight": 0.05549
+        },
+        {
+          "value": "ualtimebomb-disarm",
+          "weight": 0.03774
+        },
+        {
+          "value": "StorageAccounts/securityOperators/DefenderForStorageSecurityOperator",
+          "weight": 0.03385
+        },
+        {
+          "value": "skynet\\lorenzo",
+          "weight": 0.02997
+        },
+        {
+          "value": "Containers/securityOperators/DefenderForContainersSecurityOperator",
+          "weight": 0.02886
+        },
+        {
+          "value": "MCAPSGov-AutomationApp",
+          "weight": 0.02275
+        },
+        {
+          "value": "usm262346",
+          "weight": 0.01887
+        },
+        {
+          "value": "win11-xdr-lab-2",
+          "weight": 0.01887
+        },
+        {
+          "value": "dc-xdr-lab-1",
+          "weight": 0.01776
+        },
+        {
+          "value": "win11-xdr-lab-1",
+          "weight": 0.01776
+        },
+        {
+          "value": "StorageDataScanner",
+          "weight": 0.00777
+        },
+        {
+          "value": "msg-resources-9f5f",
+          "weight": 0.00666
+        },
+        {
+          "value": "SecurityCopilotAgentIdentity-b379352d-0748-4fd6-b1f4-4d2232fe334c",
+          "weight": 0.00333
+        },
+        {
+          "value": "azuread\\mcrane",
+          "weight": 0.00277
+        },
+        {
+          "value": "func-cmmc-evidence-ai-3722",
+          "weight": 0.00277
+        },
+        {
+          "value": "zolab1702-ai-foundry",
+          "weight": 0.00222
+        },
+        {
+          "value": "dibsec-security-project",
+          "weight": 0.00222
+        },
+        {
+          "value": "win11-intune\\xadmin",
+          "weight": 0.00222
+        },
+        {
+          "value": "Purview Item Level scan DSPM",
+          "weight": 0.00111
+        },
+        {
+          "value": "SecurityCopilotAgentIdentity-6eab514e-ae15-4e9c-9da4-8c3c6b234fbc",
+          "weight": 0.00111
+        },
+        {
+          "value": "win11-01",
+          "weight": 0.00111
+        },
+        {
+          "value": "adds01",
+          "weight": 0.00055
+        },
+        {
+          "value": "A365-Workshop-Cleanup",
+          "weight": 0.00055
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 68.0
+    },
+    "TargetPrincipalName": {
+      "fillRate": 0.901,
+      "distinctCount": 26,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 68.0
+    },
+    "Device": {
+      "fillRate": 0.901,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "Microsft/AAD",
+          "weight": 0.96504
+        },
+        {
+          "value": "dc25-1.skynet-home.local",
+          "weight": 0.02608
+        },
+        {
+          "value": "win11-ent-2.skynet-home.local",
+          "weight": 0.00333
+        },
+        {
+          "value": "avdpool-1",
+          "weight": 0.00277
+        },
+        {
+          "value": "win11-intune",
+          "weight": 0.00222
+        },
+        {
+          "value": "win11-wsl2.skynet-home.local",
+          "weight": 0.00055
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 29.0
+    },
+    "UsersInsights": {
+      "fillRate": 1.0,
+      "distinctCount": 58,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 58.0,
+      "maxLength": 170.0
+    },
+    "DevicesInsights": {
+      "fillRate": 1.0,
+      "distinctCount": 14,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 201.0
+    },
+    "ActivityInsights": {
+      "fillRate": 1.0,
+      "distinctCount": 55,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 53.0,
+      "maxLength": 270.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.901,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "AAD",
+          "weight": 0.96504
+        },
+        {
+          "value": "M365 Defender for EndPoint",
+          "weight": 0.03496
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 26.0
+    },
+    "NativeTableName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "InvestigationPriority": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.963
+        },
+        {
+          "value": "2",
+          "weight": 0.0195
+        },
+        {
+          "value": "3",
+          "weight": 0.012
+        },
+        {
+          "value": "1",
+          "weight": 0.0055
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "BehaviorAnalytics",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 17.0,
+      "maxLength": 17.0
+    },
+    "_ResourceId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

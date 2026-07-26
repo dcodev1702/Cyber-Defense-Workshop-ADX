@@ -1,0 +1,410 @@
+{
+  "tableName": "DeviceTvmInfoGatheringKB",
+  "sources": [
+    "sample:DeviceTvmInfoGatheringKB-Real.csv"
+  ],
+  "sampledRows": 90.0,
+  "columnCount": 8,
+  "emptyInProd": [
+    "TenantId",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:04:32.2842861Z",
+  "columns": {
+    "IgId": {
+      "fillRate": 1.0,
+      "distinctCount": 90,
+      "topValues": [
+        {
+          "value": "igid-1",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-157",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-156",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-155",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-154",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-153",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-152",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-151",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-150",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-158",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-15",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-148",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-147",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-146",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-145",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-144",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-143",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-142",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-141",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-149",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-159",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-16",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-160",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-7",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-6",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-5",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-4",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-3",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-22",
+          "weight": 0.01111
+        },
+        {
+          "value": "igid-21",
+          "weight": 0.01111
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 8.0
+    },
+    "FieldName": {
+      "fillRate": 1.0,
+      "distinctCount": 90,
+      "topValues": [
+        {
+          "value": "AsrAdobeReaderChildProcess",
+          "weight": 0.01111
+        },
+        {
+          "value": "TlsServer10",
+          "weight": 0.01111
+        },
+        {
+          "value": "TlsClient12",
+          "weight": 0.01111
+        },
+        {
+          "value": "TlsClient11",
+          "weight": 0.01111
+        },
+        {
+          "value": "TlsClient10",
+          "weight": 0.01111
+        },
+        {
+          "value": "SystemDefaultTlsVersions40Wow6432",
+          "weight": 0.01111
+        },
+        {
+          "value": "SystemDefaultTlsVersions40",
+          "weight": 0.01111
+        },
+        {
+          "value": "SystemDefaultTlsVersions35Wow6432",
+          "weight": 0.01111
+        },
+        {
+          "value": "SystemDefaultTlsVersions35",
+          "weight": 0.01111
+        },
+        {
+          "value": "TlsServer11",
+          "weight": 0.01111
+        },
+        {
+          "value": "SslServer30",
+          "weight": 0.01111
+        },
+        {
+          "value": "SslClient30",
+          "weight": 0.01111
+        },
+        {
+          "value": "SslClient20",
+          "weight": 0.01111
+        },
+        {
+          "value": "Spring4Shell_CVE_2022_22965",
+          "weight": 0.01111
+        },
+        {
+          "value": "SchUseStrongCrypto40Wow6432",
+          "weight": 0.01111
+        },
+        {
+          "value": "SchUseStrongCrypto40",
+          "weight": 0.01111
+        },
+        {
+          "value": "SchUseStrongCrypto35Wow6432",
+          "weight": 0.01111
+        },
+        {
+          "value": "SchUseStrongCrypto35",
+          "weight": 0.01111
+        },
+        {
+          "value": "Log4jLocalScanVulnerable",
+          "weight": 0.01111
+        },
+        {
+          "value": "SslServer20",
+          "weight": 0.01111
+        },
+        {
+          "value": "TlsServer12",
+          "weight": 0.01111
+        },
+        {
+          "value": "WdavEnginePublishTime",
+          "weight": 0.01111
+        },
+        {
+          "value": "WdavIsEngineUptodate",
+          "weight": 0.01111
+        },
+        {
+          "value": "XplatAvSignaturePublishTime",
+          "weight": 0.01111
+        },
+        {
+          "value": "XplatAvSignatureDataRefreshTime",
+          "weight": 0.01111
+        },
+        {
+          "value": "XplatAvPlatformVersion",
+          "weight": 0.01111
+        },
+        {
+          "value": "XplatAvPlatformUpdateTime",
+          "weight": 0.01111
+        },
+        {
+          "value": "XplatAvPlatformRing",
+          "weight": 0.01111
+        },
+        {
+          "value": "XplatAvPlatformPublishTime",
+          "weight": 0.01111
+        },
+        {
+          "value": "XplatAvModeDataRefreshTime",
+          "weight": 0.01111
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 39.0
+    },
+    "Description": {
+      "fillRate": 1.0,
+      "distinctCount": 77,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 29.0,
+      "maxLength": 352.0
+    },
+    "Categories": {
+      "fillRate": 1.0,
+      "distinctCount": 10,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 6.0,
+      "maxLength": 42.0
+    },
+    "DataStructure": {
+      "fillRate": 1.0,
+      "distinctCount": 21,
+      "topValues": [
+        {
+          "value": "String. e.g.: Off, Block, Warn, Unknown; a nested member of infoGatheringData.AsrConfigurationStates object",
+          "weight": 0.21111
+        },
+        {
+          "value": "String. i.e., 2022-02-15T00:27:47.744Z",
+          "weight": 0.18889
+        },
+        {
+          "value": "One of the following values: True/False",
+          "weight": 0.12222
+        },
+        {
+          "value": "One of the following values: Enabled/Disabled/DisabledByDefault",
+          "weight": 0.11111
+        },
+        {
+          "value": "One of the following values: 0/1",
+          "weight": 0.08889
+        },
+        {
+          "value": "String. i.e., 2",
+          "weight": 0.04444
+        },
+        {
+          "value": "One of the following values: true/false/null (null like false, indicates not vulnerable)",
+          "weight": 0.03333
+        },
+        {
+          "value": "String. i.e., 2024-01-15T00:27:47.744Z",
+          "weight": 0.03333
+        },
+        {
+          "value": "String. i.e., 4.18.2109.6",
+          "weight": 0.02222
+        },
+        {
+          "value": "String. i.e., 1",
+          "weight": 0.02222
+        },
+        {
+          "value": "3 maps (dictionaries) from string keys to string values, under Quick and Full Custom fields, i.e., {\"Quick\":{\"ScanStatus\":\"Completed\",\"ErrorCode\":null,\"Timestamp\":\"2021-10-19T09:17:09.403+00:00\"},\"Full\":null,\"Custom\":null}",
+          "weight": 0.01111
+        },
+        {
+          "value": "String. i.e., Found, NotFound and Unknown",
+          "weight": 0.01111
+        },
+        {
+          "value": "String. i.e., 1.351.679.0",
+          "weight": 0.01111
+        },
+        {
+          "value": "string. i.e. 1",
+          "weight": 0.01111
+        },
+        {
+          "value": "String. i.e., Mitigated, NotMitigated and NotApplicable",
+          "weight": 0.01111
+        },
+        {
+          "value": "String i.e. Wdav/Heartbeat",
+          "weight": 0.01111
+        },
+        {
+          "value": "One of the following values: True/RebootRequired/False",
+          "weight": 0.01111
+        },
+        {
+          "value": "One of the following values: 0/1/2/3/4/5",
+          "weight": 0.01111
+        },
+        {
+          "value": "CVE id, i.e. CVE-2021-44228",
+          "weight": 0.01111
+        },
+        {
+          "value": "String. i.e., 1.1.18700.3",
+          "weight": 0.01111
+        },
+        {
+          "value": "String. i.e., true",
+          "weight": 0.01111
+        }
+      ],
+      "pattern": null,
+      "minLength": 14.0,
+      "maxLength": 222.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceTvmInfoGatheringKB",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 24.0,
+      "maxLength": 24.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    }
+  }
+}

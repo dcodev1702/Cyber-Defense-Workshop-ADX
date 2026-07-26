@@ -249,14 +249,14 @@
     "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmbrowserextensions-table"
   },
   {
-    "name": "DeviceTvmBrowserExtensionsKB",
+    "name": "AppGenAIContent",
     "categories": [
-      "MDE",
-      "DefenderVulnerabilityManagement",
-      "DefenderXDR"
+      "GenAI",
+      "Agents",
+      "AzureMonitor"
     ],
-    "sourceProduct": "Microsoft Defender for Endpoint",
-    "sourceUrl": "https://learn.microsoft.com/defender-xdr/advanced-hunting-devicetvmbrowserextensionskb-table"
+    "sourceProduct": "Azure Monitor",
+    "sourceUrl": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/appgenaicontent"
   },
   {
     "name": "DeviceTvmCertificateInfo",

@@ -1,0 +1,374 @@
+{
+  "tableName": "IdentityQueryEvents",
+  "sources": [
+    "sample:IdentityQueryEvents.csv"
+  ],
+  "sampledRows": 358.0,
+  "columnCount": 29,
+  "emptyInProd": [
+    "AccountName",
+    "AccountDomain",
+    "AccountUpn",
+    "AccountSid",
+    "AccountObjectId",
+    "AccountDisplayName",
+    "TargetDeviceName",
+    "TargetAccountUpn",
+    "TargetAccountDisplayName",
+    "Location",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:04:58.9077772Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 356,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 26.0,
+      "maxLength": 28.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 356,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 26.0,
+      "maxLength": 28.0
+    },
+    "ActionType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "DNS query",
+          "weight": 0.81285
+        },
+        {
+          "value": "LDAP query",
+          "weight": 0.18715
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 10.0
+    },
+    "Application": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Active Directory",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "QueryType": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Ns",
+          "weight": 0.76536
+        },
+        {
+          "value": "None",
+          "weight": 0.18715
+        },
+        {
+          "value": "Srv",
+          "weight": 0.04749
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 4.0
+    },
+    "QueryTarget": {
+      "fillRate": 1.0,
+      "distinctCount": 18,
+      "topValues": [
+        {
+          "value": "_msdcs.skynet-home.local",
+          "weight": 0.47486
+        },
+        {
+          "value": "Domain Admins",
+          "weight": 0.18715
+        },
+        {
+          "value": "_msdcs.xdr-lab.local",
+          "weight": 0.11453
+        },
+        {
+          "value": "harmonydl.adobe.com",
+          "weight": 0.05866
+        },
+        {
+          "value": "skynet-home.local",
+          "weight": 0.0419
+        },
+        {
+          "value": "_msdcs.dibsec.net",
+          "weight": 0.02514
+        },
+        {
+          "value": "xdr-lab.local",
+          "weight": 0.02235
+        },
+        {
+          "value": "_VLMCS._TCP.skynet-home.local",
+          "weight": 0.01955
+        },
+        {
+          "value": "_VLMCS._TCP.fritz.box",
+          "weight": 0.01955
+        },
+        {
+          "value": "dibsec.net",
+          "weight": 0.00559
+        },
+        {
+          "value": "fritz.box",
+          "weight": 0.00559
+        },
+        {
+          "value": "res.public.onecdn.static.microsoft",
+          "weight": 0.00559
+        },
+        {
+          "value": "sb.teams.static.microsoft",
+          "weight": 0.00559
+        },
+        {
+          "value": "config.edge.skype.com",
+          "weight": 0.00279
+        },
+        {
+          "value": "download.windowsupdate.com",
+          "weight": 0.00279
+        },
+        {
+          "value": "eastus2-gas.guestconfiguration.azure.com",
+          "weight": 0.00279
+        },
+        {
+          "value": "fritz.box.skynet-home.local",
+          "weight": 0.00279
+        },
+        {
+          "value": "b.c2r.ts.cdn.office.net",
+          "weight": 0.00279
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 40.0
+    },
+    "Query": {
+      "fillRate": 0.1872,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "LDAP Search Scope: \"WholeSubtree\", Base Object: \"DC=xdr-lab,DC=local\", Search Filter:  \" ( &  ( |  (objectClass=user)  (objectClass=group) )  (objectSid=S-1-5-21-210508586-1546228861-637364760-512) ) \"",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 201.0,
+      "maxLength": 201.0
+    },
+    "Protocol": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Dns",
+          "weight": 0.81285
+        },
+        {
+          "value": "Ldap",
+          "weight": 0.18715
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 4.0
+    },
+    "AccountName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountDomain": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountUpn": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountSid": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountObjectId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountDisplayName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DeviceName": {
+      "fillRate": 1.0,
+      "distinctCount": 10,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 30.0
+    },
+    "IPAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 8,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 13.0
+    },
+    "Port": {
+      "fillRate": 0.8128,
+      "distinctCount": 209,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "DestinationDeviceName": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 17.0,
+      "maxLength": 26.0
+    },
+    "DestinationIPAddress": {
+      "fillRate": 0.8128,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 3.0,
+      "maxLength": 14.0
+    },
+    "DestinationPort": {
+      "fillRate": 0.8128,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "53",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "TargetDeviceName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TargetAccountUpn": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TargetAccountDisplayName": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Location": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 356,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 24,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 453.0,
+      "maxLength": 1314.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "IdentityQueryEvents",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 19.0,
+      "maxLength": 19.0
+    }
+  }
+}

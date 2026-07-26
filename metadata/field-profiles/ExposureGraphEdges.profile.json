@@ -1,0 +1,444 @@
+{
+  "tableName": "ExposureGraphEdges",
+  "sources": [
+    "sample:ExposureGraphEdges-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 14,
+  "emptyInProd": [
+    "TenantId",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:06:39.2263331Z",
+  "columns": {
+    "TargetNodeLabel": {
+      "fillRate": 1.0,
+      "distinctCount": 47,
+      "topValues": [
+        {
+          "value": "device",
+          "weight": 0.3805
+        },
+        {
+          "value": "microsoft.compute/virtualmachines",
+          "weight": 0.2485
+        },
+        {
+          "value": "subscriptions",
+          "weight": 0.052
+        },
+        {
+          "value": "container-image",
+          "weight": 0.052
+        },
+        {
+          "value": "group",
+          "weight": 0.0465
+        },
+        {
+          "value": "microsoft.authorization/roleassignments",
+          "weight": 0.036
+        },
+        {
+          "value": "vpc.securitygroup",
+          "weight": 0.0355
+        },
+        {
+          "value": "microsoft.storage/storageaccounts",
+          "weight": 0.0235
+        },
+        {
+          "value": "user",
+          "weight": 0.016
+        },
+        {
+          "value": "resourcegroups",
+          "weight": 0.0125
+        },
+        {
+          "value": "microsoft.network/networkinterfaces",
+          "weight": 0.011
+        },
+        {
+          "value": "microsoft.resources/deployments",
+          "weight": 0.006
+        },
+        {
+          "value": "microsoft.operationalinsights/workspaces",
+          "weight": 0.006
+        },
+        {
+          "value": "computer-account",
+          "weight": 0.006
+        },
+        {
+          "value": "aws-keyspaces.table",
+          "weight": 0.006
+        },
+        {
+          "value": "microsoft.network/networksecuritygroups",
+          "weight": 0.0045
+        },
+        {
+          "value": "microsoft.cognitiveservices/accounts",
+          "weight": 0.0045
+        },
+        {
+          "value": "managedidentity",
+          "weight": 0.004
+        },
+        {
+          "value": "account",
+          "weight": 0.004
+        },
+        {
+          "value": "ec2.subnet",
+          "weight": 0.0035
+        },
+        {
+          "value": "microsoft.logic/workflows",
+          "weight": 0.0035
+        },
+        {
+          "value": "ad-domain",
+          "weight": 0.003
+        },
+        {
+          "value": "microsoft.containerregistry/registries",
+          "weight": 0.003
+        },
+        {
+          "value": "microsoft.network/virtualnetworks",
+          "weight": 0.003
+        },
+        {
+          "value": "microsoft.keyvault/vaults",
+          "weight": 0.003
+        },
+        {
+          "value": "ec2.securitygroup",
+          "weight": 0.003
+        },
+        {
+          "value": "azure-logic-app-shared-access-signature",
+          "weight": 0.0025
+        },
+        {
+          "value": "cloudformation.stack",
+          "weight": 0.002
+        },
+        {
+          "value": "s3.bucket",
+          "weight": 0.0015
+        },
+        {
+          "value": "aws-athena.workgroup",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 58.0
+    },
+    "EdgeProperties": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "System.Collections.Hashtable",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 28.0,
+      "maxLength": 28.0
+    },
+    "TargetNodeId": {
+      "fillRate": 1.0,
+      "distinctCount": 469,
+      "topValues": [],
+      "pattern": "md5",
+      "minLength": 32.0,
+      "maxLength": 32.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TargetNodeCategories": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "System.Object[]",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 15.0
+    },
+    "TargetNodeName": {
+      "fillRate": 0.964,
+      "distinctCount": 365,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 116.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SourceNodeCategories": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "System.Object[]",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 15.0
+    },
+    "SourceNodeName": {
+      "fillRate": 0.967,
+      "distinctCount": 888,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 107.0
+    },
+    "SourceNodeLabel": {
+      "fillRate": 1.0,
+      "distinctCount": 30,
+      "topValues": [
+        {
+          "value": "Cve",
+          "weight": 0.5955
+        },
+        {
+          "value": "mdcSecurityRecommendation",
+          "weight": 0.067
+        },
+        {
+          "value": "managedidentity",
+          "weight": 0.064
+        },
+        {
+          "value": "microsoft.containerregistry/registries",
+          "weight": 0.052
+        },
+        {
+          "value": "group",
+          "weight": 0.047
+        },
+        {
+          "value": "user",
+          "weight": 0.04
+        },
+        {
+          "value": "microsoft.authorization/roleassignments",
+          "weight": 0.033
+        },
+        {
+          "value": "serviceprincipal",
+          "weight": 0.022
+        },
+        {
+          "value": "account",
+          "weight": 0.018
+        },
+        {
+          "value": "resourcegroups",
+          "weight": 0.0165
+        },
+        {
+          "value": "mdcManagementRecommendation",
+          "weight": 0.0125
+        },
+        {
+          "value": "subscriptions",
+          "weight": 0.008
+        },
+        {
+          "value": "microsoft.compute/virtualmachines",
+          "weight": 0.004
+        },
+        {
+          "value": "microsoft.logic/workflows",
+          "weight": 0.003
+        },
+        {
+          "value": "microsoft.resources/deployments",
+          "weight": 0.0025
+        },
+        {
+          "value": "IP address",
+          "weight": 0.0015
+        },
+        {
+          "value": "ec2.vpc",
+          "weight": 0.0015
+        },
+        {
+          "value": "microsoft.network/networkinterfaces",
+          "weight": 0.0015
+        },
+        {
+          "value": "microsoft.cognitiveservices/accounts",
+          "weight": 0.0015
+        },
+        {
+          "value": "entra-userCookie",
+          "weight": 0.0015
+        },
+        {
+          "value": "microsoft.network/virtualnetworks",
+          "weight": 0.001
+        },
+        {
+          "value": "mde-healthFinding",
+          "weight": 0.001
+        },
+        {
+          "value": "mdcAuditingRecommendation",
+          "weight": 0.001
+        },
+        {
+          "value": "device",
+          "weight": 0.001
+        },
+        {
+          "value": "azure-microsoft.machinelearningservices/workspaces-project",
+          "weight": 0.001
+        },
+        {
+          "value": "serverless.container",
+          "weight": 0.0005
+        },
+        {
+          "value": "azure-microsoft.machinelearningservices/workspaces-hub",
+          "weight": 0.0005
+        },
+        {
+          "value": "ai-agent",
+          "weight": 0.0005
+        },
+        {
+          "value": "microsoft.app/containerapps",
+          "weight": 0.0005
+        },
+        {
+          "value": "user-azure-cli-secret",
+          "weight": 0.0005
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 58.0
+    },
+    "EdgeId": {
+      "fillRate": 1.0,
+      "distinctCount": 1994,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 69.0,
+      "maxLength": 69.0
+    },
+    "EdgeLabel": {
+      "fillRate": 1.0,
+      "distinctCount": 14,
+      "topValues": [
+        {
+          "value": "affecting",
+          "weight": 0.6765
+        },
+        {
+          "value": "contains",
+          "weight": 0.099
+        },
+        {
+          "value": "has permissions to",
+          "weight": 0.0565
+        },
+        {
+          "value": "has role on",
+          "weight": 0.049
+        },
+        {
+          "value": "has assignment",
+          "weight": 0.036
+        },
+        {
+          "value": "controls access to",
+          "weight": 0.033
+        },
+        {
+          "value": "member of",
+          "weight": 0.0275
+        },
+        {
+          "value": "can authenticate as",
+          "weight": 0.0065
+        },
+        {
+          "value": "routes traffic to",
+          "weight": 0.0055
+        },
+        {
+          "value": "can authenticate to",
+          "weight": 0.005
+        },
+        {
+          "value": "has credentials of",
+          "weight": 0.003
+        },
+        {
+          "value": "frequently logged in by",
+          "weight": 0.0015
+        },
+        {
+          "value": "is running",
+          "weight": 0.0005
+        },
+        {
+          "value": "runs on",
+          "weight": 0.0005
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 23.0
+    },
+    "SourceNodeId": {
+      "fillRate": 1.0,
+      "distinctCount": 975,
+      "topValues": [],
+      "pattern": "md5",
+      "minLength": 32.0,
+      "maxLength": 32.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "ExposureGraphEdges",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 18.0,
+      "maxLength": 18.0
+    }
+  }
+}

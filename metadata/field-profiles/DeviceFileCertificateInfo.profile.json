@@ -1,0 +1,386 @@
+{
+  "tableName": "DeviceFileCertificateInfo",
+  "sources": [
+    "sample:DeviceFileCertificateInfo.csv"
+  ],
+  "sampledRows": 5000.0,
+  "columnCount": 23,
+  "emptyInProd": [
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:03:40.0829086Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "CertificateSerialNumber": {
+      "fillRate": 1.0,
+      "distinctCount": 435,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 32.0,
+      "maxLength": 38.0
+    },
+    "CrlDistributionPointUrls": {
+      "fillRate": 0.9994,
+      "distinctCount": 20,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 70.0,
+      "maxLength": 467.0
+    },
+    "DeviceId": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "DeviceName": {
+      "fillRate": 1.0,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 30.0
+    },
+    "IsRootSignerMicrosoft": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "true",
+          "weight": 0.5024
+        },
+        {
+          "value": "false",
+          "weight": 0.4976
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "IsSigned": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "true",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 4.0
+    },
+    "IsTrusted": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "true",
+          "weight": 0.9984
+        },
+        {
+          "value": "false",
+          "weight": 0.0016
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "Issuer": {
+      "fillRate": 1.0,
+      "distinctCount": 20,
+      "topValues": [
+        {
+          "value": "Microsoft Windows Production PCA 2011",
+          "weight": 0.2844
+        },
+        {
+          "value": "Microsoft Code Signing PCA 2011",
+          "weight": 0.221
+        },
+        {
+          "value": "Microsoft Windows Code Signing PCA 2024",
+          "weight": 0.2118
+        },
+        {
+          "value": "Microsoft Code Signing PCA 2024",
+          "weight": 0.12
+        },
+        {
+          "value": "Microsoft Marketplace CA G 023",
+          "weight": 0.0294
+        },
+        {
+          "value": "Microsoft Marketplace CA G 022",
+          "weight": 0.027
+        },
+        {
+          "value": "Microsoft Marketplace CA G 027",
+          "weight": 0.0264
+        },
+        {
+          "value": "Microsoft Marketplace CA G 024",
+          "weight": 0.0254
+        },
+        {
+          "value": "Microsoft Marketplace CA G 028",
+          "weight": 0.018
+        },
+        {
+          "value": "Microsoft Marketplace CA G 026",
+          "weight": 0.0124
+        },
+        {
+          "value": "Microsoft Windows Third Party Component CA 2013",
+          "weight": 0.0118
+        },
+        {
+          "value": "Microsoft Code Signing PCA 2010",
+          "weight": 0.0048
+        },
+        {
+          "value": "DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1",
+          "weight": 0.002
+        },
+        {
+          "value": "Microsoft ID Verified CS EOC CA 02",
+          "weight": 0.002
+        },
+        {
+          "value": "AME CS CA 01",
+          "weight": 0.001
+        },
+        {
+          "value": "Microsoft Code Signing PCA",
+          "weight": 0.001
+        },
+        {
+          "value": ".NET Foundation Projects Code Signing CA",
+          "weight": 0.0006
+        },
+        {
+          "value": "EdgeBuild",
+          "weight": 0.0006
+        },
+        {
+          "value": "Microsoft Windows Third Party Component CA 2012",
+          "weight": 0.0002
+        },
+        {
+          "value": "Windows UEFI CA 2023",
+          "weight": 0.0002
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 56.0
+    },
+    "IssuerHash": {
+      "fillRate": 0.9994,
+      "distinctCount": 19,
+      "topValues": [],
+      "pattern": "sha1",
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "MachineGroup": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 39.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 3760,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 7.0
+    },
+    "SHA1": {
+      "fillRate": 1.0,
+      "distinctCount": 2156,
+      "topValues": [],
+      "pattern": "sha1",
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "SignatureType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Embedded",
+          "weight": 0.7808
+        },
+        {
+          "value": "Catalog",
+          "weight": 0.2192
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 8.0
+    },
+    "Signer": {
+      "fillRate": 1.0,
+      "distinctCount": 16,
+      "topValues": [
+        {
+          "value": "Microsoft Corporation",
+          "weight": 0.6062
+        },
+        {
+          "value": "Microsoft Windows",
+          "weight": 0.2782
+        },
+        {
+          "value": ".NET",
+          "weight": 0.0764
+        },
+        {
+          "value": "Microsoft Windows Software Compatibility Publisher",
+          "weight": 0.0118
+        },
+        {
+          "value": "Microsoft 3rd Party Application Component",
+          "weight": 0.0096
+        },
+        {
+          "value": "Microsoft Windows Publisher",
+          "weight": 0.0064
+        },
+        {
+          "value": "Python Software Foundation",
+          "weight": 0.0026
+        },
+        {
+          "value": "Microsoft Dynamic Code Publisher",
+          "weight": 0.0018
+        },
+        {
+          "value": "Microsoft Corp Enclave Signer",
+          "weight": 0.0016
+        },
+        {
+          "value": "Google LLC",
+          "weight": 0.0014
+        },
+        {
+          "value": ".NET DAC",
+          "weight": 0.0012
+        },
+        {
+          "value": "Microsoft Azure 3rd Party Code Sign",
+          "weight": 0.001
+        },
+        {
+          "value": "EdgeBuild",
+          "weight": 0.0006
+        },
+        {
+          "value": "Windows Community Toolkit (.NET Foundation)",
+          "weight": 0.0006
+        },
+        {
+          "value": "Skype Software Sarl",
+          "weight": 0.0004
+        },
+        {
+          "value": "Microsoft Windows Hardware Compatibility Publisher",
+          "weight": 0.0002
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 50.0
+    },
+    "SignerHash": {
+      "fillRate": 1.0,
+      "distinctCount": 435,
+      "topValues": [],
+      "pattern": "sha1",
+      "minLength": 40.0,
+      "maxLength": 40.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 3877,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 24.0,
+      "maxLength": 28.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 3877,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 24.0,
+      "maxLength": 28.0
+    },
+    "CertificateCountersignatureTime": {
+      "fillRate": 0.9994,
+      "distinctCount": 2331,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 24.0
+    },
+    "CertificateCreationTime": {
+      "fillRate": 1.0,
+      "distinctCount": 214,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "CertificateExpirationTime": {
+      "fillRate": 1.0,
+      "distinctCount": 214,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 20.0,
+      "maxLength": 20.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "DeviceFileCertificateInfo",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 25.0,
+      "maxLength": 25.0
+    }
+  }
+}

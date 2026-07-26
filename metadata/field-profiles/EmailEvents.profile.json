@@ -1,0 +1,537 @@
+{
+  "tableName": "EmailEvents",
+  "sources": [
+    "sample:EmailEvents-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 54,
+  "emptyInProd": [
+    "Connectors",
+    "OrgLevelAction",
+    "OrgLevelPolicy",
+    "ThreatNames",
+    "UserLevelAction",
+    "UserLevelPolicy",
+    "ExchangeTransportRule",
+    "DistributionList",
+    "ForwardingInformation",
+    "Context",
+    "ThreatClassification",
+    "SourceSystem"
+  ],
+  "generatedUtc": "2026-07-26T01:05:10.1095243Z",
+  "columns": {
+    "TenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AttachmentCount": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.963
+        },
+        {
+          "value": "1",
+          "weight": 0.013
+        },
+        {
+          "value": "2",
+          "weight": 0.012
+        },
+        {
+          "value": "10",
+          "weight": 0.008
+        },
+        {
+          "value": "9",
+          "weight": 0.003
+        },
+        {
+          "value": "3",
+          "weight": 0.001
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 2.0
+    },
+    "AuthenticationDetails": {
+      "fillRate": 0.997,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 30.0,
+      "maxLength": 65.0
+    },
+    "AdditionalFields": {
+      "fillRate": 0.003,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 60.0,
+      "maxLength": 60.0
+    },
+    "ConfidenceLevel": {
+      "fillRate": 0.003,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 18.0,
+      "maxLength": 18.0
+    },
+    "Connectors": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DetectionMethods": {
+      "fillRate": 0.003,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 35.0,
+      "maxLength": 35.0
+    },
+    "DeliveryAction": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Delivered",
+          "weight": 0.997
+        },
+        {
+          "value": "Junked",
+          "weight": 0.003
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 9.0
+    },
+    "DeliveryLocation": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 11.0,
+      "maxLength": 20.0
+    },
+    "EmailClusterId": {
+      "fillRate": 0.999,
+      "distinctCount": 75,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 10.0
+    },
+    "EmailDirection": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 9.0
+    },
+    "EmailLanguage": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "EmailAction": {
+      "fillRate": 0.003,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 24.0,
+      "maxLength": 24.0
+    },
+    "EmailActionPolicy": {
+      "fillRate": 0.003,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "EmailActionPolicyGuid": {
+      "fillRate": 0.003,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "OrgLevelAction": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "OrgLevelPolicy": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "InternetMessageId": {
+      "fillRate": 1.0,
+      "distinctCount": 1035,
+      "topValues": [],
+      "pattern": null,
+      "freeText": true,
+      "minLength": 42.0,
+      "maxLength": 245.0
+    },
+    "NetworkMessageId": {
+      "fillRate": 1.0,
+      "distinctCount": 1035,
+      "topValues": [],
+      "pattern": "guid",
+      "freeText": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "RecipientEmailAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 25,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 19.0,
+      "maxLength": 42.0
+    },
+    "RecipientObjectId": {
+      "fillRate": 0.993,
+      "distinctCount": 19,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 1035,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 57.0,
+      "maxLength": 59.0
+    },
+    "SenderDisplayName": {
+      "fillRate": 0.999,
+      "distinctCount": 14,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 58.0
+    },
+    "SenderFromAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 15,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 22.0,
+      "maxLength": 77.0
+    },
+    "SenderFromDomain": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 27.0
+    },
+    "SenderObjectId": {
+      "fillRate": 0.017,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SenderIPv4": {
+      "fillRate": 0.01,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 11.0,
+      "maxLength": 13.0
+    },
+    "SenderIPv6": {
+      "fillRate": 0.873,
+      "distinctCount": 31,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 20.0,
+      "maxLength": 21.0
+    },
+    "SenderMailFromAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 19,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 22.0,
+      "maxLength": 78.0
+    },
+    "SenderMailFromDomain": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 27.0
+    },
+    "Subject": {
+      "fillRate": 1.0,
+      "distinctCount": 94,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 95.0
+    },
+    "ThreatTypes": {
+      "fillRate": 0.003,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Phish",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 5.0
+    },
+    "ThreatNames": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 703,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "LastEventExecutionTime": {
+      "fillRate": 0.4845,
+      "distinctCount": 649,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 703,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "UrlCount": {
+      "fillRate": 1.0,
+      "distinctCount": 13,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 2.0
+    },
+    "UserLevelAction": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UserLevelPolicy": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "BulkComplaintLevel": {
+      "fillRate": 0.001,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "2",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "LatestDeliveryLocation": {
+      "fillRate": 0.5145,
+      "distinctCount": 3,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 11.0,
+      "maxLength": 20.0
+    },
+    "LatestDeliveryAction": {
+      "fillRate": 0.5145,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Delivered",
+          "weight": 0.99708
+        },
+        {
+          "value": "Junked",
+          "weight": 0.00292
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 9.0
+    },
+    "ExchangeTransportRule": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DistributionList": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ForwardingInformation": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Context": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "To": {
+      "fillRate": 1.0,
+      "distinctCount": 33,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 30.0,
+      "maxLength": 59.0
+    },
+    "Cc": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "ThreatClassification": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "RecipientDomain": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 32.0
+    },
+    "EmailSize": {
+      "fillRate": 1.0,
+      "distinctCount": 971,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 6.0
+    },
+    "IsFirstContact": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "False",
+          "weight": 0.981
+        },
+        {
+          "value": "True",
+          "weight": 0.019
+        }
+      ],
+      "pattern": null,
+      "minLength": 4.0,
+      "maxLength": 5.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "EmailEvents",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 11.0,
+      "maxLength": 11.0
+    }
+  }
+}

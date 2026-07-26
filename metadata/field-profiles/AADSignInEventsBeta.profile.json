@@ -1,0 +1,906 @@
+{
+  "tableName": "AADSignInEventsBeta",
+  "sources": [
+    "sample:AADSignInEventsBeta-RealTelemetry.csv"
+  ],
+  "sampledRows": 2000.0,
+  "columnCount": 50,
+  "emptyInProd": [
+    "SourceSystem",
+    "TenantId",
+    "RiskLevelDuringSignIn",
+    "RiskEventTypes"
+  ],
+  "generatedUtc": "2026-07-26T01:02:56.1899074Z",
+  "columns": {
+    "ConditionalAccessStatus": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.9485
+        },
+        {
+          "value": "2",
+          "weight": 0.0495
+        },
+        {
+          "value": "1",
+          "weight": 0.002
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "IsManaged": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.9615
+        },
+        {
+          "value": "1",
+          "weight": 0.0385
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "AuthenticationProcessingDetails": {
+      "fillRate": 1.0,
+      "distinctCount": 208,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 145.0,
+      "maxLength": 3649.0
+    },
+    "ErrorCode": {
+      "fillRate": 1.0,
+      "distinctCount": 14,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.823
+        },
+        {
+          "value": "70043",
+          "weight": 0.153
+        },
+        {
+          "value": "500011",
+          "weight": 0.0065
+        },
+        {
+          "value": "9010010",
+          "weight": 0.0065
+        },
+        {
+          "value": "53003",
+          "weight": 0.0025
+        },
+        {
+          "value": "70044",
+          "weight": 0.0025
+        },
+        {
+          "value": "500014",
+          "weight": 0.001
+        },
+        {
+          "value": "50079",
+          "weight": 0.001
+        },
+        {
+          "value": "50140",
+          "weight": 0.001
+        },
+        {
+          "value": "65001",
+          "weight": 0.001
+        },
+        {
+          "value": "50011",
+          "weight": 0.0005
+        },
+        {
+          "value": "50199",
+          "weight": 0.0005
+        },
+        {
+          "value": "50206",
+          "weight": 0.0005
+        },
+        {
+          "value": "65002",
+          "weight": 0.0005
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 7.0
+    },
+    "AadDeviceId": {
+      "fillRate": 0.5575,
+      "distinctCount": 12,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 36.0
+    },
+    "ResourceId": {
+      "fillRate": 0.9935,
+      "distinctCount": 105,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AuthenticationRequirement": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "multiFactorAuthentication",
+          "weight": 0.8975
+        },
+        {
+          "value": "singleFactorAuthentication",
+          "weight": 0.1025
+        }
+      ],
+      "pattern": null,
+      "minLength": 25.0,
+      "maxLength": 26.0
+    },
+    "UserAgent": {
+      "fillRate": 0.6325,
+      "distinctCount": 24,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 142.0
+    },
+    "Browser": {
+      "fillRate": 0.949,
+      "distinctCount": 28,
+      "topValues": [
+        {
+          "value": "Edge 18.26200",
+          "weight": 0.38725
+        },
+        {
+          "value": "Rich Client 4.83.1.0",
+          "weight": 0.26396
+        },
+        {
+          "value": "Chrome 150.0.0",
+          "weight": 0.05111
+        },
+        {
+          "value": "Edge 149.0.0",
+          "weight": 0.04847
+        },
+        {
+          "value": "Edge 150.0.0",
+          "weight": 0.04268
+        },
+        {
+          "value": "Edge 18.28000",
+          "weight": 0.04215
+        },
+        {
+          "value": "Rich Client 4.72.1.0",
+          "weight": 0.04004
+        },
+        {
+          "value": "Mobile Safari",
+          "weight": 0.03003
+        },
+        {
+          "value": "Rich Client 4.83.3.0",
+          "weight": 0.02529
+        },
+        {
+          "value": "Rich Client 4.79.2.0",
+          "weight": 0.00896
+        },
+        {
+          "value": "Chrome 149.0.0",
+          "weight": 0.00685
+        },
+        {
+          "value": "Rich Client 4.19.1.0",
+          "weight": 0.00685
+        },
+        {
+          "value": "Rich Client 4.21.1.0",
+          "weight": 0.00632
+        },
+        {
+          "value": "Rich Client 4.74.1.0",
+          "weight": 0.00527
+        },
+        {
+          "value": "Rich Client 4.84.1.0",
+          "weight": 0.00527
+        },
+        {
+          "value": "Rich Client 4.71.1.0",
+          "weight": 0.00421
+        },
+        {
+          "value": "Rich Client 4.82.0.0",
+          "weight": 0.00369
+        },
+        {
+          "value": "Rich Client 4.61.3.0",
+          "weight": 0.00316
+        },
+        {
+          "value": "IE 7.0",
+          "weight": 0.00316
+        },
+        {
+          "value": "Rich Client 4.24.1.0",
+          "weight": 0.00316
+        },
+        {
+          "value": "Python Requests 2.33",
+          "weight": 0.00263
+        },
+        {
+          "value": "Rich Client 4.23.0.0",
+          "weight": 0.00263
+        },
+        {
+          "value": "Rich Client 4.78.0.0",
+          "weight": 0.00211
+        },
+        {
+          "value": "Rich Client 4.66.1.0",
+          "weight": 0.00158
+        },
+        {
+          "value": "Rich Client 4.77.1.0",
+          "weight": 0.00158
+        },
+        {
+          "value": "Rich Client 4.84.0.0",
+          "weight": 0.00053
+        },
+        {
+          "value": "Rich Client 4.19.0.0",
+          "weight": 0.00053
+        },
+        {
+          "value": "Rich Client 4.13.1.0",
+          "weight": 0.00053
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 20.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "AADSignInEventsBeta",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "IsGuestUser": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "LastPasswordChangeTimestamp": {
+      "fillRate": 0.983,
+      "distinctCount": 10,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "Longitude": {
+      "fillRate": 1.0,
+      "distinctCount": 23,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 19.0
+    },
+    "RiskState": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "ResourceTenantId": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "AccountDisplayName": {
+      "fillRate": 1.0,
+      "distinctCount": 12,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 10.0,
+      "maxLength": 61.0
+    },
+    "NetworkLocationDetails": {
+      "fillRate": 1.0,
+      "distinctCount": 4,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 1379.0
+    },
+    "TimeGenerated": {
+      "fillRate": 1.0,
+      "distinctCount": 1592,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "Country": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 2.0,
+      "maxLength": 2.0
+    },
+    "RiskLevelAggregated": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "AlternateSignInName": {
+      "fillRate": 0.0025,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "upn",
+      "minLength": 33.0,
+      "maxLength": 33.0
+    },
+    "RequestId": {
+      "fillRate": 1.0,
+      "distinctCount": 1984,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Application": {
+      "fillRate": 1.0,
+      "distinctCount": 90,
+      "topValues": [
+        {
+          "value": "Microsoft 365 Security and Compliance Center",
+          "weight": 0.1425
+        },
+        {
+          "value": "Graph Files Manager",
+          "weight": 0.0925
+        },
+        {
+          "value": "Azure Portal",
+          "weight": 0.0775
+        },
+        {
+          "value": "Microsoft Teams",
+          "weight": 0.051
+        },
+        {
+          "value": "Microsoft Office",
+          "weight": 0.048
+        },
+        {
+          "value": "Microsoft Edge",
+          "weight": 0.042
+        },
+        {
+          "value": "Visual Studio Code",
+          "weight": 0.0375
+        },
+        {
+          "value": "WindowsDefenderATP",
+          "weight": 0.037
+        },
+        {
+          "value": "Security Copilot API",
+          "weight": 0.035
+        },
+        {
+          "value": "M365ChatClient",
+          "weight": 0.0305
+        },
+        {
+          "value": "Microsoft Office 365 Portal",
+          "weight": 0.0295
+        },
+        {
+          "value": "Microsoft Edge Enterprise New Tab Page",
+          "weight": 0.0285
+        },
+        {
+          "value": "Microsoft Exchange Online Protection",
+          "weight": 0.0275
+        },
+        {
+          "value": "Microsoft Teams Services",
+          "weight": 0.025
+        },
+        {
+          "value": "ADIbizaUX",
+          "weight": 0.021
+        },
+        {
+          "value": "OneDrive SyncEngine",
+          "weight": 0.0185
+        },
+        {
+          "value": "Microsoft Authentication Broker",
+          "weight": 0.016
+        },
+        {
+          "value": "Microsoft 365 App Catalog Services",
+          "weight": 0.016
+        },
+        {
+          "value": "Universal Store Native Client",
+          "weight": 0.0145
+        },
+        {
+          "value": "Microsoft Defender Hunting",
+          "weight": 0.0115
+        },
+        {
+          "value": "Azure Purview",
+          "weight": 0.011
+        },
+        {
+          "value": "Outlook Mobile",
+          "weight": 0.011
+        },
+        {
+          "value": "OfficeHome",
+          "weight": 0.0105
+        },
+        {
+          "value": "Microsoft Teams Web Client",
+          "weight": 0.0095
+        },
+        {
+          "value": "Microsoft Threat Protection",
+          "weight": 0.0095
+        },
+        {
+          "value": "Microsoft_Azure_PIMCommon",
+          "weight": 0.009
+        },
+        {
+          "value": "Windows Insider Program",
+          "weight": 0.007
+        },
+        {
+          "value": "FXIrisClient",
+          "weight": 0.0065
+        },
+        {
+          "value": "MS-PIM",
+          "weight": 0.0065
+        },
+        {
+          "value": "Microsoft Azure Active Directory Connect",
+          "weight": 0.006
+        }
+      ],
+      "pattern": null,
+      "minLength": 6.0,
+      "maxLength": 65.0
+    },
+    "OSPlatform": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "Windows10",
+          "weight": 0.8085
+        },
+        {
+          "value": "Windows",
+          "weight": 0.1415
+        },
+        {
+          "value": "Ios 26.5.2",
+          "weight": 0.0245
+        },
+        {
+          "value": "Linux",
+          "weight": 0.0125
+        },
+        {
+          "value": "Ios",
+          "weight": 0.009
+        },
+        {
+          "value": "Ios 26.5",
+          "weight": 0.004
+        }
+      ],
+      "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 10.0
+    },
+    "DeviceTrustType": {
+      "fillRate": 0.552,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "Azure AD registered",
+          "weight": 0.54801
+        },
+        {
+          "value": "Azure AD joined",
+          "weight": 0.45199
+        }
+      ],
+      "pattern": null,
+      "minLength": 15.0,
+      "maxLength": 19.0
+    },
+    "RiskLevelDuringSignIn": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "ResourceDisplayName": {
+      "fillRate": 0.9865,
+      "distinctCount": 103,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 4.0,
+      "maxLength": 53.0
+    },
+    "State": {
+      "fillRate": 1.0,
+      "distinctCount": 12,
+      "topValues": [
+        {
+          "value": "Virginia",
+          "weight": 0.511
+        },
+        {
+          "value": "Rheinland-Pfalz",
+          "weight": 0.2
+        },
+        {
+          "value": "Hessen",
+          "weight": 0.1135
+        },
+        {
+          "value": "Wyoming",
+          "weight": 0.0705
+        },
+        {
+          "value": "Texas",
+          "weight": 0.054
+        },
+        {
+          "value": "Tennessee",
+          "weight": 0.018
+        },
+        {
+          "value": "West Virginia",
+          "weight": 0.018
+        },
+        {
+          "value": "Arizona",
+          "weight": 0.0045
+        },
+        {
+          "value": "California",
+          "weight": 0.0045
+        },
+        {
+          "value": "Minnesota",
+          "weight": 0.0045
+        },
+        {
+          "value": "Maryland",
+          "weight": 0.001
+        },
+        {
+          "value": "Washington",
+          "weight": 0.0005
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 15.0
+    },
+    "ConditionalAccessPolicies": {
+      "fillRate": 1.0,
+      "distinctCount": 143,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 2.0,
+      "maxLength": 6678.0
+    },
+    "CorrelationId": {
+      "fillRate": 1.0,
+      "distinctCount": 1883,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 1999,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "Latitude": {
+      "fillRate": 1.0,
+      "distinctCount": 23,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 6.0,
+      "maxLength": 18.0
+    },
+    "City": {
+      "fillRate": 1.0,
+      "distinctCount": 19,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 5.0,
+      "maxLength": 17.0
+    },
+    "DeviceName": {
+      "fillRate": 0.5575,
+      "distinctCount": 10,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 9.0,
+      "maxLength": 17.0
+    },
+    "RiskEventTypes": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "AccountObjectId": {
+      "fillRate": 1.0,
+      "distinctCount": 13,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ApplicationId": {
+      "fillRate": 1.0,
+      "distinctCount": 90,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "LogonType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 19.0,
+      "maxLength": 22.0
+    },
+    "IPAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 27,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 10.0,
+      "maxLength": 39.0
+    },
+    "TokenIssuerType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "IsExternalUser": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 1592,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 21.0
+    },
+    "EndpointCall": {
+      "fillRate": 1.0,
+      "distinctCount": 7,
+      "topValues": [
+        {
+          "value": "OAuth2:Token",
+          "weight": 0.9735
+        },
+        {
+          "value": "OAuth2:Authorize",
+          "weight": 0.015
+        },
+        {
+          "value": "Login:reprocess",
+          "weight": 0.005
+        },
+        {
+          "value": "Login:login",
+          "weight": 0.003
+        },
+        {
+          "value": "Kmsi:kmsi",
+          "weight": 0.002
+        },
+        {
+          "value": "Cmsi:Cmsi",
+          "weight": 0.001
+        },
+        {
+          "value": "Consent:Set",
+          "weight": 0.0005
+        }
+      ],
+      "pattern": null,
+      "minLength": 9.0,
+      "maxLength": 16.0
+    },
+    "EntraIdDeviceId": {
+      "fillRate": 0.5575,
+      "distinctCount": 12,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 13.0,
+      "maxLength": 36.0
+    },
+    "AccountUpn": {
+      "fillRate": 1.0,
+      "distinctCount": 13,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 22.0,
+      "maxLength": 89.0
+    },
+    "ClientAppUsed": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
+      "topValues": [
+        {
+          "value": "Browser",
+          "weight": 0.543
+        },
+        {
+          "value": "Mobile Apps and Desktop clients",
+          "weight": 0.4555
+        },
+        {
+          "value": "Unknown",
+          "weight": 0.0015
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 31.0
+    },
+    "SessionId": {
+      "fillRate": 1.0,
+      "distinctCount": 73,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "IsCompliant": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.9615
+        },
+        {
+          "value": "1",
+          "weight": 0.0385
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    }
+  }
+}
