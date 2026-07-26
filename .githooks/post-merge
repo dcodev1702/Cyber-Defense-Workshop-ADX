@@ -1,0 +1,98 @@
+#!/bin/sh
+# Rebuild the read-only gateway whenever a pull changes its source.
+#
+# The gateway is a Compose `build:` service, so `docker compose up -d` reuses
+# whatever image was last built on this host and never looks at the source. That
+# is not a theoretical problem: after the gateway hardening was pulled, the
+# running container was still a five-day-old pre-hardening build serving
+# `.show queries` with a 200, while `docker compose ps` reported healthy
+# throughout -- the health check only proves the process answers on /healthz.
+#
+# So the rebuild happens here, attached to the event that causes the drift,
+# rather than relying on someone remembering a flag.
+#
+# Git ignores this hook's exit code, so failures are printed loudly rather than
+# blocking the pull. Set CDW_SKIP_GATEWAY_REBUILD=1 to opt out.
+
+set -u
+
+GATEWAY_PATH='tools/kusto-readonly-gateway'
+SERVICE='kusto-readonly-gateway'
+CONTAINER='cyber-conf-wiesbaden-kusto-readonly-gateway'
+
+if [ "${CDW_SKIP_GATEWAY_REBUILD:-0}" = "1" ]; then
+    exit 0
+fi
+
+# ORIG_HEAD is where the branch was before the merge, so this is exactly the set
+# of files the pull brought in.
+if ! changed=$(git diff-tree -r --name-only --no-commit-id ORIG_HEAD HEAD 2>/dev/null); then
+    exit 0
+fi
+
+if ! printf '%s\n' "$changed" | grep -q "^$GATEWAY_PATH/"; then
+    exit 0
+fi
+
+printf '\n'
+printf 'This pull changed %s:\n' "$GATEWAY_PATH"
+printf '%s\n' "$changed" | grep "^$GATEWAY_PATH/" | sed 's/^/  /'
+printf '\n'
+
+if ! command -v docker >/dev/null 2>&1; then
+    printf 'docker is not on PATH. Rebuild before the next class:\n'
+    printf '  docker compose up -d --build %s\n\n' "$SERVICE"
+    exit 0
+fi
+
+if ! docker info >/dev/null 2>&1; then
+    printf 'Docker is not running. Rebuild before the next class:\n'
+    printf '  docker compose up -d --build %s\n\n' "$SERVICE"
+    exit 0
+fi
+
+printf 'Rebuilding the read-only gateway from the pulled source...\n'
+
+# --no-deps keeps this away from the kusto container, whose persistent database
+# registration does not survive replacement.
+if ! docker compose up -d --build --no-deps "$SERVICE" >/dev/null 2>&1; then
+    printf '\n  REBUILD FAILED. The running gateway is still the OLD build.\n'
+    printf '  Run this and read the error:\n'
+    printf '    docker compose up -d --build %s\n\n' "$SERVICE"
+    exit 0
+fi
+
+# Health only proves the process is listening. Confirm the policy is the one the
+# source describes: a metadata read is allowed, a disclosure command is not.
+probe() {
+    docker exec "$CONTAINER" node -e "
+        fetch('http://127.0.0.1:8081/v1/rest/mgmt', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ db: 'CyberDefendStudentSnapshot', csl: '$1' })
+        }).then(r => { console.log(r.status); process.exit(0); })
+          .catch(() => { console.log('error'); process.exit(0); });
+    " 2>/dev/null
+}
+
+i=0
+while [ "$i" -lt 20 ]; do
+    [ "$(docker inspect "$CONTAINER" --format '{{.State.Health.Status}}' 2>/dev/null)" = 'healthy' ] && break
+    i=$((i + 1))
+    sleep 2
+done
+
+allowed=$(probe '.show tables')
+blocked=$(probe '.show queries')
+
+printf '  .show tables  (must be 200) : %s\n' "${allowed:-no answer}"
+printf '  .show queries (must be 403) : %s\n' "${blocked:-no answer}"
+
+if [ "$allowed" = '200' ] && [ "$blocked" = '403' ]; then
+    printf '  Gateway rebuilt and the policy is live.\n\n'
+else
+    printf '\n  THE POLICY IS NOT WHAT THE SOURCE SAYS. Do not start a class on this.\n'
+    printf '  Inspect with: docker compose logs %s\n\n' "$SERVICE"
+fi
+
+exit 0

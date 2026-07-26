@@ -2,11 +2,18 @@ name: cyber-conf-wiesbaden
 
 services:
   kusto:
-    # A workshop's reproducibility depends on the emulator version, and :latest can
-    # change between rehearsal and delivery. Pin KUSTO_IMAGE_TAG to the digest or
-    # version you rehearsed against (e.g. in compose.override.yaml or .env) so the
-    # default only floats until you have rehearsed once, not on delivery day.
-    image: mcr.microsoft.com/azuredataexplorer/kustainer-linux:${KUSTO_IMAGE_TAG:-latest}
+    # Pinned by digest to the emulator the workshop was actually rehearsed,
+    # backed up, and restored against: build 1.0.9697.27504, product version
+    # 2026.07.20.1506-2629-8bf4dbb-master. `:latest` moves, and the restore path
+    # is only proven for this build -- a persistent database written by one
+    # emulator version cannot be attached by another, so a silent tag change
+    # between rehearsal and delivery is a data-loss event, not a version bump.
+    #
+    # Override deliberately with KUSTO_IMAGE (full reference, tag or digest):
+    #   $env:KUSTO_IMAGE = 'mcr.microsoft.com/azuredataexplorer/kustainer-linux:latest'
+    # Re-pin after rehearsing a new build:
+    #   docker image inspect <image> --format '{{index .RepoDigests 0}}'
+    image: ${KUSTO_IMAGE:-mcr.microsoft.com/azuredataexplorer/kustainer-linux@sha256:9cd9859c5ebd9d6d5cf81ec2681222ff9c805de49fedb1f6fb901eac7e25dac2}
     container_name: cyber-conf-wiesbaden-kusto
     restart: unless-stopped
     init: true

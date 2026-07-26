@@ -215,6 +215,17 @@ test('rejects databases outside KUSTO_ALLOWED_DATABASES', async () => {
   });
 });
 
+test('keeps .show cluster blocked', () => {
+  // Decided 2026-07-26: stays blocked. The pre-hardening gateway allowed every
+  // .show, so this is a deliberate behaviour change rather than an oversight,
+  // and it is asserted here so it is not quietly reverted. It is not part of the
+  // web UI's add-connection handshake -- students connect and work normally --
+  // and .show cluster principals is the disclosure the allowlist exists to stop.
+  for (const command of ['.show cluster', '.show cluster principals', '.show cluster policy caching']) {
+    assert.equal(validateKql(command, 'mgmt').allowed, false, `${command} must stay blocked`);
+  }
+});
+
 test('completes the ADX web UI add-connection handshake', async () => {
   // Regression: the web UI's opening calls carry no db, because discovering the
   // databases is what they are for. Requiring one made dataexplorer.azure.com

@@ -130,6 +130,12 @@ function firstManagementVerb(statement) {
 // discloses real tenant identities. So the management endpoint permits only the
 // metadata reads the ADX web UI and the workshop exercises actually need,
 // instead of every command whose first verb happens to be "show".
+//
+// .show cluster is deliberately absent, decided 2026-07-26. It is not part of
+// the web UI's add-connection handshake, so students connect and work normally;
+// clicking into cluster-level detail returns 403. That is the intended
+// behaviour and a regression test asserts it -- the pre-hardening gateway
+// allowed it, so its absence is a decision, not an oversight.
 const managementShowAllowlist = [
   /^\.show\s+version\b/i,
   /^\.show\s+schema\b/i,

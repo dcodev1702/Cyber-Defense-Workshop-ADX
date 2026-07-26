@@ -17,6 +17,13 @@ Local hooks can be bypassed with --no-verify, so the same check also runs in CI
 through .github\workflows\telemetry-safety.yml. This installer makes the failure
 fast and local; the workflow makes it unavoidable.
 
+The post-merge hook rebuilds the read-only gateway whenever a pull changes
+tools\kusto-readonly-gateway. The gateway is a Compose `build:` service, so
+`docker compose up -d` reuses the last image built on the host and never
+consults the source -- which once left a five-day-old pre-hardening build
+serving the class while every health check reported healthy. Set
+CDW_SKIP_GATEWAY_REBUILD=1 to opt out.
+
 .EXAMPLE
 pwsh -NoProfile -File .\scripts\Install-WorkshopGitHooks.ps1
 
@@ -56,6 +63,7 @@ try {
     # matters only on Unix, where a fresh clone leaves the file non-executable.
     if (-not $IsWindows) {
         chmod +x (Join-Path $repositoryRoot '.githooks/pre-commit')
+        chmod +x (Join-Path $repositoryRoot '.githooks/post-merge')
     }
 
     Write-Host ("core.hooksPath set to {0}" -f (git config --get core.hooksPath)) -ForegroundColor Green

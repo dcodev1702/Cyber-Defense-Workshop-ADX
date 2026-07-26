@@ -11,9 +11,11 @@
 3. Run `scripts\Start-CloudflareAdxTunnel.ps1 -Apply` to create the temporary shared Service Auth route and start the connector.
 4. Rebuild the gateway from source with `docker compose up --detach --build kusto-readonly-gateway`. The gateway is a `build:` service, so a plain `docker compose up` reuses whatever image was built last and silently serves a stale policy.
 5. Confirm `kusto-readonly-gateway` is healthy with `docker compose ps` and validate a pilot student proxy connection. Health only proves the process is listening, so also confirm the policy is live: `.show tables` must succeed and `.show queries` must return 403.
-6. Prove the connector cannot route around the gateway with `scripts\Test-WorkshopNetworkIsolation.ps1`. Step 3 applies the rule, but it lives in the host firewall and is lost on a Docker engine restart; reapply with `scripts\Set-WorkshopNetworkIsolation.ps1` if the test fails.
+6. Run `scripts\Test-WorkshopReadiness.ps1` and require a green verdict before the class starts. It checks the six things that are quiet when they break — containers, the rehearsed emulator build, whether the gateway is running its own source rather than a stale image, the table and row counts, the network boundary, and the student path — and reapplies the isolation rule, which does not survive a Docker engine restart.
 7. Distribute only `student-access.env`, `Start-StudentAdxProxy.ps1`, and the student lab instructions through the temporary class channel.
 8. Have students import `STUDENT-GUIDES\dashboard-CYBER-DEFEND-V4.json` as their dashboard; keep `dashboards\cyber-defense-workshop-dashboard.kql` open in the query editor for pinning tiles manually, and `docs\instructor_answer_key.kql` in a second tab for yourself.
+
+> `.show cluster` returns 403 by design. It is not part of the Azure Data Explorer **Add connection** handshake, so students connect and query normally, but clicking into cluster-level detail is refused. Expect the question in class.
 
 Before an intentional Kustainer replacement, run `docker compose stop kusto`, `scripts\Backup-LocalKustoSnapshot.ps1`, and `docker compose start kusto`; copy the resulting ZIP to secure storage. Rehearse the restore before the event with `scripts\Restore-LocalKustoSnapshot.ps1`, which rebuilds the database in a throwaway container and reconciles the row counts. If the snapshot is lost on site, rebuild it without Azure by running `scripts\Restore-LocalKustoSnapshot.ps1 -ExtractPayloadTo .\data\generated` followed by `scripts\Import-GeneratedDataToKustainer.ps1`.
 

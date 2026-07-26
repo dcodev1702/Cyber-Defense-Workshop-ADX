@@ -12,8 +12,10 @@
 Work proceeded straight down the evaluation's "Suggested order of work," in value-per-effort
 order. Everything was verified where a runner exists:
 
-- **55 / 55** gateway tests pass (`node --test`) — 52 from this pass, 3 added afterwards for the ADX
-  web UI handshake
+- **55 / 55** gateway tests pass (`node --test`) — 52 from this pass, 4 added afterwards for the ADX
+  web UI handshake and the `.show cluster` decision (**56** as of the operational pass)
+- **Pre-class go/no-go**: `scripts/Test-WorkshopReadiness.ps1` — 7 checks green against the live
+  stack, and verified to turn red when the network boundary is dropped
 - All PowerShell files **parse clean** with **0 lint errors** (PSScriptAnalyzer; 312 pre-existing
   style warnings remain, documented below)
 - `Test-WorkshopPackage.ps1` **exits 0 on a clean clone** (no `sample/`, no generated data)
@@ -153,30 +155,38 @@ Commits: `704d6ef`, `54ed23b`, `705b0f5` (backup/restore), `cdd0332` (gateway ha
 
 ## What remains
 
-### Before Wiesbaden — operational, not code
+### Before Wiesbaden — operational, not code ✅ DONE
 
-These are the ones that will bite on the day. None is a code change.
+All four are now implemented. One carries a consequence you have to choose when to take.
 
-- **Pin `KUSTO_IMAGE_TAG`.** `compose.yaml` resolves to `kustainer-linux:latest` today; nothing pins
-  it in `compose.override.yaml`, `.env`, or the environment. The image currently running is the one
-  every restore and rehearsal was verified against, but `:latest` can move between rehearsal and
-  delivery, and `compose.yaml`'s own comment advises pinning once rehearsed. **Not done.**
-- **Reapply the network isolation rule after any Docker engine restart**, and after anything that
-  recreates the networks. `docker compose stop`/`start` is fine; a Docker Desktop restart or
-  `docker compose down` is not. It is in force right now.
+- **`KUSTO_IMAGE_TAG` pinned — done.** `compose.yaml` now pins Kustainer **by digest** to the build
+  the snapshot was rehearsed, backed up, and restored against (`1.0.9697.27504` /
+  `2026.07.20.1506-2629-8bf4dbb-master`). The pin sits in the tracked Compose file rather than the
+  generated, git-ignored `compose.override.yaml`, so Terraform cannot wipe it. `KUSTO_IMAGE`
+  overrides it deliberately. The old `KUSTO_IMAGE_TAG` could not express a digest at all —
+  `image:sha256:...` is not a valid reference.
 
-  ```powershell
-  .\scripts\Set-WorkshopNetworkIsolation.ps1
-  .\scripts\Test-WorkshopNetworkIsolation.ps1
-  ```
+  > ⚠️ **The pin will recreate the `kusto` container on the next `docker compose up`.** Confirmed
+  > with `--dry-run`. The digest resolves to the image already running, but Compose recreates on a
+  > changed config hash regardless, and that destroys the persistent database registration. Back up
+  > and plan the re-import, or stay on `docker compose stop`/`start` as the repository already
+  > recommends for this container.
 
-- **Rebuild the gateway with `--build`** whenever anything under `tools/kusto-readonly-gateway`
-  changes, including after a `git pull`. A plain `docker compose up -d` silently serves the last
-  image built on the host.
-- **Decide on `.show cluster`.** The H3 allowlist blocks it, which is a behaviour change from the
-  pre-hardening gateway. It is not part of the ADX **Add connection** handshake, so connecting works,
-  but a student clicking into cluster-level details gets a `403`. It discloses far less than
-  `.show queries`; allowlisting it is a one-line change if you want it.
+- **Isolation rule surviving a restart — done.** `scripts/Test-WorkshopReadiness.ps1` reapplies it
+  (idempotent, clears its own stale rules first) and then proves it by sending packets. No standing
+  privileged container was added; the isolation script spawns a short-lived helper only when it
+  writes the rule, which is unavoidable from Windows. Verified both ways: removing the rule turns
+  the verdict red with the exact remedy, and a normal run repairs it and turns it green.
+- **Gateway rebuild on pull — done.** Tracked `.githooks/post-merge` rebuilds the gateway whenever a
+  pull touches `tools/kusto-readonly-gateway`, then probes the policy (`.show tables` → 200,
+  `.show queries` → 403) rather than trusting the health check. Requires
+  `Install-WorkshopGitHooks.ps1` to have been run in the clone; `CDW_SKIP_GATEWAY_REBUILD=1` opts
+  out. Written LF — a shell hook with CRLF fails as `unexpected end of file`, which it did on the
+  first attempt.
+- **`.show cluster` — decided: stays blocked.** Locked in with a test asserting `.show cluster`,
+  `.show cluster principals`, and `.show cluster policy caching` are all refused, so it is not
+  quietly reverted. Students connect and query normally; clicking into cluster-level detail returns
+  `403`. Noted in the instructor guide so the question is expected. Suite is 56 tests.
 
 ### Resolved since this summary was first written
 
