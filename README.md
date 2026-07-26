@@ -69,7 +69,8 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | Area | Purpose | Primary files |
 | --- | --- | --- |
 | Local conference runtime | Runs the persistent Kustainer snapshot, read-only gateway, and outbound Cloudflare connector for the primary attendee route | [compose.yaml](compose.yaml), [scripts/Copy-StudentAdxToLocalKusto.ps1](scripts/Copy-StudentAdxToLocalKusto.ps1), [scripts/Start-CloudflareAdxTunnel.ps1](scripts/Start-CloudflareAdxTunnel.ps1) |
-| Local snapshot backup | Produces a portable archive of the local Kustainer state and latest verified NDJSON export | [scripts/Backup-LocalKustoSnapshot.ps1](scripts/Backup-LocalKustoSnapshot.ps1) |
+| Local snapshot backup | Produces a self-contained archive of the local Kustainer state, the generated telemetry, and the schemas needed to restore it, refusing to ship a payload that does not cover the table manifest | [scripts/Backup-LocalKustoSnapshot.ps1](scripts/Backup-LocalKustoSnapshot.ps1) |
+| Local snapshot restore | Rebuilds the database from an archive in a throwaway container and reconciles the restored row counts, so the backup is proven rather than assumed | [scripts/Restore-LocalKustoSnapshot.ps1](scripts/Restore-LocalKustoSnapshot.ps1) |
 | ADX setup | Creates the ADX database tables, JSON ingestion mappings, generated telemetry, and ingestion flow | [`scripts\Initialize-Workshop.ps1`](scripts/Initialize-Workshop.ps1), [`scripts\Initialize-AdxTables.ps1`](scripts/Initialize-AdxTables.ps1), [`scripts\Import-SyntheticTelemetry.ps1`](scripts/Import-SyntheticTelemetry.ps1), [`scripts\AdxWorkshop.Common.psm1`](scripts/AdxWorkshop.Common.psm1) |
 | ADX backup | Creates secured ADLS Gen2 backup storage, exports schema records, exports table data as Parquet, and restores from the backup manifest | [`adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1`](adx_db_backupNrestore/Initialize-AdxBackupStorage.ps1), [`adx_db_backupNrestore\Backup-AdxDatabase.ps1`](adx_db_backupNrestore/Backup-AdxDatabase.ps1), [`adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1`](adx_db_backupNrestore/Restore-AdxDatabaseBackup.ps1), [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md) |
 | Schemas | Holds one Microsoft Learn-derived JSON schema file per ADX table | [`schemas\`](schemas/), [`metadata\tables.manifest.json`](metadata/tables.manifest.json), [`tools\Build-SchemasFromMicrosoftLearn.ps1`](tools/Build-SchemasFromMicrosoftLearn.ps1), [`tools\Build-SchemaFromLiveTable.ps1`](tools/Build-SchemaFromLiveTable.ps1) |
@@ -106,7 +107,7 @@ docker compose up --detach --wait kusto
 
 Distribute only the ignored `infra\cloudflare-adx\student-access.env` file and [scripts/Start-StudentAdxProxy.ps1](scripts/Start-StudentAdxProxy.ps1) through the temporary class channel. Students use `http://127.0.0.1:8080` in the ADX Web UI. The gateway permits queries and read-only `.show` metadata commands only.
 
-### 3. Back up the local snapshot
+### 3. Back up the local snapshot, and prove it restores
 
 Stop Kusto before taking a point-in-time file backup, then copy the generated ZIP to your secure storage or Google Drive. It contains synthetic workshop telemetry and should remain outside source control.
 
@@ -116,7 +117,24 @@ docker compose stop kusto
 docker compose start kusto
 ```
 
-The command writes a timestamped ZIP under `data\backups\local-kusto` and reports its SHA-256 hash. See [docs/cloudflare_adx_access.md](docs/cloudflare_adx_access.md) for the full participant and recovery procedure.
+The command writes a timestamped ZIP under `data\backups\local-kusto` and reports its SHA-256 hash.
+
+An archive is only as good as its last successful restore, so rehearse the restore rather than trusting the ZIP:
+
+```powershell
+.\scripts\Restore-LocalKustoSnapshot.ps1
+```
+
+That rebuilds the database in a throwaway container on `127.0.0.1:8099`, reconciles the restored row count against the archive, and removes the container afterwards. It never touches the workshop cluster. Add `-KeepContainer` to leave the restored copy running for inspection.
+
+Two properties of the archive are worth knowing before you rely on it:
+
+- **The NDJSON payload is what restores, not the persisted state.** The emulator registers a persistent database inside the container rather than in the mounted state directory, so a fresh container cannot attach state that a different container wrote; the attempt fails with an internal service error. The persisted state in the archive is only useful for putting files back under the same container instance.
+- **The archive is self-contained.** It carries the table schemas and manifest alongside the data, so a restore does not depend on a matching checkout being present.
+
+The backup refuses to run if the payload does not cover every table in `metadata\tables.manifest.json`. Override with `-AllowIncompleteExport` only when you deliberately want a partial archive.
+
+See [docs/cloudflare_adx_access.md](docs/cloudflare_adx_access.md) for the full participant and recovery procedure.
 
 ## 🖥️ Primary host operations: exact Student ADX copy
 
