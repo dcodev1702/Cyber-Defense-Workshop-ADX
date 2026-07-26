@@ -50,12 +50,23 @@ jobs:
               if (Test-Path $p) { Invoke-ScriptAnalyzer -Path $p -Recurse -Severity Error, Warning, ParseError }
           }
 
+          # ScriptName is the leaf file name, not a path; only ScriptPath is
+          # resolvable. Annotating from ScriptName made Resolve-Path fail on the
+          # first finding and took the whole job down with it.
+          $root = (Get-Location).Path
           foreach ($r in $results) {
               $level = if ($r.Severity -in 'Error', 'ParseError') { 'error' } else { 'warning' }
-              $file = Resolve-Path -Relative $r.ScriptName
+              $file = $r.ScriptPath
+              if ($file -and $file.StartsWith($root)) {
+                  $file = $file.Substring($root.Length).TrimStart('/', '\')
+              }
+              if (-not $file) { $file = $r.ScriptName }
+              $file = $file -replace '\\', '/'
               Write-Host ("::{0} file={1},line={2}::{3} - {4}" -f $level, $file, $r.Line, $r.RuleName, $r.Message)
           }
 
+          # The annotation loop must never decide the job outcome; only the
+          # error-severity count below does.
           $blocking = @($results | Where-Object { $_.Severity -in 'Error', 'ParseError' })
           $warnings = @($results | Where-Object { $_.Severity -eq 'Warning' })
           "PSScriptAnalyzer: $($blocking.Count) error(s), $($warnings.Count) warning(s)." | Tee-Object -FilePath $env:GITHUB_STEP_SUMMARY -Append
@@ -64,3 +75,7 @@ jobs:
               Write-Host "::error::PowerShell lint failed with $($blocking.Count) error-severity finding(s)."
               exit 1
           }
+
+          # Be explicit rather than inheriting the exit status of whatever ran
+          # last, which is how this job failed with zero error-severity findings.
+          exit 0
