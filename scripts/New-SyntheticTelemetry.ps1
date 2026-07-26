@@ -175,8 +175,12 @@ function Get-WorkshopHashSet {
 function Import-WorkshopFieldProfiles {
     <#
         Loads the per-column field profiles produced by
-        scripts\Export-TenantTelemetrySamples.ps1. Missing profiles are not an error;
-        generation simply falls back to the built-in catalogs.
+        scripts\Export-WorkshopTelemetryProfiles.ps1. Missing profiles are not an
+        error; generation simply falls back to the built-in catalogs.
+
+        The exporter already guarantees that no identity, host, or tenant-authored
+        free-text column carries a value vocabulary, so a profile's topValues can be
+        emitted verbatim without further filtering.
     #>
     param([string]$Path)
 
@@ -186,14 +190,7 @@ function Import-WorkshopFieldProfiles {
     }
 
     if ([string]::IsNullOrWhiteSpace($Path)) {
-        $sampleRoot = Join-Path $PSScriptRoot '..\sample'
-        if (-not (Test-Path $sampleRoot)) { return }
-        $latest = Get-ChildItem -Path $sampleRoot -Directory -ErrorAction SilentlyContinue |
-            Where-Object { $_.Name -match '^\d{8}T\d{6}Z$' } |
-            Sort-Object Name -Descending |
-            Select-Object -First 1
-        if ($null -eq $latest) { return }
-        $Path = Join-Path $latest.FullName '_field-profiles'
+        $Path = Join-Path $PSScriptRoot '..\metadata\field-profiles'
     }
 
     if (-not (Test-Path $Path)) {
@@ -211,13 +208,28 @@ function Import-WorkshopFieldProfiles {
         }
 
         $columnMap = @{}
-        foreach ($column in @($loaded.columns)) {
-            $columnMap[[string]$column.name] = $column
+        foreach ($property in $loaded.columns.PSObject.Properties) {
+            $observed = $property.Value
+            $bag = $observed.PSObject.Properties
+            # Columns that are empty in production carry no length or pattern stats,
+            # so every optional field is resolved through the property bag.
+            $columnMap[[string]$property.Name] = [pscustomobject]@{
+                FillRate      = [double]$observed.fillRate
+                DistinctCount = [int]$observed.distinctCount
+                TopValues     = @($observed.topValues)
+                Pattern       = [string]$observed.pattern
+                AlwaysEmpty   = [bool]$bag['alwaysEmpty']
+                Sensitive     = [bool]$bag['sensitive']
+                FreeText      = [bool]$bag['freeText']
+                MinLength     = if ($bag['minLength']) { [int]$observed.minLength } else { 0 }
+                MaxLength     = if ($bag['maxLength']) { [int]$observed.maxLength } else { 0 }
+            }
         }
+
         $script:FieldProfiles[[string]$loaded.tableName] = [pscustomobject]@{
             TableName = [string]$loaded.tableName
-            RowCount = [int]$loaded.rowCount
-            Columns = $columnMap
+            RowCount  = [int]$loaded.sampledRows
+            Columns   = $columnMap
         }
     }
 
@@ -237,13 +249,13 @@ function Get-WorkshopObservedRatio {
     if (-not $script:FieldProfiles.ContainsKey($Table)) { return $null }
     $tableProfile = $script:FieldProfiles[$Table]
     if (-not $tableProfile.Columns.ContainsKey($Column)) { return $null }
+    if ($tableProfile.RowCount -le 0) { return $null }
 
     # Note: PowerShell variable names are case-insensitive, so this local must not be
     # named $column or it would assign into the [string]$Column parameter and coerce
     # the profile object to a string.
     $columnProfile = $tableProfile.Columns[$Column]
-    if ([int]$columnProfile.rowCount -le 0) { return $null }
-    return ([double]$columnProfile.distinctCount / [double]$columnProfile.rowCount)
+    return ([double]$columnProfile.DistinctCount / [double]$tableProfile.RowCount)
 }
 
 function Get-WorkshopCardinalityVariants {
@@ -364,14 +376,192 @@ $script:BuiltInPrincipals = @(
 )
 $script:BuiltInPrincipalTotalWeight = ($script:BuiltInPrincipals | Measure-Object -Property Weight -Sum).Sum
 
-# Columns whose values are Microsoft-defined vocabularies rather than tenant data.
-$script:SafeVerbatimColumnPattern = '^(ActionType|LogonType|Protocol|OSPlatform|OSDistribution|OSArchitecture|DeviceType|DeviceCategory|Category|Categories|Severity|ServiceSource|DetectionSource|EvidenceRole|EvidenceDirection|EntityType|RegistryValueType|IsInitiatingProcessRemoteSession|InitiatingProcessIntegrityLevel|InitiatingProcessTokenElevation|ProcessIntegrityLevel|ProcessTokenElevation|LocalIPType|RemoteIPType|ClientAppUsed|ConditionalAccessStatus|AuthenticationRequirement|RiskLevel.*|RiskState|RiskDetail|ResultType|ResultDescription|TokenIssuerType|UserType|AppOwnerTenantId|Status|State|JoinType|SensorHealthState|OnboardingStatus|MachineGroup|EndOfSupportStatus|VulnerabilitySeverityLevel|CveSupportability|IsExploitAvailable|Type|SourceSystem|RequestMethod|ResponseStatusCode|ApiVersion|IdentityProvider|TargetWorkload)$'
-
 # Columns that identify a person, host, address, or secret. Never emitted verbatim.
 $script:IdentityColumnPattern = '(Account|User|Upn|Sid|Principal|Device|Host|Machine|Computer|IP|Address|Url|Domain|Email|Mail|Sha1|Sha256|Md5|Hash|Token|Key|Secret|Credential|Guid|Id$|Ids$|Name$|Path|CommandLine|Description|Title|Query|Location|City|State|Country|Latitude|Longitude|Isp|Tenant)'
 
+# Columns deliberately populated even though the live tenant leaves them empty.
+# Loaded from metadata\profile-overrides.json so the generator and the data quality
+# gate read the same list and cannot drift apart.
+$script:ProfileEmptyOverride = @{}
+$script:ProfileOverridePath = Join-Path $PSScriptRoot '..\metadata\profile-overrides.json'
+if (Test-Path $script:ProfileOverridePath) {
+    $overrideDocument = Get-Content -Raw $script:ProfileOverridePath | ConvertFrom-Json
+    foreach ($entry in $overrideDocument.PSObject.Properties) {
+        if ($entry.Name.StartsWith('$')) { continue }
+        $script:ProfileEmptyOverride[$entry.Name] = @($entry.Value.columns)
+    }
+}
+
+# Declared-agent archetypes for AgentsInfo. Modelled on the shape of real tenant
+# agent inventory: a mix of first-party, in-house, and third-party agents, each
+# with an authored purpose, a small tool surface, and a capability set.
+$script:AgentsInfoCatalog = @(
+    [pscustomobject]@{
+        Name = 'Contract Review Assistant'
+        Description = 'Reviews subcontractor agreements against FAR and DFARS clause requirements and flags missing flow-downs.'
+        Instructions = 'You are a contracts analyst. Compare the supplied agreement against the FAR and DFARS clause matrix, list missing flow-down clauses, and cite the clause number for every finding.'
+        Tools = @('clause_lookup', 'document_search')
+        Capabilities = @('Public sites')
+        Skills = @('Clause extraction', 'Redline drafting', 'Obligation tracking', 'Document summarization')
+        McpServers = @('contracts-mcp.usag-cyber.local', 'sharepoint-mcp.usag-cyber.local')
+        Model = 'gpt-4o'
+        Endpoints = @('https://usag-cyber-openai.openai.azure.example/openai/deployments/gpt-4o')
+        AuthType = 'OAuth2 (delegated)'
+        Permissions = @('Files.Read.All', 'Sites.Read.All', 'User.Read')
+        DataSources = @('SharePoint: /sites/Contracts', 'Dataverse: SubcontractRegister')
+        ConnectedAgents = @('Proposal Compliance Checker')
+        Triggers = @('Manual', 'Event: document uploaded')
+        Guardrails = @('Content safety: high', 'DLP: export controlled blocked')
+        Availability = 'Generally available'
+        Publisher = 'USAG Cyber Contracts'
+        Runtime = 'Microsoft Foundry'
+    }
+    [pscustomobject]@{
+        Name = 'Threat Intel Summarizer'
+        Description = 'Condenses vendor threat intelligence reporting into a daily brief mapped to MITRE ATT&CK.'
+        Instructions = 'Summarise each intelligence report in under 200 words. Always map observed behaviour to MITRE ATT&CK technique IDs and state the confidence level.'
+        Tools = @('attack_lookup', 'ioc_extract', 'document_search')
+        Capabilities = @('Public sites', 'Code interpreter')
+        Skills = @('IOC extraction', 'ATT&CK mapping', 'Report summarization', 'Actor attribution', 'Confidence scoring')
+        McpServers = @('threatintel-mcp.usag-cyber.local', 'virustotal-mcp.partner.example', 'mitre-attack-mcp.usag-cyber.local')
+        Model = 'claude-sonnet-4.5'
+        Endpoints = @('https://api.anthropic.example/v1/messages', 'https://threatintel-mcp.usag-cyber.local/sse')
+        AuthType = 'Managed identity'
+        Permissions = @('ThreatIndicators.Read.All', 'ThreatHunting.Read.All')
+        DataSources = @('Sentinel: DIBSecCom', 'External: vendor intel feed')
+        ConnectedAgents = @('Incident Note Drafter')
+        Triggers = @('Scheduled: daily 05:00 UTC')
+        Guardrails = @('Grounding required', 'Citation required')
+        Availability = 'Generally available'
+        Publisher = 'USAG Cyber Defense'
+        Runtime = 'Microsoft Foundry'
+    }
+    [pscustomobject]@{
+        Name = 'Insight+ Ask Knowledge'
+        Description = 'Answers employee questions from the internal knowledge base and cites the source article.'
+        Instructions = 'Answer only from the indexed knowledge base. If the answer is not present, say so and do not speculate. Always cite the source article identifier.'
+        Tools = @('knowledge_search')
+        Capabilities = @('Public sites')
+        Skills = @('Semantic search', 'Citation generation', 'Answer grounding')
+        McpServers = @('knowledge-mcp.insightplus.example')
+        Model = 'gemini-2.5-pro'
+        Endpoints = @('https://generativelanguage.googleapis.example/v1/models/gemini-2.5-pro:generateContent')
+        AuthType = 'API key'
+        Permissions = @('Sites.Read.All')
+        DataSources = @('SharePoint: /sites/Knowledge')
+        ConnectedAgents = @()
+        Triggers = @('Manual')
+        Guardrails = @('Grounding required', 'Citation required')
+        Availability = 'Internal only'
+        Publisher = 'Insight Plus'
+        Runtime = 'Other'
+    }
+    [pscustomobject]@{
+        Name = 'Supply Chain Risk Analyst'
+        Description = 'Scores supplier risk from ownership, sanctions, and past performance signals.'
+        Instructions = 'Produce a supplier risk score from 1 to 5 with a short justification. Escalate any supplier with sanctions exposure regardless of score.'
+        Tools = @('supplier_lookup', 'sanctions_check')
+        Capabilities = @('Code interpreter')
+        Skills = @('Entity resolution', 'Sanctions screening', 'Beneficial ownership tracing', 'Risk scoring')
+        McpServers = @('supplier-mcp.usag-cyber.local', 'opensanctions-mcp.partner.example')
+        Model = 'llama-4-70b-instruct'
+        Endpoints = @('https://llm-gw.usag-cyber.local/v1/chat/completions')
+        AuthType = 'OAuth2 (application)'
+        Permissions = @('Files.Read.All', 'ExternalData.Read.All')
+        DataSources = @('Dataverse: SupplierMaster', 'External: sanctions feed')
+        ConnectedAgents = @('Contract Review Assistant')
+        Triggers = @('Scheduled: daily 06:00 UTC')
+        Guardrails = @('Content safety: high', 'Human approval for escalation')
+        Availability = 'Preview'
+        Publisher = 'USAG Cyber Supply Chain'
+        Runtime = 'LocalAgents'
+    }
+    [pscustomobject]@{
+        Name = 'HR Policy Navigator'
+        Description = 'Explains leave, travel, and clearance policy to employees in plain language.'
+        Instructions = 'Explain policy in plain language at a ninth grade reading level. Never provide legal advice and never disclose another employee record.'
+        Tools = @('policy_search')
+        Capabilities = @('Public sites')
+        Skills = @('Policy lookup', 'Plain language rewriting', 'Eligibility calculation')
+        McpServers = @('hr-mcp.usag-cyber.local')
+        Model = 'gpt-4o-mini'
+        Endpoints = @('https://usag-cyber-openai.openai.azure.example/openai/deployments/gpt-4o-mini')
+        AuthType = 'OAuth2 (delegated)'
+        Permissions = @('User.Read', 'Sites.Read.All')
+        DataSources = @('SharePoint: /sites/HRPolicy')
+        ConnectedAgents = @()
+        Triggers = @('Manual')
+        Guardrails = @('PII redaction', 'DLP: personnel records blocked')
+        Availability = 'Generally available'
+        Publisher = 'USAG Cyber People Operations'
+        Runtime = 'Other'
+    }
+    [pscustomobject]@{
+        Name = 'Incident Note Drafter'
+        Description = 'Drafts incident timeline notes from analyst chat transcripts for the case record.'
+        Instructions = 'Convert the analyst transcript into a chronological incident note. Use UTC timestamps and never invent an observation that is not in the transcript.'
+        Tools = @('case_lookup', 'timeline_build')
+        Capabilities = @('Code interpreter')
+        Skills = @('Timeline reconstruction', 'Transcript summarization', 'Evidence linking', 'MITRE technique tagging')
+        McpServers = @('sentinel-mcp.usag-cyber.local', 'defender-mcp.usag-cyber.local', 'servicenow-mcp.partner.example')
+        Model = 'claude-opus-4.5'
+        Endpoints = @('https://api.anthropic.example/v1/messages', 'https://sentinel-mcp.usag-cyber.local/sse')
+        AuthType = 'Managed identity'
+        Permissions = @('SecurityEvents.Read.All', 'SecurityIncident.ReadWrite.All', 'ThreatHunting.Read.All')
+        DataSources = @('Sentinel: DIBSecCom', 'Defender XDR: advanced hunting')
+        ConnectedAgents = @('Threat Intel Summarizer', 'Engineering Runbook Copilot')
+        Triggers = @('Event: incident created', 'Scheduled: every 15 minutes')
+        Guardrails = @('Grounding required', 'PII redaction', 'Human approval for containment')
+        Availability = 'Generally available'
+        Publisher = 'USAG Cyber Defense'
+        Runtime = 'Microsoft Foundry'
+    }
+    [pscustomobject]@{
+        Name = 'Proposal Compliance Checker'
+        Description = 'Checks proposal volumes against solicitation Section L and M instructions.'
+        Instructions = 'Cross-check the proposal against Section L instructions and Section M evaluation criteria. Report every unmet requirement with its section reference.'
+        Tools = @('document_search', 'requirement_extract')
+        Capabilities = @('Public sites')
+        Skills = @('Requirement extraction', 'Compliance matrix build', 'Gap analysis')
+        McpServers = @('proposals-mcp.usag-cyber.local', 'sam-gov-mcp.partner.example')
+        Model = 'mistral-large-2'
+        Endpoints = @('https://api.mistral.example/v1/chat/completions')
+        AuthType = 'OAuth2 (delegated)'
+        Permissions = @('Files.ReadWrite.All', 'Sites.Read.All')
+        DataSources = @('SharePoint: /sites/Capture', 'External: solicitation portal')
+        ConnectedAgents = @('Contract Review Assistant')
+        Triggers = @('Manual', 'Event: solicitation posted')
+        Guardrails = @('Content safety: medium', 'DLP: competition sensitive blocked')
+        Availability = 'Preview'
+        Publisher = 'USAG Cyber Capture'
+        Runtime = 'Other'
+    }
+    [pscustomobject]@{
+        Name = 'Engineering Runbook Copilot'
+        Description = 'Guides on-call engineers through published runbooks and escalation paths.'
+        Instructions = 'Walk the engineer through the runbook one step at a time. Confirm each step completed before advancing and surface the escalation contact on failure.'
+        Tools = @('runbook_search', 'oncall_lookup')
+        Capabilities = @('Code interpreter')
+        Skills = @('Runbook navigation', 'Escalation routing', 'Command generation', 'Post-incident review')
+        McpServers = @('github-mcp.usag-cyber.local', 'pagerduty-mcp.partner.example', 'kubernetes-mcp.usag-cyber.local')
+        Model = 'gpt-5-codex'
+        Endpoints = @('https://api.openai.example/v1/responses', 'https://github-mcp.usag-cyber.local/sse')
+        AuthType = 'Managed identity'
+        Permissions = @('Repository.Read.All', 'Deployment.ReadWrite.All')
+        DataSources = @('GitHub: usag-cyber org', 'Kubernetes: prod cluster')
+        ConnectedAgents = @('Incident Note Drafter')
+        Triggers = @('Event: page acknowledged', 'Manual')
+        Guardrails = @('Human approval for write actions', 'Command allow-list')
+        Availability = 'Internal only'
+        Publisher = 'USAG Cyber Platform'
+        Runtime = 'LocalAgents'
+    }
+)
+
 $script:ValueSamplerCache = @{}
 $script:CurrentSampledColumns = @()
+$script:CurrentFilledColumns = @()
+$script:CurrentEmptyColumns = @()
 
 # Microsoft Defender advanced hunting stores several sign-in attributes as numeric
 # enums rather than the display strings shown in the portal. The scenario code is
@@ -451,8 +641,12 @@ function ConvertTo-WorkshopColumnValue {
 function Get-WorkshopValueSampler {
     <#
         Builds, once per table and column, a cumulative weighted sampler over the real
-        observed values. Returns $null when the column must not be sampled verbatim or
-        no profile exists.
+        observed values. Returns $null when the column carries no vocabulary.
+
+        The exporter only records topValues for low-cardinality categorical columns,
+        having already excluded identity, host, and tenant-authored free text, so a
+        vocabulary present here is safe to emit verbatim. IdentityColumnPattern is
+        kept as a second gate for defence in depth.
     #>
     param(
         [Parameter(Mandatory)][string]$Table,
@@ -469,17 +663,19 @@ function Get-WorkshopValueSampler {
         $tableProfile = $script:FieldProfiles[$Table]
         if ($tableProfile.Columns.ContainsKey($ColumnName)) {
             $observed = $tableProfile.Columns[$ColumnName]
-            $isSafe = $ColumnName -match $script:SafeVerbatimColumnPattern -and $ColumnName -notmatch $script:IdentityColumnPattern
-            $isLowCardinality = [int]$observed.distinctCount -le 60
+            $isSafe = -not $observed.Sensitive -and -not $observed.FreeText -and
+                      $ColumnName -notmatch $script:IdentityColumnPattern
 
-            if ($isSafe -and $isLowCardinality) {
+            if ($isSafe -and $observed.TopValues.Count -gt 0) {
                 $values = [System.Collections.Generic.List[string]]::new()
                 $weights = [System.Collections.Generic.List[int]]::new()
                 $running = 0
-                foreach ($entry in @($observed.topValues)) {
+                foreach ($entry in $observed.TopValues) {
                     $text = [string]$entry.value
-                    if ($text.EndsWith('...')) { continue }
-                    $running += [int]$entry.count
+                    if ([string]::IsNullOrWhiteSpace($text)) { continue }
+                    # Weights are fractions of the sampled rows; scale to integers so
+                    # the sampler can roll against a cumulative table.
+                    $running += [Math]::Max(1, [int][Math]::Round([double]$entry.weight * 100000))
                     $values.Add($text)
                     $weights.Add($running)
                 }
@@ -498,6 +694,53 @@ function Get-WorkshopValueSampler {
     return $sampler
 }
 
+function Get-WorkshopPatternValue {
+    <#
+        Synthesises a value whose shape matches the format observed in real telemetry
+        for a column that has no safe vocabulary. This is what stops profiled columns
+        from being written out empty: real telemetry fills them, so the workshop data
+        must fill them too, without copying tenant values.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$Pattern,
+        [Parameter(Mandatory)][string]$Table,
+        [Parameter(Mandatory)][string]$ColumnName,
+        [Parameter(Mandatory)][int]$Index,
+        [datetime]$Time = $script:StartTime
+    )
+
+    $seed = New-StableHex ('{0}|{1}|{2}' -f $Table, $ColumnName, $Index) 32
+
+    switch ($Pattern) {
+        'guid' {
+            return ([guid]::new([byte[]](0..15 | ForEach-Object { [Convert]::ToByte($seed.Substring(($_ * 2) % 30, 2), 16) }))).ToString()
+        }
+        'sha256' { return (New-StableHex ('sha256|' + $seed) 64) }
+        'sha1'   { return (New-StableHex ('sha1|' + $seed) 40) }
+        'md5'    { return (New-StableHex ('md5|' + $seed) 32) }
+        'sid' {
+            return 'S-1-5-21-{0}-{1}-{2}-{3}' -f `
+                (1000000000 + [Convert]::ToInt32($seed.Substring(0, 7), 16) % 900000000),
+                (1000000000 + [Convert]::ToInt32($seed.Substring(7, 7), 16) % 900000000),
+                (1000000000 + [Convert]::ToInt32($seed.Substring(14, 7), 16) % 900000000),
+                (1000 + [Convert]::ToInt32($seed.Substring(21, 4), 16) % 8000)
+        }
+        'ipv4' {
+            # RFC 1918 space only, so generated addresses never resolve to a real host.
+            return '10.{0}.{1}.{2}' -f `
+                ([Convert]::ToInt32($seed.Substring(0, 2), 16) % 254),
+                ([Convert]::ToInt32($seed.Substring(2, 2), 16) % 254),
+                (1 + [Convert]::ToInt32($seed.Substring(4, 2), 16) % 253)
+        }
+        'datetime' { return $Time.ToUniversalTime().ToString('o') }
+        'json'     { return '{}' }
+        'url'      { return 'https://contoso.example/{0}' -f $seed.Substring(0, 12) }
+        'winpath'  { return 'C:\Program Files\Contoso\{0}.dll' -f $seed.Substring(0, 8) }
+        'posix'    { return '/opt/contoso/{0}' -f $seed.Substring(0, 8) }
+        default    { return $null }
+    }
+}
+
 function Get-WorkshopEmptyRate {
     <#
         Fraction of rows where the real telemetry left this column null or empty.
@@ -510,7 +753,7 @@ function Get-WorkshopEmptyRate {
     if (-not $script:FieldProfiles.ContainsKey($Table)) { return $null }
     $tableProfile = $script:FieldProfiles[$Table]
     if (-not $tableProfile.Columns.ContainsKey($ColumnName)) { return $null }
-    return [double]$tableProfile.Columns[$ColumnName].nullRate
+    return (1.0 - [double]$tableProfile.Columns[$ColumnName].FillRate)
 }
 
 function Get-WorkshopBuiltInPrincipal {
@@ -529,23 +772,59 @@ function Get-WorkshopBuiltInPrincipal {
 
 function Set-WorkshopTableSamplers {
     <#
-        Resolves, once per table, the subset of schema columns that can be sampled from
+        Resolves, once per table, the subset of schema columns that can be grounded in
         the real observed distribution. Ambient row building then touches only those
         columns instead of testing every column on every row.
+
+        Two sets are produced:
+          - sampled columns, which draw a real categorical value; and
+          - filled columns, which have no safe vocabulary but are populated in real
+            telemetry, so a shape-matching value is synthesised at the observed fill
+            rate. Columns that are empty in production are deliberately in neither
+            set, so they stay empty here too.
     #>
     param([Parameter(Mandatory)][string]$Table)
 
     $sampled = [System.Collections.Generic.List[object]]::new()
+    $filled = [System.Collections.Generic.List[object]]::new()
+    $empty = [System.Collections.Generic.List[string]]::new()
+
+    $exempt = @()
+    if ($script:ProfileEmptyOverride.ContainsKey($Table)) { $exempt = $script:ProfileEmptyOverride[$Table] }
+
     if ($script:Schemas.ContainsKey($Table)) {
+        $tableProfile = $null
+        if ($script:FieldProfiles.ContainsKey($Table)) { $tableProfile = $script:FieldProfiles[$Table] }
+
         foreach ($column in $script:Schemas[$Table].columns) {
             $columnName = [string]$column.name
             $sampler = Get-WorkshopValueSampler -Table $Table -ColumnName $columnName
             if ($null -ne $sampler) {
                 $sampled.Add([pscustomobject]@{ Name = $columnName; Sampler = $sampler })
+                continue
             }
+
+            if ($null -eq $tableProfile -or -not $tableProfile.Columns.ContainsKey($columnName)) { continue }
+            $observed = $tableProfile.Columns[$columnName]
+
+            if ($observed.AlwaysEmpty) {
+                if ($exempt -notcontains $columnName) { $empty.Add($columnName) }
+                continue
+            }
+            if ([string]::IsNullOrEmpty($observed.Pattern)) { continue }
+            if ($observed.FillRate -le 0) { continue }
+
+            $filled.Add([pscustomobject]@{
+                Name     = $columnName
+                Pattern  = $observed.Pattern
+                FillRate = $observed.FillRate
+            })
         }
     }
+
     $script:CurrentSampledColumns = $sampled.ToArray()
+    $script:CurrentFilledColumns = $filled.ToArray()
+    $script:CurrentEmptyColumns = $empty.ToArray()
 }
 
 function Get-WorkshopProfileSampledValue {
@@ -1368,6 +1647,17 @@ function New-WorkshopRecordObject {
             }
             $record[$sampled.Name] = $chosen
         }
+
+        # Columns that real telemetry populates but that carry no safe vocabulary are
+        # given a shape-matching synthetic value, at the fill rate measured in
+        # production. Without this the schema default leaves them blank and the table
+        # reads as a wall of empty columns.
+        foreach ($fill in $script:CurrentFilledColumns) {
+            if ($fill.FillRate -lt 1.0 -and $script:Random.NextDouble() -ge $fill.FillRate) { continue }
+            $value = Get-WorkshopPatternValue -Pattern $fill.Pattern -Table $Table `
+                -ColumnName $fill.Name -Index $script:Random.Next() -Time $Time
+            if ($null -ne $value) { $record[$fill.Name] = $value }
+        }
     }
 
     $columnTypes = Get-WorkshopSchemaTypes -Table $Table
@@ -1377,6 +1667,15 @@ function New-WorkshopRecordObject {
             if ($null -ne $coerced) {
                 $record[$key] = $coerced
             }
+        }
+    }
+
+    if ($Ambient -and $script:CurrentEmptyColumns.Length -gt 0) {
+        # Columns the real product never populates are cleared last, so ambient rows
+        # do not invent signal that an analyst would never encounter in production.
+        # Scenario rows are exempt because their evidence is hand-authored.
+        foreach ($emptyColumn in $script:CurrentEmptyColumns) {
+            $record[$emptyColumn] = ''
         }
     }
 
@@ -3432,6 +3731,100 @@ function New-NormalTelemetryValues {
                 $values.SourceSystem = ''
             }
         }
+        'AgentsInfo' {
+            # Declared-agent inventory. Real tenant telemetry shows a long tail of
+            # third-party and in-house agents where roughly half carry authored
+            # instructions, two fifths declare tools, and a fifth declare
+            # capabilities, so the catalog below mirrors that spread rather than
+            # filling every column on every row.
+            $agentCatalog = $script:AgentsInfoCatalog
+            $archetype = $agentCatalog[$Index % $agentCatalog.Count]
+            # Keep the instance suffix a small ordinal. The raw index is a table seed
+            # offset and would otherwise produce names like "Copilot 7120887".
+            $variant = [Math]::Floor((($Index % ($agentCatalog.Count * 40)) / $agentCatalog.Count))
+            $agentName = if ($variant -eq 0) { $archetype.Name } else { '{0} {1}' -f $archetype.Name, ($variant + 1) }
+
+            $values.AgentId = New-StableGuid "$Table|agent|$Index"
+            $values.Name = $agentName
+            $values.Description = $archetype.Description
+            $values.Version = Get-WorkshopRandomItem @('1.0.0', '1.0.1', '1.0.5', '1.1.0', '1.2.3', '2.0.0', '2.1.4', '3.0.0')
+            $values.ObservabilityID = 'P_{0}' -f (New-StableGuid "$Table|observability|$Index")
+            $values.CreatedDateTime = $timeText
+            $values.LastUpdatedDateTime = $timeText
+            $values.Type = 'AgentsInfo'
+
+            # Publication surface, weighted the way the real inventory skews.
+            $values.Channels = Get-WorkshopRandomItem @(
+                @('Copilot'),
+                @('Copilot'),
+                @('Teams', 'Copilot'),
+                @('Office', 'Outlook', 'Teams', 'Copilot')
+            )
+
+            # Model, endpoint, skill, memory, and MCP surfaces are absent from the
+            # live tenant but are deliberately populated here so the workshop has an
+            # agent attack surface to hunt across. Registered in
+            # metadata\profile-overrides.json.
+            $values.Model = $archetype.Model
+            $values.Endpoints = $archetype.Endpoints
+            $values.Skills = $archetype.Skills
+            $values.McpServers = $archetype.McpServers
+            $values.Memory = 'Enabled'
+            $values.Triggers = $archetype.Triggers
+            $values.Guardrails = $archetype.Guardrails
+            $values.Permissions = $archetype.Permissions
+            $values.ToolsAuthenticationType = $archetype.AuthType
+            $values.Availability = $archetype.Availability
+            $values.DeclaredDataSources = $archetype.DataSources
+            $values.InstanceCount = 1 + ($Index % 24)
+            $values.TenantId = $tenantId
+            $values.SourceSystem = 'Azure'
+
+            if (@($archetype.ConnectedAgents).Count -gt 0) {
+                $values.ConnectedAgents = $archetype.ConnectedAgents
+            }
+
+            # Ownership and sharing follow the synthetic directory rather than the
+            # agent catalog, so hunts can pivot from an agent to a real person.
+            $agentOwner = $users[($Index * 7) % $users.Count]
+            $values.Owners = @($agentOwner.Upn)
+            $values.SharedWith = Get-WorkshopRandomItem @(
+                @('All employees'),
+                @('SOC Analysts'),
+                @('Contracts Team'),
+                @('Engineering'),
+                @($agentOwner.Upn)
+            )
+
+            # Entra Agent ID registration is rolling out, so only part of the estate
+            # carries a blueprint and identity pair.
+            if (($Index % 100) -lt 34) {
+                $values.EntraAgentID = New-StableGuid "$Table|entra-agent|$Index"
+                $values.EntraBlueprintID = New-StableGuid "$Table|entra-blueprint|$($Index % 12)"
+            }
+            if (($Index % 100) -lt 8) {
+                $values.SourceAgentId = New-StableGuid "$Table|source-agent|$Index"
+            }
+
+            # Roughly half of real agents publish authored instructions.
+            if (($Index % 100) -lt 52) { $values.Instructions = $archetype.Instructions }
+
+            # Two fifths declare tools; a fifth declare capabilities.
+            if (($Index % 100) -lt 40) {
+                $values.DeclaredTools = @($archetype.Tools | ForEach-Object {
+                    @{ type = 'function'; name = $_; endpoint = "https://api.usag-cyber.local/tools/$_" }
+                })
+            }
+            if (($Index % 100) -lt 19) { $values.Capabilities = $archetype.Capabilities }
+
+            $values.RawAgentInfo = @{
+                schemaVersion = '2026-04-01'
+                displayName   = $agentName
+                publisher     = $archetype.Publisher
+                runtime       = $archetype.Runtime
+                model         = $archetype.Model
+            }
+        }
         'CloudAppEvents' {
             $values.ActionType = Get-WorkshopRandomItem @('FileDownloaded', 'FileUploaded', 'UserLoggedIn', 'MailItemsAccessed', 'OAuthAppConsent')
             $values.Application = Get-WorkshopRandomItem @('Microsoft 365', 'Microsoft Teams', 'SharePoint Online', 'Exchange Online')
@@ -5161,7 +5554,9 @@ function Get-WorkshopTargetRowCount {
         Get-WorkshopRandomInt -Minimum $NormalMinRowsPerTable -Maximum ($NormalMaxRowsPerTable + 1)
     }
 
-    return [Math]::Max($existingCount, $targetRows)
+    # Never return zero. Every table must carry at least one properly generated row,
+    # which is what removes the need for a hand-written fallback record.
+    return [Math]::Max(1, [Math]::Max($existingCount, $targetRows))
 }
 
 function Write-WorkshopTableData {
@@ -6984,49 +7379,12 @@ Add-WorkshopScenarioSecurityIncident `
 
 Add-WorkshopAadUserRiskEvents -Identities $users -ScenarioSignInTime $signinTime -Count $AadUserRiskEventCount
 
-foreach ($table in $script:Schemas.Keys) {
-    if ($script:Records[$table].Count -gt 0) {
-        continue
-    }
-    $fallbackTime = $StartTime.AddMinutes(-10)
-    $fallbackValues = if ($table -in @(
-            'AADManagedIdentitySignInLogs',
-            'AADSpnSignInEventsBeta',
-            'EntraIdSpnSignInEvents',
-            'DeviceTvmCertificateInfo',
-            'DeviceTvmHardwareFirmware',
-            'DeviceTvmInfoGathering',
-            'DeviceTvmInfoGatheringKB',
-            'DeviceTvmSecureConfigurationAssessment',
-            'DeviceTvmSoftwareEvidenceBeta',
-            'DeviceTvmSoftwareInventory',
-            'DeviceTvmSoftwareVulnerabilities',
-            'DeviceTvmSoftwareVulnerabilitiesKB',
-            'SecurityIncident'
-        )) {
-        New-NormalTelemetryValues -Table $table -Time $fallbackTime -Index ([Convert]::ToInt32((New-StableHex "$table|fallback" 7), 16))
-    }
-    else {
-        @{
-            Timestamp = Format-WorkshopTime $fallbackTime
-            TimeGenerated = Format-WorkshopTime $fallbackTime
-            DeviceId = $win04.DeviceId
-            DeviceName = $win04.Name
-            AccountName = $victor.Name
-            AccountUpn = $victor.Upn
-            AccountObjectId = $victor.ObjectId
-            AccountDisplayName = $victor.DisplayName
-            AccountDomain = $adDomain
-            AADTenantId = $tenantId
-            TenantId = $tenantId
-            ActionType = 'WorkshopBaseline'
-            Application = 'WorkshopBaseline'
-            ReportId = 9900
-            Type = $table
-        }
-    }
-    Add-Record -Table $table -Time $fallbackTime -Values $fallbackValues
-}
+# Tables without scenario evidence are not seeded with a hand-written placeholder.
+# That placeholder wrote one row per table carrying a fabricated 'WorkshopBaseline'
+# ActionType and Application, plus endpoint and identity columns that most tables do
+# not even declare, which surfaced as a junk row in analyst queries. Every table now
+# reaches its row count through the normal generator instead, which applies the real
+# observed field profile.
 
 foreach ($table in ($tablesToWrite | Sort-Object)) {
     Write-WorkshopTableData -Table $table

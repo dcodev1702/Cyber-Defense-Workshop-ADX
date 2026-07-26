@@ -32,7 +32,7 @@
     "NetworkMessageId",
     "OAuthApplicationId"
   ],
-  "generatedUtc": "2026-07-26T01:05:11.6155044Z",
+  "generatedUtc": "2026-07-26T01:32:08.5237476Z",
   "columns": {
     "Categories": {
       "fillRate": 1.0,
@@ -106,33 +106,9 @@
     "RemoteIP": {
       "fillRate": 0.338,
       "distinctCount": 6,
-      "topValues": [
-        {
-          "value": "::1",
-          "weight": 0.25
-        },
-        {
-          "value": "127.0.0.1",
-          "weight": 0.25
-        },
-        {
-          "value": "10.1.2.4",
-          "weight": 0.125
-        },
-        {
-          "value": "192.168.1.179",
-          "weight": 0.125
-        },
-        {
-          "value": "192.168.1.80",
-          "weight": 0.125
-        },
-        {
-          "value": "fe80::873d:a305:9291:1635",
-          "weight": 0.125
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 3.0,
       "maxLength": 25.0
     },
@@ -418,37 +394,9 @@
     "BehaviorId": {
       "fillRate": 1.0,
       "distinctCount": 7,
-      "topValues": [
-        {
-          "value": "4fcc4352-5dfc-47ee-b57a-8b964202da95_1",
-          "weight": 0.26761
-        },
-        {
-          "value": "92ce1931-4ce3-4635-a70e-fb1e697c4ba8_1",
-          "weight": 0.25352
-        },
-        {
-          "value": "dad895f7-eaf2-4929-983f-586aa25f3260_1",
-          "weight": 0.25352
-        },
-        {
-          "value": "0e229173-24b7-477c-9993-059e50966c2e_1",
-          "weight": 0.15493
-        },
-        {
-          "value": "0fb0ab50-0107-435b-ba2e-be5a9151d3d7_1",
-          "weight": 0.02817
-        },
-        {
-          "value": "80b1efb9-4834-42b3-af3e-5927987e829e_1",
-          "weight": 0.02817
-        },
-        {
-          "value": "6cf10eac-0df3-4a4b-9d43-9cc01cfc48aa_1",
-          "weight": 0.01408
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 38.0,
       "maxLength": 38.0
     },

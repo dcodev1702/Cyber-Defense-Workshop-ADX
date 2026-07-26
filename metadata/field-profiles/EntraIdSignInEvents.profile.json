@@ -12,7 +12,7 @@
     "RiskLevelDuringSignIn",
     "RiskEventTypes"
   ],
-  "generatedUtc": "2026-07-26T01:04:43.6394149Z",
+  "generatedUtc": "2026-07-26T01:31:40.9245294Z",
   "columns": {
     "ConditionalAccessStatus": {
       "fillRate": 1.0,
@@ -171,121 +171,9 @@
     "Browser": {
       "fillRate": 0.9515,
       "distinctCount": 28,
-      "topValues": [
-        {
-          "value": "Edge 18.26200",
-          "weight": 0.3794
-        },
-        {
-          "value": "Rich Client 4.83.1.0",
-          "weight": 0.26957
-        },
-        {
-          "value": "Chrome 150.0.0",
-          "weight": 0.05045
-        },
-        {
-          "value": "Edge 149.0.0",
-          "weight": 0.04834
-        },
-        {
-          "value": "Edge 18.28000",
-          "weight": 0.04204
-        },
-        {
-          "value": "Edge 150.0.0",
-          "weight": 0.04046
-        },
-        {
-          "value": "Rich Client 4.72.1.0",
-          "weight": 0.03994
-        },
-        {
-          "value": "Mobile Safari",
-          "weight": 0.02838
-        },
-        {
-          "value": "Rich Client 4.83.3.0",
-          "weight": 0.02522
-        },
-        {
-          "value": "Rich Client 4.84.1.0",
-          "weight": 0.00946
-        },
-        {
-          "value": "Rich Client 4.79.2.0",
-          "weight": 0.00893
-        },
-        {
-          "value": "Chrome 149.0.0",
-          "weight": 0.00683
-        },
-        {
-          "value": "Rich Client 4.19.1.0",
-          "weight": 0.00683
-        },
-        {
-          "value": "Rich Client 4.21.1.0",
-          "weight": 0.00631
-        },
-        {
-          "value": "Rich Client 4.24.1.0",
-          "weight": 0.00631
-        },
-        {
-          "value": "Rich Client 4.74.1.0",
-          "weight": 0.00525
-        },
-        {
-          "value": "Rich Client 4.71.1.0",
-          "weight": 0.0042
-        },
-        {
-          "value": "Rich Client 4.82.0.0",
-          "weight": 0.00368
-        },
-        {
-          "value": "Rich Client 4.61.3.0",
-          "weight": 0.00315
-        },
-        {
-          "value": "IE 7.0",
-          "weight": 0.00315
-        },
-        {
-          "value": "Python Requests 2.33",
-          "weight": 0.00263
-        },
-        {
-          "value": "Rich Client 4.23.0.0",
-          "weight": 0.00263
-        },
-        {
-          "value": "Rich Client 4.78.0.0",
-          "weight": 0.0021
-        },
-        {
-          "value": "Rich Client 4.66.1.0",
-          "weight": 0.00158
-        },
-        {
-          "value": "Rich Client 4.77.1.0",
-          "weight": 0.00158
-        },
-        {
-          "value": "Rich Client 4.84.0.0",
-          "weight": 0.00053
-        },
-        {
-          "value": "Rich Client 4.19.0.0",
-          "weight": 0.00053
-        },
-        {
-          "value": "Rich Client 4.13.1.0",
-          "weight": 0.00053
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 6.0,
       "maxLength": 20.0
     },

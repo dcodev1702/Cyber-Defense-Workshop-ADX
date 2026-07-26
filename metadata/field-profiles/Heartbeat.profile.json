@@ -8,7 +8,7 @@
   "emptyInProd": [
     "IsGatewayInstalled"
   ],
-  "generatedUtc": "2026-07-26T01:06:36.4721836Z",
+  "generatedUtc": "2026-07-26T01:33:33.9812110Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -285,17 +285,9 @@
     "ResourceId": {
       "fillRate": 1.0,
       "distinctCount": 2,
-      "topValues": [
-        {
-          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourceGroups/adds/providers/Microsoft.Compute/virtualMachines/adds01",
-          "weight": 0.9985
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/linux/providers/Microsoft.Compute/virtualMachines/ubuntu01",
-          "weight": 0.0015
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 122.0,
       "maxLength": 125.0
     },
@@ -370,17 +362,9 @@
     "_ResourceId": {
       "fillRate": 1.0,
       "distinctCount": 2,
-      "topValues": [
-        {
-          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/providers/microsoft.compute/virtualmachines/adds01",
-          "weight": 0.9985
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/linux/providers/microsoft.compute/virtualmachines/ubuntu01",
-          "weight": 0.0015
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 122.0,
       "maxLength": 125.0
     }

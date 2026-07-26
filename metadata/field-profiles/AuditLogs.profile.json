@@ -11,7 +11,7 @@
     "Level",
     "Location"
   ],
-  "generatedUtc": "2026-07-26T01:03:04.5786313Z",
+  "generatedUtc": "2026-07-26T01:30:02.1691671Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -46,13 +46,9 @@
     "ResourceId": {
       "fillRate": 1.0,
       "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "/tenants/b22dee98-83da-4207-b9ab-5ba931866f44/providers/Microsoft.aadiam",
-          "weight": 1.0
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 72.0,
       "maxLength": 72.0
     },
@@ -289,77 +285,9 @@
     "Identity": {
       "fillRate": 0.9375,
       "distinctCount": 17,
-      "topValues": [
-        {
-          "value": "MS-PIM",
-          "weight": 0.22
-        },
-        {
-          "value": "Microsoft Online Services Garbage Collector",
-          "weight": 0.15
-        },
-        {
-          "value": "Azure AD PIM",
-          "weight": 0.11
-        },
-        {
-          "value": "Michael Crane",
-          "weight": 0.11
-        },
-        {
-          "value": "Managed Service Identity",
-          "weight": 0.1
-        },
-        {
-          "value": "Lorenzo Ireland",
-          "weight": 0.08333
-        },
-        {
-          "value": "1d78a85d-813d-46f0-b496-dd72f50a3ec0",
-          "weight": 0.08
-        },
-        {
-          "value": "Robert Finn",
-          "weight": 0.02667
-        },
-        {
-          "value": "mcrane@DibSecurity.onmicrosoft.com",
-          "weight": 0.02
-        },
-        {
-          "value": "Undefined user",
-          "weight": 0.02
-        },
-        {
-          "value": "Device Registration Service",
-          "weight": 0.01667
-        },
-        {
-          "value": "Microsoft Online Services",
-          "weight": 0.01333
-        },
-        {
-          "value": "Azure Resource Manager",
-          "weight": 0.01333
-        },
-        {
-          "value": "Noah Taylor",
-          "weight": 0.01333
-        },
-        {
-          "value": "Azure MFA StrongAuthenticationService",
-          "weight": 0.01333
-        },
-        {
-          "value": "Tom Grages",
-          "weight": 0.00667
-        },
-        {
-          "value": "lireland@DibSecurity.onmicrosoft.com",
-          "weight": 0.00333
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 6.0,
       "maxLength": 43.0
     },

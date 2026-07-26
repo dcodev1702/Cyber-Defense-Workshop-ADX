@@ -12,7 +12,7 @@
     "NativeTableName",
     "_ResourceId"
   ],
-  "generatedUtc": "2026-07-26T01:06:21.1009746Z",
+  "generatedUtc": "2026-07-26T01:33:18.4779696Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -275,113 +275,9 @@
     "TargetName": {
       "fillRate": 0.901,
       "distinctCount": 26,
-      "topValues": [
-        {
-          "value": "CloudPosture/securityOperators/DefenderCSPMSecurityOperator",
-          "weight": 0.30133
-        },
-        {
-          "value": "zolab-bot-mi-botprd",
-          "weight": 0.27636
-        },
-        {
-          "value": "mi-tvm-graph-ingest",
-          "weight": 0.10599
-        },
-        {
-          "value": "ME-SecurityScanner",
-          "weight": 0.05549
-        },
-        {
-          "value": "ualtimebomb-disarm",
-          "weight": 0.03774
-        },
-        {
-          "value": "StorageAccounts/securityOperators/DefenderForStorageSecurityOperator",
-          "weight": 0.03385
-        },
-        {
-          "value": "skynet\\lorenzo",
-          "weight": 0.02997
-        },
-        {
-          "value": "Containers/securityOperators/DefenderForContainersSecurityOperator",
-          "weight": 0.02886
-        },
-        {
-          "value": "MCAPSGov-AutomationApp",
-          "weight": 0.02275
-        },
-        {
-          "value": "usm262346",
-          "weight": 0.01887
-        },
-        {
-          "value": "win11-xdr-lab-2",
-          "weight": 0.01887
-        },
-        {
-          "value": "dc-xdr-lab-1",
-          "weight": 0.01776
-        },
-        {
-          "value": "win11-xdr-lab-1",
-          "weight": 0.01776
-        },
-        {
-          "value": "StorageDataScanner",
-          "weight": 0.00777
-        },
-        {
-          "value": "msg-resources-9f5f",
-          "weight": 0.00666
-        },
-        {
-          "value": "SecurityCopilotAgentIdentity-b379352d-0748-4fd6-b1f4-4d2232fe334c",
-          "weight": 0.00333
-        },
-        {
-          "value": "azuread\\mcrane",
-          "weight": 0.00277
-        },
-        {
-          "value": "func-cmmc-evidence-ai-3722",
-          "weight": 0.00277
-        },
-        {
-          "value": "zolab1702-ai-foundry",
-          "weight": 0.00222
-        },
-        {
-          "value": "dibsec-security-project",
-          "weight": 0.00222
-        },
-        {
-          "value": "win11-intune\\xadmin",
-          "weight": 0.00222
-        },
-        {
-          "value": "Purview Item Level scan DSPM",
-          "weight": 0.00111
-        },
-        {
-          "value": "SecurityCopilotAgentIdentity-6eab514e-ae15-4e9c-9da4-8c3c6b234fbc",
-          "weight": 0.00111
-        },
-        {
-          "value": "win11-01",
-          "weight": 0.00111
-        },
-        {
-          "value": "adds01",
-          "weight": 0.00055
-        },
-        {
-          "value": "A365-Workshop-Cleanup",
-          "weight": 0.00055
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 6.0,
       "maxLength": 68.0
     },

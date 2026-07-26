@@ -104,7 +104,7 @@
     "AssetIdentity_g",
     "AdditionalFields"
   ],
-  "generatedUtc": "2026-07-26T01:06:34.4338351Z",
+  "generatedUtc": "2026-07-26T01:33:31.9533087Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -720,13 +720,9 @@
     "clientInfo_s": {
       "fillRate": 0.002,
       "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "AzureResourceGraph.IngestionWorkerService.global/1.26.1.776",
-          "weight": 1.0
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 59.0,
       "maxLength": 59.0
     },
@@ -1031,17 +1027,9 @@
     "workflowId_s": {
       "fillRate": 0.985,
       "distinctCount": 2,
-      "topValues": [
-        {
-          "value": "/SUBSCRIPTIONS/192AD012-896E-4F14-8525-C37A2A9640F9/RESOURCEGROUPS/PLAYBOOK/PROVIDERS/MICROSOFT.LOGIC/WORKFLOWS/UALTIMEBOMB-DISARM",
-          "weight": 0.9401
-        },
-        {
-          "value": "/SUBSCRIPTIONS/1FB89F47-9F73-480D-A6B0-5FB68D13DE11/RESOURCEGROUPS/A365-WORKSHOP/PROVIDERS/MICROSOFT.LOGIC/WORKFLOWS/A365-WORKSHOP-CLEANUP",
-          "weight": 0.0599
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 130.0,
       "maxLength": 138.0
     },
@@ -2177,13 +2165,9 @@
     "ObjectName_s": {
       "fillRate": 0.0005,
       "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "99e7ee49-9f24-4f9e-8430-74413b000edf-appinsightsconnection3763",
-          "weight": 1.0
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 62.0,
       "maxLength": 62.0
     },
@@ -2410,129 +2394,9 @@
     "_ResourceId": {
       "fillRate": 1.0,
       "distinctCount": 89,
-      "topValues": [
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168075868083377331112753cu59/actions/run_queue_query",
-          "weight": 0.06
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166203640194248357163008cu60/actions/run_queue_query",
-          "weight": 0.06
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166023619410362061617417cu52/actions/run_queue_query",
-          "weight": 0.059
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168003860371055569710995cu19/actions/run_queue_query",
-          "weight": 0.0585
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168183881978506437928495cu23/actions/if_row_eligible",
-          "weight": 0.057
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168219886369423587117955cu21/actions/run_queue_query",
-          "weight": 0.0405
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584165987617431976849616467cu55/actions/run_queue_query",
-          "weight": 0.0405
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166275645528424107663360cu26/actions/run_queue_query",
-          "weight": 0.0395
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166167636396609625626836cu26/actions/if_row_eligible",
-          "weight": 0.039
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168147874742474821861982cu31/actions/if_row_eligible",
-          "weight": 0.0385
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166419657857024630780519cu22/actions/if_row_eligible",
-          "weight": 0.038
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168111871158527556442856cu16/actions/run_queue_query",
-          "weight": 0.0375
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168039865839319137700997cu20/actions/if_active_live_response_exists",
-          "weight": 0.034
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166383653678557769043934cu31/actions/if_disarm_lr_succeeded",
-          "weight": 0.0295
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584165915612908530916139419cu17/actions/run_queue_query",
-          "weight": 0.0225
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168111871158527556442856cu16/actions/update_watchlist_disarm_failed",
-          "weight": 0.0225
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166167636396609625626836cu26/actions/run_queue_query",
-          "weight": 0.022
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168039865839319137700997cu20/actions/run_queue_query",
-          "weight": 0.022
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166491664268578063097212cu53/actions/run_queue_query",
-          "weight": 0.021
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168219886369423587117955cu21",
-          "weight": 0.0205
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166383653678557769043934cu31/actions/run_queue_query",
-          "weight": 0.0205
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166419657857024630780519cu22/actions/run_queue_query",
-          "weight": 0.0205
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584167931852879954716269087cu26/actions/run_queue_query",
-          "weight": 0.0205
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584168147874742474821861982cu31/actions/run_queue_query",
-          "weight": 0.0205
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584167859842658863839166796cu19/triggers/recurrence",
-          "weight": 0.0195
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584165987617431976849616467cu55/actions/if_row_eligible",
-          "weight": 0.019
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/providers/microsoft.logic/workflows/ualtimebomb-disarm/runs/08584166383653678557769043934cu31/actions/get_mde_device",
-          "weight": 0.008
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourcegroups/zolab-ai/providers/microsoft.cognitiveservices/accounts/zolab1702-ai-foundry",
-          "weight": 0.0045
-        },
-        {
-          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/a365-workshop/providers/microsoft.logic/workflows/a365-workshop-cleanup/runs/08584166154739456347235136254cu26/actions/get_workshop_users",
-          "weight": 0.004
-        },
-        {
-          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/a365-workshop/providers/microsoft.logic/workflows/a365-workshop-cleanup/runs/08584168134895301050313327882cu56/actions/get_workshop_users",
-          "weight": 0.004
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 126.0,
       "maxLength": 208.0
     }

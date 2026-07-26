@@ -11,7 +11,7 @@
     "InitiatingProcessRemoteSessionIP",
     "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:04:24.8077611Z",
+  "generatedUtc": "2026-07-26T01:31:22.1947274Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -562,129 +562,9 @@
     "InitiatingProcessVersionInfoProductVersion": {
       "fillRate": 0.4,
       "distinctCount": 55,
-      "topValues": [
-        {
-          "value": "10.0.26100.7705",
-          "weight": 0.143
-        },
-        {
-          "value": "10.0.26100.5074",
-          "weight": 0.1125
-        },
-        {
-          "value": "10.0.28000.1",
-          "weight": 0.0795
-        },
-        {
-          "value": "10.8821.27906.1000",
-          "weight": 0.067
-        },
-        {
-          "value": "4.8.9221.0",
-          "weight": 0.0595
-        },
-        {
-          "value": "10.0.26100.7920",
-          "weight": 0.0525
-        },
-        {
-          "value": "4.18.26030.3011",
-          "weight": 0.047
-        },
-        {
-          "value": "10.0.26100.8115",
-          "weight": 0.0465
-        },
-        {
-          "value": "10.0.20348.4647",
-          "weight": 0.0345
-        },
-        {
-          "value": "2.7.41491.1183",
-          "weight": 0.034
-        },
-        {
-          "value": "4.18.26020.6",
-          "weight": 0.0335
-        },
-        {
-          "value": "10.8805.27858.1000",
-          "weight": 0.0265
-        },
-        {
-          "value": "10.0.20348.2849",
-          "weight": 0.023
-        },
-        {
-          "value": "10.0.20348.3451",
-          "weight": 0.0205
-        },
-        {
-          "value": "10.0.26100.7019",
-          "weight": 0.02
-        },
-        {
-          "value": "1.3.225.7",
-          "weight": 0.018
-        },
-        {
-          "value": "4.8.9222.0",
-          "weight": 0.018
-        },
-        {
-          "value": "4.8.9232.0",
-          "weight": 0.0165
-        },
-        {
-          "value": "10.0.26100.7309",
-          "weight": 0.0165
-        },
-        {
-          "value": "1507.2601.30012.0",
-          "weight": 0.0135
-        },
-        {
-          "value": "10.0.28000.1761",
-          "weight": 0.0125
-        },
-        {
-          "value": "16.0.19929.20032",
-          "weight": 0.0105
-        },
-        {
-          "value": "3.0.03194.61+d8252a8a14d1333d697832b1e9e6c5bb089c7021",
-          "weight": 0.007
-        },
-        {
-          "value": "10.0.26100.3037",
-          "weight": 0.0065
-        },
-        {
-          "value": "10.0.26100.6725",
-          "weight": 0.0065
-        },
-        {
-          "value": "1.0.0",
-          "weight": 0.0065
-        },
-        {
-          "value": "10.0.28000.1516",
-          "weight": 0.006
-        },
-        {
-          "value": "10.0.26100.1150",
-          "weight": 0.0055
-        },
-        {
-          "value": "1.3.229.3",
-          "weight": 0.005
-        },
-        {
-          "value": "147.0.3912.86",
-          "weight": 0.005
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 5.0,
       "maxLength": 113.0
     },

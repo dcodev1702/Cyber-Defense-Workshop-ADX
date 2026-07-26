@@ -19,7 +19,7 @@
     "_BilledSize",
     "_ResourceId"
   ],
-  "generatedUtc": "2026-07-26T01:05:11.4011234Z",
+  "generatedUtc": "2026-07-26T01:32:08.3255048Z",
   "columns": {
     "_ItemId": {
       "fillRate": 0.0,
@@ -128,37 +128,9 @@
     "BehaviorId": {
       "fillRate": 1.0,
       "distinctCount": 7,
-      "topValues": [
-        {
-          "value": "dad895f7-eaf2-4929-983f-586aa25f3260_1",
-          "weight": 0.3
-        },
-        {
-          "value": "0fb0ab50-0107-435b-ba2e-be5a9151d3d7_1",
-          "weight": 0.2
-        },
-        {
-          "value": "0e229173-24b7-477c-9993-059e50966c2e_1",
-          "weight": 0.1
-        },
-        {
-          "value": "4fcc4352-5dfc-47ee-b57a-8b964202da95_1",
-          "weight": 0.1
-        },
-        {
-          "value": "6cf10eac-0df3-4a4b-9d43-9cc01cfc48aa_1",
-          "weight": 0.1
-        },
-        {
-          "value": "80b1efb9-4834-42b3-af3e-5927987e829e_1",
-          "weight": 0.1
-        },
-        {
-          "value": "92ce1931-4ce3-4635-a70e-fb1e697c4ba8_1",
-          "weight": 0.1
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 38.0,
       "maxLength": 38.0
     },

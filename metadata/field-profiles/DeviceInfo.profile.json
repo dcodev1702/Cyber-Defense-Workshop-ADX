@@ -17,7 +17,7 @@
     "TenantId",
     "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:03:57.7506955Z",
+  "generatedUtc": "2026-07-26T01:30:54.7788593Z",
   "columns": {
     "TimeGenerated": {
       "fillRate": 1.0,
@@ -1072,73 +1072,9 @@
     "AzureResourceId": {
       "fillRate": 0.2682,
       "distinctCount": 16,
-      "topValues": [
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/des-lab-rg/providers/Microsoft.Compute/virtualMachines/win11-des-lab-2",
-          "weight": 0.19571
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/des-lab-rg/providers/Microsoft.Compute/virtualMachines/win11-des-lab-1",
-          "weight": 0.16869
-        },
-        {
-          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourceGroups/AVD/providers/Microsoft.Compute/virtualMachines/avdpool-1",
-          "weight": 0.1384
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/XDR-LAB-RG/providers/Microsoft.Compute/virtualMachines/dc-xdr-lab-1",
-          "weight": 0.1123
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/DES-LAB-RG/providers/Microsoft.Compute/virtualMachines/dc-des-lab-1",
-          "weight": 0.0657
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/atomic/providers/Microsoft.Compute/virtualMachines/usm262346",
-          "weight": 0.05033
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/atomic/providers/Microsoft.Compute/virtualMachines/vm-atomic-01",
-          "weight": 0.04846
-        },
-        {
-          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourceGroups/adds/providers/Microsoft.Compute/virtualMachines/adds01",
-          "weight": 0.04613
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/atomic/providers/Microsoft.Compute/virtualMachines/attackiq01",
-          "weight": 0.03448
-        },
-        {
-          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourceGroups/ADDS/providers/Microsoft.Compute/virtualMachines/adsync01",
-          "weight": 0.02889
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/LINUX/providers/Microsoft.Compute/virtualMachines/ubuntu01",
-          "weight": 0.0247
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/DES-LAB-RG/providers/Microsoft.Compute/virtualMachines/linux-des-lab-1",
-          "weight": 0.0233
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/xdr-lab-rg/providers/Microsoft.Compute/virtualMachines/win11-xdr-lab-1",
-          "weight": 0.02237
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/xdr-lab-rg/providers/Microsoft.Compute/virtualMachines/win11-xdr-lab-2",
-          "weight": 0.02144
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/XDR-LAB-RG/providers/Microsoft.Compute/virtualMachines/linux-xdr-lab-1",
-          "weight": 0.01631
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/xdr-lab-rg/providers/Microsoft.Compute/virtualMachines/dc-xdr-lab-2",
-          "weight": 0.0028
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 122.0,
       "maxLength": 137.0
     },

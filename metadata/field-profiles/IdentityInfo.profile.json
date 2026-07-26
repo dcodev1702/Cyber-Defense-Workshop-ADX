@@ -35,7 +35,7 @@
     "ServicePrincipals",
     "EntityRiskScore"
   ],
-  "generatedUtc": "2026-07-26T01:04:51.6080549Z",
+  "generatedUtc": "2026-07-26T01:31:48.8301816Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -214,81 +214,9 @@
     "OnPremisesDistinguishedName": {
       "fillRate": 0.2317,
       "distinctCount": 18,
-      "topValues": [
-        {
-          "value": "CN=lorenzo,CN=Users,DC=xdr-lab,DC=local",
-          "weight": 0.10526
-        },
-        {
-          "value": "CN=App User,CN=Users,DC=xdr-lab,DC=local",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=SamiraA,CN=Users,DC=xdr-lab,DC=local",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=RonHD,CN=Users,DC=xdr-lab,DC=local",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=MSOL_fe3a5d9f7db9,CN=Users,DC=dibsec,DC=net",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=MDITestUser\\0ADEL:187f8255-00bd-40bc-9646-ebf349b687e0,CN=Deleted Objects,DC=dibsec,DC=net",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=krbtgt,CN=Users,DC=xdr-lab,DC=local",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=krbtgt,CN=Users,DC=dibsec,DC=net",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=krbtgt_AzureAD,CN=Users,DC=dibsec,DC=net",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=JeffL,CN=Users,DC=xdr-lab,DC=local",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=HoneyTokenTest,CN=Users,DC=xdr-lab,DC=local",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=Guest,CN=Users,DC=xdr-lab,DC=local",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=Guest,CN=Users,DC=dibsec,DC=net",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=gail crane,CN=Users,DC=dibsec,DC=net",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=Break Glass,CN=Users,DC=xdr-lab,DC=local",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=AuditDCTestUser\\0ADEL:e161dde3-1edc-4bba-aa00-bae0e66e3c35,CN=Deleted Objects,DC=dibsec,DC=net",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=testeme,CN=Users,DC=dibsec,DC=net",
-          "weight": 0.05263
-        },
-        {
-          "value": "CN=xadmin,CN=Users,DC=dibsec,DC=net",
-          "weight": 0.05263
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 34.0,
       "maxLength": 97.0
     },

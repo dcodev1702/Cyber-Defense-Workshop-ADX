@@ -18,7 +18,7 @@
     "RiskEventTypes_V2",
     "TokenIssuerName"
   ],
-  "generatedUtc": "2026-07-26T01:03:20.7300644Z",
+  "generatedUtc": "2026-07-26T01:30:17.9646881Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -177,49 +177,9 @@
     "Identity": {
       "fillRate": 1.0,
       "distinctCount": 10,
-      "topValues": [
-        {
-          "value": "Lorenzo Ireland",
-          "weight": 0.328
-        },
-        {
-          "value": "Michael Crane",
-          "weight": 0.2734
-        },
-        {
-          "value": "Robert Finn",
-          "weight": 0.2078
-        },
-        {
-          "value": "SecurityCopilotAgentUser-6eab514e-ae15-4e9c-9da4-8c3c6b234fbc",
-          "weight": 0.0618
-        },
-        {
-          "value": "SecurityCopilotAgentUser-b379352d-0748-4fd6-b1f4-4d2232fe334c",
-          "weight": 0.0512
-        },
-        {
-          "value": "Destiny Staton",
-          "weight": 0.0246
-        },
-        {
-          "value": "Rob Barker",
-          "weight": 0.0244
-        },
-        {
-          "value": "Tom Grages",
-          "weight": 0.0122
-        },
-        {
-          "value": "Noah Taylor",
-          "weight": 0.0092
-        },
-        {
-          "value": "SecurityCopilotAgentUser-9105dce2-230d-4f6c-b885-79e7cfd55dc7",
-          "weight": 0.0074
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 10.0,
       "maxLength": 61.0
     },

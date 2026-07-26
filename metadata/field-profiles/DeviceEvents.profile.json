@@ -16,7 +16,7 @@
     "ProcessRemoteSessionIP",
     "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:03:36.4149428Z",
+  "generatedUtc": "2026-07-26T01:30:33.5154570Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -556,21 +556,9 @@
     "RemoteIP": {
       "fillRate": 0.001,
       "distinctCount": 3,
-      "topValues": [
-        {
-          "value": "::1",
-          "weight": 0.4
-        },
-        {
-          "value": "127.0.0.1",
-          "weight": 0.4
-        },
-        {
-          "value": "192.168.10.69",
-          "weight": 0.2
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 3.0,
       "maxLength": 13.0
     },
@@ -1074,129 +1062,9 @@
     "InitiatingProcessVersionInfoProductVersion": {
       "fillRate": 0.8538,
       "distinctCount": 76,
-      "topValues": [
-        {
-          "value": "10.0.20348.2849",
-          "weight": 0.2729
-        },
-        {
-          "value": "10.0.20348.1",
-          "weight": 0.11431
-        },
-        {
-          "value": "10.0.26100.5074",
-          "weight": 0.09276
-        },
-        {
-          "value": "10.0.26100.32522",
-          "weight": 0.08995
-        },
-        {
-          "value": "10.0.26100.7920",
-          "weight": 0.05669
-        },
-        {
-          "value": "10.0.28000.1764",
-          "weight": 0.0438
-        },
-        {
-          "value": "10.0.26100.7705",
-          "weight": 0.0335
-        },
-        {
-          "value": "10.0.20348.4893",
-          "weight": 0.02506
-        },
-        {
-          "value": "10.0.26100.7309",
-          "weight": 0.02296
-        },
-        {
-          "value": "10.0.28000.1",
-          "weight": 0.01968
-        },
-        {
-          "value": "3.0.7-419",
-          "weight": 0.0178
-        },
-        {
-          "value": "1.117.0",
-          "weight": 0.01757
-        },
-        {
-          "value": "4.18.26030.3011",
-          "weight": 0.01593
-        },
-        {
-          "value": "147.0.3912.86",
-          "weight": 0.01569
-        },
-        {
-          "value": "10.0.28000.1643",
-          "weight": 0.01452
-        },
-        {
-          "value": "2.8.6.428",
-          "weight": 0.01429
-        },
-        {
-          "value": "10.0.20348.3451",
-          "weight": 0.01101
-        },
-        {
-          "value": "4.8.4380.0",
-          "weight": 0.01031
-        },
-        {
-          "value": "10.0.26100.8115",
-          "weight": 0.00914
-        },
-        {
-          "value": "1.3.225.7",
-          "weight": 0.00867
-        },
-        {
-          "value": "2.7.41491.1183",
-          "weight": 0.0082
-        },
-        {
-          "value": "10.0.26100.32370",
-          "weight": 0.00632
-        },
-        {
-          "value": "1.115.0",
-          "weight": 0.00562
-        },
-        {
-          "value": "1507.2602.25052.0",
-          "weight": 0.00515
-        },
-        {
-          "value": "3.13.11",
-          "weight": 0.00398
-        },
-        {
-          "value": "1.101.109.0.421f9174ab77c215a4653a6e9a943b0d3921f65f Intune-Redist-EMSAgent.release (c19ec4fbc000000.260407-2319)",
-          "weight": 0.00398
-        },
-        {
-          "value": "10.0.26100.8035",
-          "weight": 0.00375
-        },
-        {
-          "value": "16.0.19929.20032",
-          "weight": 0.00351
-        },
-        {
-          "value": "10.0.26100.8246",
-          "weight": 0.00328
-        },
-        {
-          "value": "10.0.26100.8036",
-          "weight": 0.00305
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 3.0,
       "maxLength": 113.0
     },

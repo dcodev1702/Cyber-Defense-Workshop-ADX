@@ -167,7 +167,7 @@
     "VendorIds",
     "Workstation"
   ],
-  "generatedUtc": "2026-07-26T01:05:35.3624861Z",
+  "generatedUtc": "2026-07-26T01:32:32.3701203Z",
   "columns": {
     "TimeGenerated": {
       "fillRate": 1.0,
@@ -309,25 +309,9 @@
     "EventData": {
       "fillRate": 0.0482,
       "distinctCount": 4,
-      "topValues": [
-        {
-          "value": "<EventData xmlns=\"http://schemas.microsoft.com/win/2004/08/events/event\">\r\n  <Data Name=\"SubjectUserSid\">S-1-5-19</Data>\r\n  <Data Name=\"SubjectUserName\">LOCAL SERVICE</Data>\r\n  <Data Name=\"SubjectDomainName\">NT AUTHORITY</Data>\r\n  <Data Name=\"SubjectLogonId\">0x3e5</Data>\r\n  <Data Name=\"ObjectServer\">LSA</Data>\r\n  <Data Name=\"ObjectType\">-</Data>\r\n  <Data Name=\"ObjectName\">-</Data>\r\n  <Data Name=\"HandleId\">0x0</Data>\r\n  <Data Name=\"AccessMask\">16777216</Data>\r\n  <Data Name=\"PrivilegeList\">SeSecurityPrivilege</Data>\r\n  <Data Name=\"ProcessId\">0x37c</Data>\r\n  <Data Name=\"ProcessName\">C:\\Windows\\System32\\lsass.exe</Data>\r\n</EventData>",
-          "weight": 0.6971
-        },
-        {
-          "value": "<EventData xmlns=\"http://schemas.microsoft.com/win/2004/08/events/event\">\r\n  <Data Name=\"SubjectUserSid\">S-1-5-18</Data>\r\n  <Data Name=\"SubjectUserName\">adds01$</Data>\r\n  <Data Name=\"SubjectDomainName\">DIBSEC</Data>\r\n  <Data Name=\"SubjectLogonId\">0x3e7</Data>\r\n  <Data Name=\"ObjectServer\">NT Local Security Authority / Authentication Service</Data>\r\n  <Data Name=\"Service\">LsaRegisterLogonProcess()</Data>\r\n  <Data Name=\"PrivilegeList\">SeTcbPrivilege</Data>\r\n  <Data Name=\"ProcessId\">0x37c</Data>\r\n  <Data Name=\"ProcessName\">C:\\Windows\\System32\\lsass.exe</Data>\r\n</EventData>",
-          "weight": 0.18672
-        },
-        {
-          "value": "<EventData xmlns=\"http://schemas.microsoft.com/win/2004/08/events/event\">\r\n  <Data Name=\"SubjectUserSid\">S-1-5-21-273413156-312968053-789467739-500</Data>\r\n  <Data Name=\"SubjectUserName\">xadmin</Data>\r\n  <Data Name=\"SubjectDomainName\">DIBSEC</Data>\r\n  <Data Name=\"SubjectLogonId\">0x240085</Data>\r\n  <Data Name=\"ObjectServer\">Security</Data>\r\n  <Data Name=\"Service\">-</Data>\r\n  <Data Name=\"PrivilegeList\">SeTcbPrivilege</Data>\r\n  <Data Name=\"ProcessId\">0x264</Data>\r\n  <Data Name=\"ProcessName\">C:\\Windows\\System32\\svchost.exe</Data>\r\n</EventData>",
-          "weight": 0.11203
-        },
-        {
-          "value": "<EventData xmlns=\"http://schemas.microsoft.com/win/2004/08/events/event\">\r\n  <Data Name=\"TargetUserName\">WIN11-01$</Data>\r\n  <Data Name=\"TargetDomainName\">DIBSEC.NET</Data>\r\n  <Data Name=\"TargetSid\">S-1-5-21-273413156-312968053-789467739-12101</Data>\r\n  <Data Name=\"ServiceName\">krbtgt</Data>\r\n  <Data Name=\"ServiceSid\">S-1-5-21-273413156-312968053-789467739-502</Data>\r\n  <Data Name=\"TicketOptions\">0x40810010</Data>\r\n  <Data Name=\"Status\">0x0</Data>\r\n  <Data Name=\"TicketEncryptionType\">0x12</Data>\r\n  <Data Name=\"PreAuthType\">2</Data>\r\n  <Data Name=\"IpAddress\">::ffff:10.1.2.4</Data>\r\n  <Data Name=\"IpPort\">51872</Data>\r\n  <Data Name=\"CertIssuerName\" />\r\n  <Data Name=\"CertSerialNumber\" />\r\n  <Data Name=\"CertThumbprint\" />\r\n  <Data Name=\"ResponseTicket\">u4PplqFZXetRIyI9dQb2xwj1INYjnFFGGsUJB+rmZLE=</Data>\r\n  <Data Name=\"AccountSupportedEncryptionTypes\">0x1C (RC4, AES128-SHA96, AES256-SHA96)</Data>\r\n  <Data Name=\"AccountAvailableKeys\">RC4, AES128-SHA96, AES256-SHA96, AES128-SHA256, AES256-SHA384</Data>\r\n  <Data Name=\"ServiceSupportedEncryptionTypes\">0x0 (N/A)</Data>\r\n  <Data Name=\"ServiceAvailableKeys\">RC4, AES128-SHA96, AES256-SHA96</Data>\r\n  <Data Name=\"DCSupportedEncryptionTypes\">0x0 (N/A)</Data>\r\n  <Data Name=\"DCAvailableKeys\">RC4, AES128-SHA96, AES256-SHA96</Data>\r\n  <Data Name=\"ClientAdvertizedEncryptionTypes\"> \t\tAES256-CTS-HMAC-SHA1-96 \t\tAES128-CTS-HMAC-SHA1-96 \t\tRC4-HMAC-NT</Data>\r\n  <Data Name=\"SessionKeyEncryptionType\">0x12</Data>\r\n  <Data Name=\"PreAuthEncryptionType\">0x12</Data>\r\n</EventData>",
-          "weight": 0.00415
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 545.0,
       "maxLength": 1520.0
     },
@@ -553,105 +537,9 @@
     "AdditionalInfo2": {
       "fillRate": 0.018,
       "distinctCount": 24,
-      "topValues": [
-        {
-          "value": "root\\cimv2\\security\\microsofttpm:__Win32Provider.Name=\"Win32_TpmProvider\"",
-          "weight": 0.08889
-        },
-        {
-          "value": "root\\cimv2\\security\\microsofttpm:references of {__Win32Provider.Name=\"Win32_TpmProvider\"}",
-          "weight": 0.08889
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:references of {__Win32Provider.Name=\"Win32_EncryptableVolumeProvider\"}",
-          "weight": 0.08889
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:__Win32Provider.Name=\"Win32_EncryptableVolumeProvider\"",
-          "weight": 0.08889
-        },
-        {
-          "value": "root\\cimv2\\security\\microsofttpm",
-          "weight": 0.07778
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:Select * from __ClassProviderRegistration",
-          "weight": 0.04444
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption",
-          "weight": 0.04444
-        },
-        {
-          "value": "root\\cimv2\\security\\microsofttpm:Win32_Tpm",
-          "weight": 0.04444
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:__ExtendedStatus",
-          "weight": 0.04444
-        },
-        {
-          "value": "root\\cimv2\\security\\microsofttpm:Select * from __ClassProviderRegistration",
-          "weight": 0.04444
-        },
-        {
-          "value": "root\\cimv2\\security\\microsofttpm:__ExtendedStatus",
-          "weight": 0.04444
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume",
-          "weight": 0.04444
-        },
-        {
-          "value": "root\\CIMV2\\security\\microsofttpm:SELECT ManufacturerIdTxt FROM win32_tpm",
-          "weight": 0.03333
-        },
-        {
-          "value": "root\\cimv2\\security\\microsoftvolumeencryption:SELECT protectionstatus FROM win32_encryptablevolume",
-          "weight": 0.02222
-        },
-        {
-          "value": "root\\cimv2\\security\\microsofttpm:SELECT * FROM Win32_TPM",
-          "weight": 0.02222
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:\\\\adds01\\root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume.DeviceID=\"\\\\\\\\?\\\\Volume{2e50966b-0000-0000-0000-100000000000}\\\\\"::GetConversionStatus",
-          "weight": 0.02222
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:\\\\adds01\\root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume.DeviceID=\"\\\\\\\\?\\\\Volume{2e50966b-0000-0000-0000-100000000000}\\\\\"::GetLockStatus",
-          "weight": 0.02222
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:\\\\adds01\\root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume.DeviceID=\"\\\\\\\\?\\\\Volume{2e50966b-0000-0000-0000-100000000000}\\\\\"::GetProtectionStatus",
-          "weight": 0.02222
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:\\\\adds01\\root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume.DeviceID=\"\\\\\\\\?\\\\Volume{53c47efc-a09c-4106-ae04-f9eda0672381}\\\\\"::GetConversionStatus",
-          "weight": 0.02222
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:\\\\adds01\\root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume.DeviceID=\"\\\\\\\\?\\\\Volume{53c47efc-a09c-4106-ae04-f9eda0672381}\\\\\"::GetLockStatus",
-          "weight": 0.02222
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:\\\\adds01\\root\\cimv2\\security\\MicrosoftVolumeEncryption:Win32_EncryptableVolume.DeviceID=\"\\\\\\\\?\\\\Volume{53c47efc-a09c-4106-ae04-f9eda0672381}\\\\\"::GetProtectionStatus",
-          "weight": 0.02222
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption:SELECT * FROM Win32_EncryptableVolume",
-          "weight": 0.02222
-        },
-        {
-          "value": "Root\\CIMV2\\Security\\MicrosoftTpm:SELECT ManufacturerId, ManufacturerIdTxt, ManufacturerVersion, ManufacturerVersionInfo, PhysicalPresenceVersionInfo FROM Win32_Tpm",
-          "weight": 0.01111
-        },
-        {
-          "value": "Root\\CIMV2\\Security\\MicrosoftTpm:SELECT IsActivated_InitialValue, IsEnabled_InitialValue, SpecVersion FROM Win32_Tpm",
-          "weight": 0.01111
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 32.0,
       "maxLength": 210.0
     },
@@ -1401,25 +1289,9 @@
     "ObjectName": {
       "fillRate": 0.0522,
       "distinctCount": 4,
-      "topValues": [
-        {
-          "value": "-",
-          "weight": 0.64368
-        },
-        {
-          "value": "root\\cimv2\\security\\MicrosoftVolumeEncryption",
-          "weight": 0.18391
-        },
-        {
-          "value": "root\\cimv2\\security\\microsofttpm",
-          "weight": 0.16092
-        },
-        {
-          "value": "%{0de8dd0d-7529-4ad2-9b34-37c86045a698}",
-          "weight": 0.01149
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 1.0,
       "maxLength": 45.0
     },
@@ -1455,21 +1327,9 @@
     "ObjectType": {
       "fillRate": 0.0522,
       "distinctCount": 3,
-      "topValues": [
-        {
-          "value": "-",
-          "weight": 0.64368
-        },
-        {
-          "value": "WMI Namespace",
-          "weight": 0.34483
-        },
-        {
-          "value": "%{19195a5b-6da0-11d0-afd3-00c04fd930c9}",
-          "weight": 0.01149
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 1.0,
       "maxLength": 39.0
     },
@@ -1700,17 +1560,9 @@
     "Properties": {
       "fillRate": 0.0186,
       "distinctCount": 2,
-      "topValues": [
-        {
-          "value": "-",
-          "weight": 0.96774
-        },
-        {
-          "value": "%%7688 \t\t{1131f6aa-9c07-11d1-f79f-00c04fc2dcd2} \t{19195a5b-6da0-11d0-afd3-00c04fd930c9} ",
-          "weight": 0.03226
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 1.0,
       "maxLength": 88.0
     },
@@ -2551,13 +2403,9 @@
     "_ResourceId": {
       "fillRate": 1.0,
       "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/providers/microsoft.compute/virtualmachines/adds01",
-          "weight": 1.0
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 122.0,
       "maxLength": 122.0
     }

@@ -101,7 +101,7 @@
     "AdditionalEntities",
     "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:05:51.3834130Z",
+  "generatedUtc": "2026-07-26T01:32:48.2294917Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -563,129 +563,9 @@
     "DnsQuery": {
       "fillRate": 1.0,
       "distinctCount": 121,
-      "topValues": [
-        {
-          "value": "eus2-oi-ods.trafficmanager.net",
-          "weight": 0.18
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977.ods.opinsights.azure.com",
-          "weight": 0.1785
-        },
-        {
-          "value": "edr-cus3.us.endpoint.security.microsoft.com",
-          "weight": 0.066
-        },
-        {
-          "value": "ipv4-eus2-oi-ods-cses-a.eastus2.cloudapp.azure.com",
-          "weight": 0.0625
-        },
-        {
-          "value": "ipv4-eus2-oi-ods-cses-b.eastus2.cloudapp.azure.com",
-          "weight": 0.0525
-        },
-        {
-          "value": "md-prod-simcon-ip193.centralus.cloudapp.azure.com",
-          "weight": 0.032
-        },
-        {
-          "value": "ipv4-eus2-oi-ods-cses-d.eastus2.cloudapp.azure.com",
-          "weight": 0.03
-        },
-        {
-          "value": "adds01.dibsec.net",
-          "weight": 0.0275
-        },
-        {
-          "value": "md-prod-simcon-geoedr-tm-centralus3.trafficmanager.net",
-          "weight": 0.0265
-        },
-        {
-          "value": "us-v20.events.data.trafficmanager.net",
-          "weight": 0.024
-        },
-        {
-          "value": "md-prod-simcon-ip192.centralus.cloudapp.azure.com",
-          "weight": 0.0225
-        },
-        {
-          "value": "us-v20.events.endpoint.security.microsoft.com",
-          "weight": 0.02
-        },
-        {
-          "value": "dibsec.net",
-          "weight": 0.017
-        },
-        {
-          "value": "eastus2-gas.guestconfiguration.azure.com",
-          "weight": 0.014
-        },
-        {
-          "value": "global.handler.control.monitor.azure.com",
-          "weight": 0.013
-        },
-        {
-          "value": "_msdcs.dibsec.net",
-          "weight": 0.012
-        },
-        {
-          "value": "amcs-prod-global-handler.trafficmanager.net",
-          "weight": 0.0115
-        },
-        {
-          "value": "afd-eus2-guestagentsvc-prod.trafficmanager.net",
-          "weight": 0.0115
-        },
-        {
-          "value": "wpad.reddog.microsoft.com",
-          "weight": 0.009
-        },
-        {
-          "value": "wpad.dibsec.net",
-          "weight": 0.009
-        },
-        {
-          "value": "global.handler.control.privatelink.monitor.azure.com",
-          "weight": 0.0065
-        },
-        {
-          "value": "v10.events.data.microsoft.com",
-          "weight": 0.006
-        },
-        {
-          "value": "v20.events.data.microsoft.com",
-          "weight": 0.006
-        },
-        {
-          "value": "wpad.bhzqr4qrlaiebar5vwlmefj2da.cx.internal.cloudapp.net",
-          "weight": 0.006
-        },
-        {
-          "value": "eastus2-gas.privatelink.guestconfiguration.azure.com",
-          "weight": 0.0055
-        },
-        {
-          "value": "eus2-gas-guestconfiguration-azure-com.arc-0001.arc-msedge.net",
-          "weight": 0.0055
-        },
-        {
-          "value": "arc-0001.arc-msedge.net",
-          "weight": 0.0055
-        },
-        {
-          "value": "ctldl.windowsupdate.com",
-          "weight": 0.005
-        },
-        {
-          "value": "login.microsoftonline.com",
-          "weight": 0.005
-        },
-        {
-          "value": "login.mso.msidentity.com",
-          "weight": 0.005
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 10.0,
       "maxLength": 110.0
     },
@@ -1719,13 +1599,9 @@
     "_ResourceId": {
       "fillRate": 1.0,
       "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/providers/microsoft.compute/virtualmachines/adds01",
-          "weight": 1.0
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 122.0,
       "maxLength": 122.0
     }

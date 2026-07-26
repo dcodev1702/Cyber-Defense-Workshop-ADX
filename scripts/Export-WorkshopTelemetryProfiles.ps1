@@ -215,6 +215,46 @@ function Get-RowSetColumns {
     }
 }
 
+function Test-SensitiveContent {
+    <#
+        Content-based safety net for value vocabularies. Column-name matching alone
+        misses fields such as SourceAgentId, which in real data carries Azure
+        resource IDs embedding a live subscription GUID. Any vocabulary containing a
+        GUID, a resource path, a UPN, an address, or a credential is suppressed
+        regardless of the column name.
+
+        Kept deliberately in step with scripts\Test-FieldProfileSafety.ps1.
+    #>
+    param(
+        [Parameter(Mandatory)][AllowEmptyCollection()][string[]]$Values,
+        [string]$ColumnName = ''
+    )
+
+    $indicators = @(
+        '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'  # any embedded GUID
+        '(?i)/subscriptions/'
+        '(?i)/resourcegroups/'
+        '(?i)/tenants/'
+        '(?i)\.onmicrosoft\.com'
+        '(?i)[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}'                                     # any embedded UPN
+        '(?i)(bearer\s+[a-z0-9._-]{8,}|eyJ[a-zA-Z0-9._-]{10,})'                         # bearer token or JWT
+        '\b[0-9a-fA-F]{32,}\b'                                                          # long hex, hashes and keys
+    )
+
+    # Version strings such as 4.83.1.0 are shaped like an address, so the IPv4 test
+    # is skipped for version columns rather than discarding a useful vocabulary.
+    if ($ColumnName -notmatch '(?i)version') {
+        $indicators += '\b\d{1,3}(\.\d{1,3}){3}\b'
+    }
+
+    foreach ($value in $Values) {
+        foreach ($indicator in $indicators) {
+            if ($value -match $indicator) { return $true }
+        }
+    }
+    return $false
+}
+
 function New-ColumnProfile {
     <#
         Values are gathered only from row sets that actually declare the column,
@@ -272,11 +312,18 @@ function New-ColumnProfile {
     if ($isFreeText) { $result.freeText = $true }
 
     if ($groups.Count -le 200 -and -not $result.pattern -and -not $isSensitive -and -not $isFreeText) {
-        $result.topValues = @(
+        $candidate = @(
             $groups | Select-Object -First $TopValueCount | ForEach-Object {
                 [ordered]@{ value = $_.Name; weight = [Math]::Round($_.Count / $present.Count, 5) }
             }
         )
+
+        if (Test-SensitiveContent -Values @($candidate | ForEach-Object { [string]$_.value }) -ColumnName $Column) {
+            $result.sensitive = $true
+        }
+        else {
+            $result.topValues = $candidate
+        }
     }
 
     $lengths = @($strings | ForEach-Object { $_.Length })

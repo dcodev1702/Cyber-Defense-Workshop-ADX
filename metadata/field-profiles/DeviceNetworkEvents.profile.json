@@ -9,7 +9,7 @@
     "AppGuardContainerId",
     "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:04:12.3825874Z",
+  "generatedUtc": "2026-07-26T01:31:09.7845311Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -637,129 +637,9 @@
     "InitiatingProcessVersionInfoProductVersion": {
       "fillRate": 0.2172,
       "distinctCount": 43,
-      "topValues": [
-        {
-          "value": "10.0.26100.7705",
-          "weight": 0.20902
-        },
-        {
-          "value": "10.0.28000.1",
-          "weight": 0.11786
-        },
-        {
-          "value": "10.0.26100.5074",
-          "weight": 0.1105
-        },
-        {
-          "value": "26.062.0402.0002",
-          "weight": 0.06538
-        },
-        {
-          "value": "4.18.26030.3011",
-          "weight": 0.05341
-        },
-        {
-          "value": "147.0.3912.72",
-          "weight": 0.04788
-        },
-        {
-          "value": "26.055.0323.0004",
-          "weight": 0.04604
-        },
-        {
-          "value": "147.0.3912.60",
-          "weight": 0.04236
-        },
-        {
-          "value": "16.0.19929.20090",
-          "weight": 0.03499
-        },
-        {
-          "value": "26072.519.4556.7438",
-          "weight": 0.03131
-        },
-        {
-          "value": "10.0.26100.7309",
-          "weight": 0.02762
-        },
-        {
-          "value": "10.0.26100.8115",
-          "weight": 0.0267
-        },
-        {
-          "value": "26.062.0402.0001",
-          "weight": 0.01842
-        },
-        {
-          "value": "10.0.26100.7920",
-          "weight": 0.0175
-        },
-        {
-          "value": "19.2604.50081.0",
-          "weight": 0.01473
-        },
-        {
-          "value": "10.0.26100.1",
-          "weight": 0.01381
-        },
-        {
-          "value": "16.0.19929.20032",
-          "weight": 0.01289
-        },
-        {
-          "value": "1507.2602.25052.0",
-          "weight": 0.00921
-        },
-        {
-          "value": "1.115.0",
-          "weight": 0.00921
-        },
-        {
-          "value": "1.3.225.7",
-          "weight": 0.00829
-        },
-        {
-          "value": "46.24.3.0",
-          "weight": 0.00829
-        },
-        {
-          "value": "10.0.28000.1761",
-          "weight": 0.00829
-        },
-        {
-          "value": "10.0.26100.32522",
-          "weight": 0.00737
-        },
-        {
-          "value": "3.0.6-405",
-          "weight": 0.00737
-        },
-        {
-          "value": "16.0.19929.20086",
-          "weight": 0.00645
-        },
-        {
-          "value": "7.6.0 SHA: 6effea0e216b190f989e227f5a20b670804a07fb+6effea0e216b190f989e227f5a20b670804a07fb",
-          "weight": 0.00645
-        },
-        {
-          "value": "10.8821.27906.1000",
-          "weight": 0.00552
-        },
-        {
-          "value": "526.1202.10.0",
-          "weight": 0.00552
-        },
-        {
-          "value": "1.101.109.0.421f9174ab77c215a4653a6e9a943b0d3921f65f Intune-Redist-EMSAgent.release (c19ec4fbc000000.260407-2333)",
-          "weight": 0.00552
-        },
-        {
-          "value": "147.0.3912.86",
-          "weight": 0.00368
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 7.0,
       "maxLength": 113.0
     },

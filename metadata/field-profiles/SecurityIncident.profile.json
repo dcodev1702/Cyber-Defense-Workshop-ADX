@@ -9,7 +9,7 @@
     "Description",
     "ClassificationComment"
   ],
-  "generatedUtc": "2026-07-26T01:03:04.1160388Z",
+  "generatedUtc": "2026-07-26T01:30:01.7242970Z",
   "columns": {
     "TimeGenerated": {
       "fillRate": 1.0,
@@ -777,29 +777,9 @@
     "ModifiedBy": {
       "fillRate": 1.0,
       "distinctCount": 5,
-      "topValues": [
-        {
-          "value": "Microsoft Defender XDR - alert correlation",
-          "weight": 0.60101
-        },
-        {
-          "value": "Incident created from alert",
-          "weight": 0.31818
-        },
-        {
-          "value": "Microsoft XDR",
-          "weight": 0.04545
-        },
-        {
-          "value": "mcrane@DibSecurity.onmicrosoft.com",
-          "weight": 0.0303
-        },
-        {
-          "value": "Playbook - Notify-User-On-Incident",
-          "weight": 0.00505
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 13.0,
       "maxLength": 42.0
     },

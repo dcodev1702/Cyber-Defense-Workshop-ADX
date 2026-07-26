@@ -9,7 +9,7 @@
     "TenantId",
     "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:04:32.2842861Z",
+  "generatedUtc": "2026-07-26T01:31:29.7627620Z",
   "columns": {
     "IgId": {
       "fillRate": 1.0,
@@ -289,93 +289,9 @@
     "DataStructure": {
       "fillRate": 1.0,
       "distinctCount": 21,
-      "topValues": [
-        {
-          "value": "String. e.g.: Off, Block, Warn, Unknown; a nested member of infoGatheringData.AsrConfigurationStates object",
-          "weight": 0.21111
-        },
-        {
-          "value": "String. i.e., 2022-02-15T00:27:47.744Z",
-          "weight": 0.18889
-        },
-        {
-          "value": "One of the following values: True/False",
-          "weight": 0.12222
-        },
-        {
-          "value": "One of the following values: Enabled/Disabled/DisabledByDefault",
-          "weight": 0.11111
-        },
-        {
-          "value": "One of the following values: 0/1",
-          "weight": 0.08889
-        },
-        {
-          "value": "String. i.e., 2",
-          "weight": 0.04444
-        },
-        {
-          "value": "One of the following values: true/false/null (null like false, indicates not vulnerable)",
-          "weight": 0.03333
-        },
-        {
-          "value": "String. i.e., 2024-01-15T00:27:47.744Z",
-          "weight": 0.03333
-        },
-        {
-          "value": "String. i.e., 4.18.2109.6",
-          "weight": 0.02222
-        },
-        {
-          "value": "String. i.e., 1",
-          "weight": 0.02222
-        },
-        {
-          "value": "3 maps (dictionaries) from string keys to string values, under Quick and Full Custom fields, i.e., {\"Quick\":{\"ScanStatus\":\"Completed\",\"ErrorCode\":null,\"Timestamp\":\"2021-10-19T09:17:09.403+00:00\"},\"Full\":null,\"Custom\":null}",
-          "weight": 0.01111
-        },
-        {
-          "value": "String. i.e., Found, NotFound and Unknown",
-          "weight": 0.01111
-        },
-        {
-          "value": "String. i.e., 1.351.679.0",
-          "weight": 0.01111
-        },
-        {
-          "value": "string. i.e. 1",
-          "weight": 0.01111
-        },
-        {
-          "value": "String. i.e., Mitigated, NotMitigated and NotApplicable",
-          "weight": 0.01111
-        },
-        {
-          "value": "String i.e. Wdav/Heartbeat",
-          "weight": 0.01111
-        },
-        {
-          "value": "One of the following values: True/RebootRequired/False",
-          "weight": 0.01111
-        },
-        {
-          "value": "One of the following values: 0/1/2/3/4/5",
-          "weight": 0.01111
-        },
-        {
-          "value": "CVE id, i.e. CVE-2021-44228",
-          "weight": 0.01111
-        },
-        {
-          "value": "String. i.e., 1.1.18700.3",
-          "weight": 0.01111
-        },
-        {
-          "value": "String. i.e., true",
-          "weight": 0.01111
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 14.0,
       "maxLength": 222.0
     },

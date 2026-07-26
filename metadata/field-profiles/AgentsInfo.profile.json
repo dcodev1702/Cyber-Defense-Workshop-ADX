@@ -23,7 +23,7 @@
     "TenantId",
     "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:05:36.6782208Z",
+  "generatedUtc": "2026-07-26T01:32:33.7164975Z",
   "columns": {
     "TimeGenerated": {
       "fillRate": 1.0,
@@ -219,29 +219,9 @@
     "SourceAgentId": {
       "fillRate": 0.026,
       "distinctCount": 5,
-      "topValues": [
-        {
-          "value": "0f90715d92aa690449760965498caacea8d055f39fbb2b4d16c667c2bbffe5ae",
-          "weight": 0.26923
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/zolab-ai-u49gco/providers/Microsoft.CognitiveServices/accounts/zolabai-foundry-u49gco/projects/zolabai-fndry-proj-u49gco/agents/agent-007-01",
-          "weight": 0.19231
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/zolab-ai-u49gco/providers/Microsoft.CognitiveServices/accounts/zolabai-foundry-u49gco/projects/zolabai-fndry-proj-u49gco/agents/ZoDEfendersAgent-1702",
-          "weight": 0.19231
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/zolab-ai-u49gco/providers/Microsoft.CognitiveServices/accounts/zolabai-foundry-u49gco/projects/zolabai-fndry-proj-u49gco/agents/ZoDEfendersAgent-1702-sentinel",
-          "weight": 0.19231
-        },
-        {
-          "value": "977adfd0fa1938d94e5f6c2d0d2415f76bb2422823923e085e3d04f96d091a88",
-          "weight": 0.15385
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 64.0,
       "maxLength": 225.0
     },

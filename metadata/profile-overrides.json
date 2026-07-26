@@ -1,0 +1,24 @@
+{
+  "$comment": "Columns that real tenant telemetry leaves empty but that the workshop deliberately populates with synthetic, feasible data. Read by scripts/New-SyntheticTelemetry.ps1, which exempts them from the rule that clears columns empty in production, and by scripts/Test-SyntheticDataQuality.ps1, which then does not report them as overfull. Keep the two in step by editing only this file.",
+  "AgentsInfo": {
+    "reason": "The agent inventory is a hunting surface for the workshop. The live tenant has not populated the newer agent governance columns, but an analyst is expected to pivot on model, endpoint, permission, and connected-agent data, so all of it is generated.",
+    "columns": [
+      "Model",
+      "Endpoints",
+      "Skills",
+      "McpServers",
+      "Memory",
+      "Triggers",
+      "Guardrails",
+      "Permissions",
+      "ToolsAuthenticationType",
+      "Availability",
+      "DeclaredDataSources",
+      "ConnectedAgents",
+      "SharedWith",
+      "InstanceCount",
+      "TenantId",
+      "SourceSystem"
+    ]
+  }
+}

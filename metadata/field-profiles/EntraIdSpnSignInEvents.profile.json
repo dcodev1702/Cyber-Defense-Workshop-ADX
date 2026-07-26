@@ -9,7 +9,7 @@
     "TenantId",
     "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:04:49.7970519Z",
+  "generatedUtc": "2026-07-26T01:31:47.1251975Z",
   "columns": {
     "TimeGenerated": {
       "fillRate": 1.0,
@@ -30,129 +30,9 @@
     "Application": {
       "fillRate": 1.0,
       "distinctCount": 46,
-      "topValues": [
-        {
-          "value": "CloudPosture/securityOperators/DefenderCSPMSecurityOperator",
-          "weight": 0.31538
-        },
-        {
-          "value": "Containers/securityOperators/DefenderForContainersSecurityOperator",
-          "weight": 0.14875
-        },
-        {
-          "value": "zolab-bot-mi-botprd",
-          "weight": 0.10162
-        },
-        {
-          "value": "ME-SecurityScanner",
-          "weight": 0.09162
-        },
-        {
-          "value": "StorageAccounts/securityOperators/DefenderForStorageSecurityOperator",
-          "weight": 0.086
-        },
-        {
-          "value": "Check-CyberTriageQueue",
-          "weight": 0.04038
-        },
-        {
-          "value": "win11-des-lab-1",
-          "weight": 0.03138
-        },
-        {
-          "value": "storageDataScanner",
-          "weight": 0.03038
-        },
-        {
-          "value": "ConnectSyncProvisioning_ADSYNC01_fe3a5d9f7db9",
-          "weight": 0.01888
-        },
-        {
-          "value": "CyberTriage-LiveResponse-Collection",
-          "weight": 0.0175
-        },
-        {
-          "value": "MCAPSGov-AutomationApp",
-          "weight": 0.01525
-        },
-        {
-          "value": "msg-resources-9f5f",
-          "weight": 0.013
-        },
-        {
-          "value": "adds01",
-          "weight": 0.0115
-        },
-        {
-          "value": "usm262346",
-          "weight": 0.01125
-        },
-        {
-          "value": "dc-xdr-lab-1",
-          "weight": 0.01012
-        },
-        {
-          "value": "win11-xdr-lab-1",
-          "weight": 0.00575
-        },
-        {
-          "value": "win11-xdr-lab-2",
-          "weight": 0.00562
-        },
-        {
-          "value": "adsync01",
-          "weight": 0.00525
-        },
-        {
-          "value": "attackiq01",
-          "weight": 0.00525
-        },
-        {
-          "value": "win11-des-lab-2",
-          "weight": 0.00512
-        },
-        {
-          "value": "SecurityCopilotAgentIdentity-b379352d-0748-4fd6-b1f4-4d2232fe334c",
-          "weight": 0.005
-        },
-        {
-          "value": "dibsec-security-project",
-          "weight": 0.00425
-        },
-        {
-          "value": "SecurityCopilotAgentIdentity-6eab514e-ae15-4e9c-9da4-8c3c6b234fbc",
-          "weight": 0.00412
-        },
-        {
-          "value": "Set-CyberTriage",
-          "weight": 0.0035
-        },
-        {
-          "value": "zolab1702-ai-foundry",
-          "weight": 0.00262
-        },
-        {
-          "value": "ubuntu01",
-          "weight": 0.00238
-        },
-        {
-          "value": "MCAPSGovDeployPolicies",
-          "weight": 0.00138
-        },
-        {
-          "value": "zolabai-foundry-u49gco",
-          "weight": 0.00088
-        },
-        {
-          "value": "860fd279-6771-491f-a6ea",
-          "weight": 0.00075
-        },
-        {
-          "value": "ualtimebomb-arm",
-          "weight": 0.00075
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 6.0,
       "maxLength": 68.0
     },

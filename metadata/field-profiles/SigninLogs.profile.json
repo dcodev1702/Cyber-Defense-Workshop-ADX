@@ -23,7 +23,7 @@
     "AppliedConditionalAccessPolicies",
     "RiskLevel"
   ],
-  "generatedUtc": "2026-07-26T01:05:07.2386274Z",
+  "generatedUtc": "2026-07-26T01:32:04.1965797Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -58,13 +58,9 @@
     "ResourceId": {
       "fillRate": 1.0,
       "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "/tenants/b22dee98-83da-4207-b9ab-5ba931866f44/providers/Microsoft.aadiam",
-          "weight": 1.0
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 72.0,
       "maxLength": 72.0
     },

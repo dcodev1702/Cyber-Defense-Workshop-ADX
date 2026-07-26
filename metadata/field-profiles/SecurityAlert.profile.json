@@ -11,7 +11,7 @@
     "ConfidenceScore",
     "ExtendedLinks"
   ],
-  "generatedUtc": "2026-07-26T01:05:42.5004025Z",
+  "generatedUtc": "2026-07-26T01:32:39.4382486Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -267,17 +267,9 @@
     "ResourceId": {
       "fillRate": 0.0016,
       "distinctCount": 2,
-      "topValues": [
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba",
-          "weight": 0.66667
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/zolab-ai-u49gco/providers/Microsoft.CognitiveServices/accounts/zolabai-foundry-u49gco/projects/zolabai-fndry-proj-u49gco",
-          "weight": 0.33333
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 51.0,
       "maxLength": 187.0
     },
@@ -291,129 +283,9 @@
     "AlertType": {
       "fillRate": 1.0,
       "distinctCount": 67,
-      "topValues": [
-        {
-          "value": "CustomDetection",
-          "weight": 0.39032
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_69c00931-0e97-46de-a388-9959034a3a1b",
-          "weight": 0.13469
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_98d9fbde-2151-42c9-9b10-3b385d5a046a",
-          "weight": 0.11435
-        },
-        {
-          "value": "WindowsDefenderAv",
-          "weight": 0.06432
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_11d33889-c13c-49ba-b771-fa28e78b289c",
-          "weight": 0.04398
-        },
-        {
-          "value": "WindowsDefenderAtp",
-          "weight": 0.03628
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_5150afe9-0068-4e09-a50d-74c30a8eefe6",
-          "weight": 0.01759
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_6baa14b8-c833-4dce-974f-75281a5feecc",
-          "weight": 0.01484
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_cec74dd9-3998-40b7-a9d8-2a9d69529a52",
-          "weight": 0.01374
-        },
-        {
-          "value": "70af58a2-a8da-eb42-a1a8-48c6f5c3c0c4",
-          "weight": 0.011
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_6a1bd078-ebbf-46a3-ad61-486f7e645714",
-          "weight": 0.01045
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_24682348-a53d-4810-9f58-cea30d0a29a8",
-          "weight": 0.0077
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_5c38b485-a25e-4811-b363-b17d4cb044b9",
-          "weight": 0.00715
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_b8221d36-130f-4237-b505-50eeba2cbf08",
-          "weight": 0.00715
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_abbb0f81-4d8d-42cc-adfe-999bbd076b7f",
-          "weight": 0.00715
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_d30608d3-0e4e-456c-b2dc-7111194c8143",
-          "weight": 0.0066
-        },
-        {
-          "value": "5de475ad-f3d6-41e7-aff0-daf8b8e48692",
-          "weight": 0.0066
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_f4e77dca-7517-4a9f-845c-de94c8a3cb4b",
-          "weight": 0.0066
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_9b88a134-35af-41b4-af5a-947c599d1ec7",
-          "weight": 0.00605
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_f5e3b294-11d6-422a-8992-be26fbdf6c24",
-          "weight": 0.00605
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_5f76b4fa-06b7-4789-a420-0b0be0755888",
-          "weight": 0.00605
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_669fdaa7-dcf1-4006-89ac-10992fc02f77",
-          "weight": 0.00605
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_08a0fb7e-03d5-4fd1-b1b1-620bef8e8cbf",
-          "weight": 0.0044
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_650b48f4-6a35-4429-92a8-1bd7c76458bd",
-          "weight": 0.0044
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_9b13aca1-2eef-422b-ba74-ed5cfcf168ba",
-          "weight": 0.0033
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_e6ce58e9-a514-42ae-adec-d1648790892c",
-          "weight": 0.0033
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_e2a0e08f-aab5-45c9-ae17-67d05312582a",
-          "weight": 0.00275
-        },
-        {
-          "value": "ce0b72d8-15ad-81d7-ae9b-ecb2b3166bf5",
-          "weight": 0.00275
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_944d88cd-5370-45b7-889f-17e136dd6954",
-          "weight": 0.00275
-        },
-        {
-          "value": "7e9298ab-22e6-4a82-a53e-c5ed7faee977_9379e4b1-8c34-4185-803d-0b91f7f399f7",
-          "weight": 0.00275
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 3.0,
       "maxLength": 73.0
     },
@@ -616,109 +488,9 @@
     "CompromisedEntity": {
       "fillRate": 0.4953,
       "distinctCount": 25,
-      "topValues": [
-        {
-          "value": "win11-01.dibsec.net",
-          "weight": 0.11099
-        },
-        {
-          "value": "usm262346",
-          "weight": 0.07991
-        },
-        {
-          "value": "avdpool-1",
-          "weight": 0.0677
-        },
-        {
-          "value": "attackiq01",
-          "weight": 0.05771
-        },
-        {
-          "value": "win11-ent-2.skynet-home.local",
-          "weight": 0.05438
-        },
-        {
-          "value": "vm-atomic-01",
-          "weight": 0.05438
-        },
-        {
-          "value": "win11-xdr-lab-1.xdr-lab.local",
-          "weight": 0.05438
-        },
-        {
-          "value": "win11-applkr.skynet-home.local",
-          "weight": 0.05327
-        },
-        {
-          "value": "win11-xdr-lab-2.xdr-lab.local",
-          "weight": 0.05327
-        },
-        {
-          "value": "dc-xdr-lab-1.xdr-lab.local",
-          "weight": 0.05327
-        },
-        {
-          "value": "adsync01.dibsec.net",
-          "weight": 0.05327
-        },
-        {
-          "value": "adds01.dibsec.net",
-          "weight": 0.05327
-        },
-        {
-          "value": "dc25-1.skynet-home.local",
-          "weight": 0.05327
-        },
-        {
-          "value": "win11-intune",
-          "weight": 0.04994
-        },
-        {
-          "value": "des-win11.deslab.local",
-          "weight": 0.03552
-        },
-        {
-          "value": "cyberlorianhp",
-          "weight": 0.02886
-        },
-        {
-          "value": "win11-wsl2.skynet-home.local",
-          "weight": 0.02886
-        },
-        {
-          "value": "des-dc-01.deslab.local",
-          "weight": 0.02664
-        },
-        {
-          "value": "win-53q49h8nrf4.deslab.local",
-          "weight": 0.00888
-        },
-        {
-          "value": "desktop-6o1iubg.deslab.local",
-          "weight": 0.00777
-        },
-        {
-          "value": "vm-atomic-02",
-          "weight": 0.00777
-        },
-        {
-          "value": "N/A",
-          "weight": 0.00222
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba",
-          "weight": 0.00222
-        },
-        {
-          "value": "rhel8-mde01.tger1b2qsvkujjc2bgsctwfyqb.cx.internal.cloudapp.net",
-          "weight": 0.00111
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourceGroups/zolab-ai-u49gco/providers/Microsoft.CognitiveServices/accounts/zolabai-foundry-u49gco/projects/zolabai-fndry-proj-u49gco",
-          "weight": 0.00111
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 3.0,
       "maxLength": 187.0
     },

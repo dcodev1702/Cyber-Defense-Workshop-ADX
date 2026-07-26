@@ -9,7 +9,7 @@
     "SessionData",
     "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:03:26.9180015Z",
+  "generatedUtc": "2026-07-26T01:30:24.0488672Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -111,129 +111,9 @@
     "ObjectName": {
       "fillRate": 0.7866,
       "distinctCount": 193,
-      "topValues": [
-        {
-          "value": "StorageDataScanner",
-          "weight": 0.24779
-        },
-        {
-          "value": "Set-ConditionalAccessPolicy",
-          "weight": 0.08132
-        },
-        {
-          "value": "dc-xdr-lab-2",
-          "weight": 0.04478
-        },
-        {
-          "value": "azuredeploy-set-cybertriage",
-          "weight": 0.04125
-        },
-        {
-          "value": "zolabai-foundry-u49gco",
-          "weight": 0.03595
-        },
-        {
-          "value": "azuredeploy-check-queue",
-          "weight": 0.033
-        },
-        {
-          "value": "dc-xdr-lab-1",
-          "weight": 0.03241
-        },
-        {
-          "value": "azuremonitorlogs-Check-CyberTriageQueue",
-          "weight": 0.02976
-        },
-        {
-          "value": "capp-svc-lb",
-          "weight": 0.02622
-        },
-        {
-          "value": "manual",
-          "weight": 0.02475
-        },
-        {
-          "value": "Set-CyberTriage",
-          "weight": 0.02298
-        },
-        {
-          "value": "dibsecadx",
-          "weight": 0.01886
-        },
-        {
-          "value": "Check-CyberTriageQueue",
-          "weight": 0.01709
-        },
-        {
-          "value": "ualtimebomb-disarm-deploy",
-          "weight": 0.01179
-        },
-        {
-          "value": "ualtimebomb-arm-deploy",
-          "weight": 0.01179
-        },
-        {
-          "value": "stcybertriage",
-          "weight": 0.00913
-        },
-        {
-          "value": "usm262346",
-          "weight": 0.00884
-        },
-        {
-          "value": "azuresentinel-Set-CyberTriage",
-          "weight": 0.00854
-        },
-        {
-          "value": "Set-Mailbox",
-          "weight": 0.00825
-        },
-        {
-          "value": "dibsecfoundryst",
-          "weight": 0.00825
-        },
-        {
-          "value": "Set-MailboxPlan",
-          "weight": 0.00796
-        },
-        {
-          "value": "MailItemsAccessed",
-          "weight": 0.00766
-        },
-        {
-          "value": "ualtimebomb-arm",
-          "weight": 0.00737
-        },
-        {
-          "value": "ce720fb0-7dcd-45f3-bf9f-5f4e49810f24",
-          "weight": 0.00707
-        },
-        {
-          "value": "ualtimebomb-disarm",
-          "weight": 0.00648
-        },
-        {
-          "value": "azuresentinel-Check-CyberTriageQueue",
-          "weight": 0.00648
-        },
-        {
-          "value": "avdpool-1",
-          "weight": 0.0053
-        },
-        {
-          "value": "CyberTriage-LiveResponse-Collection",
-          "weight": 0.0053
-        },
-        {
-          "value": "dc-xdr-lab-2-nic",
-          "weight": 0.00501
-        },
-        {
-          "value": "ualtimebomb",
-          "weight": 0.00501
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 3.0,
       "maxLength": 65.0
     },

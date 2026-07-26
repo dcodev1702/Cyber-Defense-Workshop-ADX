@@ -64,7 +64,7 @@
     "ActorContextId_",
     "_ResourceId"
   ],
-  "generatedUtc": "2026-07-26T01:06:19.3996715Z",
+  "generatedUtc": "2026-07-26T01:33:16.7310452Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -1114,21 +1114,9 @@
     "ChannelGuid": {
       "fillRate": 0.1011,
       "distinctCount": 3,
-      "topValues": [
-        {
-          "value": "19:e59ea48f2d0548a2b8762f9957575424@thread.tacv2",
-          "weight": 0.34981
-        },
-        {
-          "value": "19:849197f4d132e2c347692946cb0defed@thread.tacv2",
-          "weight": 0.32509
-        },
-        {
-          "value": "19:1a9a4b0663bf26ad3d71d828d33edd67@thread.tacv2",
-          "weight": 0.32509
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 48.0,
       "maxLength": 48.0
     },
@@ -1216,45 +1204,9 @@
     "ChatThreadId": {
       "fillRate": 0.1011,
       "distinctCount": 9,
-      "topValues": [
-        {
-          "value": "19:6e718adaa4cfdc71f3db2b1c27794bcb@thread.tacv2",
-          "weight": 0.11867
-        },
-        {
-          "value": "19:a36d3151db89ba7c78d6d3aba360d50e@thread.tacv2",
-          "weight": 0.11619
-        },
-        {
-          "value": "19:047a3dec375c205be9e3d9fe2faa3945@thread.tacv2",
-          "weight": 0.11496
-        },
-        {
-          "value": "19:65874a87932e863a5af0e051bbf39d7c@thread.tacv2",
-          "weight": 0.11248
-        },
-        {
-          "value": "19:cf7e977500a2425064e8316fb3c2b002@thread.tacv2",
-          "weight": 0.11125
-        },
-        {
-          "value": "19:27a163bd4ad351f83d0aecf7d48665ea@thread.tacv2",
-          "weight": 0.11001
-        },
-        {
-          "value": "19:3975e4636e15fe666edf828dab91c288@thread.tacv2",
-          "weight": 0.11001
-        },
-        {
-          "value": "19:9a82f0fec9e86445dfec88e037db26bf@thread.tacv2",
-          "weight": 0.10383
-        },
-        {
-          "value": "19:d868d7c812439887fdd27c3a1f485e51@thread.tacv2",
-          "weight": 0.1026
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 48.0,
       "maxLength": 48.0
     },

@@ -16,7 +16,7 @@
     "AccessTier",
     "RehydratePriority"
   ],
-  "generatedUtc": "2026-07-26T01:05:38.3123192Z",
+  "generatedUtc": "2026-07-26T01:32:35.3531566Z",
   "columns": {
     "TimeGenerated": {
       "fillRate": 1.0,
@@ -1353,21 +1353,9 @@
     "_ResourceId": {
       "fillRate": 1.0,
       "distinctCount": 3,
-      "topValues": [
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourcegroups/zolab-worker-botprd/providers/microsoft.storage/storageaccounts/zolabworkerstbotprd/blobservices/default",
-          "weight": 0.541
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourcegroups/zolab-ai/providers/microsoft.storage/storageaccounts/zolabaifndrysa/blobservices/default",
-          "weight": 0.397
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourcegroups/zolab-ai-u49gco/providers/microsoft.storage/storageaccounts/zolabaifndrysau49gco/blobservices/default",
-          "weight": 0.062
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 155.0,
       "maxLength": 171.0
     }

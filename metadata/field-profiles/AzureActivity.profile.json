@@ -15,7 +15,7 @@
     "ResourceProvider",
     "Resource"
   ],
-  "generatedUtc": "2026-07-26T01:05:44.9374887Z",
+  "generatedUtc": "2026-07-26T01:32:41.7574804Z",
   "columns": {
     "OperationName": {
       "fillRate": 0.0,
@@ -643,57 +643,9 @@
     "Hierarchy": {
       "fillRate": 0.8865,
       "distinctCount": 12,
-      "topValues": [
-        {
-          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/DibSecurity/CISO/Security/192ad012-896e-4f14-8525-c37a2a9640f9",
-          "weight": 0.29103
-        },
-        {
-          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/DibSecurity/CISO/Identity/2161bce7-2c89-4434-8a8b-52a16239af29",
-          "weight": 0.11619
-        },
-        {
-          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/DibSecurity/CIO/Operations/1fb89f47-9f73-480d-a6b0-5fb68d13de11",
-          "weight": 0.10998
-        },
-        {
-          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/DibSecurity/SandBox/08fdc492-f5aa-4601-84ae-03a37449c2ba",
-          "weight": 0.0925
-        },
-        {
-          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/408bb797-a8dd-42f8-9b4a-66c71f7fa199",
-          "weight": 0.08404
-        },
-        {
-          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/d84924c6-063a-4990-83e5-919b38903d8f",
-          "weight": 0.06486
-        },
-        {
-          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/03a1bc46-188f-448e-b466-520cb01e29b9",
-          "weight": 0.06373
-        },
-        {
-          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/764279d3-47fc-422e-aaae-859d0a225d9a",
-          "weight": 0.06317
-        },
-        {
-          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/7dc30735-96eb-4531-939f-e445c31b73f4",
-          "weight": 0.06317
-        },
-        {
-          "value": "b22dee98-83da-4207-b9ab-5ba931866f44/DibSecurity/CIO/Connectivity/3c23f774-2e43-4c6d-83f4-41110ccec208",
-          "weight": 0.04738
-        },
-        {
-          "value": "08fdc492-f5aa-4601-84ae-03a37449c2ba",
-          "weight": 0.00226
-        },
-        {
-          "value": "d84924c6-063a-4990-83e5-919b38903d8f",
-          "weight": 0.00169
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 36.0,
       "maxLength": 102.0
     },
@@ -713,129 +665,9 @@
     "_ResourceId": {
       "fillRate": 0.924,
       "distinctCount": 107,
-      "topValues": [
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/foundry/providers/microsoft.storage/storageaccounts/dibsecfoundryst",
-          "weight": 0.19048
-        },
-        {
-          "value": "/subscriptions/03a1bc46-188f-448e-b466-520cb01e29b9/providers/microsoft.security/datascanners/storagedatascanner",
-          "weight": 0.046
-        },
-        {
-          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/providers/microsoft.security/datascanners/storagedatascanner",
-          "weight": 0.04545
-        },
-        {
-          "value": "/subscriptions/3c23f774-2e43-4c6d-83f4-41110ccec208/providers/microsoft.security/datascanners/storagedatascanner",
-          "weight": 0.04545
-        },
-        {
-          "value": "/subscriptions/d84924c6-063a-4990-83e5-919b38903d8f/providers/microsoft.security/datascanners/storagedatascanner",
-          "weight": 0.04545
-        },
-        {
-          "value": "/subscriptions/7dc30735-96eb-4531-939f-e445c31b73f4/providers/microsoft.security/datascanners/storagedatascanner",
-          "weight": 0.04545
-        },
-        {
-          "value": "/subscriptions/764279d3-47fc-422e-aaae-859d0a225d9a/providers/microsoft.security/datascanners/storagedatascanner",
-          "weight": 0.04545
-        },
-        {
-          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/providers/microsoft.security/datascanners/storagedatascanner",
-          "weight": 0.04545
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/providers/microsoft.security/datascanners/storagedatascanner",
-          "weight": 0.04545
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/providers/microsoft.security/datascanners/storagedatascanner",
-          "weight": 0.04545
-        },
-        {
-          "value": "/subscriptions/408bb797-a8dd-42f8-9b4a-66c71f7fa199/providers/microsoft.security/datascanners/storagedatascanner",
-          "weight": 0.04437
-        },
-        {
-          "value": "/subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourcegroups/me_zolab-bot-env-botprd-vnet_zolab-bot-botprd_eastus2/providers/microsoft.network/loadbalancers/capp-svc-lb",
-          "weight": 0.04329
-        },
-        {
-          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/providers/microsoft.compute/virtualmachines/win11-01",
-          "weight": 0.03734
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/ctf/providers/microsoft.compute/virtualmachines/ctf25",
-          "weight": 0.02597
-        },
-        {
-          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/mdo-automation-test/providers/microsoft.storage/storageaccounts/tiautosteag5ql",
-          "weight": 0.02327
-        },
-        {
-          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/mdo-automation-test/providers/microsoft.web/sites/tiauto-func-eag5q",
-          "weight": 0.01461
-        },
-        {
-          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/mdo-automation-test/providers/microsoft.keyvault/vaults/tiauto-kv-eag5q",
-          "weight": 0.0119
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/sentinel/providers/microsoft.operationalinsights/workspaces/dibseccom/tables/mdetvmwin11intunesinglehost_cl",
-          "weight": 0.01136
-        },
-        {
-          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/providers/microsoft.recoveryservices/vaults/identitybackup",
-          "weight": 0.00758
-        },
-        {
-          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/mdo-automation-test/providers/microsoft.resources/deployments/main",
-          "weight": 0.00758
-        },
-        {
-          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/mdo-automation-test/providers/microsoft.resources/deployments/tabl-staged",
-          "weight": 0.00541
-        },
-        {
-          "value": "/subscriptions/1fb89f47-9f73-480d-a6b0-5fb68d13de11/resourcegroups/mdo-automation-test/providers/microsoft.resources/deployments/tabl-func-flex",
-          "weight": 0.00487
-        },
-        {
-          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/azurebackuprg_eastus2_1/providers/microsoft.compute/restorepointcollections/azurebackup_adds01_246290793164466/restorepoints/azurebackup_20260721_055059",
-          "weight": 0.00487
-        },
-        {
-          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/azurebackuprg_eastus2_1/providers/microsoft.compute/restorepointcollections/azurebackup_adds01_246290793164466/restorepoints/azurebackup_20260720_055313",
-          "weight": 0.00487
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/ctf/providers/microsoft.resources/deployments/createvm-microsoftwindowsserver.windowsserver-202-20260723145552",
-          "weight": 0.00433
-        },
-        {
-          "value": "/subscriptions/408bb797-a8dd-42f8-9b4a-66c71f7fa199/resourcegroups/mcapsgovernance/providers/microsoft.resources/deployments/create_easm_resource-20260723095727",
-          "weight": 0.00433
-        },
-        {
-          "value": "/subscriptions/408bb797-a8dd-42f8-9b4a-66c71f7fa199/resourcegroups/mcapsgovernance/providers/microsoft.resources/deployments/create_easm_resource-20260722124835",
-          "weight": 0.00433
-        },
-        {
-          "value": "/subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/providers/microsoft.compute/locations/eastus/placementrecommendations/regular",
-          "weight": 0.00433
-        },
-        {
-          "value": "/subscriptions/408bb797-a8dd-42f8-9b4a-66c71f7fa199",
-          "weight": 0.00433
-        },
-        {
-          "value": "/subscriptions/d84924c6-063a-4990-83e5-919b38903d8f/resourcegroups/rhel-mde-lab/providers/microsoft.compute/virtualmachines/rhel8-mde01",
-          "weight": 0.00379
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 51.0,
       "maxLength": 239.0
     }

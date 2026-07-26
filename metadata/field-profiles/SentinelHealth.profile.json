@@ -8,7 +8,7 @@
   "emptyInProd": [
     "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:06:26.9756635Z",
+  "generatedUtc": "2026-07-26T01:33:24.3419520Z",
   "columns": {
     "TenantId": {
       "fillRate": 1.0,
@@ -51,129 +51,9 @@
     "SentinelResourceId": {
       "fillRate": 1.0,
       "distinctCount": 125,
-      "topValues": [
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/fde3cb77-1252-4a7e-b083-2822613f2a1a",
-          "weight": 0.0505
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/c73df428-f160-4f8b-9fac-1d67f5c0a1e7",
-          "weight": 0.0495
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/204e77d0-c336-4499-8d55-7fc57ae9c820",
-          "weight": 0.049
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/9a19a1d2-7c37-40b3-9d78-4beae03c4ecc",
-          "weight": 0.0485
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/669fdaa7-dcf1-4006-89ac-10992fc02f77",
-          "weight": 0.048
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/48eb70b4-99c7-44c3-ba94-4e428137aafb",
-          "weight": 0.048
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/c5cbf4c5-32d7-4758-b348-52dff125a97f",
-          "weight": 0.048
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/68701b1d-0b68-4756-8168-36c480fc15c5",
-          "weight": 0.0475
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/d11d6dd2-88ba-4d80-a76c-d34e06be55f6",
-          "weight": 0.0475
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/4a797e91-9477-4e4d-9f07-a29601a2dab3",
-          "weight": 0.047
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/a7d418fd-a501-4487-93c6-37fd4c707510",
-          "weight": 0.0465
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/b0a54ecb-9f4a-40b2-8b8e-e1a6c071b821",
-          "weight": 0.0465
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/b58c672f-09c8-47fa-84f4-e54857090045",
-          "weight": 0.046
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/3413fede-1413-4aee-a0ac-0812a9a57dc6",
-          "weight": 0.0455
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/69c00931-0e97-46de-a388-9959034a3a1b",
-          "weight": 0.045
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/1ab6f2c1-9118-43b9-9015-e089f4c60be2",
-          "weight": 0.045
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/466031bc-7193-4f65-abca-3af8f2676709",
-          "weight": 0.045
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/a3ef41b4-4c32-4d02-bbe4-49ec4a54a5b8",
-          "weight": 0.045
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/2e99c615-fe23-4875-bb74-9d2e48ad9de1",
-          "weight": 0.044
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/d386ebf6-46a8-4b0d-963f-920c8127c39d",
-          "weight": 0.005
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/1112580c-babe-4935-b3df-6c05d0620e1a",
-          "weight": 0.005
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/f13babf6-8494-424a-b5d5-577161d04064",
-          "weight": 0.0045
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/549cb998-dc90-44c5-b2be-13045a86bb52",
-          "weight": 0.0035
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/57088c21-6cfa-4e26-a04c-c5d8490094c9",
-          "weight": 0.003
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/2b8da29f-8643-4f84-880c-ac782ae79317",
-          "weight": 0.003
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/sentinel/providers/Microsoft.OperationalInsights/workspaces/dibseccom/providers/Microsoft.SecurityInsights/dataConnectors/995434ee-15b1-40f3-b10f-8fb6ab5de132",
-          "weight": 0.0025
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/a151c182-16cb-43fa-82fc-2cefc9c3e959",
-          "weight": 0.0015
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/9c6201a8-fbc8-4a0d-a884-99ab445b7a5c",
-          "weight": 0.0015
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/sentinel/providers/Microsoft.OperationalInsights/workspaces/dibseccom/providers/Microsoft.SecurityInsights/dataConnectors/e222458c-e3df-4152-96e5-6974440b9b2c",
-          "weight": 0.0015
-        },
-        {
-          "value": "/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/providers/Microsoft.OperationalInsights/workspaces/DIBSecCom/providers/Microsoft.SecurityInsights/alertRules/1797fb5c-56b5-42e9-bc56-a635fde7655e",
-          "weight": 0.0015
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 221.0,
       "maxLength": 225.0
     },

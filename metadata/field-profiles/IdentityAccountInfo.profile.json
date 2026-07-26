@@ -26,7 +26,7 @@
     "TenantId",
     "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:04:50.6563976Z",
+  "generatedUtc": "2026-07-26T01:31:47.9242434Z",
   "columns": {
     "TimeGenerated": {
       "fillRate": 1.0,
@@ -73,129 +73,9 @@
     "IdentityId": {
       "fillRate": 1.0,
       "distinctCount": 44,
-      "topValues": [
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_a9043c2d-d4c4-4277-a36b-a9c7dbebe60f",
-          "weight": 0.08841
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_db1d7718-bf4b-4d45-a4e3-ecd733a3545c",
-          "weight": 0.04573
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_8f74680f-327a-4e6d-b8e4-faae569c0d5b",
-          "weight": 0.03354
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_ffd8ce1a-0d22-4f89-b730-97fe0f5ce79d",
-          "weight": 0.03354
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_054e6651-520a-4eab-b490-0038d6e33427",
-          "weight": 0.03049
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_d4846550-a5e8-445d-b373-6c3a25db0002",
-          "weight": 0.03049
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_652bb4a7-9aad-47ce-a953-8a94b575c21a",
-          "weight": 0.03049
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_b52deda3-0f31-43d2-9433-e20964df6b67",
-          "weight": 0.03049
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_b598cca7-e216-47b2-bd12-365988c6013b",
-          "weight": 0.02744
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_1279daf3-8707-4fad-b702-8d108f8cb5ce",
-          "weight": 0.02744
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_e1c873a0-6de2-40ac-ad19-ad25907ee4fc",
-          "weight": 0.02439
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_dbc67bed-ea32-4264-ac06-437c3ee7aef0",
-          "weight": 0.02439
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_25ff088f-4ffd-40b3-8e22-dbe5c365a8e6",
-          "weight": 0.02439
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_d032a58e-d59a-4559-b70c-3e56e0a9f4f6",
-          "weight": 0.02439
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_6b7413e3-4c3c-4f23-b5a1-6f001f8cbc11",
-          "weight": 0.02439
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_6e451d5c-3cc1-47ac-8d17-072c8c6e6d29",
-          "weight": 0.02439
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_9b3fcdce-6272-41aa-8bd7-7f8e6423fb48",
-          "weight": 0.02439
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_f3d2cb42-25fb-4229-862d-74307bbc83d0",
-          "weight": 0.02439
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_d920f1c8-06f8-41c0-8e81-20e6d8dbef7e",
-          "weight": 0.02134
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_8cbbe62b-e522-41d4-b6c8-43a7bcd821ab",
-          "weight": 0.02134
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_1bbfd626-d1d7-4d6d-a0fa-a4c20529cce1",
-          "weight": 0.02134
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_2075de81-1a48-4b0b-9393-050c73422c1f",
-          "weight": 0.02134
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_0d89f94f-9cc2-4ca3-803d-9f5674b1e95a",
-          "weight": 0.01829
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_28da8cdf-fc55-4280-9838-87e06aa7f40f",
-          "weight": 0.01829
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_84e2077b-dc61-4cd2-929f-9800bbf6860d",
-          "weight": 0.01524
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_f17790c5-fc8c-4c54-8546-fab35c3a640b",
-          "weight": 0.01524
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_ef63fbc5-b1e6-48f4-af05-c2a94a34c355",
-          "weight": 0.01524
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_e8122690-9ab8-48a2-a0d8-5028ddd45dc1",
-          "weight": 0.01524
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_e3177b9c-4c30-482c-abda-61d2d6c1184c",
-          "weight": 0.01524
-        },
-        {
-          "value": "User_b22dee98-83da-4207-b9ab-5ba931866f44_1d76707c-494e-47ae-870e-7587f9515e62",
-          "weight": 0.01524
-        }
-      ],
+      "topValues": [],
       "pattern": null,
+      "sensitive": true,
       "minLength": 78.0,
       "maxLength": 78.0
     },
