@@ -2,7 +2,7 @@
 # internet-facing policy boundary is reproducible between rehearsal and delivery.
 # For a security-teaching repo the stronger form is a digest pin
 # (FROM node:24.4.1-alpine@sha256:<digest>); let Dependabot maintain the digest.
-FROM node:24.4.1-alpine3.21
+FROM node:25.2.1-alpine3.21
 
 WORKDIR /app
 
