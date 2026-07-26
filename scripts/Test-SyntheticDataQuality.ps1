@@ -133,7 +133,13 @@ foreach ($file in $profileFiles) {
         }
 
         $vocabulary = @($observed.topValues | ForEach-Object { [string]$_.value })
-        if ($vocabulary.Count -gt 0 -and $filled.Count -gt 0) {
+
+        # Out-of-vocabulary only means something for product-defined enumerations.
+        # Entity names, identifiers, and service names legitimately differ because
+        # the workshop runs its own estate rather than replaying the tenant's.
+        $isEntityColumn = $column -match '(?i)(name$|id$|ids$|agent|service|role|principal|user|account|device|host|machine|resource)'
+
+        if (-not $isEntityColumn -and $vocabulary.Count -gt 0 -and $filled.Count -gt 0) {
             $outside = @($filled | Where-Object { $vocabulary -notcontains [string]$_ })
             $foreignRate = $outside.Count / $filled.Count
             if ($foreignRate -gt 0.5) {

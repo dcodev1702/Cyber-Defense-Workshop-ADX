@@ -379,6 +379,363 @@ $script:BuiltInPrincipalTotalWeight = ($script:BuiltInPrincipals | Measure-Objec
 # Columns that identify a person, host, address, or secret. Never emitted verbatim.
 $script:IdentityColumnPattern = '(Account|User|Upn|Sid|Principal|Device|Host|Machine|Computer|IP|Address|Url|Domain|Email|Mail|Sha1|Sha256|Md5|Hash|Token|Key|Secret|Credential|Guid|Id$|Ids$|Name$|Path|CommandLine|Description|Title|Query|Location|City|State|Country|Latitude|Longitude|Isp|Tenant)'
 
+# File version metadata as Microsoft Defender for Endpoint reports it. Signed
+# Microsoft binaries carry a company name and a file description; the credential
+# access tools used in the scenario carry their real authorship, which is what
+# lets a student separate living-off-the-land activity from tooling brought in by
+# the intruder. Values follow the shipping resource strings for each binary.
+$script:WindowsProductName = 'Microsoft(R) Windows(R) Operating System'
+$script:WindowsProductVersion = '10.0.26100.1'
+
+$script:BinaryVersionInfo = @{}
+foreach ($entry in @(
+    @{ File = 'powershell.exe'; Internal = 'POWERSHELL'; Original = 'PowerShell.EXE'; Description = 'Windows PowerShell' }
+    @{ File = 'cmd.exe'; Internal = 'cmd'; Original = 'Cmd.Exe'; Description = 'Windows Command Processor' }
+    @{ File = 'explorer.exe'; Internal = 'explorer'; Original = 'EXPLORER.EXE'; Description = 'Windows Explorer' }
+    @{ File = 'svchost.exe'; Internal = 'svchost'; Original = 'svchost.exe'; Description = 'Host Process for Windows Services' }
+    @{ File = 'lsass.exe'; Internal = 'lsass'; Original = 'lsass.exe'; Description = 'Local Security Authority Process' }
+    @{ File = 'services.exe'; Internal = 'services'; Original = 'services.exe'; Description = 'Services and Controller app' }
+    @{ File = 'winlogon.exe'; Internal = 'winlogon'; Original = 'WINLOGON.EXE'; Description = 'Windows Logon Application' }
+    @{ File = 'reg.exe'; Internal = 'reg'; Original = 'reg.exe'; Description = 'Registry Console Tool' }
+    @{ File = 'regedit.exe'; Internal = 'REGEDIT'; Original = 'REGEDIT.EXE'; Description = 'Registry Editor' }
+    @{ File = 'esentutl.exe'; Internal = 'ESENTUTL'; Original = 'esentutl.exe'; Description = 'Extensible Storage Engine Utilities for Windows' }
+    @{ File = 'rundll32.exe'; Internal = 'rundll'; Original = 'RUNDLL.EXE'; Description = 'Windows host process (Rundll32)' }
+    @{ File = 'regsvr32.exe'; Internal = 'REGSVR32'; Original = 'REGSVR32.EXE'; Description = 'Microsoft(C) Register Server' }
+    @{ File = 'mshta.exe'; Internal = 'MSHTA'; Original = 'MSHTA.EXE'; Description = 'Microsoft (R) HTML Application host' }
+    @{ File = 'wscript.exe'; Internal = 'wscript'; Original = 'wscript.exe'; Description = 'Microsoft (R) Windows Based Script Host' }
+    @{ File = 'cscript.exe'; Internal = 'cscript'; Original = 'cscript.exe'; Description = 'Microsoft (R) Console Based Script Host' }
+    @{ File = 'schtasks.exe'; Internal = 'schtasks.exe'; Original = 'schtasks.exe'; Description = 'Task Scheduler Configuration Tool' }
+    @{ File = 'taskhostw.exe'; Internal = 'taskhostw'; Original = 'taskhostw.exe'; Description = 'Host Process for Windows Tasks' }
+    @{ File = 'net.exe'; Internal = 'net'; Original = 'net.exe'; Description = 'Net Command' }
+    @{ File = 'net1.exe'; Internal = 'net1'; Original = 'net1.exe'; Description = 'Net Command' }
+    @{ File = 'whoami.exe'; Internal = 'whoami.exe'; Original = 'whoami.exe'; Description = 'whoami - displays logged on user information' }
+    @{ File = 'ipconfig.exe'; Internal = 'ipconfig.exe'; Original = 'ipconfig.exe'; Description = 'IP Configuration Utility' }
+    @{ File = 'nltest.exe'; Internal = 'nltest.exe'; Original = 'nltest.exe'; Description = 'NL Test Application' }
+    @{ File = 'tasklist.exe'; Internal = 'tasklist.exe'; Original = 'tasklist.exe'; Description = 'Lists the current running tasks' }
+    @{ File = 'wmic.exe'; Internal = 'wmic.exe'; Original = 'wmic.exe'; Description = 'WMI Commandline Utility' }
+    @{ File = 'certutil.exe'; Internal = 'certutil.exe'; Original = 'certutil.exe'; Description = 'CertUtil.exe' }
+    @{ File = 'bitsadmin.exe'; Internal = 'bitsadmin.exe'; Original = 'bitsadmin.exe'; Description = 'BITS administration utility' }
+    @{ File = 'msiexec.exe'; Internal = 'msiexec'; Original = 'msiexec.exe'; Description = 'Windows(R) installer' }
+    @{ File = 'dllhost.exe'; Internal = 'dllhost.exe'; Original = 'dllhost.exe'; Description = 'COM Surrogate' }
+    @{ File = 'conhost.exe'; Internal = 'ConHost'; Original = 'CONHOST.EXE'; Description = 'Console Window Host' }
+    @{ File = 'searchindexer.exe'; Internal = 'SearchIndexer'; Original = 'SearchIndexer.exe'; Description = 'Microsoft Windows Search Indexer' }
+    @{ File = 'sihost.exe'; Internal = 'sihost.exe'; Original = 'sihost.exe'; Description = 'Shell Infrastructure Host' }
+    @{ File = 'runtimebroker.exe'; Internal = 'RuntimeBroker.exe'; Original = 'RuntimeBroker.exe'; Description = 'Runtime Broker' }
+)) {
+    $script:BinaryVersionInfo[$entry.File] = [pscustomobject]@{
+        CompanyName = 'Microsoft Corporation'
+        ProductName = $script:WindowsProductName
+        ProductVersion = $script:WindowsProductVersion
+        InternalFileName = $entry.Internal
+        OriginalFileName = $entry.Original
+        FileDescription = $entry.Description
+    }
+}
+
+foreach ($entry in @(
+    @{ File = 'msedge.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft Edge'; Version = '139.0.3405.86'; Internal = 'msedge'; Original = 'msedge.exe'; Description = 'Microsoft Edge' }
+    @{ File = 'chrome.exe'; Company = 'Google LLC'; Product = 'Google Chrome'; Version = '141.0.7390.55'; Internal = 'chrome'; Original = 'chrome.exe'; Description = 'Google Chrome' }
+    @{ File = 'outlook.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft Office'; Version = '16.0.19029.20136'; Internal = 'Outlook'; Original = 'OUTLOOK.EXE'; Description = 'Microsoft Outlook' }
+    @{ File = 'winword.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft Office'; Version = '16.0.19029.20136'; Internal = 'Microsoft Word'; Original = 'WinWord.exe'; Description = 'Microsoft Word' }
+    @{ File = 'excel.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft Office'; Version = '16.0.19029.20136'; Internal = 'Excel'; Original = 'Excel.exe'; Description = 'Microsoft Excel' }
+    @{ File = 'teams.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft Teams'; Version = '25193.1000.4001.1234'; Internal = 'Teams'; Original = 'Teams.exe'; Description = 'Microsoft Teams' }
+    @{ File = 'onedrive.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft OneDrive'; Version = '25.140.0716.0001'; Internal = 'OneDrive'; Original = 'OneDrive.exe'; Description = 'Microsoft OneDrive' }
+    @{ File = 'msmpeng.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft(R) Windows(R) Operating System'; Version = '4.18.25070.5'; Internal = 'MsMpEng'; Original = 'MsMpEng.exe'; Description = 'Antimalware Service Executable' }
+    @{ File = 'mssense.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft(R) Windows(R) Operating System'; Version = '10.8760.28000.1027'; Internal = 'MsSense'; Original = 'MsSense.exe'; Description = 'Windows Defender Advanced Threat Protection Service Executable' }
+    @{ File = 'senseir.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft(R) Windows(R) Operating System'; Version = '10.8760.28000.1027'; Internal = 'SenseIR'; Original = 'SenseIR.exe'; Description = 'Windows Defender Advanced Threat Protection Automated Investigation and Response' }
+    @{ File = 'notepad.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft(R) Windows(R) Operating System'; Version = '10.0.26100.1'; Internal = 'Notepad'; Original = 'NOTEPAD.EXE'; Description = 'Notepad' }
+    @{ File = 'pwsh.exe'; Company = 'Microsoft Corporation'; Product = 'PowerShell'; Version = '7.6.4.0'; Internal = 'pwsh'; Original = 'pwsh.dll'; Description = 'PowerShell' }
+    @{ File = 'wsl.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft(R) Windows(R) Operating System'; Version = '10.0.26100.1'; Internal = 'wsl'; Original = 'wsl.exe'; Description = 'Windows Subsystem for Linux Launcher' }
+    @{ File = 'windowsterminal.exe'; Company = 'Microsoft Corporation'; Product = 'Windows Terminal'; Version = '1.22.11141.0'; Internal = 'WindowsTerminal'; Original = 'WindowsTerminal.exe'; Description = 'Windows Terminal' }
+    @{ File = 'msword.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft Office'; Version = '16.0.19029.20136'; Internal = 'Microsoft Word'; Original = 'WinWord.exe'; Description = 'Microsoft Word' }
+    @{ File = 'powerpoint.exe'; Company = 'Microsoft Corporation'; Product = 'Microsoft Office'; Version = '16.0.19029.20136'; Internal = 'PowerPoint'; Original = 'POWERPNT.EXE'; Description = 'Microsoft PowerPoint' }
+    @{ File = 'code.exe'; Company = 'Microsoft Corporation'; Product = 'Visual Studio Code'; Version = '1.104.2.0'; Internal = 'VS Code'; Original = 'Code.exe'; Description = 'Visual Studio Code' }
+    @{ File = 'githubdesktop.exe'; Company = 'GitHub, Inc.'; Product = 'GitHub Desktop'; Version = '3.4.13.0'; Internal = 'GitHubDesktop'; Original = 'GitHubDesktop.exe'; Description = 'GitHub Desktop' }
+    @{ File = 'firefox.exe'; Company = 'Mozilla Corporation'; Product = 'Firefox'; Version = '142.0.1.9502'; Internal = 'main'; Original = 'firefox.exe'; Description = 'Firefox' }
+    @{ File = 'slack.exe'; Company = 'Slack Technologies, Inc.'; Product = 'Slack'; Version = '4.44.65.0'; Internal = 'Slack'; Original = 'slack.exe'; Description = 'Slack' }
+    @{ File = 'zoom.exe'; Company = 'Zoom Video Communications, Inc.'; Product = 'Zoom Workplace'; Version = '6.5.7.5024'; Internal = 'Zoom'; Original = 'Zoom.exe'; Description = 'Zoom Workplace' }
+    @{ File = 'whatsapp.exe'; Company = 'WhatsApp LLC'; Product = 'WhatsApp'; Version = '2.2540.5.0'; Internal = 'WhatsApp'; Original = 'WhatsApp.exe'; Description = 'WhatsApp' }
+    @{ File = 'dockerdesktop.exe'; Company = 'Docker Inc.'; Product = 'Docker Desktop'; Version = '4.45.0.0'; Internal = 'Docker Desktop'; Original = 'Docker Desktop.exe'; Description = 'Docker Desktop' }
+
+    # Tooling brought in by the intruder. Real authorship is what makes these
+    # findable: none of them claim Microsoft Corporation.
+    @{ File = 'mimikatz.exe'; Company = 'gentilkiwi (Benjamin DELPY)'; Product = 'mimikatz'; Version = '2.2.0.0'; Internal = 'mimikatz'; Original = 'mimikatz.exe'; Description = 'mimikatz for Windows' }
+    @{ File = 'pwdump7.exe'; Company = 'Tarasco Security'; Product = 'PWDump'; Version = '7.1.0.0'; Internal = 'PwDump'; Original = 'PwDump7.exe'; Description = 'Password dumper' }
+    @{ File = 'gsecdump.exe'; Company = 'TrueSec'; Product = 'gsecdump'; Version = '2.0.0.0'; Internal = 'gsecdump'; Original = 'gsecdump.exe'; Description = 'Dump hashes from SAM and LSASS' }
+    @{ File = 'lazagne.exe'; Company = 'AlessandroZ'; Product = 'LaZagne'; Version = '2.4.6.0'; Internal = 'laZagne'; Original = 'laZagne.exe'; Description = 'Credentials recovery project' }
+    @{ File = 'procdump.exe'; Company = 'Sysinternals - www.sysinternals.com'; Product = 'Sysinternals ProcDump'; Version = '11.0.0.0'; Internal = 'ProcDump'; Original = 'procdump.exe'; Description = 'Sysinternals process dump utility' }
+    @{ File = 'psexec.exe'; Company = 'Sysinternals - www.sysinternals.com'; Product = 'Sysinternals PsExec'; Version = '2.43.0.0'; Internal = 'PsExec'; Original = 'psexec.c'; Description = 'Execute processes remotely' }
+)) {
+    $script:BinaryVersionInfo[$entry.File] = [pscustomobject]@{
+        CompanyName = $entry.Company
+        ProductName = $entry.Product
+        ProductVersion = $entry.Version
+        InternalFileName = $entry.Internal
+        OriginalFileName = $entry.Original
+        FileDescription = $entry.Description
+    }
+}
+
+# Network adapter vendors with their real IEEE OUI prefixes, so a generated MAC
+# address resolves to the vendor named in NetworkAdapterVendor. That consistency
+# matters: identifying hardware from the first three octets is a standard triage
+# step, and a MAC whose OUI disagrees with the reported vendor is a tell that the
+# data is fabricated.
+$script:NetworkAdapterVendors = @(
+    [pscustomobject]@{ Vendor = 'Intel Corporation'; Oui = '00-1B-21'; Model = 'Intel(R) Ethernet Connection I219-LM'; Virtual = $false }
+    [pscustomobject]@{ Vendor = 'Intel Corporation'; Oui = 'A4-BB-6D'; Model = 'Intel(R) Wi-Fi 6E AX211 160MHz'; Virtual = $false }
+    [pscustomobject]@{ Vendor = 'Realtek Semiconductor Corp.'; Oui = '00-E0-4C'; Model = 'Realtek PCIe GbE Family Controller'; Virtual = $false }
+    [pscustomobject]@{ Vendor = 'Broadcom Inc.'; Oui = '00-10-18'; Model = 'Broadcom NetXtreme Gigabit Ethernet'; Virtual = $false }
+    [pscustomobject]@{ Vendor = 'Dell Inc.'; Oui = 'B8-2A-72'; Model = 'Dell Giga Ethernet'; Virtual = $false }
+    [pscustomobject]@{ Vendor = 'Hewlett Packard Enterprise'; Oui = '3C-D9-2B'; Model = 'HPE Ethernet 1Gb 4-port 331i Adapter'; Virtual = $false }
+    [pscustomobject]@{ Vendor = 'Cisco Systems, Inc.'; Oui = '00-25-45'; Model = 'Cisco VIC Ethernet Interface'; Virtual = $false }
+    [pscustomobject]@{ Vendor = 'Lenovo'; Oui = '54-EE-75'; Model = 'ThinkPad USB-C Dock Ethernet'; Virtual = $false }
+    [pscustomobject]@{ Vendor = 'Qualcomm Atheros'; Oui = '04-F0-21'; Model = 'Qualcomm Atheros QCA61x4A Wireless Adapter'; Virtual = $false }
+    [pscustomobject]@{ Vendor = 'Mellanox Technologies'; Oui = 'EC-0D-9A'; Model = 'Mellanox ConnectX-5 Adapter'; Virtual = $false }
+    [pscustomobject]@{ Vendor = 'VMware, Inc.'; Oui = '00-50-56'; Model = 'VMware VMXNET3 Ethernet Adapter'; Virtual = $true }
+    [pscustomobject]@{ Vendor = 'Microsoft Corporation'; Oui = '00-15-5D'; Model = 'Microsoft Hyper-V Network Adapter'; Virtual = $true }
+    [pscustomobject]@{ Vendor = 'Red Hat, Inc.'; Oui = '52-54-00'; Model = 'Red Hat Virtio network device'; Virtual = $true }
+)
+
+# Site DNS resolver pairs and the gateway convention for each subnet.
+$script:NetworkSiteResolvers = @(
+    [pscustomobject]@{ Site = 'Clay Kaserne'; Primary = '10.42.0.10'; Secondary = '10.42.0.11' }
+    [pscustomobject]@{ Site = 'Hainerberg'; Primary = '10.42.1.10'; Secondary = '10.42.1.11' }
+    [pscustomobject]@{ Site = 'Mainz-Kastel'; Primary = '10.42.2.10'; Secondary = '10.42.0.10' }
+    [pscustomobject]@{ Site = 'Datacenter'; Primary = '10.42.8.10'; Secondary = '10.42.8.11' }
+)
+
+# Source geographies for cloud app sessions. Weighted toward the sites the
+# organisation actually operates from, with a small tail of travel and hosting
+# provider addresses so that anomaly detection has something to find.
+$script:CloudAppGeographies = @(
+    [pscustomobject]@{ City = 'Wiesbaden'; CountryCode = 'DE'; Isp = 'Deutsche Telekom AG'; Category = 'Corporate' }
+    [pscustomobject]@{ City = 'Wiesbaden'; CountryCode = 'DE'; Isp = 'Deutsche Telekom AG'; Category = 'Corporate' }
+    [pscustomobject]@{ City = 'Stuttgart'; CountryCode = 'DE'; Isp = 'Vodafone GmbH'; Category = 'Corporate' }
+    [pscustomobject]@{ City = 'Ramstein'; CountryCode = 'DE'; Isp = 'Deutsche Telekom AG'; Category = 'Corporate' }
+    [pscustomobject]@{ City = 'Arlington'; CountryCode = 'US'; Isp = 'Verizon Business'; Category = 'Corporate' }
+    [pscustomobject]@{ City = 'Huntsville'; CountryCode = 'US'; Isp = 'AT&T Services, Inc.'; Category = 'Corporate' }
+    [pscustomobject]@{ City = 'San Antonio'; CountryCode = 'US'; Isp = 'Spectrum'; Category = 'Satellite' }
+    [pscustomobject]@{ City = 'London'; CountryCode = 'GB'; Isp = 'British Telecommunications'; Category = 'Satellite' }
+    [pscustomobject]@{ City = 'Dublin'; CountryCode = 'IE'; Isp = 'Microsoft Corporation'; Category = 'Azure' }
+    [pscustomobject]@{ City = 'Amsterdam'; CountryCode = 'NL'; Isp = 'M247 Europe SRL'; Category = 'Anonymous proxy' }
+    [pscustomobject]@{ City = 'Frankfurt'; CountryCode = 'DE'; Isp = 'Hetzner Online GmbH'; Category = 'Hosting provider' }
+    [pscustomobject]@{ City = 'Bucharest'; CountryCode = 'RO'; Isp = 'M247 Europe SRL'; Category = 'Anonymous proxy' }
+)
+
+# Ambient alert catalog. Real Microsoft Defender and Microsoft Sentinel alert
+# titles paired with the MITRE ATT&CK tactic and technique identifiers each maps
+# to, so background alerts support technique-based hunting rather than acting as
+# untyped noise. Weighted toward the lower severities that dominate a real queue.
+$script:AmbientAlertCatalog = @(
+    [pscustomobject]@{ Title = 'Suspicious PowerShell command line'; Category = 'Execution'; Severity = 'Medium'; Techniques = 'T1059.001'; ServiceSource = 'Microsoft Defender for Endpoint'; DetectionSource = 'EDR'; EntityType = 'Process' }
+    [pscustomobject]@{ Title = 'Malware was prevented'; Category = 'Execution'; Severity = 'Low'; Techniques = 'T1204.002'; ServiceSource = 'Microsoft Defender for Endpoint'; DetectionSource = 'Antivirus'; EntityType = 'File' }
+    [pscustomobject]@{ Title = 'Anomalous sign-in from an unfamiliar location'; Category = 'InitialAccess'; Severity = 'Medium'; Techniques = 'T1078.004'; ServiceSource = 'Microsoft Entra ID Protection'; DetectionSource = 'Microsoft Entra ID Protection'; EntityType = 'User' }
+    [pscustomobject]@{ Title = 'Suspicious LDAP enumeration'; Category = 'Discovery'; Severity = 'Low'; Techniques = 'T1087.002,T1069.002'; ServiceSource = 'Microsoft Defender for Identity'; DetectionSource = 'Microsoft Defender for Identity'; EntityType = 'User' }
+    [pscustomobject]@{ Title = 'Possible attempt to access credentials from the local security authority'; Category = 'CredentialAccess'; Severity = 'High'; Techniques = 'T1003.001'; ServiceSource = 'Microsoft Defender for Endpoint'; DetectionSource = 'EDR'; EntityType = 'Process' }
+    [pscustomobject]@{ Title = 'Suspicious service was registered'; Category = 'Persistence'; Severity = 'Medium'; Techniques = 'T1543.003'; ServiceSource = 'Microsoft Defender for Endpoint'; DetectionSource = 'EDR'; EntityType = 'Device' }
+    [pscustomobject]@{ Title = 'User added to a privileged directory role'; Category = 'PrivilegeEscalation'; Severity = 'Medium'; Techniques = 'T1098.003'; ServiceSource = 'Microsoft Defender for Cloud Apps'; DetectionSource = 'Microsoft Defender for Cloud Apps'; EntityType = 'User' }
+    [pscustomobject]@{ Title = 'Suspicious Kerberos ticket request'; Category = 'CredentialAccess'; Severity = 'Medium'; Techniques = 'T1558.003'; ServiceSource = 'Microsoft Defender for Identity'; DetectionSource = 'Microsoft Defender for Identity'; EntityType = 'User' }
+    [pscustomobject]@{ Title = 'Scheduled task was created from an uncommon location'; Category = 'Persistence'; Severity = 'Low'; Techniques = 'T1053.005'; ServiceSource = 'Microsoft Defender for Endpoint'; DetectionSource = 'EDR'; EntityType = 'Process' }
+    [pscustomobject]@{ Title = 'Mass download by a single user'; Category = 'Exfiltration'; Severity = 'Medium'; Techniques = 'T1530'; ServiceSource = 'Microsoft Defender for Cloud Apps'; DetectionSource = 'Microsoft Defender for Cloud Apps'; EntityType = 'User' }
+    [pscustomobject]@{ Title = 'Suspicious inbox manipulation rule'; Category = 'DefenseEvasion'; Severity = 'Medium'; Techniques = 'T1564.008'; ServiceSource = 'Microsoft Defender for Office 365'; DetectionSource = 'Microsoft Defender for Office 365'; EntityType = 'MailBox' }
+    [pscustomobject]@{ Title = 'Windows registry persistence method detected'; Category = 'Persistence'; Severity = 'Low'; Techniques = 'T1547.001'; ServiceSource = 'Microsoft Defender for Endpoint'; DetectionSource = 'EDR'; EntityType = 'Registry' }
+    [pscustomobject]@{ Title = 'Process memory was dumped by a suspicious tool'; Category = 'CredentialAccess'; Severity = 'High'; Techniques = 'T1003.001,T1055'; ServiceSource = 'Microsoft Defender for Endpoint'; DetectionSource = 'EDR'; EntityType = 'Process' }
+    [pscustomobject]@{ Title = 'Impossible travel activity'; Category = 'InitialAccess'; Severity = 'Medium'; Techniques = 'T1078.004'; ServiceSource = 'Microsoft Defender for Cloud Apps'; DetectionSource = 'Microsoft Defender for Cloud Apps'; EntityType = 'User' }
+    [pscustomobject]@{ Title = 'Attempt to disable a security control'; Category = 'DefenseEvasion'; Severity = 'High'; Techniques = 'T1562.001'; ServiceSource = 'Microsoft Defender for Endpoint'; DetectionSource = 'EDR'; EntityType = 'Device' }
+    [pscustomobject]@{ Title = 'Remote system discovery command executed'; Category = 'Discovery'; Severity = 'Informational'; Techniques = 'T1018'; ServiceSource = 'Microsoft Defender for Endpoint'; DetectionSource = 'EDR'; EntityType = 'Process' }
+    [pscustomobject]@{ Title = 'Consent granted to an application with high privileges'; Category = 'PrivilegeEscalation'; Severity = 'Medium'; Techniques = 'T1098.001'; ServiceSource = 'Microsoft Defender for Cloud Apps'; DetectionSource = 'Microsoft Defender for Cloud Apps'; EntityType = 'CloudApplication' }
+    [pscustomobject]@{ Title = 'Suspicious sign-in followed by a mailbox forwarding rule'; Category = 'Collection'; Severity = 'High'; Techniques = 'T1114.003,T1078.004'; ServiceSource = 'Microsoft Sentinel'; DetectionSource = 'Scheduled Alerts'; EntityType = 'MailBox' }
+    [pscustomobject]@{ Title = 'Anomalous volume of failed sign-ins from a single address'; Category = 'CredentialAccess'; Severity = 'Low'; Techniques = 'T1110.003'; ServiceSource = 'Microsoft Sentinel'; DetectionSource = 'Scheduled Alerts'; EntityType = 'Ip' }
+    [pscustomobject]@{ Title = 'Lateral movement using remote services detected'; Category = 'LateralMovement'; Severity = 'High'; Techniques = 'T1021.006,T1021.002'; ServiceSource = 'Microsoft Defender for Endpoint'; DetectionSource = 'EDR'; EntityType = 'Device' }
+)
+
+# Secure configuration knowledge base, modelled on the Microsoft Defender
+# Vulnerability Management catalog and the CIS and DISA STIG benchmarks it cites.
+# Impact is the Microsoft 1-10 weighting, and the real distribution clusters on 8,
+# 5, and 9, which the ordering below preserves. CCE identifiers are the Common
+# Configuration Enumeration references carried by the baseline compliance tables.
+$script:SecureConfigurationCatalog = @(
+    [pscustomobject]@{
+        Id = 'scid-2010'; Impact = 9; Category = 'Security controls'; Subcategory = 'Attack Surface Reduction'
+        Name = 'Block credential stealing from the Windows local security authority subsystem'
+        Description = 'Attack Surface Reduction rules block the techniques most commonly used in malware and hands-on-keyboard intrusions. This rule prevents processes from opening a handle to lsass.exe to read credential material from memory.'
+        Rationale = 'Credential material harvested from LSASS enables lateral movement using valid accounts, which is difficult to detect once the attacker holds a legitimate ticket or hash.'
+        Risk = 'Without this rule, tools such as Mimikatz and gsecdump can extract plaintext credentials, hashes, and Kerberos tickets from memory on any host where the attacker holds local administrator rights.'
+        Cce = 'CCE-38217-4'; Benchmarks = @('MS', 'CIS'); Tags = @('UserImpactAssessment')
+        Recommended = 'Block'
+        Remediation = "<b>Option 1</b> - Set the following Group Policy:<br/><i>Computer Configuration\Policies\Administrative Templates\Windows Components\Microsoft Defender Antivirus\Microsoft Defender Exploit Guard\Attack Surface Reduction</i> to <b>Enabled</b> and add rule GUID <i>9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2</i> with value <b>1</b>.<br/><b>Option 2</b> - Run <i>Set-MpPreference -AttackSurfaceReductionRules_Ids 9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2 -AttackSurfaceReductionRules_Actions Enabled</i>."
+    }
+    [pscustomobject]@{
+        Id = 'scid-2011'; Impact = 8; Category = 'Security controls'; Subcategory = 'Attack Surface Reduction'
+        Name = 'Block executable content from email client and webmail'
+        Description = 'Prevents executable files and scripts delivered as mail attachments from launching on the endpoint.'
+        Rationale = 'Mail remains the most common initial access vector, and blocking execution at the client stops the payload before it establishes a foothold.'
+        Risk = 'Users can be socially engineered into launching an attachment, giving an attacker code execution under the user context without any exploit.'
+        Cce = 'CCE-36313-3'; Benchmarks = @('MS', 'CIS'); Tags = @('UserImpactAssessment')
+        Recommended = 'Block'
+        Remediation = "<b>Option 1</b> - Set the Attack Surface Reduction rule GUID <i>be9ba2d9-53ea-4cdc-84e5-9b1eeee46550</i> to <b>Block</b>.<br/><b>Option 2</b> - Run <i>Add-MpPreference -AttackSurfaceReductionRules_Ids be9ba2d9-53ea-4cdc-84e5-9b1eeee46550 -AttackSurfaceReductionRules_Actions Enabled</i>."
+    }
+    [pscustomobject]@{
+        Id = 'scid-2512'; Impact = 9; Category = 'Security controls'; Subcategory = 'Attack Surface Reduction'
+        Name = 'Block Office communication application from creating child processes'
+        Description = 'Prevents Outlook from launching child processes, which stops payloads that rely on the mail client spawning a shell or script host.'
+        Rationale = 'Blocking child process creation removes an entire class of social engineering and exploit chains that pivot through the mail client.'
+        Risk = 'Provides protection against social engineering attacks and prevents exploit code from abusing a vulnerability in Outlook, by blocking the launch of additional payloads.'
+        Cce = 'CCE-36077-4'; Benchmarks = @('MS', 'CIS'); Tags = @('UserImpactAssessment')
+        Recommended = 'Block'
+        Remediation = "<b>Option 1</b> - Set the Attack Surface Reduction rule GUID <i>26190899-1602-49e8-8b27-eb1d0a1ce869</i> to <b>Block</b>."
+    }
+    [pscustomobject]@{
+        Id = 'scid-20'; Impact = 9; Category = 'OS'; Subcategory = 'Credentials'
+        Name = 'Enable Local Security Authority protection'
+        Description = 'Runs the Local Security Authority as a protected process so that unsigned code cannot read or inject into it.'
+        Rationale = 'Protected process light prevents credential dumping tools from attaching to LSASS even when the operator holds administrator rights.'
+        Risk = 'Without LSA protection an attacker with local administrator rights can read credential material directly from memory.'
+        Cce = 'CCE-38318-0'; Benchmarks = @('MS', 'CIS', 'STIG'); Tags = @()
+        Recommended = 'Enabled'
+        Remediation = "Set registry value <i>HKLM\SYSTEM\CurrentControlSet\Control\Lsa\RunAsPPL</i> to <b>1</b> and restart the device."
+    }
+    [pscustomobject]@{
+        Id = 'scid-30'; Impact = 10; Category = 'Network'; Subcategory = 'Services'
+        Name = 'Disable the SMBv1 client and server'
+        Description = 'Removes the deprecated Server Message Block version 1 protocol, which has no support for signing or encryption.'
+        Rationale = 'SMBv1 has been superseded for more than a decade and is the transport abused by several self-propagating families.'
+        Risk = 'SMBv1 exposes the host to remote code execution and to relay attacks, and it permits downgrade from newer, authenticated dialects.'
+        Cce = 'CCE-37864-4'; Benchmarks = @('MS', 'CIS', 'STIG'); Tags = @()
+        Recommended = 'Disabled'
+        Remediation = "Run <i>Disable-WindowsOptionalFeature -Online -FeatureName SMB1Protocol</i> on Windows client, or <i>Remove-WindowsFeature FS-SMB1</i> on Windows Server."
+    }
+    [pscustomobject]@{
+        Id = 'scid-88'; Impact = 8; Category = 'Accounts'; Subcategory = 'Shares'
+        Name = 'Disable anonymous enumeration of shares'
+        Description = 'Determines whether anonymous logon users, that is null session connections, are allowed to list all account names and enumerate all shared resources.'
+        Rationale = 'Denying anonymous enumeration removes an unauthenticated discovery path into the estate.'
+        Risk = 'Allowing this can provide a map of potential points to attack the system.'
+        Cce = 'CCE-36077-1'; Benchmarks = @('MS', 'CIS', 'STIG'); Tags = @()
+        Recommended = 'Enabled'
+        Remediation = "<b>Option 1</b> - Set the following Group Policy:<br/><i>Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Network access: Do not allow anonymous enumeration of SAM accounts and shares</i> to <b>Enabled</b>."
+    }
+    [pscustomobject]@{
+        Id = 'scid-40'; Impact = 8; Category = 'Accounts'; Subcategory = ''
+        Name = 'Disable the built-in guest account'
+        Description = 'Ensures the local guest account is disabled so it cannot be used to access the device without credentials.'
+        Rationale = 'The guest account provides unauthenticated access and is not required in a managed environment.'
+        Risk = 'An enabled guest account allows access to resources without an auditable identity, which frustrates both prevention and investigation.'
+        Cce = 'CCE-37432-0'; Benchmarks = @('MS', 'CIS', 'STIG'); Tags = @()
+        Recommended = 'Disabled'
+        Remediation = "Set <i>Computer Configuration\Policies\Windows Settings\Security Settings\Local Policies\Security Options\Accounts: Guest account status</i> to <b>Disabled</b>."
+    }
+    [pscustomobject]@{
+        Id = 'scid-2500'; Impact = 5; Category = 'OS'; Subcategory = 'Logging'
+        Name = 'Enable PowerShell script block logging'
+        Description = 'Records the content of every script block PowerShell executes, including code that was decoded or generated at runtime.'
+        Rationale = 'Script block logging is frequently the only durable record of an obfuscated or in-memory payload.'
+        Risk = 'Without script block logging, encoded PowerShell activity leaves little evidence and post-incident reconstruction is largely guesswork.'
+        Cce = 'CCE-38318-2'; Benchmarks = @('MS', 'CIS', 'STIG'); Tags = @()
+        Recommended = 'Enabled'
+        Remediation = "Set <i>Computer Configuration\Policies\Administrative Templates\Windows Components\Windows PowerShell\Turn on PowerShell Script Block Logging</i> to <b>Enabled</b>."
+    }
+    [pscustomobject]@{
+        Id = 'scid-91'; Impact = 8; Category = 'Network'; Subcategory = 'Firewall'
+        Name = 'Enable the Windows Defender Firewall for the domain profile'
+        Description = 'Ensures host firewall filtering remains active while the device is connected to the corporate network.'
+        Rationale = 'Host firewalling contains lateral movement even when the network perimeter has been crossed.'
+        Risk = 'If the firewall is turned off all traffic will be able to access the system, and a single compromised host can reach every listening service on its peers.'
+        Cce = 'CCE-36062-6'; Benchmarks = @('MS', 'CIS', 'STIG'); Tags = @()
+        Recommended = 'Enabled'
+        Remediation = "Set <i>Computer Configuration\Policies\Windows Settings\Security Settings\Windows Defender Firewall\Domain Profile\Firewall state</i> to <b>On</b>."
+    }
+    [pscustomobject]@{
+        Id = 'scid-2000'; Impact = 9; Category = 'Security controls'; Subcategory = 'Antivirus'
+        Name = 'Enable Microsoft Defender Antivirus real-time protection'
+        Description = 'Keeps always-on scanning enabled so that malicious files are inspected as they are written and executed.'
+        Rationale = 'Real-time protection is the control that stops commodity payloads before execution.'
+        Risk = 'Limited communication between the machine and the Microsoft Defender for Endpoint service reduces detection coverage, and disabled real-time protection is itself a common attacker action.'
+        Cce = 'CCE-36622-7'; Benchmarks = @('MS', 'CIS'); Tags = @()
+        Recommended = 'Enabled'
+        Remediation = "Run <i>Set-MpPreference -DisableRealtimeMonitoring `$false</i>, and ensure tamper protection is enabled so the setting cannot be reverted."
+    }
+    [pscustomobject]@{
+        Id = 'scid-2001'; Impact = 5; Category = 'Security controls'; Subcategory = 'Antivirus'
+        Name = 'Turn on potentially unwanted application protection in block mode'
+        Description = 'Blocks software that is not outright malicious but that degrades the security posture of the device, such as bundled toolbars and unauthorised remote access utilities.'
+        Rationale = 'Unwanted applications frequently provide the remote access channel an intruder later reuses.'
+        Risk = 'Not having PUA in <b>Block</b> mode enabled leaves your machines vulnerable to software that degrades performance and introduces unmanaged remote access paths.'
+        Cce = 'CCE-36092-3'; Benchmarks = @('MS'); Tags = @('UserImpactAssessment')
+        Recommended = 'Block'
+        Remediation = "Run <i>Set-MpPreference -PUAProtection Enabled</i>."
+    }
+    [pscustomobject]@{
+        Id = 'scid-70'; Impact = 8; Category = 'OS'; Subcategory = 'Bitlocker'
+        Name = 'Enable BitLocker on the operating system drive'
+        Description = 'Encrypts the system volume so that data cannot be read by removing the disk or booting an alternative operating system.'
+        Rationale = 'Full volume encryption is the control that makes device loss a property incident rather than a data breach.'
+        Risk = 'An unencrypted system drive exposes credentials, cached tickets, and controlled unclassified information to anyone with physical access.'
+        Cce = 'CCE-37116-9'; Benchmarks = @('MS', 'CIS', 'STIG'); Tags = @()
+        Recommended = 'Enabled'
+        Remediation = "Enable BitLocker with a TPM protector and escrow the recovery key to Microsoft Entra ID before enforcing the policy."
+    }
+    [pscustomobject]@{
+        Id = 'scid-60'; Impact = 5; Category = 'Network'; Subcategory = ''
+        Name = 'Prohibit use of Internet Connection Sharing on your DNS domain network'
+        Description = 'Determines whether an existing internet connection, such as through wireless, can be shared and used by other systems, essentially creating a mobile hotspot.'
+        Rationale = 'Connection sharing creates an unmanaged bridge between the corporate network and an untrusted one.'
+        Risk = 'This exposes the system sharing the connection to others with potentially malicious purpose.'
+        Cce = 'CCE-38002-0'; Benchmarks = @('CIS', 'STIG'); Tags = @()
+        Recommended = 'Enabled'
+        Remediation = "<b>Option 1</b> - Set the following Group Policy:<br/><i>Computer Configuration\Policies\Administrative Templates\Network\Network Connections\Prohibit use of Internet Connection Sharing on your DNS domain network</i> to <b>Enabled</b>."
+    }
+    [pscustomobject]@{
+        Id = 'scid-20000'; Impact = 9; Category = 'Security controls'; Subcategory = 'EDR'
+        Name = 'Onboard devices to Microsoft Defender for Endpoint'
+        Description = 'Ensures the endpoint reports sensor telemetry so detection, investigation, and response are possible on that device.'
+        Rationale = 'An unonboarded device is a blind spot; no detection or response capability applies to it.'
+        Risk = 'Devices that are not onboarded generate no telemetry, so intrusions on those hosts are found only indirectly, if at all.'
+        Cce = 'CCE-38000-1'; Benchmarks = @('MS'); Tags = @()
+        Recommended = 'Onboarded'
+        Remediation = "Deploy the onboarding package from the Microsoft Defender portal, or assign the onboarding profile through Microsoft Intune."
+    }
+)
+
+# Prompt and completion pairs for AppGenAIContent spans. Business questions an
+# employee at a defence contractor would plausibly put to an internal agent, so
+# the gen_ai content reads like work rather than filler.
+$script:AppGenAIPrompts = @(
+    [pscustomobject]@{
+        Ask = 'Which flow-down clauses are missing from the Meridian subcontract?'
+        Answer = 'Three flow-downs are missing: 252.204-7012 safeguarding, 252.204-7020 assessment reporting, and 252.239-7010 cloud services. Section 8 references 7012 but does not incorporate it by reference.'
+    }
+    [pscustomobject]@{
+        Ask = 'Summarise the latest reporting on device code phishing.'
+        Answer = 'Recent reporting describes attackers sending a legitimate Microsoft device code prompt to a target, who authenticates and unknowingly issues the attacker a refresh token. Maps to Phishing (T1566) and Steal Application Access Token (T1528). Confidence: high.'
+    }
+    [pscustomobject]@{
+        Ask = 'What is our policy on carrying a government laptop overseas?'
+        Answer = 'Foreign travel with a government laptop requires a travel briefing at least ten business days beforehand and a loaner device for travel to designated countries. Source: TRV-114.'
+    }
+    [pscustomobject]@{
+        Ask = 'Score supplier risk for Northbridge Components.'
+        Answer = 'Risk score 4 of 5. Ultimate beneficial ownership resolves to a holding company in a designated country, and two past-performance records cite late delivery of controlled parts. Escalating for sanctions review.'
+    }
+    [pscustomobject]@{
+        Ask = 'Draft the timeline note for the credential access activity on WIN-04.'
+        Answer = 'At 16:16 UTC reg.exe saved the SAM, SECURITY, and SYSTEM hives to C:\ProgramData\wrstage. Between 16:31 and 17:07 UTC PwDump7, gsecdump, LaZagne, and mimikatz executed from the same directory under victor.alvarez. Techniques: T1003.002, T1003.001, T1555.'
+    }
+    [pscustomobject]@{
+        Ask = 'Which controls did we fail in the latest secure configuration assessment?'
+        Answer = 'Four controls are failing across 62 devices: SMBv1 remains enabled on 11 servers, LSA protection is off on 38 endpoints, PowerShell script block logging is unconfigured on 44, and the guest account is enabled on 3.'
+    }
+    [pscustomobject]@{
+        Ask = 'Walk me through restarting the ingestion pipeline.'
+        Answer = 'Step 1 of 6: confirm the alert is ingestion lag and not source outage by checking SentinelHealth for the last successful run. Confirm when complete and I will continue.'
+    }
+    [pscustomobject]@{
+        Ask = 'Does our proposal meet the Section L page limits?'
+        Answer = 'Volume II exceeds the Section L limit by 4 pages. Section M weights technical approach highest, so the recommendation is to reduce the management narrative in 2.3 rather than the technical detail.'
+    }
+)
+
 # Columns deliberately populated even though the live tenant leaves them empty.
 # Loaded from metadata\profile-overrides.json so the generator and the data quality
 # gate read the same list and cannot drift apart.
@@ -711,6 +1068,14 @@ function Get-WorkshopPatternValue {
 
     $seed = New-StableHex ('{0}|{1}|{2}' -f $Table, $ColumnName, $Index) 32
 
+    # Identity columns are drawn from the estate rather than minted freshly. One
+    # tenant backs the whole environment, and subscriptions come from a fixed pool,
+    # so a generic GUID here would silently break both invariants.
+    if ($ColumnName -match '(?i)tenantid$') { return $tenantId }
+    if ($ColumnName -match '(?i)subscription') {
+        return Get-WorkshopSubscriptionId -Key ('{0}|{1}' -f $Table, $ColumnName)
+    }
+
     switch ($Pattern) {
         'guid' {
             return ([guid]::new([byte[]](0..15 | ForEach-Object { [Convert]::ToByte($seed.Substring(($_ * 2) % 30, 2), 16) }))).ToString()
@@ -847,6 +1212,37 @@ function Get-WorkshopProfileSampledValue {
         }
     }
     return $sampler.Values[$sampler.Values.Length - 1]
+}
+
+function Get-WorkshopSubscriptionId {
+    <#
+        Deterministic subscription for a resource. Hashing the key rather than using
+        the row index keeps a given device or storage account in the same
+        subscription across every table that references it, which is what makes
+        cross-table joins believable.
+    #>
+    param([Parameter(Mandatory)][string]$Key)
+
+    $hash = [Convert]::ToInt32((New-StableHex $Key 6), 16)
+    return $script:SubscriptionIds[$hash % $script:SubscriptionIds.Count]
+}
+
+function Get-WorkshopBinaryVersionInfo {
+    <#
+        File version metadata for a binary, matching what Microsoft Defender for
+        Endpoint reports in the ProcessVersionInfo and InitiatingProcessVersionInfo
+        columns. This is a primary triage pivot: a signed Microsoft binary and an
+        attacker tool are told apart by company name and file description long
+        before anyone looks at a hash. Unknown binaries return empty fields, which
+        is also what the real product does and what keeps the generated fill rate
+        close to the observed one.
+    #>
+    param([string]$FileName)
+
+    if ([string]::IsNullOrWhiteSpace($FileName)) { return $null }
+    $key = $FileName.ToLowerInvariant()
+    if ($script:BinaryVersionInfo.ContainsKey($key)) { return $script:BinaryVersionInfo[$key] }
+    return $null
 }
 
 function Get-WorkshopRandomInt {
@@ -1349,7 +1745,7 @@ function New-WorkshopDeviceInfoValues {
     $hardwareUuid = New-StableGuid "hardware|$deviceId"
     $hasAzureResource = $cloudPlatforms -match 'Azure'
     $resourceGroup = if ($Device.Type -eq 'DomainController') { 'identity-tier0' } elseif ($Device.Type -eq 'EntraConnect') { 'hybrid-identity' } elseif ($isUbuntuDevice -or $osPlatform -eq 'Linux') { 'linux-mde' } else { 'workstations' }
-    $azureResourceId = if ($hasAzureResource) { '/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Compute/virtualMachines/{2}' -f $subscriptionId, $resourceGroup, ($deviceName.Split('.')[0]).ToLowerInvariant() } else { '' }
+    $azureResourceId = if ($hasAzureResource) { '/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Compute/virtualMachines/{2}' -f (Get-WorkshopSubscriptionId -Key $deviceName), $resourceGroup, ($deviceName.Split('.')[0]).ToLowerInvariant() } else { '' }
     $sensorHealth = if ($profile) { Get-WorkshopPropertyText $profile 'SensorHealthState' } else { '' }
     if ([string]::IsNullOrWhiteSpace($sensorHealth) -and $onboardingStatus -eq 'Onboarded') { $sensorHealth = if (($Index % 67) -eq 0) { 'Inactive' } else { 'Active' } }
     $exposureLevel = if ($profile) { Get-WorkshopPropertyText $profile 'ExposureLevel' } else { '' }
@@ -1413,7 +1809,7 @@ function New-WorkshopDeviceInfoValues {
         CloudPlatforms = $cloudPlatforms
         AzureVmId = if ($hasAzureResource) { $hardwareUuid } else { '' }
         AzureResourceId = $azureResourceId
-        AzureVmSubscriptionId = if ($hasAzureResource) { $subscriptionId } else { '' }
+        AzureVmSubscriptionId = if ($hasAzureResource) { Get-WorkshopSubscriptionId -Key $deviceName } else { '' }
         GcpFullResourceName = ''
         AwsResourceName = ''
         IsTransient = ConvertFrom-WorkshopBooleanText -Value $(if ($profile) { Get-WorkshopPropertyText $profile 'IsTransient' } else { '' }) -Default:($Ambient -and $onboardingStatus -ne 'Onboarded')
@@ -2036,7 +2432,7 @@ function Add-WorkshopScenarioSecurityIncident {
             @{ labelName = 'WorkshopScenario'; labelType = 'AutoAssigned' },
             @{ labelName = 'XDRCorrelation'; labelType = 'AutoAssigned' }
         )
-        IncidentUrl = "https://portal.azure.com/#asset/Microsoft_Azure_Security_Insights/Incident/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sentinel/providers/Microsoft.OperationalInsights/workspaces/usag-cyber/providers/Microsoft.SecurityInsights/Incidents/$(New-StableGuid "scenario-incident|$ProviderIncidentId")"
+        IncidentUrl = "https://portal.azure.com/#asset/Microsoft_Azure_Security_Insights/Incident/subscriptions/$subscriptionId/resourceGroups/sentinel/providers/Microsoft.OperationalInsights/workspaces/usag-cyber/providers/Microsoft.SecurityInsights/Incidents/$(New-StableGuid "scenario-incident|$ProviderIncidentId")"
         AdditionalData = @{
             alertsCount = $AlertIds.Count
             bookmarksCount = 0
@@ -2107,8 +2503,46 @@ else {
     @($script:Schemas.Keys)
 }
 
-$tenantId = '11111111-2222-3333-4444-555555555555'
-$subscriptionId = '22222222-3333-4444-5555-666666666666'
+# One Microsoft Entra tenant backs the whole estate, so this GUID must appear in
+# every table that carries a tenant identifier. It is a fixed random value rather
+# than a patterned placeholder, and it is hard-coded rather than minted per run so
+# that regenerating a single table still agrees with the rest of the package.
+$tenantId = '5867d47f-e3a9-4d17-8ea0-bbdd0f9d838c'
+
+# Azure subscriptions in the estate. Resources are spread across this pool so
+# resource IDs are not all identical, while staying small enough that a student can
+# still reason about the environment. Never grow this beyond 25 entries.
+$script:SubscriptionIds = @(
+    '1a43c66d-ac5b-4850-bda7-48b670c1f0cc'
+    '32316a65-afdb-4b86-8908-8a45bb5f8ef8'
+    '81a98a6e-5558-4023-8465-74269605b774'
+    '7871f44f-b3d2-4f26-b62a-88e143397897'
+    '4bdf4e5f-e4e8-41a6-af8b-98e5e440a64c'
+    '129edfc1-a4c5-48fe-852e-3cf597ac5c80'
+    '89cc7cf2-b173-4b7d-add1-7f9dc9267d8d'
+    '3990cc51-e79f-4b73-8e58-2a68df83a668'
+    '96c3fd09-9362-459a-91ba-d8e70923b529'
+    'f67d02b4-2a02-4fb7-a390-a343b5b82846'
+    '1521dcb0-c738-4068-ac05-679f1a1ae584'
+    '5b483c8e-a8e4-4419-9429-7189661127db'
+    'df5f31ad-e26e-49e1-87ec-4da5fe839a07'
+    '95d0e82c-30d3-4413-89db-f7590e295b53'
+    '9c59a5d3-286d-496e-83b5-3f0f8b2e8d55'
+    'f23f513f-b9c8-4857-92f0-e852ca59aab4'
+    '4a44c0eb-9c63-4b6f-b84c-c5ec5627e9b9'
+    'f6288c45-b32a-4e62-b315-041a258bb031'
+    'e0fefaa8-eb89-49d1-bc52-05dedceb2b21'
+    '61f3c055-df60-414b-ad6d-625086e96247'
+    'de93693b-d7ec-4b0c-9512-2225457fc005'
+    'fef1df9c-74cc-4a6f-b4b2-a869326959c0'
+    '659ae0b8-a1be-4759-ae29-315d55436c6f'
+    'ad023b3b-78ab-40da-81b7-67a6e3d5d536'
+    '1dd546d0-4fe0-4c0b-a0d5-864fc5103be7'
+)
+
+# The platform subscription, used wherever a single well-known scope is expected,
+# such as the Sentinel workspace and its analytics rules.
+$subscriptionId = $script:SubscriptionIds[0]
 $tenantDomain = 'usag-cyber.local'
 $adDomain = 'USAG-CYBER'
 $corpFqdn = 'usag-cyber.local'
@@ -3125,19 +3559,61 @@ Assert-WorkshopCatalogMinimum -Name 'Linux remote endpoints' -Items $linuxRemote
 Assert-WorkshopCatalogMinimum -Name 'DeviceNetworkEvents real profiles' -Items $deviceNetworkEventProfiles -Minimum 2000
 Assert-WorkshopCatalogMinimum -Name 'Linux software catalog' -Items $linuxSoftwareCatalog -Minimum 408
 
+$deviceIndex = 0
 foreach ($device in $devices) {
-    $deviceIndex = [array]::IndexOf($devices, $device) + 1
+    # An explicit counter rather than [array]::IndexOf, which scanned the whole
+    # fleet on every iteration and could return a collection rather than a scalar.
+    $deviceIndex++
     $deviceUser = if ($device.ShortName -eq 'WIN11-04') { $victor } elseif ($device.OS -eq 'Ubuntu') { $svcSql } else { $users[$deviceIndex % $users.Count] }
     Add-Record -Table 'DeviceInfo' -Time $StartTime.AddMinutes(-30) -Values (New-WorkshopDeviceInfoValues -Device $device -Time $StartTime.AddMinutes(-30) -Index $deviceIndex -User $deviceUser)
+
+    # DeviceNetworkInfo is an inventory table: one adapter record per device rather
+    # than an event stream. It is written here, so the adapter detail has to be
+    # complete here too. A device whose adapter has no vendor, or an unexpected
+    # tunnel type, is exactly what a student is asked to notice.
+    $isLinuxDevice = $device.OS -eq 'Ubuntu'
+
+    # Virtualised hosts get a hypervisor NIC, physical hosts get real silicon. The
+    # MAC is built from the vendor's own IEEE OUI so hardware identification from
+    # the first three octets agrees with the reported vendor.
+    $vendorPool = @($script:NetworkAdapterVendors | Where-Object { $_.Virtual -eq $isLinuxDevice })
+    if ($vendorPool.Count -eq 0) { $vendorPool = $script:NetworkAdapterVendors }
+    $adapter = $vendorPool[$deviceIndex % $vendorPool.Count]
+
+    # Each element is parenthesised because the comma operator binds tighter than
+    # the arithmetic operators, so "a % 256, b % 256" would parse as "a % (256, b)".
+    $adapterOctets = @( (($deviceIndex -shr 8) % 256), ($deviceIndex % 256), ((($deviceIndex * 7) + 19) % 256) )
+    $macAddress = '{0}-{1:X2}-{2:X2}-{3:X2}' -f $adapter.Oui, $adapterOctets[0], $adapterOctets[1], $adapterOctets[2]
+    if ($isLinuxDevice) { $macAddress = $macAddress.Replace('-', ':').ToLowerInvariant() }
+
+    $adapterType = if ($adapter.Model -match 'Wi-Fi|Wireless') { 'Wireless80211' }
+        elseif (($deviceIndex % 29) -eq 0) { 'Tunnel' }
+        else { 'Ethernet' }
+
+    $resolver = $script:NetworkSiteResolvers[$deviceIndex % $script:NetworkSiteResolvers.Count]
+    $ipOctets = $device.IP -split '\.'
+    $subnetPrefix = if ($ipOctets.Count -eq 4) { '{0}.{1}.{2}' -f $ipOctets[0], $ipOctets[1], $ipOctets[2] } else { '10.42.0' }
 
     Add-Record -Table 'DeviceNetworkInfo' -Time $StartTime.AddMinutes(-29) -Values @{
         Timestamp = Format-WorkshopTime $StartTime.AddMinutes(-29)
         DeviceId = $device.DeviceId
         DeviceName = $device.Name
-        NetworkAdapterName = if ($device.OS -eq 'Ubuntu') { 'ens160' } else { 'Ethernet0' }
-        ConnectedNetworks = if ($device.OS -eq 'Ubuntu') { '[{"Name":"CorpLinux","Category":"Private"}]' } else { '[{"Name":"CorpNet","Category":"DomainAuthenticated"}]' }
+        NetworkAdapterName = if ($isLinuxDevice) { 'ens160' } else { $adapter.Model }
+        ConnectedNetworks = if ($isLinuxDevice) { '[{"Name":"CorpLinux","Category":"Private"}]' } else { '[{"Name":"CorpNet","Category":"DomainAuthenticated"}]' }
         IPAddresses = "[`"$($device.IP)`"]"
-        MacAddress = if ($device.OS -eq 'Ubuntu') { ('00:15:5d:{0:x2}:2a:63' -f $deviceIndex) } else { ('00-15-5D-{0:X2}-2A-63' -f $deviceIndex) }
+        MacAddress = $macAddress
+        NetworkAdapterType = $adapterType
+        NetworkAdapterStatus = if (($deviceIndex % 23) -eq 0) { 'Down' } else { 'Up' }
+        NetworkAdapterVendor = $adapter.Vendor
+        TunnelType = if ($adapterType -eq 'Tunnel') { @('Teredo', 'IPHTTPS', 'SixToFour')[$deviceIndex % 3] } else { 'None' }
+        # Every routed adapter has a gateway and a DHCP server; the resolver pair
+        # follows the site the subnet belongs to.
+        DefaultGateways = "[`"$subnetPrefix.1`"]"
+        DnsAddresses = "[`"$($resolver.Primary)`",`"$($resolver.Secondary)`"]"
+        IPv4Dhcp = "$subnetPrefix.10"
+        IPv6Dhcp = if (($deviceIndex % 11) -eq 0) { 'fe80::{0:x}:1' -f (($deviceIndex % 4096)) } else { '' }
+        NetworkAdapterDnsSuffix = $corpFqdn
+        OnboardingStatus = if (($deviceIndex % 37) -eq 0) { 'Can be onboarded' } else { 'Onboarded' }
         ReportId = 2000 + $deviceIndex
     }
 }
@@ -3478,6 +3954,20 @@ function New-NormalTelemetryValues {
         AdditionalFields = @{ Workload = 'WorkshopNormal'; Baseline = $true; OSProfile = if ($isUbuntuDevice) { 'Ubuntu' } else { 'Windows' } }
     }
 
+    # File version metadata for the initiating process, and a unique process
+    # identifier. Defender reports both on every endpoint table, and without them
+    # a student cannot separate a signed Microsoft binary from attacker tooling.
+    $initiatingVersionInfo = Get-WorkshopBinaryVersionInfo -FileName $process.File
+    if ($initiatingVersionInfo) {
+        $values.InitiatingProcessVersionInfoCompanyName = $initiatingVersionInfo.CompanyName
+        $values.InitiatingProcessVersionInfoProductName = $initiatingVersionInfo.ProductName
+        $values.InitiatingProcessVersionInfoProductVersion = $initiatingVersionInfo.ProductVersion
+        $values.InitiatingProcessVersionInfoInternalFileName = $initiatingVersionInfo.InternalFileName
+        $values.InitiatingProcessVersionInfoOriginalFileName = $initiatingVersionInfo.OriginalFileName
+        $values.InitiatingProcessVersionInfoFileDescription = $initiatingVersionInfo.FileDescription
+    }
+    $values.InitiatingProcessUniqueId = [long]([Convert]::ToInt64((New-StableHex "uniqueid|$($process.File)|$Index" 12), 16))
+
     switch ($Table) {
         'DeviceProcessEvents' {
             $values.ActionType = 'ProcessCreated'
@@ -3488,6 +3978,20 @@ function New-NormalTelemetryValues {
             $values.ProcessId = 2000 + ($Index % 40000)
             $values.ProcessIntegrityLevel = if ($isUbuntuDevice) { 'Unknown' } else { 'Medium' }
             $values.ProcessTokenElevation = if ($isUbuntuDevice) { 'None' } else { 'TokenElevationTypeLimited' }
+
+            # The created process carries its own version metadata, which is the
+            # column an analyst filters on to find unsigned or oddly described
+            # binaries running from user-writable paths.
+            $createdVersionInfo = Get-WorkshopBinaryVersionInfo -FileName $process.File
+            if ($createdVersionInfo) {
+                $values.ProcessVersionInfoCompanyName = $createdVersionInfo.CompanyName
+                $values.ProcessVersionInfoProductName = $createdVersionInfo.ProductName
+                $values.ProcessVersionInfoProductVersion = $createdVersionInfo.ProductVersion
+                $values.ProcessVersionInfoInternalFileName = $createdVersionInfo.InternalFileName
+                $values.ProcessVersionInfoOriginalFileName = $createdVersionInfo.OriginalFileName
+                $values.ProcessVersionInfoFileDescription = $createdVersionInfo.FileDescription
+            }
+            $values.ProcessUniqueId = [long]([Convert]::ToInt64((New-StableHex "processuniqueid|$($process.File)|$Index" 12), 16))
         }
         'DeviceFileEvents' {
             $values.ActionType = Get-WorkshopRandomItem @('FileCreated', 'FileModified', 'FileRenamed', 'FileDeleted')
@@ -3575,13 +4079,39 @@ function New-NormalTelemetryValues {
             $values.ConnectedNetworks = if ($isUbuntuDevice) { @(@{ Name = 'CorpLinux'; Category = 'Private' }) } else { @(@{ Name = 'CorpNet'; Category = 'DomainAuthenticated' }) }
             $values.IPAddresses = @($device.IP)
             $values.MacAddress = if ($isUbuntuDevice) { ('00:15:5d:{0:x2}:{1:x2}:{2:x2}' -f ($Index % 255), (($Index + 42) % 255), (($Index + 99) % 255)) } else { ('00-15-5D-{0:X2}-{1:X2}-{2:X2}' -f ($Index % 255), (($Index + 42) % 255), (($Index + 99) % 255)) }
+
+            # Adapter inventory. A network adapter with no vendor or an unexpected
+            # tunnel type is how an unmanaged or virtual interface is spotted, so
+            # these are populated rather than left blank.
+            $values.NetworkAdapterStatus = if (($Index % 23) -eq 0) { 'Down' } else { 'Up' }
+            $values.NetworkAdapterType = if ($isUbuntuDevice) { 'Ethernet' } else {
+                Get-WorkshopRandomItem @('Ethernet', 'Ethernet', 'Ethernet', 'Wireless80211', 'Tunnel')
+            }
+            $values.NetworkAdapterVendor = if ($isUbuntuDevice) {
+                Get-WorkshopRandomItem @('VMware, Inc.', 'Red Hat, Inc.', 'Intel Corporation')
+            }
+            else {
+                Get-WorkshopRandomItem @('Microsoft', 'Intel Corporation', 'Realtek Semiconductor Corp.', 'VMware, Inc.', 'Broadcom Inc.')
+            }
+            $values.TunnelType = if ($values.NetworkAdapterType -eq 'Tunnel') {
+                Get-WorkshopRandomItem @('Teredo', 'IPHTTPS', 'SixToFour')
+            }
+            else { 'None' }
+            # Only routed adapters carry a gateway, which matches the low fill rate
+            # observed in real telemetry.
+            if (($Index % 100) -lt 27) {
+                $octets = $device.IP -split '\.'
+                if ($octets.Count -eq 4) {
+                    $values.DefaultGateways = @('{0}.{1}.{2}.1' -f $octets[0], $octets[1], $octets[2])
+                }
+            }
         }
         'AADManagedIdentitySignInLogs' {
             $managedResource = $managedIdentityResourceCatalog[$Index % $managedIdentityResourceCatalog.Count]
             $targetResource = $servicePrincipalResourceCatalog[$Index % $servicePrincipalResourceCatalog.Count]
             $isFailure = ($Index % 97) -eq 0
             $managedIdentityName = '{0}-mi' -f $managedResource.Name
-            $managedIdentityResourceId = '/subscriptions/{0}/resourceGroups/{1}/providers/{2}/{3}' -f $subscriptionId, $managedResource.ResourceGroup, $managedResource.Provider, $managedResource.Name
+            $managedIdentityResourceId = '/subscriptions/{0}/resourceGroups/{1}/providers/{2}/{3}' -f (Get-WorkshopSubscriptionId -Key $managedResource.Name), $managedResource.ResourceGroup, $managedResource.Provider, $managedResource.Name
             $servicePrincipalSeed = "$Table|managed-identity|$($managedResource.Name)"
             $servicePrincipalId = New-StableGuid "$servicePrincipalSeed|servicePrincipal"
             $appIdValue = New-StableGuid "$servicePrincipalSeed|appId"
@@ -3731,6 +4261,76 @@ function New-NormalTelemetryValues {
                 $values.SourceSystem = ''
             }
         }
+        'AppGenAIContent' {
+            # OpenTelemetry gen_ai spans for the same agents declared in AgentsInfo,
+            # so a hunt can pivot from an agent registration to what that agent
+            # actually did. Trace and span identifiers follow the OTel wire format:
+            # 32 hex characters for a trace, 16 for a span.
+            $agentCatalog = $script:AgentsInfoCatalog
+            $archetype = $agentCatalog[$Index % $agentCatalog.Count]
+            $operation = @('create_agent', 'invoke_agent', 'chat', 'execute_tool')[$Index % 4]
+
+            $values.TenantId = $tenantId
+            $values.Id = New-StableGuid "$Table|id|$Index"
+            $values.TimeGenerated = $timeText
+            $values.TraceId = New-StableHex "$Table|trace|$([Math]::Floor($Index / 3))" 32
+            $values.SpanId = New-StableHex "$Table|span|$Index" 16
+            $values.ParentSpanId = New-StableHex "$Table|parent-span|$([Math]::Floor($Index / 3))" 16
+            $values.AgentName = $archetype.Name
+            $values.AgentId = '{0}:{1}' -f ($archetype.Name -replace '\s+', ''), (1 + ($Index % 40))
+            $values.ModelName = $archetype.Model
+            $values.SystemInstructions = ConvertTo-Json -Compress -Depth 6 -InputObject `
+                ([object[]]@(@{ type = 'text'; content = $archetype.Instructions }))
+
+            # Real spans carry the prompt and completion only on the chat operations;
+            # the lifecycle spans leave them empty.
+            if ($operation -in @('invoke_agent', 'chat')) {
+                $prompt = $script:AppGenAIPrompts[$Index % $script:AppGenAIPrompts.Count]
+                $values.InputMessages = ConvertTo-Json -Compress -Depth 6 -InputObject `
+                    ([object[]]@(@{ role = 'user'; parts = @(@{ type = 'text'; content = $prompt.Ask }) }))
+                $values.OutputMessages = ConvertTo-Json -Compress -Depth 6 -InputObject `
+                    ([object[]]@(@{ role = 'assistant'; parts = @(@{ type = 'text'; content = $prompt.Answer }); finish_reason = 'stop' }))
+            }
+
+            if ($operation -eq 'execute_tool') {
+                $toolName = @($archetype.Tools)[$Index % @($archetype.Tools).Count]
+                $values.ToolDefinitions = ConvertTo-Json -Compress -Depth 6 -InputObject `
+                    ([object[]]@(@{ type = 'function'; name = $toolName; description = "Invokes $toolName" }))
+                $values.ToolCallArguments = ConvertTo-Json -Compress -InputObject @{ query = 'quarterly'; top = 5 }
+                $values.ToolCallResult = ConvertTo-Json -Compress -InputObject @{ status = 'succeeded'; itemCount = ($Index % 12) }
+            }
+
+            $serviceName = '{0}.{1}' -f ($archetype.Publisher -replace '\s+', '-').ToLowerInvariant(), 'agent-framework'
+            $values.ServiceNamespace = ($archetype.Publisher -replace '\s+', '-').ToLowerInvariant()
+            $values.ServiceName = $serviceName
+            $values.RoleName = $serviceName
+            $values.ServiceInstanceId = New-StableGuid "$Table|instance|$($Index % 18)"
+            $values.SourceSystem = 'Azure'
+            $values.Type = 'AppGenAIContent'
+            $values._ResourceId = '/subscriptions/{0}/resourcegroups/foundry/providers/microsoft.cognitiveservices/accounts/usagcyber-ai' -f `
+                (Get-WorkshopSubscriptionId -Key $archetype.Publisher)
+
+            $values.Attributes = @{
+                'gen_ai.provider.name'    = $archetype.Runtime
+                'gen_ai.operation.name'   = $operation
+                'gen_ai.request.model'    = $archetype.Model
+                'gen_ai.agent.name'       = $archetype.Name
+                'gen_ai.usage.input_tokens'  = 120 + ($Index % 3400)
+                'gen_ai.usage.output_tokens' = 40 + ($Index % 900)
+            }
+
+            # A minority of spans carry an evaluator verdict, which is where an
+            # analyst finds groundedness and safety failures worth hunting.
+            if (($Index % 100) -lt 14) {
+                $values.EvaluationExplanation = Get-WorkshopRandomItem @(
+                    'Groundedness: pass. Every claim traced to a retrieved source.'
+                    'Groundedness: fail. Response asserted a policy clause absent from the retrieved documents.'
+                    'Content safety: pass. No harmful content detected.'
+                    'Relevance: partial. Response answered a narrower question than the one asked.'
+                    'Prompt shield: flagged. Instruction-like text detected inside retrieved content.'
+                )
+            }
+        }
         'AgentsInfo' {
             # Declared-agent inventory. Real tenant telemetry shows a long tail of
             # third-party and in-house agents where roughly half carry authored
@@ -3825,6 +4425,35 @@ function New-NormalTelemetryValues {
                 model         = $archetype.Model
             }
         }
+        'IntuneDevices' {
+            # Intune device inventory. Compliance state, ownership, and registration
+            # state are the columns a responder uses to decide whether a device can
+            # be trusted or wiped, so all of them are populated.
+            $intuneDevice = $device
+            $intuneUser = $user
+            $isPersonal = ($Index % 100) -lt 18
+            $isCompliant = ($Index % 100) -lt 77
+
+            $values.OperationName = 'Devices'
+            $values.DeviceName = $intuneDevice.Name
+            $values.ManagedDeviceName = '{0}_{1}_{2}' -f $intuneUser.Name, $(if ($isUbuntuDevice) { 'Linux' } else { 'Windows' }), $intuneDevice.ShortName
+            $values.UPN = $intuneUser.Upn
+            $values.UserName = $intuneUser.DisplayName
+            $values.UserEmail = $intuneUser.Upn
+            $values.UserId = $intuneUser.ObjectId
+            $values.SerialNumber = ('{0}{1:D8}' -f $(if ($isUbuntuDevice) { 'VMW' } else { 'DLL' }), ($Index % 99999999))
+            $values.Ownership = if ($isPersonal) { 'Personal' } else { 'Company' }
+            $values.CompliantState = if ($isCompliant) { 'Compliant' } else {
+                Get-WorkshopRandomItem @('Noncompliant', 'Noncompliant', 'InGracePeriod', 'ConfigManager')
+            }
+            $values.DeviceState = Get-WorkshopRandomItem @('Managed', 'Managed', 'Managed', 'RetirePending', 'WipePending')
+            $values.DeviceRegistrationState = Get-WorkshopRandomItem @('Registered', 'Registered', 'Registered', 'NotRegistered', 'KeyConflict')
+            # Wi-Fi hardware address is reported for portable devices only.
+            if (($Index % 100) -lt 47) {
+                $values.WifiMacAddress = ('{0:X2}{1:X2}{2:X2}{3:X2}{4:X2}{5:X2}' -f `
+                    (0x3C), (0x58), ($Index % 255), (($Index + 17) % 255), (($Index + 83) % 255), (($Index + 151) % 255))
+            }
+        }
         'CloudAppEvents' {
             $values.ActionType = Get-WorkshopRandomItem @('FileDownloaded', 'FileUploaded', 'UserLoggedIn', 'MailItemsAccessed', 'OAuthAppConsent')
             $values.Application = Get-WorkshopRandomItem @('Microsoft 365', 'Microsoft Teams', 'SharePoint Online', 'Exchange Online')
@@ -3835,6 +4464,16 @@ function New-NormalTelemetryValues {
             $values.ObjectType = Get-WorkshopRandomItem @('File', 'Message', 'MailItem', 'OAuthApplication')
             $values.ActivityType = $values.ActionType
             $values.RawEventData = @{ baseline = $true; workload = $values.Application }
+
+            # Network provenance. Defender for Cloud Apps resolves the source
+            # address to a geography and an ISP, and classifies it, which is how a
+            # session from an anonymising proxy or an unexpected country is caught.
+            $geo = $script:CloudAppGeographies[$Index % $script:CloudAppGeographies.Count]
+            $values.City = $geo.City
+            $values.CountryCode = $geo.CountryCode
+            $values.ISP = $geo.Isp
+            $values.IPCategory = $geo.Category
+            $values.ObjectId = New-StableGuid "$Table|object|$($values.ObjectName)|$($Index % 400)"
         }
         'AuditLogs' {
             $values.ActivityDisplayName = Get-WorkshopRandomItem @('Update user', 'Add member to group', 'Update application', 'User registered security info')
@@ -3911,17 +4550,24 @@ function New-NormalTelemetryValues {
             $values.RequestDuration = Get-WorkshopRandomInt -Minimum 20 -Maximum 1200
         }
         { $_ -in @('AlertInfo', 'AlertEvidence') } {
+            # Ambient alerts are the background noise the scenario alerts must be
+            # found within, so each carries a real Defender or Sentinel title, the
+            # MITRE tactic it maps to, and the technique IDs an analyst would pivot
+            # on. Leaving AttackTechniques empty made the whole table unusable for
+            # technique-based hunting.
+            $alertTemplate = $script:AmbientAlertCatalog[$Index % $script:AmbientAlertCatalog.Count]
             $alertId = New-StableGuid "baseline-alert|$Index"
+
             $values.AlertId = $alertId
-            $values.Title = Get-WorkshopRandomItem @('Informational Defender sensor event', 'Suspicious but remediated sign-in', 'Low severity malware blocked', 'Cloud app policy match')
-            $values.Category = Get-WorkshopRandomItem @('InitialAccess', 'Execution', 'DefenseEvasion', 'Discovery')
-            $values.Severity = Get-WorkshopRandomItem @('Informational', 'Low', 'Low', 'Medium')
-            $values.ServiceSource = Get-WorkshopRandomItem @('Microsoft Defender for Endpoint', 'Microsoft Defender for Identity', 'Microsoft Defender for Cloud Apps')
-            $values.DetectionSource = 'AutomatedInvestigation'
-            $values.EntityType = Get-WorkshopRandomItem @('Device', 'User', 'File', 'Process')
-            $values.EvidenceRole = 'Related'
+            $values.Title = $alertTemplate.Title
+            $values.Category = $alertTemplate.Category
+            $values.Severity = $alertTemplate.Severity
+            $values.ServiceSource = $alertTemplate.ServiceSource
+            $values.DetectionSource = $alertTemplate.DetectionSource
+            $values.AttackTechniques = $alertTemplate.Techniques
+            $values.EntityType = $alertTemplate.EntityType
+            $values.EvidenceRole = if (($Index % 5) -eq 0) { 'Impacted' } else { 'Related' }
             $values.EvidenceDirection = 'Source'
-            $values.AttackTechniques = ''
             $values.Categories = @($values.Category)
         }
         'IdentityLogonEvents' {
@@ -4211,6 +4857,58 @@ function New-NormalTelemetryValues {
             $values.ComplianceStatus = if ($values.IsCompliant) { 'Compliant' } else { 'NonCompliant' }
             $values.RiskScore = if ($isUbuntuDevice -and $software) { $software.Risk } else { Get-WorkshopRandomInt -Minimum 1 -Maximum 60 }
         }
+        'DeviceTvmSecureConfigurationAssessmentKB' {
+            # Knowledge base rows describe the catalog itself, not a device, so every
+            # descriptive column is populated exactly as the real KB carries it.
+            $entry = $script:SecureConfigurationCatalog[$Index % $script:SecureConfigurationCatalog.Count]
+            $values.ConfigurationId = $entry.Id
+            $values.ConfigurationImpact = [double]$entry.Impact
+            $values.ConfigurationName = $entry.Name
+            $values.ConfigurationDescription = $entry.Description
+            $values.RiskDescription = $entry.Risk
+            $values.ConfigurationCategory = $entry.Category
+            $values.ConfigurationSubcategory = $entry.Subcategory
+            $values.ConfigurationBenchmarks = [object[]]$entry.Benchmarks
+            $values.Tags = [object[]]$entry.Tags
+            $values.RemediationOptions = $entry.Remediation
+        }
+        'DeviceBaselineComplianceAssessmentKB' {
+            # The baseline KB cites the CIS or STIG benchmark a setting comes from,
+            # along with its Common Configuration Enumeration reference. Its category
+            # is the Group Policy section the setting lives under, which is a
+            # different taxonomy from the secure configuration assessment category.
+            $entry = $script:SecureConfigurationCatalog[$Index % $script:SecureConfigurationCatalog.Count]
+            $policySection = switch ($entry.Id) {
+                'scid-2010' { 'Microsoft Defender Exploit Guard' }
+                'scid-2011' { 'Microsoft Defender Exploit Guard' }
+                'scid-2512' { 'Microsoft Defender Exploit Guard' }
+                'scid-20'   { 'Security Options' }
+                'scid-30'   { 'System Services' }
+                'scid-88'   { 'Security Options' }
+                'scid-40'   { 'Security Options' }
+                'scid-2500' { 'Windows PowerShell' }
+                'scid-91'   { 'Windows Defender Firewall' }
+                'scid-2000' { 'Microsoft Defender Antivirus' }
+                'scid-2001' { 'Microsoft Defender Antivirus' }
+                'scid-70'   { 'Operating System Drives' }
+                'scid-60'   { 'Network Connections' }
+                default     { 'Computer Configuration' }
+            }
+            # Real distribution is CIS 69 percent, then Microsoft and STIG evenly.
+            $benchmark = if ($entry.Benchmarks -contains 'CIS') { 'CIS' } elseif ($entry.Benchmarks -contains 'STIG') { 'STIG' } else { 'Microsoft' }
+
+            $values.ConfigurationId = $entry.Id
+            $values.ConfigurationName = $entry.Name
+            $values.ConfigurationDescription = $entry.Description
+            $values.ConfigurationRationale = $entry.Rationale
+            $values.ConfigurationCategory = $policySection
+            $values.BenchmarkProfileLevels = [object[]]@(if ($entry.Impact -ge 8) { 'Level 1' } else { 'Level 2' })
+            $values.CCEReference = $entry.Cce
+            $values.RemediationOptions = $entry.Remediation
+            $values.ConfigurationBenchmark = $benchmark
+            $values.Source = [object[]]@('Windows 11 Security Baseline')
+            $values.RecommendedValue = [object[]]@($entry.Recommended)
+        }
         'SecurityIncident' {
             $firstActivity = $Time.AddMinutes(-45 - ($Index % 90))
             $lastActivity = $Time.AddMinutes(-($Index % 30))
@@ -4253,7 +4951,7 @@ function New-NormalTelemetryValues {
             $values.Comments = if (($Index % 7) -eq 0) { [object[]]@(@{ message = 'activity comment'; createdTimeUtc = $timeText; lastModifiedTimeUtc = $timeText; author = @{ name = 'soc.analyst@usag-cyber.local' } }) } else { [object[]]@() }
             $values.Tasks = [object[]]@()
             $values.Labels = if (($Index % 5) -eq 0) { [object[]]@(@{ labelName = 'Redirected'; labelType = 'AutoAssigned' }) } else { [object[]]@() }
-            $values.IncidentUrl = "https://portal.azure.com/#asset/Microsoft_Azure_Security_Insights/Incident/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sentinel/providers/Microsoft.OperationalInsights/workspaces/usag-cyber/providers/Microsoft.SecurityInsights/Incidents/$incidentName"
+            $values.IncidentUrl = "https://portal.azure.com/#asset/Microsoft_Azure_Security_Insights/Incident/subscriptions/$subscriptionId/resourceGroups/sentinel/providers/Microsoft.OperationalInsights/workspaces/usag-cyber/providers/Microsoft.SecurityInsights/Incidents/$incidentName"
             $values.AdditionalData = @{
                 alertsCount = 1 + ($Index % 3)
                 bookmarksCount = 0
@@ -4719,11 +5417,12 @@ function New-NormalTelemetryValues {
             $callerObjectId = if ($isScenarioCaller) { $maliciousOAuthSpId } else { New-StableGuid "azure-caller|$($Index % 22)" }
             $callerIp = if ($isScenarioCaller) { $externalIp } else { '172.170.{0}.{1}' -f (($Index * 3) % 256), (1 + (($Index * 11) % 254)) }
             $activityResourceGroup = @('FOUNDRY', 'ADDS', 'SENTINEL', 'STORAGE', 'NETWORK')[$Index % 5]
-            $activityScope = '/subscriptions/{0}/resourceGroups/{1}' -f $subscriptionId, $activityResourceGroup
+            $activitySubscriptionId = Get-WorkshopSubscriptionId -Key $activityResourceGroup
+            $activityScope = '/subscriptions/{0}/resourceGroups/{1}' -f $activitySubscriptionId, $activityResourceGroup
             $authorizationBlock = @{
                 scope = $activityScope
                 action = ($activityTemplate.Operation.ToLowerInvariant())
-                evidence = @{ role = 'Contributor'; roleAssignmentScope = "/subscriptions/$subscriptionId" }
+                evidence = @{ role = 'Contributor'; roleAssignmentScope = "/subscriptions/$activitySubscriptionId" }
             }
             $claimsBlock = @{
                 aud = 'https://management.core.windows.net/'
@@ -4745,7 +5444,7 @@ function New-NormalTelemetryValues {
             $values.ActivityStatusValue = $activityTemplate.Status
             $values.ActivitySubstatusValue = $activityTemplate.Substatus
             $values.ResourceGroup = $activityResourceGroup
-            $values.SubscriptionId = $subscriptionId
+            $values.SubscriptionId = $activitySubscriptionId
             $values.CorrelationId = New-StableGuid "azure-correlation|$($Index % 450)"
             $values.Caller = $callerObjectId
             $values.CallerIpAddress = $callerIp
@@ -5136,7 +5835,7 @@ function New-NormalTelemetryValues {
         'Heartbeat' {
             # 30 of 31 columns carry data and every value is effectively fixed per host.
             $hbDevice = $windowsDevices[($Index * 3) % $windowsDevices.Count]
-            $hbResourceId = '/subscriptions/{0}/resourcegroups/adds/providers/microsoft.compute/virtualmachines/{1}' -f $subscriptionId, $hbDevice.ShortName
+            $hbResourceId = '/subscriptions/{0}/resourcegroups/adds/providers/microsoft.compute/virtualmachines/{1}' -f (Get-WorkshopSubscriptionId -Key $hbDevice.ShortName), $hbDevice.ShortName
 
             $values.TenantId = $tenantId
             $values.SourceSystem = 'OpsManager'
@@ -5155,7 +5854,7 @@ function New-NormalTelemetryValues {
             $values.RemoteIPLongitude = -78.27
             $values.RemoteIPLatitude = 36.64
             $values.RemoteIPCountry = 'United States'
-            $values.SubscriptionId = $subscriptionId
+            $values.SubscriptionId = Get-WorkshopSubscriptionId -Key $hbDevice.ShortName
             $values.ResourceGroup = 'adds'
             $values.ResourceProvider = 'Microsoft.Compute'
             $values.Resource = $hbDevice.ShortName
@@ -5274,7 +5973,7 @@ function New-NormalTelemetryValues {
                 }
             }
             $values.EntityIds = [object[]]@(
-                (ConvertTo-Json -Compress -InputObject @{ type = 'AzureResourceId'; id = ('/subscriptions/{0}/resourceGroups/usag-cyber/providers/{1}' -f $subscriptionId, $nodeTemplate.Label) })
+                (ConvertTo-Json -Compress -InputObject @{ type = 'AzureResourceId'; id = ('/subscriptions/{0}/resourceGroups/usag-cyber/providers/{1}' -f (Get-WorkshopSubscriptionId -Key $nodeTemplate.Label), $nodeTemplate.Label) })
             )
             $values.Type = 'ExposureGraphNodes'
         }
@@ -5315,12 +6014,12 @@ function New-NormalTelemetryValues {
             $isBulkCollection = ($Index % 43) -eq 0 -and $storageTemplate.Operation -eq 'GetBlob'
             $storageAccountName = @('usagcyberdata', 'usagcyberbackup', 'usagcyberarchive')[$Index % 3]
             $opsCount = if ($isBulkCollection) { 400 + ($Index % 600) } else { 1 + ($Index % 6) }
-            $storageResourceId = '/subscriptions/{0}/resourceGroups/storage/providers/Microsoft.Storage/storageAccounts/{1}' -f $subscriptionId, $storageAccountName
+            $storageResourceId = '/subscriptions/{0}/resourceGroups/storage/providers/Microsoft.Storage/storageAccounts/{1}' -f (Get-WorkshopSubscriptionId -Key $storageAccountName), $storageAccountName
 
             $values.DataAggregationStartTime = Format-WorkshopTime $aggStart
             $values.DataAggregationEndTime = Format-WorkshopTime $aggStart.AddHours(1)
             $values.DataSource = 'Azure Storage'
-            $values.SubscriptionId = $subscriptionId
+            $values.SubscriptionId = Get-WorkshopSubscriptionId -Key $storageAccountName
             $values.ResourceGroup = 'storage'
             $values.StorageAccount = $storageAccountName
             $values.StorageContainer = @('engineering', 'finance', 'hr-archive', '$purview')[$Index % 4]
@@ -5361,13 +6060,13 @@ function New-NormalTelemetryValues {
                 'MICROSOFT.NETWORK' { 'USAGCYBER-NSG' }
                 default { 'USAGCYBER-AI' }
             }
-            $diagResourceId = '/SUBSCRIPTIONS/{0}/RESOURCEGROUPS/{1}/PROVIDERS/{2}/{3}/{4}' -f $subscriptionId.ToUpperInvariant(), $diagTemplate.ResourceGroup, $diagTemplate.Provider, $diagTemplate.ResourceType, $diagResourceName
+            $diagResourceId = '/SUBSCRIPTIONS/{0}/RESOURCEGROUPS/{1}/PROVIDERS/{2}/{3}/{4}' -f (Get-WorkshopSubscriptionId -Key $diagResourceName).ToUpperInvariant(), $diagTemplate.ResourceGroup, $diagTemplate.Provider, $diagTemplate.ResourceType, $diagResourceName
 
             $values.TenantId = $tenantId
             $values.ResourceId = $diagResourceId
             $values.Category = $diagTemplate.Category
             $values.ResourceGroup = $diagTemplate.ResourceGroup
-            $values.SubscriptionId = $subscriptionId
+            $values.SubscriptionId = Get-WorkshopSubscriptionId -Key $diagResourceName
             $values.ResourceProvider = $diagTemplate.Provider
             $values.Resource = $diagResourceName
             $values.ResourceType = $diagTemplate.ResourceType
@@ -5402,7 +6101,7 @@ function New-NormalTelemetryValues {
                 $values.resource_location_s = $values.Location
                 $values.resource_workflowId_g = New-StableGuid "diag-workflow|$diagResourceName"
                 $values.resource_resourceGroupName_s = 'Playbook'
-                $values.resource_subscriptionId_g = $subscriptionId
+                $values.resource_subscriptionId_g = Get-WorkshopSubscriptionId -Key $diagResourceName
                 $values.resource_runId_s = $runId
                 $values.resource_workflowName_s = 'playbook-isolate-device'
                 $values.resource_actionName_s = @('Get_MDE_Device', 'Query_DeviceInfo', 'Isolate_Machine')[$Index % 3]

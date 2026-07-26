@@ -20,5 +20,49 @@
       "TenantId",
       "SourceSystem"
     ]
+  },
+  "IdentityInfo": {
+    "reason": "The source tenant is a lab with no HR attribute sync, so directory enrichment is empty there. A real estate populates it, and the workshop needs department, manager, and location so students can judge whether an account's behaviour fits its owner. Blast radius and risk detail drive the same triage decision.",
+    "columns": [
+      "Department",
+      "JobTitle",
+      "Manager",
+      "EmployeeId",
+      "City",
+      "State",
+      "Country",
+      "CompanyName",
+      "BlastRadius",
+      "RiskLevelDetails"
+    ]
+  },
+  "IdentityAccountInfo": {
+    "reason": "Same reason as IdentityInfo. Defender for Identity account records in a production estate carry directory enrichment, authentication method, eligible roles, and criticality; the lab tenant emits none of it, which would leave the table unusable for identity triage.",
+    "columns": [
+      "Department",
+      "JobTitle",
+      "Manager",
+      "EmployeeId",
+      "City",
+      "CriticalityLevel",
+      "AuthenticationMethod",
+      "AuthenticationSourceAccountId",
+      "EnrolledMfas",
+      "EligibleRoles",
+      "TenantMembershipType",
+      "SourceProviderInstanceId",
+      "SourceProviderInstanceDisplayName",
+      "AdditionalFields",
+      "TenantId",
+      "SourceSystem"
+    ]
+  },
+  "DeviceInfo": {
+    "reason": "Azure resource association and public IP are absent from the lab fleet but present on a real hybrid estate, and the workshop scenario pivots from a device to its Azure resource.",
+    "columns": [
+      "AzureResourceId",
+      "AzureVmSubscriptionId",
+      "PublicIP"
+    ]
   }
 }
