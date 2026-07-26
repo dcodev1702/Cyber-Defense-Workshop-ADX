@@ -215,6 +215,56 @@ test('rejects databases outside KUSTO_ALLOWED_DATABASES', async () => {
   });
 });
 
+test('completes the ADX web UI add-connection handshake', async () => {
+  // Regression: the web UI's opening calls carry no db, because discovering the
+  // databases is what they are for. Requiring one made dataexplorer.azure.com
+  // fail to add the connection at all with an opaque 403, even though every
+  // database-scoped call worked. Observed against the real UI on 2026-07-26.
+  await withUpstreamStub(async (upstream, received) => {
+    await withServer({ upstream, allowedDatabases: new Set(['cyberdefendstudentsnapshot']) }, async (base) => {
+      for (const csl of ['.show version', '.show databases', '.show databases schema', '.show schema']) {
+        const response = await fetch(`${base}/v1/rest/mgmt`, { method: 'POST', body: JSON.stringify({ csl }) });
+        assert.equal(response.status, 200, `${csl} without a db should reach the cluster`);
+      }
+
+      assert.equal(received.length, 4);
+    });
+  });
+});
+
+test('a database-less request is not a way around the allowlist', async () => {
+  await withUpstreamStub(async (upstream, received) => {
+    await withServer({ upstream, allowedDatabases: new Set(['cyberdefendstudentsnapshot']) }, async (base) => {
+      // Row data never travels without a named, allowed database.
+      const query = await fetch(`${base}/v1/rest/query`, { method: 'POST', body: JSON.stringify({ csl: 'SecurityIncident | take 1' }) });
+      assert.equal(query.status, 403);
+
+      // Nor does a management command that is not cluster-scoped discovery.
+      const scoped = await fetch(`${base}/v1/rest/mgmt`, { method: 'POST', body: JSON.stringify({ csl: '.show tables' }) });
+      assert.equal(scoped.status, 403);
+
+      // And whitespace is not a loophole for a data query.
+      const blank = await fetch(`${base}/v1/rest/query`, { method: 'POST', body: JSON.stringify({ csl: 'print 1', db: '   ' }) });
+      assert.equal(blank.status, 403);
+
+      assert.equal(received.length, 0);
+    });
+  });
+});
+
+test('forwards the auth metadata probe the ADX web UI sends first', async () => {
+  await withUpstreamStub(async (upstream, received) => {
+    await withServer({ upstream }, async (base) => {
+      const response = await fetch(`${base}/v1/rest/auth/metadata`);
+      assert.equal(response.status, 200);
+      assert.equal(received[0].url, '/v1/rest/auth/metadata');
+
+      const posted = await fetch(`${base}/v1/rest/auth/metadata`, { method: 'POST' });
+      assert.equal(posted.status, 405);
+    });
+  });
+});
+
 test('forwards the canonical body, not the raw client bytes', async () => {
   await withUpstreamStub(async (upstream, received) => {
     await withServer({ upstream }, async (base) => {

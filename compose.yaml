@@ -43,10 +43,15 @@ services:
         target: /workshop-data
         read_only: true
     networks:
-      # Kustainer lives only on the backend network. cloudflared is not attached
-      # to it, so the connector cannot reach kusto:8080 no matter what the
-      # dashboard-managed ingress rule is set to. The read-only gateway is the
-      # only path from the edge to the emulator.
+      # Kustainer lives only on the backend network, so `kusto` does not resolve
+      # for cloudflared and a hostname-based ingress rule cannot reach it. That
+      # is defense in depth, not a hard boundary: verified on Docker 29.6.2,
+      # DOCKER-FORWARD accepts traffic from every bridge, so an ingress rule
+      # naming the backend IP directly (e.g. tcp://172.19.0.2:8080) still
+      # reaches the engine. Only `internal: true` blocks that, and it also
+      # disables the published 127.0.0.1:8080 the instructor and the import
+      # scripts depend on. Treat the read-only gateway and the Cloudflare
+      # ingress configuration as the enforced boundary; see CHANGELOG.
       - backend
     healthcheck:
       test:
@@ -166,8 +171,9 @@ services:
       - 127.0.0.1:0
       - run
     networks:
-      # Edge only. cloudflared has no route to the backend network, so it can only
-      # reach the gateway, never Kustainer directly.
+      # Edge only, so `kusto` does not resolve here and the connector reaches the
+      # emulator through the gateway. This does not block an ingress rule that
+      # names the backend IP directly -- see the note on the kusto service.
       - edge
 
 networks:

@@ -213,6 +213,15 @@ A local hook can be skipped with `--no-verify` and does nothing until installed,
 
 The same [compose.yaml](compose.yaml) runs a private read-only Kusto gateway and the `cloudflared` connector. The connector has no host port; it reaches the gateway over the private Compose network at `tcp://kusto-readonly-gateway:8081`. The gateway forwards read-only requests to Kusto while Kusto remains locally bound to `127.0.0.1:8080`.
 
+> [!IMPORTANT]
+> The gateway is a `build:` service, not a pulled image. `docker compose up --detach` reuses the last image built on this host, so after pulling or editing anything under [tools/kusto-readonly-gateway](tools/kusto-readonly-gateway) you must rebuild it explicitly:
+>
+> ```powershell
+> docker compose up --detach --build kusto-readonly-gateway
+> ```
+>
+> Neither `docker compose ps` nor the container health check can tell a current policy build from a stale one — both report healthy either way, because the health check only proves the process answers on `/healthz`. Confirm the policy itself is live: `.show tables` must succeed and `.show queries` must return 403. Rebuilding the gateway alone does not disturb the `kusto` container or the persistent Student snapshot.
+
 Provision the shared class credential, read-only gateway route, and connector token once from the repository root:
 
 ```powershell

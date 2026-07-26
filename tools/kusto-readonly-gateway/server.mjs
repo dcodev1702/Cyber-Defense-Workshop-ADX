@@ -141,6 +141,32 @@ const managementShowAllowlist = [
   /^\.show\s+function\s+\S+/i
 ];
 
+// The ADX web UI cannot name a database in its opening calls, because those
+// calls are how it discovers which databases exist. Requiring a database on
+// every request therefore made https://dataexplorer.azure.com fail to add the
+// connection at all, with an opaque "Request failed with status code 403",
+// while every database-scoped call worked normally. These commands are
+// cluster-scoped, already on the .show allowlist, and disclose no row data, so
+// a request that names no database is legitimate for these and only these.
+const clusterScopedShowAllowlist = [
+  /^\.show\s+version\b/i,
+  /^\.show\s+databases\b(?![^|]*\bprincipals\b)/i,
+  /^\.show\s+schema\b/i
+];
+
+export function isClusterScopedRequest(csl) {
+  if (typeof csl !== 'string') {
+    return false;
+  }
+
+  const statements = splitTopLevelStatements(csl)
+    .map(trimLeadingComments)
+    .filter((statement) => statement.length > 0);
+
+  return statements.length === 1
+    && clusterScopedShowAllowlist.some((pattern) => pattern.test(statements[0]));
+}
+
 // KQL query-language primitives that never start with a dot but still reach
 // outside the database: externaldata performs arbitrary outbound HTTP from the
 // lab host, the request plugins open attacker-supplied connections, python/r
@@ -447,6 +473,14 @@ function getEndpoint(pathname) {
     return 'ping';
   }
 
+  // The ADX web UI fetches this before it will talk to a cluster at all; it is
+  // how the browser learns that the local emulator wants no AAD sign-in.
+  // Kustainer answers 200 with a body that carries no data, so forward it
+  // rather than returning 404 and leaving the UI to guess at an auth mode.
+  if (/^\/v1\/rest\/auth\/metadata$/i.test(pathname)) {
+    return 'auth-metadata';
+  }
+
   return null;
 }
 
@@ -520,6 +554,16 @@ export function createGatewayServer({
       return;
     }
 
+    if (endpoint === 'auth-metadata') {
+      if (request.method !== 'GET') {
+        writeJson(response, 405, { error: 'Only GET is permitted for auth metadata.' });
+        return;
+      }
+
+      forwardRequest(request, response, Buffer.alloc(0), upstream, allowedOrigins);
+      return;
+    }
+
     if (!endpoint) {
       logDecision({ source, method: request.method, path: requestUrl.pathname, outcome: 'unknown-route', status: 404 });
       writeJson(response, 404, { error: 'The read-only gateway does not expose this Kusto route.' });
@@ -573,10 +617,22 @@ export function createGatewayServer({
       return;
     }
 
-    if (allowedDatabases && !(typeof payload.db === 'string' && allowedDatabases.has(payload.db.toLowerCase()))) {
-      logDecision({ source, endpoint, outcome: 'blocked-database', db: payload.db ?? null, status: 403 });
-      writeJson(response, 403, { error: 'This database is not exposed through the read-only gateway.' });
-      return;
+    // A named database must be on the allowlist. A request naming none is
+    // permitted only for the cluster-scoped discovery commands above, and only
+    // on the management endpoint: a database-less *query* would run against the
+    // engine's default database, which is exactly what the allowlist exists to
+    // prevent.
+    if (allowedDatabases) {
+      const requestedDatabase = typeof payload.db === 'string' ? payload.db.trim() : '';
+      const databaseAllowed = requestedDatabase.length > 0
+        ? allowedDatabases.has(requestedDatabase.toLowerCase())
+        : (endpoint === 'mgmt' && isClusterScopedRequest(payload.csl));
+
+      if (!databaseAllowed) {
+        logDecision({ source, endpoint, outcome: 'blocked-database', db: payload.db ?? null, status: 403 });
+        writeJson(response, 403, { error: 'This database is not exposed through the read-only gateway.' });
+        return;
+      }
     }
 
     const validation = validateKql(payload.csl, endpoint);
