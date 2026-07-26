@@ -28,7 +28,7 @@ param(
     [string]$DisplayNamePrefix = 'KQL Workshop Student',
     [string]$InitialPassword,
     [string]$GroupDisplayName = 'ADX KQL Cyber Defense Workshop Students',
-    [string]$OutputCsvPath = (Join-Path $PSScriptRoot '..\students\students.csv'),
+    [string]$OutputCsvPath = (Join-Path $PSScriptRoot '..' 'students' 'students.csv'),
     [switch]$CreateUsers,
     [switch]$CreateTemporaryAccessPass,
     [int]$TemporaryAccessPassLifetimeMinutes = 480
@@ -44,7 +44,10 @@ if ($CreateUsers -and [string]::IsNullOrWhiteSpace($InitialPassword)) {
 New-Item -ItemType Directory -Path (Split-Path -Parent $OutputCsvPath) -Force | Out-Null
 
 if ($CreateUsers) {
-    $requiredCommands = @('Connect-MgGraph', 'New-MgUser', 'Get-MgGroup', 'New-MgGroup', 'New-MgGroupMember')
+    # Get-MgUser is called in the per-student loop below to detect existing
+    # accounts; without it in the preflight the script passed this check and
+    # failed mid-loop, after it had already created the group.
+    $requiredCommands = @('Connect-MgGraph', 'Get-MgUser', 'New-MgUser', 'Get-MgGroup', 'New-MgGroup', 'New-MgGroupMember')
     foreach ($command in $requiredCommands) {
         if (-not (Get-Command $command -ErrorAction SilentlyContinue)) {
             throw "Microsoft Graph PowerShell command '$command' was not found. Install Microsoft.Graph modules before using -CreateUsers."

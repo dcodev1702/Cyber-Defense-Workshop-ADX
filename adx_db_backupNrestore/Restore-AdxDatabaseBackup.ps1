@@ -40,7 +40,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-Import-Module (Join-Path $PSScriptRoot '..\scripts\AdxWorkshop.Common.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot '..' 'scripts' 'AdxWorkshop.Common.psm1') -Force
 
 function ConvertTo-KustoObfuscatedVerbatimStringLiteral {
     param([AllowEmptyString()][string]$Value = '')
@@ -203,4 +203,4 @@ if (-not $SkipData) {
     }
 }
 
-Write-Host "ADX restore/import complete for database $DatabaseName."
+Write-Host "ADX restore/import complete for database $DatabaseName."

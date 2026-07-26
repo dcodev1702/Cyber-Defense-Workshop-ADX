@@ -37,7 +37,7 @@ param(
     [string]$UserAssignedIdentityResourceGroupName = 'ADX',
     [string[]]$TableName,
     [string]$BackupName,
-    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\data\backups'),
+    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..' 'data' 'backups'),
     [ValidateSet('gzip', 'snappy', 'lz4_raw', 'brotli', 'zstd')]
     [string]$ParquetCompressionType = 'snappy',
     [ValidateRange(104857600, 4294967296)]
@@ -51,7 +51,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-Import-Module (Join-Path $PSScriptRoot '..\scripts\AdxWorkshop.Common.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot '..' 'scripts' 'AdxWorkshop.Common.psm1') -Force
 
 function Invoke-BackupAzCliJson {
     [CmdletBinding()]
@@ -330,4 +330,4 @@ $tableIdentifier
 
 Save-BackupManifest -Manifest $manifest -Path $manifestPath
 Write-Host "ADX backup complete. Manifest: $manifestPath"
-$manifest | ConvertTo-Json -Depth 30
+$manifest | ConvertTo-Json -Depth 30

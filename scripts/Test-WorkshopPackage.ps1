@@ -24,7 +24,13 @@ Key commands: Parser.ParseFile, ConvertFrom-Json, Get-ChildItem, Get-Content.
 [CmdletBinding()]
 param(
     [string]$Root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path,
-    [string]$DataDirectory
+    [string]$DataDirectory,
+    # The real-export CSV header checks require sample/*-Real.csv, which .gitignore
+    # excludes by design. Without this switch they are skipped, so the parser,
+    # schema, and manifest checks -- the bulk of this validator -- can run on a
+    # clean clone and in CI. Pass -WithRealSamples on the authoring machine where
+    # the sample/ captures are present.
+    [switch]$WithRealSamples
 )
 
 Set-StrictMode -Version Latest
@@ -103,7 +109,7 @@ foreach ($scriptFile in $scriptFiles) {
 Write-TestPhase ("Parsed {0} script files." -f $scriptFiles.Count)
 
 Write-TestPhase 'Validating table manifest and schemas...'
-$manifestPath = Join-Path $Root 'metadata\tables.manifest.json'
+$manifestPath = Join-Path $Root 'metadata' 'tables.manifest.json'
 if (-not (Test-Path $manifestPath)) {
     Add-TestError "Missing manifest: $manifestPath"
 }
@@ -117,7 +123,7 @@ else {
     }
 
     foreach ($entry in $manifest) {
-        $schemaPath = Join-Path $Root "schemas\$($entry.name).schema.json"
+        $schemaPath = Join-Path $Root "schemas" "$($entry.name).schema.json"
         if (-not (Test-Path $schemaPath)) {
             Add-TestError "Missing schema for table $($entry.name): $schemaPath"
         }
@@ -150,53 +156,70 @@ foreach ($schemaFile in $schemaFiles) {
     }
 }
 
-$realExportSchemaChecks = @(
-    @{ Table = 'DeviceTvmCertificateInfo'; Csv = 'sample\DeviceTvmCertificateInfo-Real.csv' },
-    @{ Table = 'DeviceTvmHardwareFirmware'; Csv = 'sample\DeviceTvmHardwareFirmware-Real.csv' },
-    @{ Table = 'DeviceTvmInfoGathering'; Csv = 'sample\DeviceTVMInfoGrathering-Real.csv' },
-    @{ Table = 'DeviceTvmInfoGatheringKB'; Csv = 'sample\DeviceTvmInfoGatheringKB-Real.csv' },
-    @{ Table = 'DeviceTvmSecureConfigurationAssessment'; Csv = 'sample\DeviceTvmSecureConfigurationAssessment-Real.csv' },
-    @{ Table = 'DeviceTvmSoftwareEvidenceBeta'; Csv = 'sample\DeviceTvmSoftwareEvidenceBeta-Real.csv' },
-    @{ Table = 'DeviceTvmSoftwareInventory'; Csv = 'sample\DeviceTvmSoftwareInventory-Real.csv' },
-    @{ Table = 'DeviceTvmSoftwareVulnerabilities'; Csv = 'sample\DeviceTvmSoftwareVulnerabilities-Real.csv' },
-    @{ Table = 'DeviceTvmSoftwareVulnerabilitiesKB'; Csv = 'sample\DeviceTvmSoftwareVulnerabilitiesKB-Real.csv' },
-    @{ Table = 'SecurityIncident'; Csv = 'sample\SecurityIncident-Real.csv' }
-)
-foreach ($check in $realExportSchemaChecks) {
-    $table = [string]$check.Table
-    $csvPath = Join-Path $Root ([string]$check.Csv)
-    $schemaPath = Join-Path $Root "schemas\$table.schema.json"
-    if (-not (Test-Path $csvPath)) {
-        Add-TestError "Missing real export sample for $table`: $csvPath"
-        continue
-    }
-    if (-not (Test-Path $schemaPath)) {
-        Add-TestError "Missing schema for real export table $table`: $schemaPath"
-        continue
-    }
+if ($WithRealSamples) {
+    Write-TestPhase 'Validating real-export sample headers against schemas...'
+    $realExportSchemaChecks = @(
+        @{ Table = 'DeviceTvmCertificateInfo'; Csv = (Join-Path 'sample' 'DeviceTvmCertificateInfo-Real.csv') },
+        @{ Table = 'DeviceTvmHardwareFirmware'; Csv = (Join-Path 'sample' 'DeviceTvmHardwareFirmware-Real.csv') },
+        @{ Table = 'DeviceTvmInfoGathering'; Csv = (Join-Path 'sample' 'DeviceTVMInfoGrathering-Real.csv') },
+        @{ Table = 'DeviceTvmInfoGatheringKB'; Csv = (Join-Path 'sample' 'DeviceTvmInfoGatheringKB-Real.csv') },
+        @{ Table = 'DeviceTvmSecureConfigurationAssessment'; Csv = (Join-Path 'sample' 'DeviceTvmSecureConfigurationAssessment-Real.csv') },
+        @{ Table = 'DeviceTvmSoftwareEvidenceBeta'; Csv = (Join-Path 'sample' 'DeviceTvmSoftwareEvidenceBeta-Real.csv') },
+        @{ Table = 'DeviceTvmSoftwareInventory'; Csv = (Join-Path 'sample' 'DeviceTvmSoftwareInventory-Real.csv') },
+        @{ Table = 'DeviceTvmSoftwareVulnerabilities'; Csv = (Join-Path 'sample' 'DeviceTvmSoftwareVulnerabilities-Real.csv') },
+        @{ Table = 'DeviceTvmSoftwareVulnerabilitiesKB'; Csv = (Join-Path 'sample' 'DeviceTvmSoftwareVulnerabilitiesKB-Real.csv') },
+        @{ Table = 'SecurityIncident'; Csv = (Join-Path 'sample' 'SecurityIncident-Real.csv') }
+    )
+    foreach ($check in $realExportSchemaChecks) {
+        $table = [string]$check.Table
+        $csvPath = Join-Path $Root ([string]$check.Csv)
+        $schemaPath = Join-Path $Root "schemas" "$table.schema.json"
+        if (-not (Test-Path $csvPath)) {
+            Add-TestError "Missing real export sample for $table`: $csvPath"
+            continue
+        }
+        if (-not (Test-Path $schemaPath)) {
+            Add-TestError "Missing schema for real export table $table`: $schemaPath"
+            continue
+        }
 
-    $csvFirstRow = Import-Csv -Path $csvPath | Select-Object -First 1
-    if (-not $csvFirstRow) {
-        Add-TestError "Real export sample for $table has no rows: $csvPath"
-        continue
-    }
+        $csvFirstRow = Import-Csv -Path $csvPath | Select-Object -First 1
+        if (-not $csvFirstRow) {
+            Add-TestError "Real export sample for $table has no rows: $csvPath"
+            continue
+        }
 
-    $csvColumns = @($csvFirstRow.PSObject.Properties.Name)
-    $schema = Get-Content -Path $schemaPath -Raw | ConvertFrom-Json
-    $schemaColumns = @($schema.columns.name)
-    if (($csvColumns -join '|') -ne ($schemaColumns -join '|')) {
-        Add-TestError "Schema columns for $table do not match real export header order. CSV=[$($csvColumns -join ', ')] Schema=[$($schemaColumns -join ', ')]"
+        $csvColumns = @($csvFirstRow.PSObject.Properties.Name)
+        $schema = Get-Content -Path $schemaPath -Raw | ConvertFrom-Json
+        $schemaColumns = @($schema.columns.name)
+        if (($csvColumns -join '|') -ne ($schemaColumns -join '|')) {
+            Add-TestError "Schema columns for $table do not match real export header order. CSV=[$($csvColumns -join ', ')] Schema=[$($schemaColumns -join ', ')]"
+        }
     }
 }
+else {
+    Write-TestPhase 'Skipping real-export sample checks (sample/*-Real.csv is gitignored; pass -WithRealSamples to run them).'
+}
 
+$dataDirectoryRequested = $PSBoundParameters.ContainsKey('DataDirectory')
 if ([string]::IsNullOrWhiteSpace($DataDirectory)) {
-    $DataDirectory = Join-Path $Root 'data\generated'
+    $DataDirectory = Join-Path $Root 'data' 'generated'
 }
 elseif (-not [System.IO.Path]::IsPathRooted($DataDirectory)) {
     $DataDirectory = Join-Path (Get-Location).Path $DataDirectory
 }
 if (-not (Test-Path $DataDirectory)) {
-    Add-TestError "Missing generated data directory: $DataDirectory"
+    # data/generated is gitignored (~900 MB, reproduced from schemas + profiles),
+    # so it is absent on a clean clone. Only treat it as a failure when the caller
+    # explicitly asked for a directory; otherwise skip the NDJSON phase so the
+    # static checks above still gate. CI passes -DataDirectory <fixture> after a
+    # small generator run to exercise this phase.
+    if ($dataDirectoryRequested) {
+        Add-TestError "Missing generated data directory: $DataDirectory"
+    }
+    else {
+        Write-TestPhase "Skipping generated-telemetry validation ($DataDirectory not present; generate it or pass -DataDirectory to run this phase)."
+    }
 }
 else {
     $generatedFiles = @(Get-ChildItem -Path $DataDirectory -Filter '*.json')
@@ -206,7 +229,7 @@ else {
         $fileIndex++
         Write-Progress -Activity 'Validating generated telemetry' -Status ("{0} ({1} of {2})" -f $dataFile.Name, $fileIndex, $generatedFiles.Count) -PercentComplete (($fileIndex / [Math]::Max($generatedFiles.Count, 1)) * 100)
         $table = $dataFile.BaseName
-        $schemaPath = Join-Path $Root "schemas\$table.schema.json"
+        $schemaPath = Join-Path $Root "schemas" "$table.schema.json"
         if (-not (Test-Path $schemaPath)) {
             Add-TestError "Generated data has no schema: $($dataFile.FullName)"
             continue

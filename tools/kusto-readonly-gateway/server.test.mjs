@@ -1,7 +1,43 @@
 import assert from 'node:assert/strict';
+import http from 'node:http';
 import { once } from 'node:events';
 import test from 'node:test';
-import { createGatewayServer, splitTopLevelStatements, validateKql } from './server.mjs';
+import { buildForwardPayload, createGatewayServer, createRateLimiter, splitTopLevelStatements, timespanToSeconds, validateKql } from './server.mjs';
+
+async function withServer(options, run) {
+  const server = createGatewayServer(options);
+  server.listen(0, '127.0.0.1');
+  await once(server, 'listening');
+
+  try {
+    await run(`http://127.0.0.1:${server.address().port}`);
+  }
+  finally {
+    await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+}
+
+async function withUpstreamStub(run) {
+  const received = [];
+  const upstream = http.createServer((request, response) => {
+    const chunks = [];
+    request.on('data', (chunk) => chunks.push(chunk));
+    request.on('end', () => {
+      received.push({ url: request.url, body: Buffer.concat(chunks).toString('utf8') });
+      response.writeHead(200, { 'content-type': 'application/json' });
+      response.end('{"Tables":[]}');
+    });
+  });
+  upstream.listen(0, '127.0.0.1');
+  await once(upstream, 'listening');
+
+  try {
+    await run(new URL(`http://127.0.0.1:${upstream.address().port}`), received);
+  }
+  finally {
+    await new Promise((resolve, reject) => upstream.close((error) => error ? reject(error) : resolve()));
+  }
+}
 
 test('allows read-only query statements and KQL let bindings', () => {
   const result = validateKql("let incidents = SecurityIncident | take 10; incidents | count", 'query');
@@ -36,14 +72,200 @@ test('blocks management commands hidden after a line comment', () => {
   assert.equal(result.allowed, false);
 });
 
-test('allows ADX browser headers and private-network access to the local proxy', async () => {
-  const server = createGatewayServer();
-  server.listen(0, '127.0.0.1');
-  await once(server, 'listening');
+// ---- .show subcommand allowlist ---------------------------------------------
+// .show is read-only for data but not for secrets: queries, journal, and
+// principals disclose other students' activity and real tenant identities.
 
-  try {
-    const address = server.address();
-    const response = await fetch(`http://127.0.0.1:${address.port}/v1/rest/query`, {
+for (const command of ['.show version', '.show databases', '.show databases schema', '.show tables', '.show table SecurityIncident schema', '.show table SecurityIncident cslschema', '.show functions', '.show schema']) {
+  test(`allows metadata read ${command}`, () => {
+    assert.equal(validateKql(command, 'mgmt').allowed, true);
+  });
+}
+
+for (const command of ['.show queries', '.show commands-and-queries', '.show journal', '.show cluster principals', '.show database CyberDefendStudentSnapshot principals', '.show ingestion failures', '.show external tables', '.show cluster identity', '.show table SecurityIncident extents']) {
+  test(`blocks disclosure command ${command}`, () => {
+    assert.equal(validateKql(command, 'mgmt').allowed, false);
+  });
+}
+
+// ---- query-language egress and code-execution primitives ---------------------
+
+for (const csl of ['externaldata (x:string) ["http://169.254.169.254/latest"]', 'print 1 | evaluate python(typeof(x:int), "code")', 'evaluate http_request("http://example.com")', 'T | evaluate sql_request("Server=x", "select 1")', "cluster('other.kusto.windows.net').database('x').T | take 1"]) {
+  test(`blocks egress primitive in ${csl.slice(0, 24)}...`, () => {
+    assert.equal(validateKql(csl, 'query').allowed, false);
+  });
+}
+
+test('still allows harmless evaluate plugins such as bag_unpack', () => {
+  assert.equal(validateKql('SecurityIncident | evaluate bag_unpack(AdditionalData)', 'query').allowed, true);
+});
+
+test('rejects a statement hidden inside a string from reaching Kusto', () => {
+  // The lexer models ''/"" doubling but not backslash escapes; the deny scan on
+  // the raw text means the classic smuggling payload still fails closed.
+  assert.equal(validateKql('print x = "\\""; .drop table T', 'query').allowed, true, 'lexer sees one statement');
+  assert.equal(validateKql('print x = "\\""; cluster(\'x\').database(\'y\')', 'query').allowed, false, 'deny scan is not string-aware, so this fails closed');
+});
+
+// ---- canonical forwarded body (validate-one-thing, forward-the-same-thing) ---
+
+test('rebuilds the forwarded body from validated fields only', () => {
+  const payload = JSON.parse('{"csl":".show tables","Csl":".drop table SecurityIncident","db":"CyberDefendStudentSnapshot","extra":"x"}');
+  const forward = buildForwardPayload(payload);
+
+  assert.equal(forward.csl, '.show tables');
+  assert.equal('Csl' in forward, false);
+  assert.equal('extra' in forward, false);
+  assert.equal(forward.db, 'CyberDefendStudentSnapshot');
+});
+
+test('forces read-only options and drops notruncation', () => {
+  const forward = buildForwardPayload({
+    csl: 'print 1',
+    db: 'db',
+    properties: { Options: { notruncation: true, servertimeout: '08:00:00', queryconsistency: 'strongconsistency' }, Parameters: { p: 'v' } }
+  }, { forceReadOnly: true, maxServerTimeoutSeconds: 240 });
+
+  assert.equal('notruncation' in forward.properties.Options, false);
+  assert.equal(forward.properties.Options.servertimeout, '00:04:00');
+  assert.equal(forward.properties.Options.request_readonly, true);
+  assert.equal(forward.properties.Options.query_language, 'kql');
+  assert.equal(forward.properties.Options.queryconsistency, 'strongconsistency');
+  assert.deepEqual(forward.properties.Parameters, { p: 'v' });
+});
+
+test('honours the read-only escape hatch', () => {
+  const forward = buildForwardPayload({ csl: 'print 1' }, { forceReadOnly: false });
+  assert.equal('request_readonly' in forward.properties.Options, false);
+});
+
+test('parses Kusto timespan literals', () => {
+  assert.equal(timespanToSeconds('00:04:00'), 240);
+  assert.equal(timespanToSeconds('1.00:00:00'), 86400);
+  assert.equal(timespanToSeconds('bogus'), null);
+  assert.equal(timespanToSeconds(undefined), null);
+});
+
+// ---- crash resistance ---------------------------------------------------------
+// A request body of the literal four bytes `null` parses successfully and then
+// crashed the whole process before the handler was hardened. The gateway must
+// answer 400 and keep serving.
+
+test('survives a null JSON body and keeps serving', async () => {
+  await withServer({}, async (base) => {
+    const first = await fetch(`${base}/v1/rest/query`, { method: 'POST', body: 'null' });
+    assert.equal(first.status, 400);
+
+    const second = await fetch(`${base}/healthz`);
+    assert.equal(second.status, 200);
+  });
+});
+
+test('rejects non-object JSON bodies and malformed JSON', async () => {
+  await withServer({}, async (base) => {
+    for (const body of ['null', 'true', '42', '"csl"', '[1,2]']) {
+      const response = await fetch(`${base}/v1/rest/query`, { method: 'POST', body });
+      assert.equal(response.status, 400, `body ${body}`);
+    }
+
+    const malformed = await fetch(`${base}/v1/rest/query`, { method: 'POST', body: '{not json' });
+    assert.equal(malformed.status, 400);
+  });
+});
+
+// ---- HTTP error paths ---------------------------------------------------------
+
+test('returns 404 for unknown routes and 405 for wrong methods', async () => {
+  await withServer({}, async (base) => {
+    assert.equal((await fetch(`${base}/v1/rest/ingest`, { method: 'POST', body: '{}' })).status, 404);
+    assert.equal((await fetch(`${base}/v1/rest/query`, { method: 'GET' })).status, 405);
+    assert.equal((await fetch(`${base}/v1/rest/query`, { method: 'DELETE' })).status, 405);
+  });
+});
+
+test('returns 413 when the body exceeds the configured limit', async () => {
+  await withServer({ maximumBodyBytes: 64 }, async (base) => {
+    const response = await fetch(`${base}/v1/rest/query`, { method: 'POST', body: JSON.stringify({ csl: 'x'.repeat(256) }) });
+    assert.equal(response.status, 413);
+  });
+});
+
+test('returns 403 for a blocked command over HTTP', async () => {
+  await withServer({}, async (base) => {
+    const response = await fetch(`${base}/v1/rest/query`, { method: 'POST', body: JSON.stringify({ csl: '.drop table SecurityIncident', db: 'db' }) });
+    assert.equal(response.status, 403);
+  });
+});
+
+// ---- database allowlist -------------------------------------------------------
+
+test('rejects databases outside KUSTO_ALLOWED_DATABASES', async () => {
+  await withUpstreamStub(async (upstream, received) => {
+    await withServer({ upstream, allowedDatabases: new Set(['cyberdefendstudentsnapshot']) }, async (base) => {
+      const blocked = await fetch(`${base}/v1/rest/query`, { method: 'POST', body: JSON.stringify({ csl: 'print 1', db: 'KustoMonitoringPersistentDatabase' }) });
+      assert.equal(blocked.status, 403);
+
+      const missing = await fetch(`${base}/v1/rest/query`, { method: 'POST', body: JSON.stringify({ csl: 'print 1' }) });
+      assert.equal(missing.status, 403);
+
+      const allowed = await fetch(`${base}/v1/rest/query`, { method: 'POST', body: JSON.stringify({ csl: 'print 1', db: 'CyberDefendStudentSnapshot' }) });
+      assert.equal(allowed.status, 200);
+      assert.equal(received.length, 1);
+    });
+  });
+});
+
+test('forwards the canonical body, not the raw client bytes', async () => {
+  await withUpstreamStub(async (upstream, received) => {
+    await withServer({ upstream }, async (base) => {
+      const raw = '{"csl":"print 1","Csl":".drop table SecurityIncident","db":"db","properties":{"Options":{"notruncation":true}}}';
+      const response = await fetch(`${base}/v1/rest/query`, { method: 'POST', body: raw });
+      assert.equal(response.status, 200);
+
+      const forwarded = JSON.parse(received[0].body);
+      assert.equal(forwarded.csl, 'print 1');
+      assert.equal('Csl' in forwarded, false);
+      assert.equal('notruncation' in forwarded.properties.Options, false);
+      assert.equal(forwarded.properties.Options.request_readonly, true);
+    });
+  });
+});
+
+// ---- rate limiting and concurrency -------------------------------------------
+
+test('token bucket refuses once the burst is spent', () => {
+  const limiter = createRateLimiter({ burst: 2, perMinute: 60 });
+  const start = 1_000_000;
+  assert.equal(limiter.take('a', start), true);
+  assert.equal(limiter.take('a', start), true);
+  assert.equal(limiter.take('a', start), false);
+  assert.equal(limiter.take('b', start), true, 'other sources have their own bucket');
+  assert.equal(limiter.take('a', start + 61_000), true, 'tokens refill over time');
+});
+
+test('answers 429 when the per-source budget is exhausted', async () => {
+  await withServer({ rateBurst: 2, ratePerMinute: 1 }, async (base) => {
+    const body = JSON.stringify({ csl: '.drop table T', db: 'db' });
+    assert.equal((await fetch(`${base}/v1/rest/query`, { method: 'POST', body })).status, 403);
+    assert.equal((await fetch(`${base}/v1/rest/query`, { method: 'POST', body })).status, 403);
+    const limited = await fetch(`${base}/v1/rest/query`, { method: 'POST', body });
+    assert.equal(limited.status, 429);
+    assert.equal(limited.headers.get('retry-after'), '10');
+  });
+});
+
+test('answers 429 at the concurrent-query cap', async () => {
+  await withServer({ maxInFlight: 0 }, async (base) => {
+    const response = await fetch(`${base}/v1/rest/query`, { method: 'POST', body: JSON.stringify({ csl: 'print 1', db: 'db' }) });
+    assert.equal(response.status, 429);
+  });
+});
+
+// ---- CORS ---------------------------------------------------------------------
+
+test('allows ADX browser headers and private-network access to the local proxy', async () => {
+  await withServer({}, async (base) => {
+    const response = await fetch(`${base}/v1/rest/query`, {
       method: 'OPTIONS',
       headers: {
         Origin: 'https://dataexplorer.azure.com',
@@ -57,8 +279,15 @@ test('allows ADX browser headers and private-network access to the local proxy',
     assert.equal(response.headers.get('access-control-allow-origin'), 'https://dataexplorer.azure.com');
     assert.equal(response.headers.get('access-control-allow-private-network'), 'true');
     assert.equal(response.headers.get('access-control-allow-headers'), 'authorization,content-type,x-ms-app,x-ms-client-version,x-ms-user-id');
-  }
-  finally {
-    await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
-  }
+  });
+});
+
+test('rejects preflight from an origin outside the allowlist', async () => {
+  await withServer({}, async (base) => {
+    const response = await fetch(`${base}/v1/rest/query`, {
+      method: 'OPTIONS',
+      headers: { Origin: 'https://evil.example', 'Access-Control-Request-Method': 'POST' }
+    });
+    assert.equal(response.status, 403);
+  });
 });

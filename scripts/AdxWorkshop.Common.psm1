@@ -52,14 +52,32 @@ function Get-WorkshopObjectPropertyValue {
     return $null
 }
 
+# Token cache. A fresh token was acquired on every management call, so a batched
+# ingest (Import-SyntheticTelemetry sends 500 rows at a time) triggered dozens of
+# token acquisitions for one table. Cache the plaintext token with its real
+# expiry and reuse it until it is close to expiring; -Force bypasses the cache.
+$script:WorkshopAdxToken = $null
+$script:WorkshopAdxTokenExpiresOn = [datetimeoffset]::MinValue
+
 function Get-WorkshopAdxAccessToken {
     [CmdletBinding()]
-    param()
+    param(
+        [switch]$Force
+    )
+
+    if (-not $Force -and
+        -not [string]::IsNullOrWhiteSpace($script:WorkshopAdxToken) -and
+        $script:WorkshopAdxTokenExpiresOn -gt [datetimeoffset]::UtcNow.AddMinutes(5)) {
+        return $script:WorkshopAdxToken
+    }
 
     if (Get-Command Get-AzAccessToken -ErrorAction SilentlyContinue) {
         try {
             $tokenResult = Get-AzAccessToken -ResourceUrl 'https://kusto.kusto.windows.net' -ErrorAction Stop
-            return ConvertTo-WorkshopPlainTextToken -Token $tokenResult.Token
+            $script:WorkshopAdxToken = ConvertTo-WorkshopPlainTextToken -Token $tokenResult.Token
+            $expiresOn = Get-WorkshopObjectPropertyValue -InputObject $tokenResult -Name @('ExpiresOn', 'expiresOn')
+            $script:WorkshopAdxTokenExpiresOn = if ($expiresOn) { [datetimeoffset]$expiresOn } else { [datetimeoffset]::UtcNow.AddMinutes(50) }
+            return $script:WorkshopAdxToken
         }
         catch {
             Write-Verbose "Get-AzAccessToken failed: $($_.Exception.Message)"
@@ -67,9 +85,27 @@ function Get-WorkshopAdxAccessToken {
     }
 
     if (Get-Command az -ErrorAction SilentlyContinue) {
-        $token = az account get-access-token --resource https://kusto.kusto.windows.net --query accessToken -o tsv 2>$null
-        if (-not [string]::IsNullOrWhiteSpace($token)) {
-            return $token.Trim()
+        # Read the token and its expiry together, and check the CLI exit code:
+        # az writes diagnostics to stdout on some failures, and returning that as
+        # a bearer token produces a confusing 401 far downstream instead of a
+        # clear "run az login" here.
+        $tokenJson = az account get-access-token --resource https://kusto.kusto.windows.net --output json 2>$null
+        if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($tokenJson)) {
+            try {
+                $parsed = $tokenJson | ConvertFrom-Json
+            }
+            catch {
+                $parsed = $null
+            }
+
+            if ($parsed -and -not [string]::IsNullOrWhiteSpace($parsed.accessToken)) {
+                $script:WorkshopAdxToken = [string]$parsed.accessToken
+                $script:WorkshopAdxTokenExpiresOn =
+                    if ($parsed.PSObject.Properties['expires_on']) { [datetimeoffset]::FromUnixTimeSeconds([int64]$parsed.expires_on) }
+                    elseif ($parsed.PSObject.Properties['expiresOn']) { [datetimeoffset]([datetime]$parsed.expiresOn) }
+                    else { [datetimeoffset]::UtcNow.AddMinutes(50) }
+                return $script:WorkshopAdxToken
+            }
         }
     }
 
@@ -301,7 +337,12 @@ function Invoke-WorkshopAdxManagementCommand {
         'Content-Type' = 'application/json'
     }
 
-    Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $body -ErrorAction Stop
+    # servertimeout above is only a server-side hint; it does not bound the HTTP
+    # client, so a hung ADX connection would hang the whole script indefinitely.
+    # -TimeoutSec bounds the client, and the retry rides out transient 429/503s
+    # during ingest instead of failing the entire run on one blip.
+    Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $body -ErrorAction Stop `
+        -TimeoutSec 300 -MaximumRetryCount 3 -RetryIntervalSec 5
 }
 
 function ConvertFrom-WorkshopAdxResponseRows {

@@ -16,45 +16,32 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   field-profile-safety:
     name: Field profiles carry no tenant data
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Scan field profiles for tenant data
+      # One script enforces both the forbidden-path rules (nothing under sample/,
+      # no students/samples csv, no data/generated) and the field-profile tenant
+      # scan. The pre-commit hook runs the same script with -Staged, so the hook
+      # and CI cannot drift apart.
+      - name: Repository safety (paths + field profiles)
         shell: pwsh
-        run: ./scripts/Test-FieldProfileSafety.ps1
-
-      - name: Confirm raw tenant telemetry is not tracked
-        shell: pwsh
-        run: |
-          $tracked = @(git ls-files 'sample/*.csv' 'samples/*.csv' 'students/*.csv')
-          if ($tracked.Count -gt 0) {
-              Write-Host 'Raw tenant telemetry is tracked:' -ForegroundColor Red
-              $tracked | ForEach-Object { Write-Host "  $_" }
-              exit 1
-          }
-          Write-Host 'No raw tenant telemetry is tracked.' -ForegroundColor Green
-
-      - name: Confirm generated telemetry is not tracked
-        shell: pwsh
-        run: |
-          # The generated package is ~900 MB and is reproduced from the schemas
-          # and field profiles, so it must stay out of the repository.
-          $tracked = @(git ls-files 'data/generated')
-          if ($tracked.Count -gt 0) {
-              Write-Host ("data/generated is tracked ({0} files); it must be ignored." -f $tracked.Count) -ForegroundColor Red
-              exit 1
-          }
-          Write-Host 'data/generated is not tracked.' -ForegroundColor Green
+        run: ./scripts/Test-RepositorySafety.ps1
 
   package-integrity:
     name: Manifest, schemas, and profiles agree
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Reconcile manifest against schemas
         shell: pwsh

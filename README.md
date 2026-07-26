@@ -18,7 +18,7 @@ See [docs/cloudflare_adx_access.md](docs/cloudflare_adx_access.md) for the full 
 
 This repository contains a complete two-hour cyber defense workshop package for teaching KQL-driven investigation in Azure Data Explorer (ADX). The workshop uses synthetic Microsoft security telemetry loaded into an ADX database so students can investigate a realistic hybrid identity and endpoint intrusion without needing live production infrastructure.
 
-The lab is designed for **20 - 40 students** using the **ADX Web UI**. The primary conference path uses the local Kustainer snapshot through a Cloudflare TCP proxy; the managed Azure ADX and Microsoft Entra B2B path remains available when per-person tenant access is required. Students query Microsoft Defender XDR-style, Microsoft Defender for Endpoint (MDE), Microsoft Defender for Identity (MDI), Microsoft Entra ID, Microsoft Graph, sign-in, cloud app, and alert telemetry.
+The lab is designed for **5 to 100 students** using the **ADX Web UI**. The primary conference path uses the local Kustainer snapshot through a Cloudflare TCP proxy; the managed Azure ADX and Microsoft Entra B2B path remains available when per-person tenant access is required. Students query Microsoft Defender XDR-style, Microsoft Defender for Endpoint (MDE), Microsoft Defender for Identity (MDI), Microsoft Entra ID, Microsoft Graph, sign-in, cloud app, and alert telemetry.
 
 ## 🎯 Purpose
 
@@ -359,4 +359,4 @@ The package creates 79 tables (JSON) from Microsoft Security & Operational Servi
 
 ---
 
-<sub>Cyber Defense KQL Workshop for Azure Data Explorer · synthetic telemetry only, no production data · 79 tables · ~629K rows</sub>
+<sub>Cyber Defense KQL Workshop for Azure Data Explorer · synthetic telemetry only, no production data · 79 tables · ~624K rows</sub>

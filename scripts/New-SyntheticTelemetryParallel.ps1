@@ -39,8 +39,8 @@ Key commands: Start-Process, Wait-Process, Get-ChildItem, Measure-Command.
 #>
 [CmdletBinding()]
 param(
-    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),
-    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\data\generated'),
+    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..' 'schemas'),
+    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..' 'data' 'generated'),
     [string]$FieldProfileDirectory,
     [ValidateRange(1, 1000000)]
     [int]$RowsPerTable = 8000,
@@ -168,6 +168,15 @@ Write-Host ''
 $logRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("workshop-gen-" + [guid]::NewGuid().ToString('N').Substring(0, 8))
 New-Item -ItemType Directory -Path $logRoot -Force | Out-Null
 
+# Capture one end time in the driver and pass it to every worker. The generator
+# defaults -TelemetryEndTime to (Get-Date) and anchors every ambient row to it,
+# so without this each worker process (which launch at staggered times) would
+# anchor to a different "now" -- tables from later workers shifted relative to
+# earlier ones, and reruns not reproducible. The docstring promises identical
+# rows regardless of worker; this is what makes the timestamps honour it too.
+$telemetryEndTime = (Get-Date).ToUniversalTime()
+Write-Host ("End time    : {0:yyyy-MM-ddTHH:mm:ssZ} (shared by all workers)" -f $telemetryEndTime)
+
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 $running = [System.Collections.Generic.List[pscustomobject]]::new()
 $completed = [System.Collections.Generic.List[pscustomobject]]::new()
@@ -195,6 +204,7 @@ while ($queue.Count -gt 0 -or $running.Count -gt 0) {
             '-NormalRowsPerTable', $batch.Rows
             '-NormalLookbackDays', $NormalLookbackDays
             '-RandomSeed', $RandomSeed
+            '-TelemetryEndTime', $telemetryEndTime.ToString('o')
             '-TableName', ($batch.Tables -join ',')
         )
 

@@ -1,0 +1,23 @@
+version: 2
+
+# Keeps the security-relevant dependencies current: the GitHub Actions (pinned to
+# commit SHAs, so Dependabot is what bumps them), the gateway's Node base image and
+# any npm packages it grows, and the Docker base images in Compose.
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: npm
+    directory: /tools/kusto-readonly-gateway
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: docker
+    directory: /tools/kusto-readonly-gateway
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5

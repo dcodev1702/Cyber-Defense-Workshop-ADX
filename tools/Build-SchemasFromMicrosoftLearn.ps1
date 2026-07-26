@@ -19,8 +19,8 @@ Key commands: Invoke-WebRequest, ConvertFrom-Json, ConvertTo-Json, Set-Content.
 #>
 [CmdletBinding()]
 param(
-    [string]$ManifestPath = (Join-Path $PSScriptRoot '..\metadata\tables.manifest.json'),
-    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\schemas'),
+    [string]$ManifestPath = (Join-Path $PSScriptRoot '..' 'metadata' 'tables.manifest.json'),
+    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..' 'schemas'),
     [switch]$Force
 )
 

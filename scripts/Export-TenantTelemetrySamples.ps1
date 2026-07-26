@@ -60,9 +60,9 @@ param(
     [string]$WorkspaceName = 'DIBSecCom',
     [string]$ResourceGroupName = 'sentinel',
     [string]$WorkspaceId,
-    [string]$ManifestPath = (Join-Path $PSScriptRoot '..\metadata\tables.manifest.json'),
-    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),
-    [string]$OutputRoot = (Join-Path $PSScriptRoot '..\sample'),
+    [string]$ManifestPath = (Join-Path $PSScriptRoot '..' 'metadata' 'tables.manifest.json'),
+    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..' 'schemas'),
+    [string]$OutputRoot = (Join-Path $PSScriptRoot '..' 'sample'),
     [Alias('DateStamp')]
     [string]$Dtg = (Get-Date).ToUniversalTime().ToString('yyyyMMddTHHmmssZ'),
     [ValidateRange(1, 100000)]

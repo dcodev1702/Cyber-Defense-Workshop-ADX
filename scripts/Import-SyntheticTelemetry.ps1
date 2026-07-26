@@ -28,8 +28,8 @@ param(
     [string]$SubscriptionId,
     [string]$ResourceGroupName = 'ADX',
     [string]$ClusterName = 'dibsecadx',
-    [string]$DataDirectory = (Join-Path $PSScriptRoot '..\data\generated'),
-    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),
+    [string]$DataDirectory = (Join-Path $PSScriptRoot '..' 'data' 'generated'),
+    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..' 'schemas'),
     [string[]]$TableName,
     [int]$BatchSize = 500,
     [switch]$ClearExistingData

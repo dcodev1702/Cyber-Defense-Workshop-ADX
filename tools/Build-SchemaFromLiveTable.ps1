@@ -35,8 +35,8 @@ param(
     [Parameter(Mandatory)][string[]]$TableName,
     [ValidateSet('DefenderXdr', 'LogAnalytics')]
     [string]$Source = 'DefenderXdr',
-    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\schemas'),
-    [string]$ManifestPath = (Join-Path $PSScriptRoot '..\metadata\tables.manifest.json'),
+    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..' 'schemas'),
+    [string]$ManifestPath = (Join-Path $PSScriptRoot '..' 'metadata' 'tables.manifest.json'),
     [string]$FieldProfileDirectory,
     [string]$WorkspaceName = 'DIBSecCom',
     [string]$ResourceGroupName = 'sentinel',
@@ -255,7 +255,7 @@ function Get-WorkshopFieldProfile {
     param([Parameter(Mandatory)][string]$Table)
 
     if ([string]::IsNullOrWhiteSpace($FieldProfileDirectory)) {
-        $sampleRoot = Join-Path $PSScriptRoot '..\sample'
+        $sampleRoot = Join-Path $PSScriptRoot '..' 'sample'
         if (-not (Test-Path $sampleRoot)) { return $null }
         $latest = Get-ChildItem -Path $sampleRoot -Directory -ErrorAction SilentlyContinue |
             Where-Object { $_.Name -match '^\d{8}T\d{6}Z$' } |

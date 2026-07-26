@@ -73,7 +73,7 @@ function Get-WorkshopNdjsonRowCount {
     return $count
 }
 
-$schemaDirectory = Join-Path $PSScriptRoot '..\schemas'
+$schemaDirectory = Join-Path $PSScriptRoot '..' 'schemas'
 $requestedDatabaseName = $DatabaseName
 $dataDirectoryWasProvided = -not [string]::IsNullOrWhiteSpace($DataDirectory)
 $clusterStateVerified = $false
@@ -187,7 +187,7 @@ if (-not $clusterStateVerified) {
 
 if ([string]::IsNullOrWhiteSpace($DataDirectory)) {
     $safeDatabaseName = $DatabaseName -replace '[^A-Za-z0-9_.-]', '_'
-    $DataDirectory = Join-Path ([System.IO.Path]::GetTempPath()) "CyberDefenseKqlWorkshop\$safeDatabaseName\generated"
+    $DataDirectory = Join-Path ([System.IO.Path]::GetTempPath()) "CyberDefenseKqlWorkshop" "$safeDatabaseName" "generated"
 }
 elseif (-not [System.IO.Path]::IsPathRooted($DataDirectory)) {
     $DataDirectory = Join-Path (Get-Location).Path $DataDirectory

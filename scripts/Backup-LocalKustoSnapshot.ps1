@@ -29,12 +29,12 @@ docker compose start kusto
 [CmdletBinding()]
 param(
     [string]$DatabaseName = 'CyberDefendStudentSnapshot',
-    [string]$LocalStateDirectory = (Join-Path $PSScriptRoot '..\data\local-kusto'),
-    [string]$ExportRootDirectory = (Join-Path $PSScriptRoot '..\data\local-export'),
-    [string]$GeneratedDirectory = (Join-Path $PSScriptRoot '..\data\generated'),
-    [string]$TableManifestPath = (Join-Path $PSScriptRoot '..\metadata\tables.manifest.json'),
-    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),
-    [string]$BackupDirectory = (Join-Path $PSScriptRoot '..\data\backups\local-kusto'),
+    [string]$LocalStateDirectory = (Join-Path $PSScriptRoot '..' 'data' 'local-kusto'),
+    [string]$ExportRootDirectory = (Join-Path $PSScriptRoot '..' 'data' 'local-export'),
+    [string]$GeneratedDirectory = (Join-Path $PSScriptRoot '..' 'data' 'generated'),
+    [string]$TableManifestPath = (Join-Path $PSScriptRoot '..' 'metadata' 'tables.manifest.json'),
+    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..' 'schemas'),
+    [string]$BackupDirectory = (Join-Path $PSScriptRoot '..' 'data' 'backups' 'local-kusto'),
     [switch]$UseLocalExport,
     [switch]$AllowIncompleteExport
 )
@@ -180,4 +180,4 @@ finally {
     if (Test-Path -LiteralPath $stagingPath) {
         Remove-Item -LiteralPath $stagingPath -Recurse -Force
     }
-}
+}

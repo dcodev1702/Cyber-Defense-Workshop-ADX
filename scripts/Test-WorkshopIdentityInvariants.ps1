@@ -19,7 +19,7 @@ pwsh -NoProfile -File .\scripts\Test-WorkshopIdentityInvariants.ps1
 #>
 [CmdletBinding()]
 param(
-    [string]$DataDirectory = (Join-Path $PSScriptRoot '..\data\generated'),
+    [string]$DataDirectory = (Join-Path $PSScriptRoot '..' 'data' 'generated'),
     [int]$MaximumSubscriptions = 25,
     [int]$LinesPerTable = 400
 )

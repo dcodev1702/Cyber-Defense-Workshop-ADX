@@ -47,7 +47,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-Import-Module (Join-Path $PSScriptRoot '..\scripts\AdxWorkshop.Common.psm1') -Force
+Import-Module (Join-Path $PSScriptRoot '..' 'scripts' 'AdxWorkshop.Common.psm1') -Force
 
 function Invoke-WorkshopAzCli {
     [CmdletBinding()]
@@ -536,4 +536,4 @@ $result = [ordered]@{
     backupCommand = ".\adx_db_backupNrestore\Backup-AdxDatabase.ps1 -ClusterUri '$ClusterUri' -DatabaseName '$DatabaseName' -StorageAccountName '$StorageAccountName' -FileSystemName '$FileSystemName' -ManagedIdentityObjectId '$identityPrincipalId'"
 }
 
-$result | ConvertTo-Json -Depth 10
+$result | ConvertTo-Json -Depth 10

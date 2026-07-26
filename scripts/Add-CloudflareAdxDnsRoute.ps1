@@ -14,7 +14,7 @@ Run cloudflared tunnel login first if %USERPROFILE%\.cloudflared\cert.pem is abs
 #>
 [CmdletBinding()]
 param(
-    [string]$TerraformDirectory = (Join-Path $PSScriptRoot '..\infra\cloudflare-adx')
+    [string]$TerraformDirectory = (Join-Path $PSScriptRoot '..' 'infra' 'cloudflare-adx')
 )
 
 Set-StrictMode -Version Latest
@@ -26,7 +26,7 @@ function Get-CloudflaredExecutable {
         return $command.Source
     }
 
-    $wingetPath = Join-Path ${env:ProgramFiles(x86)} 'cloudflared\cloudflared.exe'
+    $wingetPath = Join-Path ${env:ProgramFiles(x86)} 'cloudflared' 'cloudflared.exe'
     if (Test-Path -LiteralPath $wingetPath -PathType Leaf) {
         return $wingetPath
     }
@@ -35,7 +35,7 @@ function Get-CloudflaredExecutable {
 }
 
 $cloudflaredExecutable = Get-CloudflaredExecutable
-$credentialsPath = Join-Path $env:USERPROFILE '.cloudflared\cert.pem'
+$credentialsPath = Join-Path $env:USERPROFILE '.cloudflared' 'cert.pem'
 if (-not (Test-Path $credentialsPath -PathType Leaf)) {
     throw "Cloudflare browser credentials are missing. Run 'cloudflared tunnel login', complete browser authorization for $credentialsPath, then retry."
 }
@@ -60,4 +60,4 @@ try {
 }
 finally {
     Set-Location $previousLocation
-}
+}

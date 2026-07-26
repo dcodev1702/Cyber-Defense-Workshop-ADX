@@ -1,0 +1,45 @@
+name: Package validation
+
+# Runs the static half of Test-WorkshopPackage.ps1 in CI: PowerShell parser checks
+# across every script and module, and manifest/schema consistency. The real-export
+# sample checks (which need gitignored sample/*.csv) and the generated-telemetry
+# validation (which needs the ~900 MB data/generated) are skipped here by design --
+# see the -WithRealSamples switch and the -DataDirectory parameter for running them
+# on a machine that has those inputs, or behind a fixture generation step.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/**'
+      - 'schemas/**'
+      - 'metadata/**'
+      - 'adx_db_backupNrestore/**'
+      - '.github/workflows/package-validation.yml'
+  pull_request:
+    paths:
+      - 'scripts/**'
+      - 'schemas/**'
+      - 'metadata/**'
+      - 'adx_db_backupNrestore/**'
+      - '.github/workflows/package-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Static package validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Validate workshop package (static checks)
+        shell: pwsh
+        run: ./scripts/Test-WorkshopPackage.ps1

@@ -1,0 +1,76 @@
+name: IaC validate
+
+# Neither infrastructure tree was validated in CI. This lints and validates the
+# Bicep (azure-data-explorer/) and the Cloudflare Terraform (infra/cloudflare-adx/)
+# without deploying anything: terraform init runs with -backend=false and no
+# provider credentials, so it checks syntax and references only.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'azure-data-explorer/**'
+      - 'infra/cloudflare-adx/**'
+      - '.github/workflows/iac-validate.yml'
+  pull_request:
+    paths:
+      - 'azure-data-explorer/**'
+      - 'infra/cloudflare-adx/**'
+      - '.github/workflows/iac-validate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bicep:
+    name: Bicep build and lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Build and lint Bicep
+        shell: bash
+        run: |
+          shopt -s nullglob
+          files=(azure-data-explorer/*.bicep)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No Bicep files found; nothing to validate."
+            exit 0
+          fi
+          status=0
+          for f in "${files[@]}"; do
+            echo "::group::az bicep build $f"
+            az bicep build --file "$f" --stdout > /dev/null || status=1
+            echo "::endgroup::"
+            echo "::group::az bicep lint $f"
+            az bicep lint --file "$f" || status=1
+            echo "::endgroup::"
+          done
+          exit $status
+
+  terraform:
+    name: Terraform fmt and validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: infra/cloudflare-adx
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+
+      - name: Format check
+        run: terraform fmt -check -recursive
+
+      - name: Init (no backend, no providers configured)
+        run: terraform init -backend=false
+
+      - name: Validate
+        run: terraform validate

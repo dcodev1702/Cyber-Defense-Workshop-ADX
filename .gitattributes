@@ -1,0 +1,36 @@
+# Normalize line endings so a Windows checkout and a Linux/macOS/CI checkout agree.
+# Without this, the /bin/sh pre-commit hook authored on Windows breaks with
+# "bad interpreter" under a CRLF checkout, and a whole-repo CRLF<->LF diff appears
+# whenever the tree is read from the other platform.
+
+# Default: let git decide text vs binary, and normalize to LF in the repo.
+* text=auto
+
+# Shell scripts and the git hook must be LF or they will not execute on Unix.
+*.sh      text eol=lf
+.githooks/* text eol=lf
+
+# Node/gateway sources and configs: LF.
+*.mjs     text eol=lf
+*.js      text eol=lf
+*.json    text eol=lf
+*.yml     text eol=lf
+*.yaml    text eol=lf
+
+# PowerShell is authored on Windows; keep CRLF so the Windows tooling is happy.
+*.ps1     text eol=crlf
+*.psm1    text eol=crlf
+*.psd1    text eol=crlf
+
+# Docs and data.
+*.md      text
+*.kql     text
+*.csv     text
+
+# Binary assets should never be line-ending converted.
+*.png     binary
+*.jpg     binary
+*.gif     binary
+*.ico     binary
+*.pptx    binary
+*.zip     binary

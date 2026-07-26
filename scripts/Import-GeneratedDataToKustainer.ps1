@@ -21,9 +21,9 @@ param(
     [string]$ClusterUri = 'http://127.0.0.1:8080',
     [string]$Database = 'CyberDefendStudentSnapshot',
     [string]$ContainerDataPath = '/workshop-data/generated',
-    [string]$ManifestPath = (Join-Path $PSScriptRoot '..\metadata\tables.manifest.json'),
-    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),
-    [string]$DataDirectory = (Join-Path $PSScriptRoot '..\data\generated'),
+    [string]$ManifestPath = (Join-Path $PSScriptRoot '..' 'metadata' 'tables.manifest.json'),
+    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..' 'schemas'),
+    [string]$DataDirectory = (Join-Path $PSScriptRoot '..' 'data' 'generated'),
     [string[]]$TableName
 )
 

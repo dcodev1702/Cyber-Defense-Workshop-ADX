@@ -42,7 +42,7 @@ cluster, is unavailable exactly when it is most likely to be needed.
 [CmdletBinding(DefaultParameterSetName = 'Verify')]
 param(
     [string]$ArchivePath,
-    [string]$BackupDirectory = (Join-Path $PSScriptRoot '..\data\backups\local-kusto'),
+    [string]$BackupDirectory = (Join-Path $PSScriptRoot '..' 'data' 'backups' 'local-kusto'),
     [string]$DatabaseName = 'CyberDefendStudentSnapshot',
     [string]$WorkingDirectory = (Join-Path ([System.IO.Path]::GetTempPath()) 'cdw-restore-check'),
 

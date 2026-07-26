@@ -24,8 +24,9 @@
 // If a query returns nothing, check in this order:
 //   1. Is the database the workshop database rather than NetDefaultDB?
 //   2. Was the data regenerated but not re-ingested?
-//   3. Is the table one of the newer ones? The 48 table local snapshot predates
-//      the email, SecurityEvent, cloud, and exposure tables.
+//   3. Is the snapshot complete? The full package is 79 tables. A stale or
+//      partial snapshot can be missing the email, SecurityEvent, cloud, and
+//      exposure tables; recopy or rebuild it rather than working around them.
 //
 // Run one numbered section at a time in the ADX Web UI.
 // =============================================================================
@@ -288,8 +289,11 @@ DeviceProcessEvents
 // column does not exist here. Teach the pattern using event volume, the targeted
 // ServiceName values, and the burst timing instead, and tell students that in a
 // production workspace they should add the encryption type to the hunt.
-// If SecurityEvent returns nothing at all, the environment is the older 48 table
-// snapshot; fall back to IdentityQueryEvents and say so.
+// SecurityEvent is part of the 79 table package. If it returns nothing at all,
+// the environment is a stale or incomplete snapshot missing that table -- recopy
+// or rebuild the full package. As an interim in-class fallback you can pivot on
+// IdentityQueryEvents, but say the snapshot needs rebuilding rather than
+// teaching around a table that is supposed to be there.
 // =============================================================================
 union
     (IdentityQueryEvents | where QueryTarget has "servicePrincipalName" or Query has "servicePrincipalName" | extend Source = "IdentityQueryEvents", Detail = strcat(AccountName, " queried ", QueryTarget)),
@@ -517,7 +521,7 @@ datatable(Topic:string, StudentSays:string, InstructorResponse:string)
     'Blocking the URL',      'Just block the phishing link',                                       'The lure points at the real https://microsoft.com/devicelogin. You cannot block it. That is why the technique works.',
     'Response action',       'Reset the password',                                                 'Insufficient. The OAuth grant and refresh token survive. You must revoke the service principal and its consent. See Query 05, note offline_access.',
     'ZAP saved us',          'Defender quarantined the mail, so we are fine',                      'Check the ordering in Query 03. ZAP fires AFTER the token was issued. It removed the mail, not the access.',
-    'Empty SecurityEvent',   'The Kerberoasting query returns nothing',                            'The 48 table local snapshot predates SecurityEvent. Use IdentityQueryEvents instead and say the environment is the older snapshot.',
+    'Empty SecurityEvent',   'The Kerberoasting query returns nothing',                            'SecurityEvent is in the 79 table package. An empty result means a stale or incomplete snapshot -- rebuild it. Pivot on IdentityQueryEvents only as an interim.',
     'Timestamps differ',     'The times do not match the answer key',                              'Expected. Telemetry is anchored to generation time. AlertIds are stable, timestamps are not. Use Query 00 to derive the window.',
     'Alert IDs look random', 'Why are the AlertIds not named after the actor',                     'Deliberate. Real SOCs get opaque identifiers. Students must hunt by behaviour, entity, technique and time.',
     'Where do I start',      'I do not know which table to open',                                  'Give the pivot order: identity, then endpoint, then cloud. Or hand them one entity, victor.alvarez, and ask them to find every table that mentions it.',

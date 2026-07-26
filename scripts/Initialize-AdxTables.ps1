@@ -24,7 +24,7 @@ Key commands: .show tables, .drop table, .create table, .create-or-alter table i
 param(
     [Parameter(Mandatory)][string]$ClusterUri,
     [Parameter(Mandatory)][string]$DatabaseName,
-    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),
+    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..' 'schemas'),
     [string[]]$TableName,
     [switch]$ForceRecreate
 )

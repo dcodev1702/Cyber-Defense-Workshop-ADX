@@ -44,9 +44,9 @@ param(
     [int]$TopValueCount = 30,
     [int]$SampleRowCap = 2000,
     [string]$WorkspaceId = '7e9298ab-22e6-4a82-a53e-c5ed7faee977',
-    [string]$ManifestPath = (Join-Path $PSScriptRoot '..\metadata\tables.manifest.json'),
-    [string]$SampleDirectory = (Join-Path $PSScriptRoot '..\sample'),
-    [string]$ProfileDirectory = (Join-Path $PSScriptRoot '..\metadata\field-profiles'),
+    [string]$ManifestPath = (Join-Path $PSScriptRoot '..' 'metadata' 'tables.manifest.json'),
+    [string]$SampleDirectory = (Join-Path $PSScriptRoot '..' 'sample'),
+    [string]$ProfileDirectory = (Join-Path $PSScriptRoot '..' 'metadata' 'field-profiles'),
     [switch]$LocalOnly,
     [switch]$RefreshSamples,
     [switch]$SkipExistingProfiles

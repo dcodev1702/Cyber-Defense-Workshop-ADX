@@ -59,12 +59,23 @@ if (-not (Get-Command cloudflared -ErrorAction SilentlyContinue)) {
     throw 'cloudflared was not found in PATH. Install it with: winget install --id Cloudflare.cloudflared --exact'
 }
 
-& cloudflared access tcp `
-    --hostname $Hostname `
-    --url "127.0.0.1:$LocalPort" `
-    --service-token-id $ServiceTokenId `
-    --service-token-secret $ServiceTokenSecret
+# Pass the secret through the environment rather than as a command-line argument.
+# Command-line arguments are visible in the process table to any other local user
+# (ps, Task Manager details, Get-CimInstance Win32_Process). cloudflared reads the
+# token pair from TUNNEL_SERVICE_TOKEN_ID / TUNNEL_SERVICE_TOKEN_SECRET, so the
+# flags can be dropped entirely. This runs on student machines, which is exactly
+# where you have the least control over who else is logged in.
+$env:TUNNEL_SERVICE_TOKEN_ID = $ServiceTokenId
+$env:TUNNEL_SERVICE_TOKEN_SECRET = $ServiceTokenSecret
+try {
+    & cloudflared access tcp `
+        --hostname $Hostname `
+        --url "127.0.0.1:$LocalPort"
 
-if ($LASTEXITCODE -ne 0) {
-    throw "cloudflared access tcp exited with code $LASTEXITCODE."
+    if ($LASTEXITCODE -ne 0) {
+        throw "cloudflared access tcp exited with code $LASTEXITCODE."
+    }
 }
+finally {
+    Remove-Item Env:\TUNNEL_SERVICE_TOKEN_SECRET -ErrorAction SilentlyContinue
+}

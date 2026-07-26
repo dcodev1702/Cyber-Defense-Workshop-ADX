@@ -19,7 +19,7 @@ Key commands: New-Object -ComObject PowerPoint.Application, Presentations.Add, S
 #>
 [CmdletBinding()]
 param(
-    [string]$OutputPath = (Join-Path $PSScriptRoot '..\workshop\CyberDefenseKqlWorkshop.pptx')
+    [string]$OutputPath = (Join-Path $PSScriptRoot '..' 'workshop' 'CyberDefenseKqlWorkshop.pptx')
 )
 
 Set-StrictMode -Version Latest

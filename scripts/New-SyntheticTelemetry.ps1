@@ -36,8 +36,8 @@ Key commands: ConvertTo-Json, StreamWriter.WriteLine, Set-Content, deterministic
 #>
 [CmdletBinding()]
 param(
-    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),
-    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\data\generated'),
+    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..' 'schemas'),
+    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..' 'data' 'generated'),
     [string]$SummaryPath,
     [Alias('StartTime')]
     [datetime]$TelemetryEndTime = (Get-Date).ToUniversalTime(),
@@ -190,7 +190,7 @@ function Import-WorkshopFieldProfiles {
     }
 
     if ([string]::IsNullOrWhiteSpace($Path)) {
-        $Path = Join-Path $PSScriptRoot '..\metadata\field-profiles'
+        $Path = Join-Path $PSScriptRoot '..' 'metadata' 'field-profiles'
     }
 
     if (-not (Test-Path $Path)) {
@@ -740,7 +740,7 @@ $script:AppGenAIPrompts = @(
 # Loaded from metadata\profile-overrides.json so the generator and the data quality
 # gate read the same list and cannot drift apart.
 $script:ProfileEmptyOverride = @{}
-$script:ProfileOverridePath = Join-Path $PSScriptRoot '..\metadata\profile-overrides.json'
+$script:ProfileOverridePath = Join-Path $PSScriptRoot '..' 'metadata' 'profile-overrides.json'
 if (Test-Path $script:ProfileOverridePath) {
     $overrideDocument = Get-Content -Raw $script:ProfileOverridePath | ConvertFrom-Json
     foreach ($entry in $overrideDocument.PSObject.Properties) {
@@ -3413,15 +3413,15 @@ $linuxRemoteEndpoints = @(
     [pscustomobject]@{ Url = 'admin-jump01.usag-cyber.local'; IP = '10.42.30.10'; Port = 22; Protocol = 'Tcp' }
 )
 $linuxRemoteEndpoints += @(New-WorkshopRemoteEndpointCatalog -Prefix 'linux-repo' -Domain 'workshop.example' -IpPrefix '192.0.2' -Ports @(443, 80, 22, 123, 53, 514, 631, 1521, 8080, 9092) -Protocols @('Tcp', 'Tcp', 'Tcp', 'Udp', 'Udp') -Count 200)
-$deviceNetworkEventsSamplePath = Join-Path $PSScriptRoot '..\sample\DeviceNetworkEvents-Real.csv'
+$deviceNetworkEventsSamplePath = Join-Path $PSScriptRoot '..' 'sample' 'DeviceNetworkEvents-Real.csv'
 $deviceNetworkEventProfiles = @(Import-WorkshopDeviceNetworkEventProfileCatalog -Path $deviceNetworkEventsSamplePath)
-$deviceInfoSamplePath = Join-Path $PSScriptRoot '..\sample\DeviceInfo-RealTelemetry.csv'
+$deviceInfoSamplePath = Join-Path $PSScriptRoot '..' 'sample' 'DeviceInfo-RealTelemetry.csv'
 $deviceInfoProfiles = @(Import-WorkshopDeviceInfoProfileCatalog -Path $deviceInfoSamplePath)
 $deviceInfoWindows11Profiles = @($deviceInfoProfiles | Where-Object { $_.OSPlatform -eq 'Windows11' -and $_.DeviceType -eq 'Workstation' })
 $deviceInfoServerProfiles = @($deviceInfoProfiles | Where-Object { $_.OSPlatform -like 'WindowsServer*' -and $_.DeviceType -eq 'Server' })
 $deviceInfoLinuxProfiles = @($deviceInfoProfiles | Where-Object { $_.OSPlatform -eq 'Linux' -or $_.OSDistribution -eq 'Ubuntu' })
 
-$linuxSoftwareInventoryPath = Join-Path $PSScriptRoot '..\sample\export-tvm-machine-software-inventory-linux.csv'
+$linuxSoftwareInventoryPath = Join-Path $PSScriptRoot '..' 'sample' 'export-tvm-machine-software-inventory-linux.csv'
 $linuxSoftwareCatalog = @(
     [pscustomobject]@{ Name = 'openssh-server'; Vendor = 'OpenBSD'; Version = '1:9.6p1-3ubuntu13.5'; CveId = 'CVE-2024-6387'; Package = 'openssh-server'; Risk = 88 },
     [pscustomobject]@{ Name = 'cups'; Vendor = 'OpenPrinting'; Version = '2.4.7-1.2ubuntu7.3'; CveId = 'CVE-2024-47176'; Package = 'cups-browsed'; Risk = 74 },

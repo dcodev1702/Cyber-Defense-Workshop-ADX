@@ -22,12 +22,12 @@ Requires Docker Desktop, Terraform, and outbound connectivity to Cloudflare.
 #>
 [CmdletBinding()]
 param(
-    [string]$TerraformDirectory = (Join-Path $PSScriptRoot '..\infra\cloudflare-adx'),
-    [string]$SecretConfigPath = (Join-Path $PSScriptRoot '..\.cf-config'),
-    [string]$ComposeFile = (Join-Path $PSScriptRoot '..\compose.yaml'),
-    [string]$ComposeOverrideFile = (Join-Path $PSScriptRoot '..\compose.override.yaml'),
-    [string]$CloudflaredEnvironmentFile = (Join-Path $PSScriptRoot '..\infra\cloudflare-adx\cloudflared.env'),
-    [string]$StudentAccessEnvironmentFile = (Join-Path $PSScriptRoot '..\infra\cloudflare-adx\student-access.env'),
+    [string]$TerraformDirectory = (Join-Path $PSScriptRoot '..' 'infra' 'cloudflare-adx'),
+    [string]$SecretConfigPath = (Join-Path $PSScriptRoot '..' '.cf-config'),
+    [string]$ComposeFile = (Join-Path $PSScriptRoot '..' 'compose.yaml'),
+    [string]$ComposeOverrideFile = (Join-Path $PSScriptRoot '..' 'compose.override.yaml'),
+    [string]$CloudflaredEnvironmentFile = (Join-Path $PSScriptRoot '..' 'infra' 'cloudflare-adx' 'cloudflared.env'),
+    [string]$StudentAccessEnvironmentFile = (Join-Path $PSScriptRoot '..' 'infra' 'cloudflare-adx' 'student-access.env'),
     [string]$ZoneName = 'tier1-cyberdefense.ai',
     [string]$CloudflaredContainerName = 'cyber-conf-wiesbaden-cloudflared',
     [string]$KustoContainerName = 'cyber-conf-wiesbaden-kusto',
@@ -482,4 +482,4 @@ finally {
     else {
         $env:CLOUDFLARE_API_TOKEN = $previousCloudflareApiToken
     }
-}
+}

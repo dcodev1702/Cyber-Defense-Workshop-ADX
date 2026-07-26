@@ -27,8 +27,8 @@ param(
     [string]$SubscriptionId,
     [string]$WorkspaceName = 'DIBSecCom',
     [string]$ResourceGroupName = 'sentinel',
-    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..\schemas'),
-    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..\sample'),
+    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..' 'schemas'),
+    [string]$OutputDirectory = (Join-Path $PSScriptRoot '..' 'sample'),
     [int]$LookbackDays = 7,
     [int]$MaxRowsPerTable = 5000,
     [ValidateSet('All', 'Linux')]

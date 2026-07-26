@@ -24,8 +24,8 @@ Key commands: ConvertTo-Json, Set-Content, deterministic dashboard IDs.
 param(
     [string]$ClusterUri = 'https://dibsecadx.eastus2.kusto.windows.net',
     [string]$DatabaseName = 'cyber-defend-q0xxzc',
-    [string]$OutputPath = (Join-Path $PSScriptRoot '..\dashboards\cyber-defense-workshop-dashboard.json'),
-    [string]$KqlPath = (Join-Path $PSScriptRoot '..\dashboards\cyber-defense-workshop-dashboard.kql')
+    [string]$OutputPath = (Join-Path $PSScriptRoot '..' 'dashboards' 'cyber-defense-workshop-dashboard.json'),
+    [string]$KqlPath = (Join-Path $PSScriptRoot '..' 'dashboards' 'cyber-defense-workshop-dashboard.kql')
 )
 
 Set-StrictMode -Version Latest

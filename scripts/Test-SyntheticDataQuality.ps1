@@ -33,9 +33,9 @@ Requires PowerShell 7. Exits non-zero when any table falls below -MinimumScore.
 [CmdletBinding()]
 param(
     [string[]]$TableName,
-    [string]$DataDirectory = (Join-Path $PSScriptRoot '..\data\generated'),
-    [string]$ProfileDirectory = (Join-Path $PSScriptRoot '..\metadata\field-profiles'),
-    [string]$OverridePath = (Join-Path $PSScriptRoot '..\metadata\profile-overrides.json'),
+    [string]$DataDirectory = (Join-Path $PSScriptRoot '..' 'data' 'generated'),
+    [string]$ProfileDirectory = (Join-Path $PSScriptRoot '..' 'metadata' 'field-profiles'),
+    [string]$OverridePath = (Join-Path $PSScriptRoot '..' 'metadata' 'profile-overrides.json'),
     [int]$SampleRows = 1500,
     [double]$SparseTolerance = 0.25,
     [double]$MinimumScore = 0.80,

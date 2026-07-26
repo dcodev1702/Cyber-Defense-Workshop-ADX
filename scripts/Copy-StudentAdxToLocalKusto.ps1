@@ -28,8 +28,8 @@ param(
     [string]$LocalDatabaseName = 'CyberDefendStudentSnapshot',
     [string]$LocalDataMountPath = '/workshop-data',
     [string]$LocalStateMountPath = '/kustodata',
-    [string]$LocalStateDirectory = (Join-Path $PSScriptRoot '..\data\local-kusto'),
-    [string]$ExportRootDirectory = (Join-Path $PSScriptRoot '..\data\local-export'),
+    [string]$LocalStateDirectory = (Join-Path $PSScriptRoot '..' 'data' 'local-kusto'),
+    [string]$ExportRootDirectory = (Join-Path $PSScriptRoot '..' 'data' 'local-export'),
     [string[]]$TableName,
     [switch]$ForceRecreate
 )
@@ -391,4 +391,4 @@ $localTotalRows = [long](($tableManifestArray | ForEach-Object { [long]$_['local
     LocalDatabaseName = $LocalDatabaseName
     LocalTotalRows = $localTotalRows
     ManifestPath = $manifestPath
-} | Format-List
+} | Format-List
