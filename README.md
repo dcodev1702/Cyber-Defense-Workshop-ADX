@@ -76,6 +76,7 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | Tenant sampling | Exports real Log Analytics and Defender XDR advanced hunting rows plus per-column field profiles that ground synthetic generation | [`scripts\Export-TenantTelemetrySamples.ps1`](scripts/Export-TenantTelemetrySamples.ps1), [`scripts\Export-WorkshopTelemetryProfiles.ps1`](scripts/Export-WorkshopTelemetryProfiles.ps1) |
 | Synthetic data | Reproduces the schema-aligned NDJSON telemetry from the committed schemas and field profiles. `data\generated\` is not tracked; run the generator to create it | [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1), [`scripts\New-SyntheticTelemetryParallel.ps1`](scripts/New-SyntheticTelemetryParallel.ps1), [`metadata\field-profiles\`](metadata/field-profiles/), [`metadata\profile-overrides.json`](metadata/profile-overrides.json), [`data\scenario-summary.json`](data/scenario-summary.json) |
 | Data quality gates | Scores generated telemetry against the real field profiles, verifies tenant and subscription identifiers, and blocks tenant data from reaching the profiles | [`scripts\Test-SyntheticDataQuality.ps1`](scripts/Test-SyntheticDataQuality.ps1), [`scripts\Test-WorkshopIdentityInvariants.ps1`](scripts/Test-WorkshopIdentityInvariants.ps1), [`scripts\Test-FieldProfileSafety.ps1`](scripts/Test-FieldProfileSafety.ps1) |
+| Tenant data safeguards | Enforces, on every commit and in CI, that raw tenant telemetry is never committed and that tracked field profiles carry no tenant data | [`.githooks\pre-commit`](.githooks/pre-commit), [`scripts\Install-WorkshopGitHooks.ps1`](scripts/Install-WorkshopGitHooks.ps1), [`.github\workflows\telemetry-safety.yml`](.github/workflows/telemetry-safety.yml) |
 | Managed Azure access (secondary) | Documents the full managed Azure ADX build plus SFI-aligned B2B guest provisioning, MFA, access-package lifecycle, participant group access, ADX database viewer permissions, and dashboard sharing | [`docs\managed_azure_adx_setup.md`](docs/managed_azure_adx_setup.md), [`user_creation\README.md`](user_creation/README.md), [`docs\student_access.md`](docs/student_access.md), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1) |
 | Cloudflare ADX class access | Documents the shared Service Auth credential, student TCP proxy, read-only KQL gateway, rotation, and troubleshooting | [`docs\cloudflare_adx_access.md`](docs/cloudflare_adx_access.md) |
 | Kustainer gateway | Documents the read-only request policy, browser CORS/private-network support, default-database cleaner, configuration, and security boundary | [`tools\kusto-readonly-gateway\README.md`](tools/kusto-readonly-gateway/README.md) |
@@ -169,7 +170,21 @@ To refresh the field profiles from live telemetry, sign in to the tenant and run
 .\scripts\Test-FieldProfileSafety.ps1
 ```
 
-`Test-FieldProfileSafety.ps1` must report clean before profiles are committed. It rejects any captured value vocabulary containing a GUID, an Azure resource path, a user principal name, an address, or a credential, so real tenant data cannot reach this repository.
+### Keeping tenant data out of this repository
+
+`metadata\field-profiles\` is tracked, because those profiles are what make the generated telemetry reproducible. That makes them the one path by which live tenant data could reach a public repository, so the safeguard is enforced rather than documented.
+
+Run this once per clone:
+
+```powershell
+.\scripts\Install-WorkshopGitHooks.ps1
+```
+
+Git does not version `.git\hooks`, so the tracked hook in `.githooks\` is inert until that installer points `core.hooksPath` at it. From then on, every commit is blocked if it stages anything under `sample\`, which holds raw capture data, or if a staged field profile contains an embedded GUID, an Azure subscription, resource group or tenant path, an onmicrosoft domain, a user principal name, an address, or a credential.
+
+Column-name filtering alone is not enough. `SourceAgentId` carries Azure resource IDs containing a live subscription GUID, and a scan found 70 such columns before this check existed, so the check inspects the values themselves.
+
+A local hook can be skipped with `--no-verify` and does nothing until installed, so [`.github\workflows\telemetry-safety.yml`](.github/workflows/telemetry-safety.yml) runs the same scan on every push and pull request, and additionally fails if raw telemetry or the generated package is ever tracked. The hook makes the failure fast and local; the workflow makes it unavoidable.
 
 ### Publish read-only local Kusto through Cloudflare
 

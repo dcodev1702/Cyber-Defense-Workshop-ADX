@@ -1,0 +1,53 @@
+#!/bin/sh
+#
+# Blocks real tenant data from entering the repository.
+#
+# Two rules are enforced:
+#   1. Nothing under sample/ may be committed. That directory holds raw tenant
+#      telemetry captures and is gitignored; staging one is always a mistake.
+#   2. If any field profile is staged, scripts/Test-FieldProfileSafety.ps1 must
+#      report clean. The profiles are tracked because they make generated
+#      telemetry reproducible, which makes that scan the last line of defence.
+#
+# Install with: pwsh -NoProfile -File scripts/Install-WorkshopGitHooks.ps1
+# Bypass is possible with --no-verify, and is never appropriate for these rules.
+
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+
+# ---- rule 1: raw tenant telemetry ------------------------------------------
+raw=$(printf '%s\n' "$staged" | grep -E '^sample/' || true)
+if [ -n "$raw" ]; then
+    echo "COMMIT BLOCKED: raw tenant telemetry is staged." >&2
+    echo "" >&2
+    printf '%s\n' "$raw" >&2
+    echo "" >&2
+    echo "sample/ holds live capture data and must never be committed." >&2
+    echo "Unstage it with: git restore --staged sample/" >&2
+    exit 1
+fi
+
+# ---- rule 2: field profile safety ------------------------------------------
+profiles=$(printf '%s\n' "$staged" | grep -E '^metadata/field-profiles/' || true)
+if [ -z "$profiles" ]; then
+    exit 0
+fi
+
+if command -v pwsh >/dev/null 2>&1; then
+    shell="pwsh"
+else
+    echo "COMMIT BLOCKED: PowerShell 7 (pwsh) is required to verify field profiles." >&2
+    echo "Install it, or unstage metadata/field-profiles/ and commit those separately." >&2
+    exit 1
+fi
+
+echo "Field profiles staged; scanning for tenant data..."
+"$shell" -NoProfile -File "scripts/Test-FieldProfileSafety.ps1" -Quiet
+status=$?
+
+if [ $status -ne 0 ]; then
+    echo "" >&2
+    echo "COMMIT BLOCKED: the staged field profiles contain tenant data." >&2
+    exit 1
+fi
+
+exit 0

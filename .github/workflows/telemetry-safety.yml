@@ -1,0 +1,94 @@
+name: Telemetry safety
+
+# The field profiles in metadata/field-profiles/ are tracked, because they are
+# what make the generated telemetry reproducible. That makes this workflow the
+# enforcement point that keeps live tenant data out of a public repository.
+#
+# The same checks run locally through .githooks/pre-commit, but a local hook can
+# be skipped with --no-verify and is inert until installed. This cannot.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  field-profile-safety:
+    name: Field profiles carry no tenant data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Scan field profiles for tenant data
+        shell: pwsh
+        run: ./scripts/Test-FieldProfileSafety.ps1
+
+      - name: Confirm raw tenant telemetry is not tracked
+        shell: pwsh
+        run: |
+          $tracked = @(git ls-files 'sample/*.csv' 'samples/*.csv' 'students/*.csv')
+          if ($tracked.Count -gt 0) {
+              Write-Host 'Raw tenant telemetry is tracked:' -ForegroundColor Red
+              $tracked | ForEach-Object { Write-Host "  $_" }
+              exit 1
+          }
+          Write-Host 'No raw tenant telemetry is tracked.' -ForegroundColor Green
+
+      - name: Confirm generated telemetry is not tracked
+        shell: pwsh
+        run: |
+          # The generated package is ~900 MB and is reproduced from the schemas
+          # and field profiles, so it must stay out of the repository.
+          $tracked = @(git ls-files 'data/generated')
+          if ($tracked.Count -gt 0) {
+              Write-Host ("data/generated is tracked ({0} files); it must be ignored." -f $tracked.Count) -ForegroundColor Red
+              exit 1
+          }
+          Write-Host 'data/generated is not tracked.' -ForegroundColor Green
+
+  package-integrity:
+    name: Manifest, schemas, and profiles agree
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reconcile manifest against schemas
+        shell: pwsh
+        run: |
+          $manifest = @((Get-Content -Raw metadata/tables.manifest.json | ConvertFrom-Json) | ForEach-Object { $_.name })
+          $schemas = @(Get-ChildItem schemas -Filter '*.schema.json' | ForEach-Object { $_.BaseName -replace '\.schema$', '' })
+
+          $missing = @($manifest | Where-Object { $schemas -notcontains $_ })
+          $orphan = @($schemas | Where-Object { $manifest -notcontains $_ })
+
+          Write-Host ("Manifest tables : {0}" -f $manifest.Count)
+          Write-Host ("Schema files    : {0}" -f $schemas.Count)
+
+          if ($missing.Count -gt 0) {
+              Write-Host ("Manifest tables without a schema: {0}" -f ($missing -join ', ')) -ForegroundColor Red
+          }
+          if ($orphan.Count -gt 0) {
+              Write-Host ("Schema files not in the manifest: {0}" -f ($orphan -join ', ')) -ForegroundColor Red
+          }
+          if ($missing.Count -gt 0 -or $orphan.Count -gt 0) { exit 1 }
+
+          Write-Host 'Manifest and schemas agree.' -ForegroundColor Green
+
+      - name: Confirm profile overrides reference real tables
+        shell: pwsh
+        run: |
+          $manifest = @((Get-Content -Raw metadata/tables.manifest.json | ConvertFrom-Json) | ForEach-Object { $_.name })
+          $overrides = Get-Content -Raw metadata/profile-overrides.json | ConvertFrom-Json
+
+          $unknown = @($overrides.PSObject.Properties.Name |
+              Where-Object { -not $_.StartsWith('$') -and $manifest -notcontains $_ })
+
+          if ($unknown.Count -gt 0) {
+              Write-Host ("profile-overrides.json names tables not in the manifest: {0}" -f ($unknown -join ', ')) -ForegroundColor Red
+              exit 1
+          }
+          Write-Host 'Profile overrides reference known tables.' -ForegroundColor Green
