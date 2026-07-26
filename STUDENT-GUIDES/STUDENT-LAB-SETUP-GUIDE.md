@@ -347,6 +347,8 @@ The four views below form a practical SOC triage sequence. Set the dashboard-wid
 
 In Azure Data Explorer, select **Dashboards** > **New dashboard** > **Import dashboard from file**, then choose [dashboard-CYBER-DEFEND-V4.json](dashboard-CYBER-DEFEND-V4.json). Importing this JSON creates the Defender Dashboard pages and tiles represented by the images below.
 
+> If every tile shows **Access denied**, you have imported the wrong variant. [dashboard-CYBER-DEFEND-V4.json](dashboard-CYBER-DEFEND-V4.json) queries the workshop cluster through your local proxy at `http://127.0.0.1:8080`, which is the one this guide sets up. [dashboard-CYBER-DEFEND-V4-azure.json](dashboard-CYBER-DEFEND-V4-azure.json) queries the managed Azure cluster and is only for the instructor-led Azure path.
+
 The JSON was exported with its authoring cloud data source, so set the lab connection before relying on the tiles:
 
 1. In the imported dashboard, select **Data sources** and edit **Cyber Defense Workshop ADX**.

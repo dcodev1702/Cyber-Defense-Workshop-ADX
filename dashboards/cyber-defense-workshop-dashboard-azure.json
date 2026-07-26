@@ -1218,8 +1218,8 @@
     {
       "id": "53445c59-8c53-b9c5-bec8-1326116fb7d1",
       "name": "Cyber Defense Workshop ADX",
-      "clusterUri": "http://127.0.0.1:8080",
-      "database": "CyberDefendStudentSnapshot",
+      "clusterUri": "https://dibsecadx.eastus2.kusto.windows.net",
+      "database": "cyber-defend-q0xxzc",
       "kind": "manual-kusto",
       "scopeId": "kusto"
     }

@@ -9,9 +9,17 @@ threat protection, identity defense, sign-in, alert, network, Graph API, device
 posture, and scenario investigation signals.
 
 .EXAMPLE
+.\scripts\New-WorkshopDashboard.ps1
+
+Targets the containerized workshop, which is the primary delivery path: students
+reach the local emulator through the Cloudflare proxy on http://127.0.0.1:8080.
+
+.EXAMPLE
 .\scripts\New-WorkshopDashboard.ps1 `
   -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' `
   -DatabaseName 'cyber-defend-q0xxzc'
+
+Targets the secondary managed Azure ADX deployment.
 
 .NOTES
 Name: New-WorkshopDashboard.ps1
@@ -22,8 +30,15 @@ Key commands: ConvertTo-Json, Set-Content, deterministic dashboard IDs.
 #>
 [CmdletBinding()]
 param(
-    [string]$ClusterUri = 'https://dibsecadx.eastus2.kusto.windows.net',
-    [string]$DatabaseName = 'cyber-defend-q0xxzc',
+    # The dashboard's data source has to name the cluster the student is actually
+    # connected to. These defaulted to the managed Azure cluster, so every
+    # imported dashboard queried a cluster no attendee has rights to and each of
+    # the forty tiles rendered "Access denied" -- with nothing reaching the local
+    # gateway, because the request never came near it. The primary delivery path
+    # is the container, so that is what the committed dashboard now targets; pass
+    # these to build the managed Azure variant instead.
+    [string]$ClusterUri = 'http://127.0.0.1:8080',
+    [string]$DatabaseName = 'CyberDefendStudentSnapshot',
     [string]$OutputPath = (Join-Path $PSScriptRoot '..' 'dashboards' 'cyber-defense-workshop-dashboard.json'),
     [string]$KqlPath = (Join-Path $PSScriptRoot '..' 'dashboards' 'cyber-defense-workshop-dashboard.kql')
 )
@@ -192,8 +207,8 @@ let FailedLogons = union isfuzzy=true
 (AADNonInteractiveUserSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated),
 (AADServicePrincipalSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated),
 (AADManagedIdentitySignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated),
-(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType has 'Failed' | project Timestamp),
-(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType has 'Failed' | project Timestamp);
+(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType == 'LogonFailed' | project Timestamp),
+(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType == 'LogonFailed' | project Timestamp);
 FailedLogons
 | summarize ['Failed logins']=count()
 | render card
@@ -205,8 +220,8 @@ let SuccessfulLogons = union isfuzzy=true
 (AADNonInteractiveUserSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where tostring(ResultType) == '0' or ResultType =~ 'Success' | project Timestamp=TimeGenerated),
 (AADServicePrincipalSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where tostring(ResultType) == '0' or ResultType =~ 'Success' | project Timestamp=TimeGenerated),
 (AADManagedIdentitySignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where tostring(ResultType) == '0' or ResultType =~ 'Success' | project Timestamp=TimeGenerated),
-(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType !has 'Failed' | project Timestamp),
-(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType !has 'Failed' | project Timestamp);
+(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType == 'LogonSuccess' | project Timestamp),
+(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType == 'LogonSuccess' | project Timestamp);
 SuccessfulLogons
 | summarize ['Successful logins']=count()
 | render card
@@ -249,7 +264,7 @@ $deviceOsCategoryQuery = @'
 DeviceInfo
 | where TimeGenerated between (['_startTime'] .. ['_endTime'])
 | summarize arg_max(TimeGenerated, *) by DeviceId
-| summarize Devices=count() by OSFamily=case(OSPlatform has 'Windows', 'Windows', OSPlatform =~ 'Linux' or OSDistribution =~ 'Ubuntu', 'Linux', OSPlatform =~ 'Android', 'Android/IoT', 'Other'), DeviceCategory, DeviceType
+| summarize Devices=count() by OSFamily=case(OSPlatform startswith 'Windows', 'Windows', OSPlatform =~ 'Linux' or OSDistribution =~ 'Ubuntu', 'Linux', OSPlatform =~ 'Android', 'Android/IoT', 'Other'), DeviceCategory, DeviceType
 | order by Devices desc
 | render barchart with (title='Devices by OS family, category, and type')
 '@
@@ -347,8 +362,8 @@ let Logons = union isfuzzy=true
 (AADNonInteractiveUserSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Timestamp=TimeGenerated, Source='Non-interactive Entra', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
 (AADServicePrincipalSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Timestamp=TimeGenerated, Source='Service principal', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
 (AADManagedIdentitySignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | project Timestamp=TimeGenerated, Source='Managed identity', Result=iff(tostring(ResultType) == '0' or ResultType =~ 'Success', 'Success', 'Failure')),
-(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | project Timestamp, Source='Endpoint logon', Result=iff(ActionType has 'Failed', 'Failure', 'Success')),
-(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | project Timestamp, Source='Identity logon', Result=iff(ActionType has 'Failed', 'Failure', 'Success'));
+(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | project Timestamp, Source='Endpoint logon', Result=iff(ActionType == 'LogonFailed', 'Failure', 'Success')),
+(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | project Timestamp, Source='Identity logon', Result=iff(ActionType == 'LogonFailed', 'Failure', 'Success'));
 Logons
 | summarize Logons=count() by bin(Timestamp, 6h), Result
 | order by Timestamp asc
@@ -359,8 +374,8 @@ $failedLoginSourcesQuery = @'
 let Failed = union isfuzzy=true
 (SigninLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated, Source='Interactive Entra', Principal=UserPrincipalName, Application=AppDisplayName, IPAddress, Failure=ResultDescription),
 (AADNonInteractiveUserSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Timestamp=TimeGenerated, Source='Non-interactive Entra', Principal=UserPrincipalName, Application=AppDisplayName, IPAddress, Failure=ResultDescription),
-(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType has 'Failed' | project Timestamp, Source='Endpoint logon', Principal=strcat(AccountDomain, '\\', AccountName), Application=LogonType, IPAddress=RemoteIP, Failure=FailureReason),
-(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType has 'Failed' | project Timestamp, Source='Identity logon', Principal=coalesce(AccountUpn, strcat(AccountDomain, '\\', AccountName)), Application=LogonType, IPAddress, Failure=FailureReason);
+(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType == 'LogonFailed' | project Timestamp, Source='Endpoint logon', Principal=strcat(AccountDomain, '\\', AccountName), Application=LogonType, IPAddress=RemoteIP, Failure=FailureReason),
+(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType == 'LogonFailed' | project Timestamp, Source='Identity logon', Principal=coalesce(AccountUpn, strcat(AccountDomain, '\\', AccountName)), Application=LogonType, IPAddress, Failure=FailureReason);
 Failed
 | summarize FailedLogins=count(), Principals=dcount(Principal), Applications=dcount(Application) by Source
 | order by FailedLogins desc
@@ -371,8 +386,8 @@ $topFailedPrincipalsQuery = @'
 let Failed = union isfuzzy=true
 (SigninLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Principal=UserPrincipalName, IPAddress, Failure=ResultDescription),
 (AADNonInteractiveUserSignInLogs | where TimeGenerated between (['_startTime'] .. ['_endTime']) | where not(tostring(ResultType) == '0' or ResultType =~ 'Success') | project Principal=UserPrincipalName, IPAddress, Failure=ResultDescription),
-(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType has 'Failed' | project Principal=strcat(AccountDomain, '\\', AccountName), IPAddress=RemoteIP, Failure=FailureReason),
-(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType has 'Failed' | project Principal=coalesce(AccountUpn, strcat(AccountDomain, '\\', AccountName)), IPAddress, Failure=FailureReason);
+(DeviceLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType == 'LogonFailed' | project Principal=strcat(AccountDomain, '\\', AccountName), IPAddress=RemoteIP, Failure=FailureReason),
+(IdentityLogonEvents | where Timestamp between (['_startTime'] .. ['_endTime']) | where ActionType == 'LogonFailed' | project Principal=coalesce(AccountUpn, strcat(AccountDomain, '\\', AccountName)), IPAddress, Failure=FailureReason);
 Failed
 | summarize FailedLogins=count(), SourceIPs=dcount(IPAddress), Failures=make_set(Failure, 5) by Principal
 | top 20 by FailedLogins desc
