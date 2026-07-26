@@ -12,7 +12,8 @@
 Work proceeded straight down the evaluation's "Suggested order of work," in value-per-effort
 order. Everything was verified where a runner exists:
 
-- **52 / 52** gateway tests pass (`node --test`)
+- **55 / 55** gateway tests pass (`node --test`) — 52 from this pass, 3 added afterwards for the ADX
+  web UI handshake
 - All PowerShell files **parse clean** with **0 lint errors** (PSScriptAnalyzer; 312 pre-existing
   style warnings remain, documented below)
 - `Test-WorkshopPackage.ps1` **exits 0 on a clean clone** (no `sample/`, no generated data)
@@ -20,8 +21,9 @@ order. Everything was verified where a runner exists:
 - `compose.yaml` and all five workflows validate (`docker compose config`, YAML parse)
 
 **48 files** were changed or created. All non-`.github/` files were written back to the machine.
-The 6 files under `.github/` are blocked by the device bridge's protection on that folder and were
-delivered separately as a zip for manual placement (see "Needs one manual step" below).
+The 6 files under `.github/` were blocked by the device bridge's protection on that folder and were
+delivered separately as a zip. **That step is now complete** — all six are in place and tracked, and
+a seventh workflow was added later (see "After the evaluation pass").
 
 ---
 
@@ -68,9 +70,17 @@ delivered separately as a zip for manual placement (see "Needs one manual step" 
   `cluster(`; forced `request_readonly = true` (env-toggle `KUSTO_FORCE_READONLY`, default on per the
   chosen option); and a database allowlist (`KUSTO_ALLOWED_DATABASES`, set to
   `CyberDefendStudentSnapshot`).
-- **H8** — Compose split into `edge` (cloudflared + gateway) and `backend` (gateway + kusto).
-  cloudflared is no longer on the backend network, so it cannot reach `kusto:8080` no matter what the
-  dashboard-managed tunnel ingress says — the one-click bypass is now architecturally impossible.
+- **H8** — Compose split into `edge` (cloudflared + gateway) and `backend` (gateway + kusto), so
+  `kusto` no longer resolves for cloudflared and a hostname-based tunnel ingress rule cannot reach
+  the emulator.
+
+  > **Correction.** This entry originally claimed the connector "cannot reach `kusto:8080` no matter
+  > what the dashboard-managed tunnel ingress says — the one-click bypass is now architecturally
+  > impossible." Testing later the same day disproved that. Publishing Kustainer's `8080` makes
+  > Docker insert a firewall accept **above** its own cross-bridge isolation which is not restricted
+  > by source network, so an ingress rule naming the backend IP still reached the engine. The split
+  > blocks the realistic misconfiguration, not a deliberate one. Closed separately — see "After the
+  > evaluation pass" below.
 - **M8 / M10** — Dockerfile: pinned base tag (was moving `node:24-alpine`), `USER node`,
   `HEALTHCHECK`, `ENV NODE_ENV=production`, `npm ci` + lockfile, `.dockerignore`. Compose:
   `init: true` on every service, `security_opt: [no-new-privileges:true]`, JSON log size limits, and
@@ -97,15 +107,88 @@ delivered separately as a zip for manual placement (see "Needs one manual step" 
 
 ---
 
+## After the evaluation pass
+
+Three defects found the same day by *exercising* the workshop rather than reading it. All three are
+the same shape as the ones the evaluation caught: an artifact produced, never exercised, assumed
+good — and in each case the check that should have caught it reported success.
+
+- **The hardened gateway was not the gateway that was running.** `kusto-readonly-gateway` is a
+  Compose `build:` service, so `docker compose up -d` reuses the last image built on the host and
+  never consults the source. After H2/H3/H1b landed, the running container was still a five-day-old
+  pre-hardening build: `.show queries` answered `200`. `docker compose ps` and the container health
+  check reported healthy throughout, because the health check only proves the process answers on
+  `/healthz`. `README.md` and the instructor checklist now require an explicit
+  `docker compose up -d --build kusto-readonly-gateway` and a policy probe (`.show tables` → 200,
+  `.show queries` → 403) rather than a health check.
+- **The database allowlist locked out the client the workshop exists to serve.** H1b's
+  `KUSTO_ALLOWED_DATABASES` required every request to name a permitted database, but the ADX web
+  UI's opening calls carry none — discovering which databases exist is what they are for. **Add
+  connection** at `dataexplorer.azure.com` failed with a bare "Request failed with status code 403",
+  at the first step every student must complete. Database-less cluster-scoped discovery is now
+  permitted on the management endpoint only, and `/v1/rest/auth/metadata` is forwarded instead of
+  answered `404`. Diagnosed in one line from the structured audit log added in this pass. Three
+  regression tests added (52 → 55): every earlier test and probe had supplied an explicit database,
+  so the one path the real client always takes was the one path never exercised.
+- **The connector could route around the gateway** — the H8 correction above. Closed with
+  `scripts/Set-WorkshopNetworkIsolation.ps1`, which inserts a `DOCKER-USER` DROP between the two
+  bridges. It derives the networks from the running containers rather than from names and clears its
+  own stale rules first, because Docker names a bridge after the network ID: any `docker compose
+  down` yields new bridge names and leaves a dead rule that still reads as protection.
+  `scripts/Test-WorkshopNetworkIsolation.ps1` proves the boundary by sending packets rather than
+  reading rules — six assertions against the live stack, and a `-SelfTest` mode on throwaway networks
+  for CI (`network-isolation.yml`). Wired into `Start-CloudflareAdxTunnel.ps1 -Apply`, which fails
+  the run if the boundary does not hold. **The rule is host firewall state and does not survive a
+  Docker engine restart** — Terraform cannot own it.
+
+Also completed the same day, outside the evaluation's scope: the local backup shipping a stale
+48-table / 358,621-row payload while the live database held 79 tables / 623,832 rows, and the new
+`Restore-LocalKustoSnapshot.ps1` that makes restoring a proven operation rather than one
+reconstructed under pressure. Both are recorded in `CHANGELOG.md`.
+
+Commits: `704d6ef`, `54ed23b`, `705b0f5` (backup/restore), `cdd0332` (gateway handshake),
+`a62ab4f` (network boundary), `658e898` (assets).
+
+---
+
 ## What remains
 
-### Needs one manual step (blocked by the device bridge)
+### Before Wiesbaden — operational, not code
 
-- The **6 `.github/` files** — the 4 new workflows, the updated `telemetry-safety.yml`, and
-  `dependabot.yml` — could not be written to disk because the bridge protects `.github/`. They were
-  delivered as **`github-ci-files.zip`**; extract it at the repo root to place them. Until then, CI
-  runs the old `telemetry-safety.yml` and the new workflows are absent. Everything else is already on
-  disk.
+These are the ones that will bite on the day. None is a code change.
+
+- **Pin `KUSTO_IMAGE_TAG`.** `compose.yaml` resolves to `kustainer-linux:latest` today; nothing pins
+  it in `compose.override.yaml`, `.env`, or the environment. The image currently running is the one
+  every restore and rehearsal was verified against, but `:latest` can move between rehearsal and
+  delivery, and `compose.yaml`'s own comment advises pinning once rehearsed. **Not done.**
+- **Reapply the network isolation rule after any Docker engine restart**, and after anything that
+  recreates the networks. `docker compose stop`/`start` is fine; a Docker Desktop restart or
+  `docker compose down` is not. It is in force right now.
+
+  ```powershell
+  .\scripts\Set-WorkshopNetworkIsolation.ps1
+  .\scripts\Test-WorkshopNetworkIsolation.ps1
+  ```
+
+- **Rebuild the gateway with `--build`** whenever anything under `tools/kusto-readonly-gateway`
+  changes, including after a `git pull`. A plain `docker compose up -d` silently serves the last
+  image built on the host.
+- **Decide on `.show cluster`.** The H3 allowlist blocks it, which is a behaviour change from the
+  pre-hardening gateway. It is not part of the ADX **Add connection** handshake, so connecting works,
+  but a student clicking into cluster-level details gets a `403`. It discloses far less than
+  `.show queries`; allowlisting it is a one-line change if you want it.
+
+### Resolved since this summary was first written
+
+- The **6 `.github/` files** are in place and tracked; the zip step is no longer outstanding. A
+  seventh, `workflows/network-isolation.yml`, was added afterwards. Dependabot has since opened and
+  merged four bumps against them (`actions/checkout` 7.0.1, `actions/setup-node` 7.0.0,
+  `hashicorp/setup-terraform` 4.0.1, and the gateway base image to `node:25.2.1-alpine3.21`), which
+  is the SHA-pinning working as intended. `gateway-tests.yml` was also corrected to read the Node
+  version from the Dockerfile, after CI went green against a Node the container never runs.
+- The **line-ending renormalization** is done. Verified: no file is stored with CRLF in the index,
+  so the one-time `git add --renormalize .` is not outstanding.
+- **`iac-validate.yml`** has now run in CI rather than only being authored.
 
 ### Not started — the evaluation's "Next iteration" (better candidates for an Opus pass)
 
@@ -131,19 +214,19 @@ delivered separately as a zip for manual placement (see "Needs one manual step" 
   risking a red pipeline.
 - **H1c** — the string-smuggling trick is closed via the raw-text deny-scan (fails closed), but
   backslash / `@`-verbatim string handling was **not** added inside the lexer itself.
-- **iac-validate.yml** — authored, but `az bicep` / `terraform` were not available in the sandbox to
-  confirm it runs green against the actual infra.
 - **H7 / H9 / M5 / M6** and the remaining LOW items — untouched; several (H7 public-repo identifiers,
   H9 student-teardown script) need a decision first.
+- **`Test-MetadataConsistency.ps1`** (item 19's regression guard) — not written, because the metadata
+  pass it would guard has not been done.
 
 ---
 
 ## Notes
 
 - **Line endings** were written as **CRLF** to match the Windows tree (so diffs show real content
-  changes, not a line-ending flip), except `.githooks/pre-commit`, written as **LF** to fix L7. After
-  committing `.gitattributes`, a one-time `git add --renormalize .` will apply the intended endings
-  tree-wide.
+  changes, not a line-ending flip), except `.githooks/pre-commit`, written as **LF** to fix L7.
+  `.gitattributes` is committed and the tree is normalized — verified 2026-07-26, zero files stored
+  with CRLF in the index.
 - **PSScriptAnalyzer** reported **312 warnings**, all pre-existing documented debt (Write-Host,
   missing `ShouldProcess` = M5, plaintext-password params = H9/H10, the unapproved verb = L9). The
   lint job surfaces them as annotations but only fails on error severity, of which there are none.
@@ -176,7 +259,10 @@ Hook / docs: `.githooks/pre-commit`, `docs/instructor_answer_key.kql`, `README.m
 
 Governance: `LICENSE` (new), `.gitattributes` (new), `SECURITY.md` (new).
 
-`.github/` (delivered via zip — bridge-protected, not written to disk): `dependabot.yml` (new),
-`workflows/telemetry-safety.yml` (edited), `workflows/gateway-tests.yml` (new),
-`workflows/powershell-lint.yml` (new), `workflows/iac-validate.yml` (new),
+`.github/` (originally delivered via zip — bridge-protected; **now in place and tracked**):
+`dependabot.yml` (new), `workflows/telemetry-safety.yml` (edited), `workflows/gateway-tests.yml`
+(new), `workflows/powershell-lint.yml` (new), `workflows/iac-validate.yml` (new),
 `workflows/package-validation.yml` (new).
+
+Added after this pass: `scripts/Set-WorkshopNetworkIsolation.ps1`,
+`scripts/Test-WorkshopNetworkIsolation.ps1`, `.github/workflows/network-isolation.yml`.
