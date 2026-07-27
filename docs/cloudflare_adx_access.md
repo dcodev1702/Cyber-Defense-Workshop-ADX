@@ -166,7 +166,7 @@ If the ADX **Add connection** dialog shows a failure while the proxy terminal sa
 2. Verify the proxy on the student device:
 
     ```powershell
-    $body = @{ csl = '.show cluster' } | ConvertTo-Json -Compress
+    $body = @{ csl = '.show databases' } | ConvertTo-Json -Compress
     Invoke-WebRequest -UseBasicParsing -Method Post `
        -ContentType 'application/json' `
        -Body $body `
@@ -174,6 +174,13 @@ If the ADX **Add connection** dialog shows a failure while the proxy terminal sa
     ```
 
     This must return HTTP `200`.
+
+    > Use `.show databases`, not `.show cluster`. The read-only gateway refuses
+    > `.show cluster` with `403` **by design** — it is not on the metadata allowlist
+    > and is not part of the Add connection handshake. A `403` here means the probe
+    > was wrong, not the proxy, and chasing it costs a credential rotation you did
+    > not need. (`.show cluster` does answer `200` on the instructor host, because
+    > that path reaches Kustainer directly rather than through the gateway.)
 
 3. Use the URI `http://127.0.0.1:8080`.
 4. Hard-refresh the ADX web UI with `Ctrl+F5`, close the failed dialog, and add the connection again.
@@ -207,12 +214,15 @@ Expected values are HTTP `204`, `AllowedOrigin=https://dataexplorer.azure.com`, 
 With the student proxy running, this should return HTTP `200`:
 
 ```powershell
-$body = @{ csl = '.show cluster' } | ConvertTo-Json -Compress
+$body = @{ csl = '.show databases' } | ConvertTo-Json -Compress
 Invoke-WebRequest -UseBasicParsing -Method Post `
   -ContentType 'application/json' `
   -Body $body `
   -Uri 'http://127.0.0.1:8080/v1/rest/mgmt'
 ```
+
+> `.show databases` is the probe because it is on the gateway's metadata allowlist.
+> `.show cluster` returns `403` through the gateway by design.
 
 The direct public hostname does not accept requests without the shared Service Token. A request without the local proxy should return HTTP `403`.
 

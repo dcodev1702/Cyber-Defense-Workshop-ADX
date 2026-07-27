@@ -148,12 +148,15 @@ If the ADX **Add connection** dialog reports a failure while the proxy is listen
 1. Confirm the student proxy answers locally:
 
    ```powershell
-   $body = @{ csl = '.show cluster' } | ConvertTo-Json -Compress
+   $body = @{ csl = '.show databases' } | ConvertTo-Json -Compress
    Invoke-WebRequest -UseBasicParsing -Method Post `
      -ContentType 'application/json' `
      -Body $body `
      -Uri 'http://127.0.0.1:8080/v1/rest/mgmt'
    ```
+
+   > `.show cluster` is **not** the probe to use here. The gateway refuses it with
+   > `403` by design, which reads as a broken proxy on a perfectly healthy stack.
 
 2. Use `http://127.0.0.1:8080` as the connection URI.
 3. Hard-refresh the ADX web UI with `Ctrl+F5`, then add the connection again.

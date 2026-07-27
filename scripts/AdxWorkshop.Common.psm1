@@ -317,7 +317,19 @@ function Invoke-WorkshopAdxManagementCommand {
         [Parameter(Mandatory)][string]$ClusterUri,
         [Parameter(Mandatory)][string]$DatabaseName,
         [Parameter(Mandatory)][string]$Command,
-        [int]$ServerTimeoutSeconds = 600
+        [int]$ServerTimeoutSeconds = 600,
+
+        # Head-room for TLS, token refresh and response transfer on top of the
+        # server's own budget. The client must always outlast the server, never
+        # the other way round.
+        [int]$ClientTimeoutMarginSeconds = 60,
+
+        # Opt in ONLY for commands that are safe to run twice. Off by default
+        # because this helper also drives `.ingest inline` and `.export async`,
+        # where a retry after the server already committed duplicates data.
+        [switch]$Idempotent,
+
+        [int]$MaximumRetryCount = 3
     )
 
     $token = Get-WorkshopAdxAccessToken
@@ -337,12 +349,49 @@ function Invoke-WorkshopAdxManagementCommand {
         'Content-Type' = 'application/json'
     }
 
-    # servertimeout above is only a server-side hint; it does not bound the HTTP
-    # client, so a hung ADX connection would hang the whole script indefinitely.
-    # -TimeoutSec bounds the client, and the retry rides out transient 429/503s
-    # during ingest instead of failing the entire run on one blip.
-    Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $body -ErrorAction Stop `
-        -TimeoutSec 300 -MaximumRetryCount 3 -RetryIntervalSec 5
+    # servertimeout is only a server-side hint and does not bound the HTTP client,
+    # so the client needs its own limit or a hung connection hangs the whole run.
+    #
+    # It was a flat 300s while callers ask for up to 1800s, so the client gave up
+    # while ADX was still working: a batch between the two aborts here, the server
+    # finishes anyway, and the operator reruns it -- into whatever the first run
+    # already committed.
+    $clientTimeoutSeconds = $ServerTimeoutSeconds + $ClientTimeoutMarginSeconds
+
+    $attempt = 0
+    while ($true) {
+        $attempt++
+        try {
+            return Invoke-RestMethod -Method Post -Uri $uri -Headers $headers -Body $body -ErrorAction Stop `
+                -TimeoutSec $clientTimeoutSeconds
+        }
+        catch {
+            # -MaximumRetryCount used to do this, but it retries on any 4xx/5xx.
+            # A 5xx from a load balancer AFTER an `.ingest inline` committed means
+            # the rows are already in; replaying it silently duplicates the batch
+            # and Initialize-Workshop still reports success. Retry only what is
+            # safe to replay, and only what genuinely means "not processed".
+            $response = $_.Exception.Response
+            $status = if ($response -and $response.StatusCode) { [int]$response.StatusCode } else { 0 }
+
+            $retryable = $Idempotent -and ($status -eq 429 -or $status -eq 503) -and $attempt -le $MaximumRetryCount
+            if (-not $retryable) { throw }
+
+            # Honour Retry-After when ADX sends one; it knows its own throttle window.
+            $delaySeconds = 5 * $attempt
+            try {
+                $retryAfter = $response.Headers.RetryAfter
+                if ($retryAfter) {
+                    if ($retryAfter.Delta) { $delaySeconds = [int]$retryAfter.Delta.TotalSeconds }
+                    elseif ($retryAfter.Date) { $delaySeconds = [Math]::Max(1, [int](($retryAfter.Date - [DateTimeOffset]::UtcNow).TotalSeconds)) }
+                }
+            }
+            catch { }
+
+            Write-Verbose ("ADX returned {0}; retrying idempotent command in {1}s (attempt {2}/{3})." -f $status, $delaySeconds, $attempt, $MaximumRetryCount)
+            Start-Sleep -Seconds $delaySeconds
+        }
+    }
 }
 
 function ConvertFrom-WorkshopAdxResponseRows {

@@ -283,12 +283,16 @@ The checked-in Compose connector uses `tcp://kusto-readonly-gateway:8081` on its
 1. Confirm the student proxy answers a Kusto management query:
 
   ```powershell
-  $body = @{ csl = '.show cluster' } | ConvertTo-Json -Compress
+  $body = @{ csl = '.show databases' } | ConvertTo-Json -Compress
   Invoke-WebRequest -UseBasicParsing -Method Post `
     -ContentType 'application/json' `
     -Body $body `
     -Uri 'http://127.0.0.1:8080/v1/rest/mgmt'
   ```
+
+  > Not `.show cluster`: the read-only gateway refuses it with `403` by design, so
+  > it reports a healthy stack as broken. The direct check earlier in this document
+  > can use `.show cluster` because it reaches Kustainer without passing the gateway.
 
 1. The read-only gateway supports the ADX web UI browser origin, its required `x-ms-*` headers, and browser private-network preflight to the local proxy. If the ADX connection dialog previously failed, hard-refresh the browser with `Ctrl+F5` before retrying the exact URI `http://127.0.0.1:8080`.
 

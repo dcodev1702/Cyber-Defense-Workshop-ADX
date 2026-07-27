@@ -41,14 +41,17 @@ Exit code 0 when the workshop is ready to run, 1 otherwise.
 param(
     [string]$ClusterUri = 'http://127.0.0.1:8080',
     [string]$Database = 'CyberDefendStudentSnapshot',
+
+    # Fallback only. When data/generated is present these are derived from it
+    # instead, because the payload is what Import-GeneratedDataToKustainer.ps1
+    # reconciles against and so is the only figure that can be correct by
+    # definition. A hardcoded total goes stale the moment anyone regenerates --
+    # which the on-site rebuild path does -- and this check then fails on correct
+    # data while telling you to re-import something already loaded.
     [int]$ExpectedTables = 79,
-    # Must equal the NDJSON payload the importer loads, not a remembered figure:
-    #   (Get-ChildItem data/generated/*.json | ForEach-Object {
-    #       [System.Linq.Enumerable]::Count([System.IO.File]::ReadLines($_.FullName)) }
-    #    | Measure-Object -Sum).Sum
-    # Update this whenever the generator's output changes, or the preflight fails
-    # on correct data and sends you to re-import something already loaded.
     [int]$ExpectedRows = 637370,
+
+    [string]$GeneratedDirectory = (Join-Path $PSScriptRoot '..' 'data' 'generated'),
     [string]$GatewayContainer = 'cyber-conf-wiesbaden-kusto-readonly-gateway',
     [string]$KustoContainer = 'cyber-conf-wiesbaden-kusto',
     [switch]$NoRepair
@@ -156,6 +159,27 @@ Report -Name 'gateway policy is live, not a stale build' -Ok ($allowed -eq 200 -
     -Remedy 'docker compose up -d --build kusto-readonly-gateway'
 
 # ---- 4. the data ---------------------------------------------------------------
+
+# Prefer the payload over the pinned constants. data/generated is gitignored and
+# will be absent on a fresh clone, so the constants stay as the fallback -- but
+# whenever the NDJSON is on disk it wins, and a regeneration moves the expected
+# figure with it instead of stranding this check.
+$expectationSource = 'pinned defaults'
+if (Test-Path -LiteralPath $GeneratedDirectory) {
+    $payloadFiles = @(Get-ChildItem -Path $GeneratedDirectory -Filter '*.json' -File -ErrorAction SilentlyContinue)
+    if ($payloadFiles.Count -gt 0) {
+        $payloadRows = 0L
+        foreach ($payloadFile in $payloadFiles) {
+            $payloadRows += [System.Linq.Enumerable]::Count([System.IO.File]::ReadLines($payloadFile.FullName))
+        }
+
+        $ExpectedTables = $payloadFiles.Count
+        $ExpectedRows = $payloadRows
+        $expectationSource = 'data/generated'
+    }
+}
+
+Write-Info -Name 'expected counts derived from' -Detail ('{0}  ({1} tables, {2:N0} rows)' -f $expectationSource, $ExpectedTables, $ExpectedRows)
 
 $tables = 0
 $rows = 0

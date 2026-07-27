@@ -64,7 +64,7 @@ foreach ($schemaFile in $schemaFiles) {
     $tableLiteral = ConvertTo-WorkshopKustoStringLiteral -Value $table
 
     Write-Host "Preparing table $table"
-    $existsResponse = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show tables | where TableName == $tableLiteral | project TableName"
+    $existsResponse = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show tables | where TableName == $tableLiteral | project TableName" -Idempotent
     $exists = @(ConvertFrom-WorkshopAdxResponseRows -Response $existsResponse).Count -gt 0
 
     if ($ForceRecreate -and $exists) {

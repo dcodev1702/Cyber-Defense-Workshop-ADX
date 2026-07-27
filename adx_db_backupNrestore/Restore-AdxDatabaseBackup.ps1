@@ -75,7 +75,7 @@ function Wait-AdxOperationCompleted {
 
     $deadline = (Get-Date).AddMinutes($OperationTimeoutMinutes)
     do {
-        $response = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show operations $OperationId" -ServerTimeoutSeconds 300
+        $response = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show operations $OperationId" -ServerTimeoutSeconds 300 -Idempotent
         $rows = @(ConvertFrom-WorkshopAdxResponseRows -Response $response)
         if ($rows.Count -gt 0) {
             $row = $rows | Select-Object -First 1
@@ -203,4 +203,4 @@ if (-not $SkipData) {
     }
 }
 
-Write-Host "ADX restore/import complete for database $DatabaseName."
+Write-Host "ADX restore/import complete for database $DatabaseName."

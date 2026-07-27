@@ -269,7 +269,7 @@ function Test-WorkshopAdxManagedIdentityPolicyUsage {
         [Parameter(Mandatory)][string[]]$RequiredUsage
     )
 
-    $response = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command $ShowCommand -ServerTimeoutSeconds 300
+    $response = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command $ShowCommand -ServerTimeoutSeconds 300 -Idempotent
     $rows = @(ConvertFrom-WorkshopAdxResponseRows -Response $response)
     foreach ($row in $rows) {
         $policyText = if ($row.PSObject.Properties['Policy']) { [string]$row.Policy } else { '' }
@@ -536,4 +536,4 @@ $result = [ordered]@{
     backupCommand = ".\adx_db_backupNrestore\Backup-AdxDatabase.ps1 -ClusterUri '$ClusterUri' -DatabaseName '$DatabaseName' -StorageAccountName '$StorageAccountName' -FileSystemName '$FileSystemName' -ManagedIdentityObjectId '$identityPrincipalId'"
 }
 
-$result | ConvertTo-Json -Depth 10
+$result | ConvertTo-Json -Depth 10

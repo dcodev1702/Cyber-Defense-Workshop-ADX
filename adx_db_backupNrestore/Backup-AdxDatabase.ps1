@@ -156,7 +156,7 @@ function Wait-AdxOperationCompleted {
 
     $deadline = (Get-Date).AddMinutes($TimeoutMinutes)
     do {
-        $response = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show operations $OperationId" -ServerTimeoutSeconds 300
+        $response = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show operations $OperationId" -ServerTimeoutSeconds 300 -Idempotent
         $rows = @(ConvertFrom-WorkshopAdxResponseRows -Response $response)
         if ($rows.Count -gt 0) {
             $row = $rows | Select-Object -First 1
@@ -191,7 +191,7 @@ function Get-AdxOperationDetailsRows {
         [Parameter(Mandatory)][string]$DatabaseName
     )
 
-    $response = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show operation $OperationId details" -ServerTimeoutSeconds 300
+    $response = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show operation $OperationId details" -ServerTimeoutSeconds 300 -Idempotent
     return @(ConvertFrom-WorkshopAdxResponseRows -Response $response)
 }
 
@@ -251,11 +251,11 @@ $manifest = [ordered]@{
 
 if (-not $SkipSchemaExport) {
     Write-Host "Capturing database schema for $DatabaseName"
-    $schemaCslResponse = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show database $databaseIdentifier schema as csl script" -ServerTimeoutSeconds 600
+    $schemaCslResponse = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show database $databaseIdentifier schema as csl script" -ServerTimeoutSeconds 600 -Idempotent
     $schemaCsl = Get-FirstAdxStringValue -Response $schemaCslResponse
     $schemaCsl | Set-Content -Path $schemaCslPath -Encoding UTF8
 
-    $schemaJsonResponse = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show database $databaseIdentifier schema as json" -ServerTimeoutSeconds 600
+    $schemaJsonResponse = Invoke-WorkshopAdxManagementCommand -ClusterUri $ClusterUri -DatabaseName $DatabaseName -Command ".show database $databaseIdentifier schema as json" -ServerTimeoutSeconds 600 -Idempotent
     $schemaJson = Get-FirstAdxStringValue -Response $schemaJsonResponse
     $schemaJson | Set-Content -Path $schemaJsonPath -Encoding UTF8
 
@@ -330,4 +330,4 @@ $tableIdentifier
 
 Save-BackupManifest -Manifest $manifest -Path $manifestPath
 Write-Host "ADX backup complete. Manifest: $manifestPath"
-$manifest | ConvertTo-Json -Depth 30
+$manifest | ConvertTo-Json -Depth 30
