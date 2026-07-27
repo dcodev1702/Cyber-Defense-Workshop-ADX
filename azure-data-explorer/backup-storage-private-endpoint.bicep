@@ -1,9 +1,19 @@
 targetScope = 'resourceGroup'
 
-param clusterName string = 'usag-wiesbaden-cys26'
-param dfsEndpointName string = 'mpe-adxdibsecadx09da4d6a-dfs'
-param backupStorageResourceId string = '/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/ADX/providers/Microsoft.Storage/storageAccounts/adxdibsecadx09da4d6a'
-param backupStorageRegion string = 'eastus2'
+@description('Name of the student ADX cluster that owns the managed private endpoint.')
+param clusterName string
+
+@description('Name for the managed private endpoint, for example mpe-<storageAccount>-dfs.')
+param dfsEndpointName string
+
+// No default. This previously carried a real subscription id and storage account
+// name, which put tenant identifiers into a tracked template. Pass them at deploy
+// time from workshop.settings.json or a .bicepparam file kept outside the repo.
+@description('Full resource id of the ADLS Gen2 backup storage account.')
+param backupStorageResourceId string
+
+@description('Region of the backup storage account, for example eastus2.')
+param backupStorageRegion string
 
 resource backupStorageDfsPrivateEndpoint 'Microsoft.Kusto/clusters/managedPrivateEndpoints@2024-04-13' = {
   name: '${clusterName}/${dfsEndpointName}'

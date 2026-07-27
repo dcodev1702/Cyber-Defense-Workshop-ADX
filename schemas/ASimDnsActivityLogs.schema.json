@@ -15,7 +15,7 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
     },
     {
       "name": "TimeGenerated",
@@ -195,7 +195,7 @@
       "name": "DnsQuery",
       "type": "string",
       "sourceType": "string",
-      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 90. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977.ods.opinsights.azure.com"
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 90."
     },
     {
       "name": "DnsQueryType",
@@ -873,7 +873,7 @@
       "name": "_ResourceId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1. Most common: /subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/provider..."
+      "description": "Live ASimDnsActivityLogs column. Distinct values observed: 1."
     }
   ],
   "adx": {

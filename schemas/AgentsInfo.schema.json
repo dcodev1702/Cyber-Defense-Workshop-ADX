@@ -20,7 +20,7 @@
       "name": "AgentId",
       "type": "guid",
       "sourceType": "guid",
-      "description": "Live AgentsInfo column. Distinct values observed: 253. Most common: 7b3f16ed-6fa8-4b7b-9675-2a6a8b85d2ff"
+      "description": "Live AgentsInfo column. Distinct values observed: 253."
     },
     {
       "name": "Name",
@@ -116,7 +116,7 @@
       "name": "Owners",
       "type": "dynamic",
       "sourceType": "dynamic",
-      "description": "Live AgentsInfo column. Distinct values observed: 1. Most common: 00000000-0000-0000-0000-000000000000"
+      "description": "Live AgentsInfo column. Distinct values observed: 1."
     },
     {
       "name": "SharedWith",

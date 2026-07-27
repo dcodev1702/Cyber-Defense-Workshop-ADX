@@ -14,7 +14,7 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live SentinelHealth column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live SentinelHealth column. Distinct values observed: 1."
     },
     {
       "name": "TimeGenerated",
@@ -32,7 +32,7 @@
       "name": "SentinelResourceId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live SentinelHealth column. Distinct values observed: 81. Most common: /subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/Sentinel/prov..."
+      "description": "Live SentinelHealth column. Distinct values observed: 81."
     },
     {
       "name": "SentinelResourceName",
@@ -62,7 +62,7 @@
       "name": "WorkspaceId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live SentinelHealth column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live SentinelHealth column. Distinct values observed: 1."
     },
     {
       "name": "SentinelResourceType",
@@ -80,7 +80,7 @@
       "name": "RecordId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live SentinelHealth column. Distinct values observed: 1000. Most common: 12f19839-ef85-423d-b2db-b896ba443af5"
+      "description": "Live SentinelHealth column. Distinct values observed: 1000."
     },
     {
       "name": "ExtendedProperties",

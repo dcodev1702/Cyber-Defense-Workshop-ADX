@@ -62,19 +62,19 @@
       "name": "SubscriptionId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureActivity column. Distinct values observed: 10. Most common: 192ad012-896e-4f14-8525-c37a2a9640f9"
+      "description": "Live AzureActivity column. Distinct values observed: 10."
     },
     {
       "name": "CorrelationId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureActivity column. Distinct values observed: 454. Most common: 29743038-5a6f-4923-9963-b802c4c6fa97"
+      "description": "Live AzureActivity column. Distinct values observed: 454."
     },
     {
       "name": "Caller",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureActivity column. Distinct values observed: 22. Most common: 42067bb9-5746-4542-9ce5-1fa26dca7c84"
+      "description": "Live AzureActivity column. Distinct values observed: 22."
     },
     {
       "name": "CallerIpAddress",
@@ -104,7 +104,7 @@
       "name": "Properties",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureActivity column. Distinct values observed: 172. Most common: {\"eventCategory\":\"Administrative\",\"entity\":\"/subscriptions/192ad012-896e-4f14-85..."
+      "description": "Live AzureActivity column. Distinct values observed: 172."
     },
     {
       "name": "EventSubmissionTimestamp",
@@ -116,7 +116,7 @@
       "name": "Authorization",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureActivity column. Distinct values observed: 69. Most common: {\"scope\":\"/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/fou..."
+      "description": "Live AzureActivity column. Distinct values observed: 69."
     },
     {
       "name": "ResourceId",
@@ -152,13 +152,13 @@
       "name": "EventDataId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureActivity column. Distinct values observed: 1000. Most common: 68fbbb4d-770e-2880-c2f9-e234d61abd9e"
+      "description": "Live AzureActivity column. Distinct values observed: 1000."
     },
     {
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureActivity column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live AzureActivity column. Distinct values observed: 1."
     },
     {
       "name": "TimeGenerated",
@@ -176,7 +176,7 @@
       "name": "Authorization_d",
       "type": "dynamic",
       "sourceType": "dynamic",
-      "description": "Live AzureActivity column. Distinct values observed: 68. Most common: {\"scope\":\"/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/fou..."
+      "description": "Live AzureActivity column. Distinct values observed: 68."
     },
     {
       "name": "Claims",
@@ -194,13 +194,13 @@
       "name": "Properties_d",
       "type": "dynamic",
       "sourceType": "dynamic",
-      "description": "Live AzureActivity column. Distinct values observed: 998. Most common: {\"eventCategory\":\"Administrative\",\"entity\":\"/subscriptions/192ad012-896e-4f14-85..."
+      "description": "Live AzureActivity column. Distinct values observed: 998."
     },
     {
       "name": "Hierarchy",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureActivity column. Distinct values observed: 12. Most common: b22dee98-83da-4207-b9ab-5ba931866f44/DibSecurity/CISO/Security/192ad012-896e-4f1..."
+      "description": "Live AzureActivity column. Distinct values observed: 12."
     },
     {
       "name": "Type",
@@ -212,7 +212,7 @@
       "name": "_ResourceId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureActivity column. Distinct values observed: 56. Most common: /subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/foundry/provi..."
+      "description": "Live AzureActivity column. Distinct values observed: 56."
     }
   ],
   "adx": {

@@ -43,7 +43,11 @@ param(
     [int]$LookbackDays = 90,
     [int]$TopValueCount = 30,
     [int]$SampleRowCap = 2000,
-    [string]$WorkspaceId = '7e9298ab-22e6-4a82-a53e-c5ed7faee977',
+    # No default. This used to carry the live DIBSecCom workspace id, which meant a
+    # real tenant identifier sat in a tracked script -- exactly the thing this
+    # repository's own field-profile gate exists to prevent, in the one file type
+    # that gate never scanned. Supply it per deployment; -LocalOnly does not need it.
+    [string]$WorkspaceId,
     [string]$ManifestPath = (Join-Path $PSScriptRoot '..' 'metadata' 'tables.manifest.json'),
     [string]$SampleDirectory = (Join-Path $PSScriptRoot '..' 'sample'),
     [string]$ProfileDirectory = (Join-Path $PSScriptRoot '..' 'metadata' 'field-profiles'),
@@ -54,6 +58,14 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+# Resolve the workspace from configuration rather than a literal default. Only
+# required when this run actually queries Log Analytics: -LocalOnly reads the
+# cached captures and needs no workspace at all.
+. (Join-Path $PSScriptRoot 'WorkshopSettings.ps1')
+if ([string]::IsNullOrWhiteSpace($WorkspaceId) -and -not $LocalOnly) {
+    $WorkspaceId = Get-WorkshopSetting -Name 'logAnalyticsWorkspaceId' -EnvironmentVariable 'CDW_LOG_ANALYTICS_WORKSPACE_ID' -Required
+}
 
 # Sample files whose name does not derive from the table name.
 $SampleAlias = @{

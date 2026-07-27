@@ -15,13 +15,13 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live BehaviorAnalytics column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 1."
     },
     {
       "name": "SourceRecordId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live BehaviorAnalytics column. Distinct values observed: 999. Most common: a88dc2d8-7f72-11f1-8065-7c1e52f5e947"
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 999."
     },
     {
       "name": "TimeGenerated",
@@ -147,7 +147,7 @@
       "name": "UsersInsights",
       "type": "dynamic",
       "sourceType": "dynamic",
-      "description": "Live BehaviorAnalytics column. Distinct values observed: 50. Most common: {\"UserType\":\"AADID\",\"UserId\":\"cb35c2b4-d46f-4693-9732-e513751bed8c\",\"AccountObje..."
+      "description": "Live BehaviorAnalytics column. Distinct values observed: 50."
     },
     {
       "name": "DevicesInsights",

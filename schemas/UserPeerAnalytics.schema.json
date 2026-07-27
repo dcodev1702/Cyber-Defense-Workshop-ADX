@@ -15,7 +15,7 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live UserPeerAnalytics column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 1."
     },
     {
       "name": "TimeGenerated",
@@ -27,13 +27,13 @@
       "name": "AADTenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live UserPeerAnalytics column. Distinct values observed: 1. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 1."
     },
     {
       "name": "UserId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live UserPeerAnalytics column. Distinct values observed: 33. Most common: ad4ea7e4-a256-4217-9671-133c24e80ca7"
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 33."
     },
     {
       "name": "UserPrincipalName",
@@ -51,7 +51,7 @@
       "name": "PeerUserId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live UserPeerAnalytics column. Distinct values observed: 35. Most common: ad4ea7e4-a256-4217-9671-133c24e80ca7"
+      "description": "Live UserPeerAnalytics column. Distinct values observed: 35."
     },
     {
       "name": "PeerUserPrincipalName",

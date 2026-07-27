@@ -15,7 +15,7 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live StorageBlobLogs column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1."
     },
     {
       "name": "TimeGenerated",
@@ -93,7 +93,7 @@
       "name": "CorrelationId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live StorageBlobLogs column. Distinct values observed: 1000. Most common: a6d52ad7-401e-00fb-6fd3-1b58b9000000"
+      "description": "Live StorageBlobLogs column. Distinct values observed: 1000."
     },
     {
       "name": "SchemaVersion",
@@ -111,25 +111,25 @@
       "name": "AuthenticationHash",
       "type": "string",
       "sourceType": "string",
-      "description": "Live StorageBlobLogs column. Distinct values observed: 99. Most common: system-1(EA8459F2DE77470F885D27CD1D0C0DF0E44B135C35E7F2FE7C38D5B31DFEF6B5)"
+      "description": "Live StorageBlobLogs column. Distinct values observed: 99."
     },
     {
       "name": "RequesterObjectId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live StorageBlobLogs column. Distinct values observed: 6. Most common: e9a17b6f-74e3-44f4-ae3e-14dd48d5c251"
+      "description": "Live StorageBlobLogs column. Distinct values observed: 6."
     },
     {
       "name": "RequesterTenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live StorageBlobLogs column. Distinct values observed: 2. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+      "description": "Live StorageBlobLogs column. Distinct values observed: 2."
     },
     {
       "name": "RequesterAppId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live StorageBlobLogs column. Distinct values observed: 6. Most common: 59bffc04-c429-4580-9833-8ce88c088877"
+      "description": "Live StorageBlobLogs column. Distinct values observed: 6."
     },
     {
       "name": "RequesterAudience",
@@ -141,7 +141,7 @@
       "name": "RequesterTokenIssuer",
       "type": "string",
       "sourceType": "string",
-      "description": "Live StorageBlobLogs column. Distinct values observed: 2. Most common: https://sts.windows.net/b22dee98-83da-4207-b9ab-5ba931866f44/"
+      "description": "Live StorageBlobLogs column. Distinct values observed: 2."
     },
     {
       "name": "RequesterUpn",
@@ -321,7 +321,7 @@
       "name": "_ResourceId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live StorageBlobLogs column. Distinct values observed: 3. Most common: /subscriptions/08fdc492-f5aa-4601-84ae-03a37449c2ba/resourcegroups/zolab-worker-..."
+      "description": "Live StorageBlobLogs column. Distinct values observed: 3."
     }
   ],
   "adx": {

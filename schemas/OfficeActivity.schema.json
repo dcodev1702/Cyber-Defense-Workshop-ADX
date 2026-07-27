@@ -14,7 +14,7 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live OfficeActivity column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
     },
     {
       "name": "Application",
@@ -62,13 +62,13 @@
       "name": "OrganizationId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live OfficeActivity column. Distinct values observed: 1. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
     },
     {
       "name": "OrganizationId_",
       "type": "string",
       "sourceType": "string",
-      "description": "Live OfficeActivity column. Distinct values observed: 1. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+      "description": "Live OfficeActivity column. Distinct values observed: 1."
     },
     {
       "name": "UserType",
@@ -284,7 +284,7 @@
       "name": "OrganizationName",
       "type": "string",
       "sourceType": "string",
-      "description": "Live OfficeActivity column. Distinct values observed: 2. Most common: MngEnvMCAP343999.onmicrosoft.com"
+      "description": "Live OfficeActivity column. Distinct values observed: 2."
     },
     {
       "name": "Logon_Type",
@@ -578,13 +578,13 @@
       "name": "OfficeId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live OfficeActivity column. Distinct values observed: 985. Most common: ab5e2045-0a18-4fdd-b4cb-08deac0fe1da"
+      "description": "Live OfficeActivity column. Distinct values observed: 985."
     },
     {
       "name": "SourceRecordId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live OfficeActivity column. Distinct values observed: 985. Most common: ab5e2045-0a18-4fdd-b4cb-08deac0fe1da"
+      "description": "Live OfficeActivity column. Distinct values observed: 985."
     },
     {
       "name": "AzureActiveDirectory_EventType",
@@ -638,7 +638,7 @@
       "name": "Members",
       "type": "dynamic",
       "sourceType": "dynamic",
-      "description": "Live OfficeActivity column. Distinct values observed: 3. Most common: [{\"OrganizationId\":\"b22dee98-83da-4207-b9ab-5ba931866f44\",\"DisplayName\":\"Finn, R..."
+      "description": "Live OfficeActivity column. Distinct values observed: 3."
     },
     {
       "name": "TeamName",

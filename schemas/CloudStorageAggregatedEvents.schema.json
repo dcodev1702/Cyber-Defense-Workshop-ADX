@@ -32,7 +32,7 @@
       "name": "SubscriptionId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 5. Most common: 192ad012-896e-4f14-8525-c37a2a9640f9"
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 5."
     },
     {
       "name": "ResourceGroup",
@@ -92,19 +92,19 @@
       "name": "AccountObjectId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 14. Most common: 664372c9-3b78-4c38-9b0f-4a4238c1c4b9"
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 14."
     },
     {
       "name": "AccountTenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 2. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 2."
     },
     {
       "name": "AccountApplicationId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 15. Most common: a15dcae4-a235-4eda-afe0-72c6dd2e1764"
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 15."
     },
     {
       "name": "AccountUpn",
@@ -176,7 +176,7 @@
       "name": "AzureResourceId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 14. Most common: /subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/foundry/provi..."
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 14."
     },
     {
       "name": "Location",
@@ -194,7 +194,7 @@
       "name": "ReportId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 996. Most common: d0f80506-3847-5f2a-8fa9-b572b3f3ba4d"
+      "description": "Live CloudStorageAggregatedEvents column. Distinct values observed: 996."
     },
     {
       "name": "ActionType",

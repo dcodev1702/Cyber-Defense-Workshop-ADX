@@ -14,7 +14,7 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live SecurityAlert column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live SecurityAlert column. Distinct values observed: 1."
     },
     {
       "name": "TimeGenerated",
@@ -62,13 +62,13 @@
       "name": "VendorOriginalId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live SecurityAlert column. Distinct values observed: 595. Most common: 07ea1516-612d-4b0d-ac44-7300f232c207_1"
+      "description": "Live SecurityAlert column. Distinct values observed: 595."
     },
     {
       "name": "SystemAlertId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live SecurityAlert column. Distinct values observed: 595. Most common: dd732c2f-fd2e-01d4-71e3-767af34a7d95"
+      "description": "Live SecurityAlert column. Distinct values observed: 595."
     },
     {
       "name": "ResourceId",

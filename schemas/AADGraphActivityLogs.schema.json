@@ -15,7 +15,7 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1."
     },
     {
       "name": "TimeGenerated",
@@ -39,13 +39,13 @@
       "name": "RequestId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AADGraphActivityLogs column. Distinct values observed: 852. Most common: 59b0fede-2342-4e64-9f0e-6f6c7df94e95"
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 852."
     },
     {
       "name": "AADTenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 1."
     },
     {
       "name": "OperationName",
@@ -105,7 +105,7 @@
       "name": "SignInActivityId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AADGraphActivityLogs column. Distinct values observed: 584. Most common: c1332fb7-8c67-4b89-9c56-5cb72bd24300"
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 584."
     },
     {
       "name": "Roles",
@@ -129,7 +129,7 @@
       "name": "AppId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AADGraphActivityLogs column. Distinct values observed: 18. Most common: 74658136-14ec-4630-ad9b-26e160ff0fc6"
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 18."
     },
     {
       "name": "UserId",
@@ -183,7 +183,7 @@
       "name": "RequestUri",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AADGraphActivityLogs column. Distinct values observed: 74. Most common: /v2/b22dee98-83da-4207-b9ab-5ba931866f44/policies"
+      "description": "Live AADGraphActivityLogs column. Distinct values observed: 74."
     },
     {
       "name": "SessionId",

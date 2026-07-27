@@ -14,7 +14,7 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1."
     },
     {
       "name": "TimeGenerated",
@@ -26,13 +26,13 @@
       "name": "WorkspaceId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1."
     },
     {
       "name": "AzureTenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+      "description": "Live ThreatIntelIndicators column. Distinct values observed: 1."
     },
     {
       "name": "Id",

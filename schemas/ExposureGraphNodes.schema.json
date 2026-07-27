@@ -14,7 +14,7 @@
       "name": "NodeId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live ExposureGraphNodes column. Distinct values observed: 1000. Most common: 82a6bd24e8e44dfd9c3eeff0e844296f"
+      "description": "Live ExposureGraphNodes column. Distinct values observed: 1000."
     },
     {
       "name": "NodeLabel",
@@ -44,7 +44,7 @@
       "name": "EntityIds",
       "type": "dynamic",
       "sourceType": "dynamic",
-      "description": "Live ExposureGraphNodes column. Distinct values observed: 973. Most common: [\"{\\\"type\\\":\\\"AzureResourceId\\\",\\\"id\\\":\\\"/subscriptions/08fdc492-f5aa-4601-84ae-..."
+      "description": "Live ExposureGraphNodes column. Distinct values observed: 973."
     },
     {
       "name": "TenantId",

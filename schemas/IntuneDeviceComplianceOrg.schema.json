@@ -14,7 +14,7 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 1."
     },
     {
       "name": "TimeGenerated",
@@ -44,7 +44,7 @@
       "name": "UPN",
       "type": "string",
       "sourceType": "string",
-      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 3. Most common: lireland@DibSecurity.onmicrosoft.com"
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 3."
     },
     {
       "name": "ComplianceState",
@@ -92,7 +92,7 @@
       "name": "UserId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 3. Most common: 1821f16b-41ee-4008-914d-12334122753d"
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 3."
     },
     {
       "name": "IMEI",
@@ -134,7 +134,7 @@
       "name": "BatchId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 181. Most common: de4c2deb-bd6f-4556-ae86-639bd644edc3"
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 181."
     },
     {
       "name": "InGracePeriodUntil",
@@ -152,19 +152,19 @@
       "name": "UserEmail",
       "type": "string",
       "sourceType": "string",
-      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 3. Most common: lireland@DibSecurity.onmicrosoft.com"
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 3."
     },
     {
       "name": "IntuneAccountId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 1. Most common: ae45df63-b097-434d-9668-f85de1cb2fcb"
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 1."
     },
     {
       "name": "AADTenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 2. Most common: b22dee98-83da-4207-b9ab-5ba931866f44"
+      "description": "Live IntuneDeviceComplianceOrg column. Distinct values observed: 2."
     },
     {
       "name": "Stats",

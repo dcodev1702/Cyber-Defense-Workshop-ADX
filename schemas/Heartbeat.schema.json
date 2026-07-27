@@ -13,7 +13,7 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live Heartbeat column. Distinct values observed: 1."
     },
     {
       "name": "SourceSystem",
@@ -31,19 +31,19 @@
       "name": "MG",
       "type": "string",
       "sourceType": "string",
-      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: 00000000-0000-0000-0000-000000000001"
+      "description": "Live Heartbeat column. Distinct values observed: 1."
     },
     {
       "name": "ManagementGroupName",
       "type": "string",
       "sourceType": "string",
-      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: AOI-7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live Heartbeat column. Distinct values observed: 1."
     },
     {
       "name": "SourceComputerId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live Heartbeat column. Distinct values observed: 2. Most common: 2e50966b-0596-4dc9-b372-fff763fe75da"
+      "description": "Live Heartbeat column. Distinct values observed: 2."
     },
     {
       "name": "ComputerIP",
@@ -127,7 +127,7 @@
       "name": "SubscriptionId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live Heartbeat column. Distinct values observed: 1. Most common: 2161bce7-2c89-4434-8a8b-52a16239af29"
+      "description": "Live Heartbeat column. Distinct values observed: 1."
     },
     {
       "name": "ResourceGroup",
@@ -151,7 +151,7 @@
       "name": "ResourceId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live Heartbeat column. Distinct values observed: 2. Most common: /subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourceGroups/adds/provider..."
+      "description": "Live Heartbeat column. Distinct values observed: 2."
     },
     {
       "name": "ResourceType",
@@ -175,7 +175,7 @@
       "name": "VMUUID",
       "type": "string",
       "sourceType": "string",
-      "description": "Live Heartbeat column. Distinct values observed: 2. Most common: 2e50966b-0596-4dc9-b372-fff763fe75db"
+      "description": "Live Heartbeat column. Distinct values observed: 2."
     },
     {
       "name": "ComputerPrivateIPs",
@@ -193,7 +193,7 @@
       "name": "_ResourceId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live Heartbeat column. Distinct values observed: 2. Most common: /subscriptions/2161bce7-2c89-4434-8a8b-52a16239af29/resourcegroups/adds/provider..."
+      "description": "Live Heartbeat column. Distinct values observed: 2."
     }
   ],
   "adx": {

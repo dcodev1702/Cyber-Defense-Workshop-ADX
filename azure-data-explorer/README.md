@@ -4,8 +4,8 @@
 
 | Setting | Value |
 | --- | --- |
-| Tenant | DIB Security Commercial (`b22dee98-83da-4207-b9ab-5ba931866f44`) |
-| Subscription | Student (`408bb797-a8dd-42f8-9b4a-66c71f7fa199`) |
+| Tenant | DIB Security Commercial (`<tenant-id>`) |
+| Subscription | Student (`<student-subscription-id>`) |
 | Resource group | `USAG-WSBDN-CYS-26` |
 | Cluster name | `usag-wiesbaden-cys26` |
 | Resource type | `Microsoft.Kusto/clusters` |
@@ -16,8 +16,8 @@
 
 ## Access URLs
 
-- [Azure portal cluster overview](https://portal.azure.com/#@b22dee98-83da-4207-b9ab-5ba931866f44/resource/subscriptions/408bb797-a8dd-42f8-9b4a-66c71f7fa199/resourceGroups/USAG-WSBDN-CYS-26/providers/Microsoft.Kusto/clusters/usag-wiesbaden-cys26/overview)
-- [Azure portal resource group](https://portal.azure.com/#@b22dee98-83da-4207-b9ab-5ba931866f44/resource/subscriptions/408bb797-a8dd-42f8-9b4a-66c71f7fa199/resourceGroups/USAG-WSBDN-CYS-26/overview)
+- [Azure portal cluster overview](https://portal.azure.com/#@<tenant-id>/resource/subscriptions/<student-subscription-id>/resourceGroups/USAG-WSBDN-CYS-26/providers/Microsoft.Kusto/clusters/usag-wiesbaden-cys26/overview)
+- [Azure portal resource group](https://portal.azure.com/#@<tenant-id>/resource/subscriptions/<student-subscription-id>/resourceGroups/USAG-WSBDN-CYS-26/overview)
 - [Azure Data Explorer web UI](https://dataexplorer.azure.com/clusters/https%3A%2F%2Fusag-wiesbaden-cys26.northeurope.kusto.windows.net)
 - Query endpoint: `https://usag-wiesbaden-cys26.northeurope.kusto.windows.net`
 - Ingestion endpoint: `https://ingest-usag-wiesbaden-cys26.northeurope.kusto.windows.net`
@@ -39,8 +39,8 @@ Sign in with the DIB Security identity before opening the portal or Data Explore
 Authenticate to the DIB Security tenant and select the Student subscription:
 
 ```powershell
-Connect-AzAccount -Tenant 'b22dee98-83da-4207-b9ab-5ba931866f44' -Subscription '408bb797-a8dd-42f8-9b4a-66c71f7fa199'
-Set-AzContext -Subscription '408bb797-a8dd-42f8-9b4a-66c71f7fa199'
+Connect-AzAccount -Tenant '<tenant-id>' -Subscription '<student-subscription-id>'
+Set-AzContext -Subscription '<student-subscription-id>'
 ```
 
 Confirm that the Kusto resource provider is registered, then preview and deploy the template from the repository root:
@@ -67,17 +67,17 @@ Do not redeploy or delete the same cluster name while its provisioning state is 
 
 | Setting | Value |
 | --- | --- |
-| Source cluster and database | `dibsecadx/cyber-defend-q0xxzc` in the Security subscription |
+| Source cluster and database | `<source-cluster>/<source-database>` in the Security subscription |
 | Destination cluster and database | `usag-wiesbaden-cys26/cyber-defend-usagwsbdn-cys26` in Student |
 | Source inventory at copy preparation | 79 tables from Microsoft Learn-derived schema JSON |
 | Transfer method | Source schema script, UAMI-backed Parquet export, and table-by-table restore through temporary external tables |
-| Backup identity | `uami-adx-backup` (`8b8fadd4-9d17-4471-b0c7-139625bfef12`) |
-| Backup storage | `adxdibsecadx09da4d6a` / `adx-backups` |
+| Backup identity | `uami-adx-backup` (`<backup-identity-object-id>`) |
+| Backup storage | `<backup-storage-account>` / `adx-backups` |
 
 The restore uses the current DIB Security user, which is an `AllDatabasesAdmin` on both clusters, to run the management commands. It does not use a shared key, SAS token, or user-level storage access. The shared `uami-adx-backup` identity has `Storage Blob Data Contributor` on the backup account and is used by both ADX clusters for storage access.
 
-- [Destination database in the Azure portal](https://portal.azure.com/#@b22dee98-83da-4207-b9ab-5ba931866f44/resource/subscriptions/408bb797-a8dd-42f8-9b4a-66c71f7fa199/resourceGroups/USAG-WSBDN-CYS-26/providers/Microsoft.Kusto/clusters/usag-wiesbaden-cys26/databases/cyber-defend-usagwsbdn-cys26/overview)
-- [Source database in the Azure portal](https://portal.azure.com/#@b22dee98-83da-4207-b9ab-5ba931866f44/resource/subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourceGroups/ADX/providers/Microsoft.Kusto/clusters/dibsecadx/databases/cyber-defend-q0xxzc/overview)
+- [Destination database in the Azure portal](https://portal.azure.com/#@<tenant-id>/resource/subscriptions/<student-subscription-id>/resourceGroups/USAG-WSBDN-CYS-26/providers/Microsoft.Kusto/clusters/usag-wiesbaden-cys26/databases/cyber-defend-usagwsbdn-cys26/overview)
+- [Source database in the Azure portal](https://portal.azure.com/#@<tenant-id>/resource/subscriptions/<source-subscription-id>/resourceGroups/ADX/providers/Microsoft.Kusto/clusters/<source-cluster>/databases/<source-database>/overview)
 
 [backup-storage-private-endpoint.bicep](backup-storage-private-endpoint.bicep) manages the Student cluster's DFS managed private endpoint to the locked-down ADLS Gen2 backup account. The restore reads Parquet through that DFS endpoint; the storage-side private endpoint request must be approved before a restore can access the backup files.
 

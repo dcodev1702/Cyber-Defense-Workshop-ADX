@@ -14,7 +14,7 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureDiagnostics column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live AzureDiagnostics column. Distinct values observed: 1."
     },
     {
       "name": "TimeGenerated",
@@ -26,7 +26,7 @@
       "name": "ResourceId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureDiagnostics column. Distinct values observed: 228. Most common: /SUBSCRIPTIONS/192AD012-896E-4F14-8525-C37A2A9640F9/RESOURCEGROUPS/PLAYBOOK/PROV..."
+      "description": "Live AzureDiagnostics column. Distinct values observed: 228."
     },
     {
       "name": "Category",
@@ -44,7 +44,7 @@
       "name": "SubscriptionId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureDiagnostics column. Distinct values observed: 3. Most common: 192ad012-896e-4f14-8525-c37a2a9640f9"
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3."
     },
     {
       "name": "ResourceProvider",
@@ -434,7 +434,7 @@
       "name": "workflowId_s",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureDiagnostics column. Distinct values observed: 3. Most common: /SUBSCRIPTIONS/192AD012-896E-4F14-8525-C37A2A9640F9/RESOURCEGROUPS/PLAYBOOK/PROV..."
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3."
     },
     {
       "name": "resource_location_s",
@@ -446,7 +446,7 @@
       "name": "resource_workflowId_g",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureDiagnostics column. Distinct values observed: 3. Most common: 66ffa43b-28f1-4050-89d8-1128642ad627"
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3."
     },
     {
       "name": "resource_resourceGroupName_s",
@@ -458,7 +458,7 @@
       "name": "resource_subscriptionId_g",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureDiagnostics column. Distinct values observed: 3. Most common: 192ad012-896e-4f14-8525-c37a2a9640f9"
+      "description": "Live AzureDiagnostics column. Distinct values observed: 3."
     },
     {
       "name": "resource_runId_s",
@@ -1028,7 +1028,7 @@
       "name": "_ResourceId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AzureDiagnostics column. Distinct values observed: 55. Most common: /subscriptions/192ad012-896e-4f14-8525-c37a2a9640f9/resourcegroups/playbook/prov..."
+      "description": "Live AzureDiagnostics column. Distinct values observed: 55."
     }
   ],
   "adx": {

@@ -46,6 +46,11 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+# One definition of "this looks like live tenant data", shared with the field
+# profile gate. Without it this script embeds observed values into every schema
+# description, which is how tenant identifiers reached 17 files under schemas/.
+. (Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts' 'WorkshopSensitiveContent.ps1')
+
 if ($PSVersionTable.PSVersion.Major -lt 7) {
     throw "PowerShell 7 or later is required. Detected $($PSVersionTable.PSVersion)."
 }
@@ -331,6 +336,18 @@ foreach ($table in $TableName) {
             # error, so the count must be checked before indexing topValues.
             $topValues = @($observed.topValues)
             $sample = if ($topValues.Count -gt 0) { [string]$topValues[0].value } else { '' }
+
+            # The sample is a real value out of live tenant telemetry, and this line
+            # is how the tenant GUID, the Security subscription and the DIBSecCom
+            # workspace id reached 17 tracked files under schemas/. The cardinality is
+            # the useful part of the description; the literal value is not worth the
+            # exposure, so anything matching a tenant-data indicator is dropped.
+            $indicator = Test-WorkshopSensitiveContent -Value $sample
+            if ($indicator) {
+                Write-Verbose ("Suppressed {0}.{1} sample ({2}) from the schema description." -f $table, $liveColumn.ColumnName, $indicator)
+                $sample = ''
+            }
+
             if (-not [string]::IsNullOrWhiteSpace($sample)) {
                 if ($sample.Length -gt 80) { $sample = $sample.Substring(0, 80) + '...' }
                 $description = "Live $table column. Distinct values observed: $($observed.distinctCount). Most common: $sample"

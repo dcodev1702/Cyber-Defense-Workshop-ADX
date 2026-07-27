@@ -21,6 +21,12 @@ data/backups/
 data/local-export/
 data/local-kusto/
 
+# Deployment identifiers: tenant, subscription, workspace, storage. These are
+# facts about one deployment, not source, and writing them as literal defaults in
+# tracked scripts is what put a live tenant into this repository. Copy
+# workshop.settings.example.json (which is tracked and holds only placeholders).
+workshop.settings.json
+
 # Generated telemetry. Reproduced deterministically by
 # scripts/New-SyntheticTelemetry.ps1 from schemas/ and metadata/field-profiles/,
 # so the ~900 MB of NDJSON does not belong in the repository. data/scenario-summary.json

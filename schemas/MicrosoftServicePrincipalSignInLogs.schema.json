@@ -15,19 +15,19 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 1."
     },
     {
       "name": "AppId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 56. Most common: 8edd93e1-2103-40b4-bd70-6e34e586362d"
+      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 56."
     },
     {
       "name": "AppOwnerTenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 1. Most common: f8cdef31-a31e-4b4a-93e4-5f571e91255a"
+      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 1."
     },
     {
       "name": "Category",
@@ -39,7 +39,7 @@
       "name": "CorrelationId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 954. Most common: 09375fcd-c2f8-45c5-b831-3247d6786ee8"
+      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 954."
     },
     {
       "name": "CreatedDateTime",
@@ -81,19 +81,19 @@
       "name": "ResourceIdentity",
       "type": "string",
       "sourceType": "string",
-      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 25. Most common: 797f4846-ba00-4fd7-ba43-dac1f8f63013"
+      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 25."
     },
     {
       "name": "ResourceOwnerTenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 1. Most common: f8cdef31-a31e-4b4a-93e4-5f571e91255a"
+      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 1."
     },
     {
       "name": "ResourceServicePrincipalId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 25. Most common: 13cd3126-3903-4d0a-b700-c7d9959bed10"
+      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 25."
     },
     {
       "name": "ResultSignature",
@@ -117,7 +117,7 @@
       "name": "ServicePrincipalId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 53. Most common: 420795a4-f02d-47de-886f-6c25fd7e1a88"
+      "description": "Live MicrosoftServicePrincipalSignInLogs column. Distinct values observed: 53."
     },
     {
       "name": "ServicePrincipalName",

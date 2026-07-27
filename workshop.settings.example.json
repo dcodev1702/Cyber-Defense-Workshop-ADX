@@ -1,0 +1,39 @@
+{
+  "_comment": [
+    "Copy this file to workshop.settings.json and fill in your own deployment values.",
+    "workshop.settings.json is gitignored. Never commit real tenant, subscription,",
+    "workspace or storage identifiers -- that is what put a live tenant into this",
+    "repository once already. Every value below is a placeholder, not a real id.",
+    "Each key can also be supplied as the listed environment variable instead."
+  ],
+
+  "tenantId": "00000000-0000-0000-0000-000000000000",
+  "_tenantId_env": "CDW_TENANT_ID",
+
+  "studentSubscriptionId": "00000000-0000-0000-0000-000000000000",
+  "_studentSubscriptionId_env": "CDW_STUDENT_SUBSCRIPTION_ID",
+
+  "sourceSubscriptionId": "00000000-0000-0000-0000-000000000000",
+  "_sourceSubscriptionId_env": "CDW_SOURCE_SUBSCRIPTION_ID",
+
+  "logAnalyticsWorkspaceId": "00000000-0000-0000-0000-000000000000",
+  "_logAnalyticsWorkspaceId_env": "CDW_LOG_ANALYTICS_WORKSPACE_ID",
+
+  "backupIdentityObjectId": "00000000-0000-0000-0000-000000000000",
+  "_backupIdentityObjectId_env": "CDW_BACKUP_IDENTITY_OBJECT_ID",
+
+  "backupStorageAccountName": "examplebackupstorage",
+  "_backupStorageAccountName_env": "CDW_BACKUP_STORAGE_ACCOUNT",
+
+  "backupContainerName": "adx-backups",
+
+  "sourceClusterUri": "https://example-source.eastus2.kusto.windows.net",
+  "_sourceClusterUri_env": "CDW_SOURCE_CLUSTER_URI",
+
+  "sourceDatabaseName": "cyber-defend-example",
+
+  "destinationClusterUri": "https://example-destination.northeurope.kusto.windows.net",
+  "_destinationClusterUri_env": "CDW_DESTINATION_CLUSTER_URI",
+
+  "destinationDatabaseName": "cyber-defend-example"
+}

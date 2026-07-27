@@ -15,13 +15,13 @@
       "name": "TenantId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: 7e9298ab-22e6-4a82-a53e-c5ed7faee977"
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1."
     },
     {
       "name": "Id",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: 1821f16b-41ee-4008-914d-12334122753d"
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1."
     },
     {
       "name": "IsDeleted",
@@ -69,7 +69,7 @@
       "name": "UserPrincipalName",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: lireland@DibSecurity.onmicrosoft.com"
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1."
     },
     {
       "name": "TimeGenerated",
@@ -87,7 +87,7 @@
       "name": "CorrelationId",
       "type": "string",
       "sourceType": "string",
-      "description": "Live AADRiskyUsers column. Distinct values observed: 1. Most common: 1821f16b-41ee-4008-914d-12334122753d"
+      "description": "Live AADRiskyUsers column. Distinct values observed: 1."
     },
     {
       "name": "SourceSystem",

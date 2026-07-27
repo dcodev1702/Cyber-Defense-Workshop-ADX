@@ -8,14 +8,21 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$studentSubscriptionId = '408bb797-a8dd-42f8-9b4a-66c71f7fa199'
-$sourceClusterUri = 'https://dibsecadx.eastus2.kusto.windows.net'
-$sourceDatabaseName = 'cyber-defend-q0xxzc'
-$destinationClusterUri = 'https://usag-wiesbaden-cys26.northeurope.kusto.windows.net'
-$destinationDatabaseName = 'cyber-defend-usagwsbdn-cys26'
-$backupStorageAccountName = 'adxdibsecadx09da4d6a'
-$backupContainerName = 'adx-backups'
-$backupIdentityObjectId = '8b8fadd4-9d17-4471-b0c7-139625bfef12'
+# These are deployment facts, not source. They were literals here, which put a
+# live subscription, a managed-identity object id and a storage account name into
+# a tracked file. Configure them in workshop.settings.json (gitignored) or the
+# matching environment variables; there is deliberately no fallback value.
+. (Join-Path (Split-Path -Parent $PSScriptRoot) 'scripts' 'WorkshopSettings.ps1')
+$settingsRoot = Split-Path -Parent $PSScriptRoot
+
+$studentSubscriptionId = Get-WorkshopSetting -Name 'studentSubscriptionId' -EnvironmentVariable 'CDW_STUDENT_SUBSCRIPTION_ID' -Root $settingsRoot -Required
+$sourceClusterUri = Get-WorkshopSetting -Name 'sourceClusterUri' -EnvironmentVariable 'CDW_SOURCE_CLUSTER_URI' -Root $settingsRoot -Required
+$sourceDatabaseName = Get-WorkshopSetting -Name 'sourceDatabaseName' -Root $settingsRoot -Required
+$destinationClusterUri = Get-WorkshopSetting -Name 'destinationClusterUri' -EnvironmentVariable 'CDW_DESTINATION_CLUSTER_URI' -Root $settingsRoot -Required
+$destinationDatabaseName = Get-WorkshopSetting -Name 'destinationDatabaseName' -Root $settingsRoot -Required
+$backupStorageAccountName = Get-WorkshopSetting -Name 'backupStorageAccountName' -EnvironmentVariable 'CDW_BACKUP_STORAGE_ACCOUNT' -Root $settingsRoot -Required
+$backupContainerName = Get-WorkshopSetting -Name 'backupContainerName' -Root $settingsRoot -Required
+$backupIdentityObjectId = Get-WorkshopSetting -Name 'backupIdentityObjectId' -EnvironmentVariable 'CDW_BACKUP_IDENTITY_OBJECT_ID' -Root $settingsRoot -Required
 $backupBlobPrefix = "https://$backupStorageAccountName.blob.core.windows.net/"
 $backupDfsPrefix = "https://$backupStorageAccountName.dfs.core.windows.net/"
 
