@@ -1,10 +1,10 @@
 {
   "scenarioName": "MIDNIGHT BLIZZARD hybrid identity credential access",
-  "startTime": "2026-07-27T06:24:30.6266226Z",
+  "startTime": "2026-07-27T07:48:50.6872949Z",
   "telemetryWindow": {
-    "endTime": "2026-07-27T07:54:30.6266226Z",
+    "endTime": "2026-07-27T09:18:50.6872949Z",
     "lookbackDays": 7,
-    "earliestNormalTime": "2026-07-20T07:54:30.6266226Z"
+    "earliestNormalTime": "2026-07-20T09:18:50.6872949Z"
   },
   "tenantDomain": "usag-cyber.local",
   "adDomain": "USAG-CYBER",
