@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### 2026-07-27 — the go/no-go check was failing on correct data
+
+- Fixed `Test-WorkshopReadiness.ps1` asserting **623,832** rows when the dataset has held **637,370** since the parallel-generation work landed the day before. That change verified its own result end to end and is recorded in this file as "637,370 rows across 79 tables"; the preflight's constant was simply never carried along with it. The one command meant to answer *is the workshop ready* has been answering **NOT READY** on a perfectly good database, and the remedy it printed — re-run the importer — would have changed nothing, because the database already equals the payload exactly. A gate that cries wolf and then prescribes a no-op is worse than no gate, since the habit it teaches is to ignore it.
+- Settled which number was authoritative by counting the payload rather than trusting either side or the commit history: `data/generated` holds 79 NDJSON files totalling 637,370 lines, matching `metadata/tables.manifest.json` table for table with nothing extra and nothing missing. That is the figure `Import-GeneratedDataToKustainer.ps1` reconciles against, so it is the only one that can be correct by definition. Recorded the command in a comment beside the constant, because the failure mode here was a remembered number drifting from a measurable one.
+- Verified red then green: before the change the preflight exited 1 with `FAIL database holds the workshop data / 79 tables, 637,370 rows` as its only failure; after, all checks pass and it exits 0.
+
 ### 2026-07-26 — 46 minutes to 14, and the generator is finally reproducible
 
 - Cut the full regeneration from **46.2 minutes to 14.4** (3.2x) by running the 79 independent tables across 8 worker processes. 8 is the measured optimum, not a guess: scaling was 4.7x at 8 workers and only 5.2x at 16, because SMT adds little to CPU-bound PowerShell and every worker re-pays the ~2 minute setup phase, so 16 workers finish a full run *slower* than 8. Memory never binds — a worker peaks at 522 MB.

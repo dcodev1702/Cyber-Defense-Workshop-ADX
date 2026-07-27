@@ -42,7 +42,13 @@ param(
     [string]$ClusterUri = 'http://127.0.0.1:8080',
     [string]$Database = 'CyberDefendStudentSnapshot',
     [int]$ExpectedTables = 79,
-    [int]$ExpectedRows = 623832,
+    # Must equal the NDJSON payload the importer loads, not a remembered figure:
+    #   (Get-ChildItem data/generated/*.json | ForEach-Object {
+    #       [System.Linq.Enumerable]::Count([System.IO.File]::ReadLines($_.FullName)) }
+    #    | Measure-Object -Sum).Sum
+    # Update this whenever the generator's output changes, or the preflight fails
+    # on correct data and sends you to re-import something already loaded.
+    [int]$ExpectedRows = 637370,
     [string]$GatewayContainer = 'cyber-conf-wiesbaden-kusto-readonly-gateway',
     [string]$KustoContainer = 'cyber-conf-wiesbaden-kusto',
     [switch]$NoRepair
