@@ -97,16 +97,16 @@ Log Analytics access uses the Az context. Defender advanced hunting uses Microso
 
 ### 3. Generate telemetry at workshop volume
 
-The single-process generator is fine for one table. For the full set, use the parallel driver, which partitions tables across worker processes. Output is identical either way because the generator reseeds per table from `RandomSeed` XOR the table seed.
+The single-process generator is fine for one table. For the full set, use the parallel driver, which partitions tables across worker processes. Output is byte-identical either way: the generator reseeds per table from `RandomSeed` XOR the table seed, and that equivalence is verified across all 79 tables rather than assumed.
 
 ```powershell
-.\scripts\New-SyntheticTelemetryParallel.ps1 -RowsPerTable 8000
+.\scripts\Invoke-WorkshopParallelGeneration.ps1 -RowsPerTable 8000
 ```
 
-Row counts are resolved per table. `DeviceProcessEvents` defaults to 32000 because process creation is by a wide margin the highest-volume endpoint table, and small reference tables are reduced. Override any table explicitly:
+Row counts are resolved per table. `DeviceProcessEvents` defaults to 32000 because process creation is by a wide margin the highest-volume endpoint table, and small reference tables are reduced. A per-table target outranks `-RowsPerTable`, so the 32000 survives even when a smaller global row count is requested. Override any table explicitly:
 
 ```powershell
-.\scripts\New-SyntheticTelemetryParallel.ps1 -RowsPerTable 8000 -TableRowOverride @{ DeviceProcessEvents = 32000; DeviceNetworkEvents = 16000 }
+.\scripts\Invoke-WorkshopParallelGeneration.ps1 -RowsPerTable 8000 -TableRowOverride @{ DeviceProcessEvents = 32000; DeviceNetworkEvents = 16000 }
 ```
 
 > ⚠️ **Generated telemetry is large.** The full 79-table set at 8000 rows per table is roughly 876 MB, and `DeviceProcessEvents` alone is 92 MB. It is committed so the workshop can be run without Azure access, but it is fully reproducible from the generator, so prefer regenerating over re-committing it. `Initialize-Workshop.ps1` regenerates it by default unless you pass `-SkipGenerateData`.

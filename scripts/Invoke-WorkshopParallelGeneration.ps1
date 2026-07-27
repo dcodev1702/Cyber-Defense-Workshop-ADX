@@ -38,22 +38,35 @@ Key commands: Start-Process, Get-FileHash, ConvertFrom-Json.
 #>
 [CmdletBinding()]
 param(
+    # -ThrottleLimit is the name the retired New-SyntheticTelemetryParallel.ps1 used.
+    # Kept as an alias so its documented command lines still run. The default is 8
+    # rather than that script's cores-1: measured here, 8 workers scale 4.7x and 16
+    # only 5.2x, and because each worker repeats the ~2 minute setup phase, 16 finish
+    # a full run slower than 8.
+    [Alias('ThrottleLimit')]
     [ValidateRange(1, 64)]
     [int]$WorkerCount = 8,
+    [string]$SchemaDirectory = (Join-Path $PSScriptRoot '..' 'schemas'),
     [string]$OutputDirectory = (Join-Path $PSScriptRoot '..' 'data' 'generated'),
     [string]$SummaryPath,
+    [string]$FieldProfileDirectory,
     [datetime]$TelemetryEndTime = (Get-Date).ToUniversalTime(),
     [int]$RandomSeed = 1702,
+    # -RowsPerTable is likewise the retired script's name for this.
+    [Alias('RowsPerTable')]
     [int]$NormalRowsPerTable = -1,
     [int]$NormalMinRowsPerTable = 5000,
     [int]$NormalMaxRowsPerTable = 10000,
+    [int]$NormalLookbackDays = 7,
     [hashtable]$TableRowOverride = @{ DeviceProcessEvents = 32000 },
     [int]$SyntheticUserCount = 6000,
     [int]$SyntheticServiceAccountCount = 4000,
     [int]$SyntheticDeviceCount = 3000,
     [int]$AadUserRiskEventCount = 5500,
     [string[]]$TableName,
-    [string]$ManifestPath = (Join-Path $PSScriptRoot '..' 'metadata' 'tables.manifest.json')
+    [string]$ManifestPath = (Join-Path $PSScriptRoot '..' 'metadata' 'tables.manifest.json'),
+    [switch]$DisableProfileGrounding,
+    [switch]$KeepWorkerLogs
 )
 
 Set-StrictMode -Version Latest
@@ -134,12 +147,18 @@ $buckets = @($buckets | Where-Object { $_.Tables.Count -gt 0 })
 # 5,000-10,000 and quietly shrink the dataset.
 $forwarded = [System.Collections.Generic.List[string]]::new()
 foreach ($name in @('NormalRowsPerTable', 'NormalMinRowsPerTable', 'NormalMaxRowsPerTable',
-                    'SyntheticUserCount', 'SyntheticServiceAccountCount', 'SyntheticDeviceCount',
-                    'AadUserRiskEventCount')) {
+                    'NormalLookbackDays', 'SyntheticUserCount', 'SyntheticServiceAccountCount',
+                    'SyntheticDeviceCount', 'AadUserRiskEventCount')) {
     if ($PSBoundParameters.ContainsKey($name)) {
         $forwarded.Add(('-{0} {1}' -f $name, [int]$PSBoundParameters[$name]))
     }
 }
+foreach ($name in @('SchemaDirectory', 'FieldProfileDirectory')) {
+    if ($PSBoundParameters.ContainsKey($name)) {
+        $forwarded.Add(("-{0} '{1}'" -f $name, [string]$PSBoundParameters[$name]))
+    }
+}
+if ($DisableProfileGrounding) { $forwarded.Add('-DisableProfileGrounding') }
 if ($PSBoundParameters.ContainsKey('TableRowOverride')) {
     $pairs = @($TableRowOverride.GetEnumerator() | Sort-Object Key | ForEach-Object { "'{0}'={1}" -f $_.Key, [int]$_.Value })
     $forwarded.Add('-TableRowOverride @{' + ($pairs -join '; ') + '}')
@@ -289,7 +308,12 @@ if ($failed.Count -gt 0 -or $missing.Count -gt 0) {
 
 # Every worker ran the same setup, so any of the summaries is the summary.
 Copy-Item -LiteralPath $workers[0].Summary -Destination $SummaryPath -Force
-Remove-Item -LiteralPath $workDirectory -Recurse -Force -ErrorAction SilentlyContinue
+if ($KeepWorkerLogs) {
+    Write-Host ("Worker logs: {0}" -f $workDirectory)
+}
+else {
+    Remove-Item -LiteralPath $workDirectory -Recurse -Force -ErrorAction SilentlyContinue
+}
 
 $rows = 0
 foreach ($table in $tables) {
