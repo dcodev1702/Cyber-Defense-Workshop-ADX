@@ -256,17 +256,17 @@ Write-Host ''
 $activity = 'Generating workshop telemetry'
 $totalTables = $tables.Count
 $lastDone = -1
+$progressStyle = Get-WorkshopProgressStyle
 
 while ($true) {
     $live = @($workers | Where-Object { -not $_.Process.HasExited })
     $done = Get-WorkshopCompletedTableCount -Workers $workers
 
-    # Redrawn on every tick rather than only when a table finishes. Tables take about
-    # eleven seconds each here, so refreshing on completion alone leaves the elapsed
-    # clock apparently frozen and gives no sign the run is alive. A redirected stream
-    # still gets one line per completed table, because 500 ms updates would bury the
-    # log.
-    if (-not [Console]::IsOutputRedirected -or $done -ne $lastDone) {
+    # Inline redraw refreshes on every tick, so the elapsed clock keeps moving between
+    # completions -- tables take about eleven seconds each here and a completion-driven
+    # clock looks frozen. Line mode refreshes only when a table finishes, because one
+    # line every 500 ms over a fourteen minute run is 1,700 lines of noise.
+    if ($progressStyle -eq 'Inline' -or $done -ne $lastDone) {
         Write-WorkshopProgressBar -Activity $activity -Completed $done -Total $totalTables `
             -Elapsed $stopwatch.Elapsed -Detail ("{0} worker(s) busy" -f $live.Count)
     }

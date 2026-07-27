@@ -23,6 +23,22 @@ Dependencies: PowerShell 7.
 Key commands: Write-Progress, Write-Host.
 #>
 
+function Get-WorkshopProgressStyle {
+    <#
+        'Inline' redraws one line in place, 'Lines' writes one line per update.
+
+        Auto picks Inline at a prompt and Lines when redirected, but the guess is wrong
+        in a captured console: redraw looks live to a person watching and collapses to
+        a single final line in a transcript, so a run whose output is being recorded
+        shows no progress at all. WORKSHOP_PROGRESS_STYLE forces the choice.
+    #>
+    $requested = [string]$env:WORKSHOP_PROGRESS_STYLE
+    if ($requested -ieq 'Lines') { return 'Lines' }
+    if ($requested -ieq 'Inline') { return 'Inline' }
+    if ([Console]::IsOutputRedirected) { return 'Lines' }
+    return 'Inline'
+}
+
 function Write-WorkshopProgressBar {
     param(
         [Parameter(Mandatory)][string]$Activity,
@@ -51,8 +67,17 @@ function Write-WorkshopProgressBar {
     $line = "  [{0}] {1,4}/{2}  {3,4:P0}   elapsed {4:mm\:ss}   eta {5:mm\:ss}{6}" -f `
         $bar, $Completed, $Total, $fraction, $Elapsed, $eta, $suffix
 
-    if ([Console]::IsOutputRedirected) { Write-Host $line }
-    else { Write-Host ("`r" + $line + '   ') -NoNewline }
+    if ((Get-WorkshopProgressStyle) -eq 'Lines') {
+        Write-Host $line
+    }
+    else {
+        # Padded to the console width before the carriage return. Without this a
+        # shorter line leaves the tail of a longer predecessor on screen -- a table
+        # name of 12 characters following one of 30 left the last 18 behind.
+        $width = try { [Console]::BufferWidth - 1 } catch { 120 }
+        if ($width -lt $line.Length) { $width = $line.Length }
+        Write-Host ("`r" + $line.PadRight($width)) -NoNewline
+    }
 
     Write-Progress -Activity $Activity `
         -Status ("{0} of {1}" -f $Completed, $Total) `
@@ -65,6 +90,6 @@ function Complete-WorkshopProgressBar {
 
     # The in-place line has no newline of its own, so one is owed before anything
     # else prints.
-    if (-not [Console]::IsOutputRedirected) { Write-Host '' }
+    if ((Get-WorkshopProgressStyle) -eq 'Inline') { Write-Host '' }
     Write-Progress -Activity $Activity -Completed
 }
