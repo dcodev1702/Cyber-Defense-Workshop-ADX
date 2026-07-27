@@ -68,10 +68,22 @@ if ([string]::IsNullOrWhiteSpace($WorkspaceId) -and -not $LocalOnly) {
 }
 
 # Sample files whose name does not derive from the table name.
+#
+# The two -GeneratedExport entries were called "-RealTelemetry" until 2026-07-27,
+# which is a lie: both are exports of this generator's own output, not tenant
+# captures. OfficeActivity-GeneratedExport.csv carries the literal
+# `$RestApiTenantId$` placeholder and the generator's hardcoded 45.23.0.0 block;
+# the AADSpnSignInEventsBeta one carries application ids recomputable from
+# $servicePrincipalNames. A leak scan read the old names at face value and
+# reported 25,000 identifiers as tenant data that were nothing of the kind.
+# Note this makes their profiles circular -- the generator grounded on statistics
+# taken from the generator. That is a separate problem and is not fixed here.
 $SampleAlias = @{
-    'AADUserRiskEvents' = 'AADRiskUserEvents.csv'
-    'DeviceFileEvents'  = 'New query (7).csv'
-    'DeviceLogonEvents' = 'New query (8).csv'
+    'AADUserRiskEvents'      = 'AADRiskUserEvents.csv'
+    'DeviceFileEvents'       = 'New query (7).csv'
+    'DeviceLogonEvents'      = 'New query (8).csv'
+    'OfficeActivity'         = 'OfficeActivity-GeneratedExport.csv'
+    'AADSpnSignInEventsBeta' = 'AADSpnSignInEventsBeta-GeneratedExport.csv'
 }
 
 # Columns that carry identity, host, or location data from the live tenant. Their

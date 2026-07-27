@@ -104,7 +104,10 @@ try {
 
     # Microsoft's documented example domains. contoso.onmicrosoft.com is what the
     # student instructions are supposed to say, so flagging it is a false positive.
-    $exampleTenantPattern = '(?i)^(contoso|fabrikam|adventureworks|northwind|example|tailwind|tailspin|woodgrove)$'
+    # usag-wiesbaden-cysm27 is the workshop's own fictional tenant: it is what
+    # ConvertTo-WorkshopSafeCapturedValue rewrites real tenant names to, so it
+    # appears in the generator source and must not be treated as live tenant data.
+    $exampleTenantPattern = '(?i)^(usag-wiesbaden-cysm27|contoso|fabrikam|adventureworks|northwind|example|tailwind|tailspin|woodgrove)$'
     $onmicrosoftPattern = '(?i)([a-z0-9-]+)\.onmicrosoft\.com'
 
     $baseline = @{}

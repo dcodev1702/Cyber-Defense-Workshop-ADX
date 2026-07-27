@@ -1361,11 +1361,11 @@ function Import-WorkshopTvmSoftwareCatalog {
                 }
 
                 [pscustomobject]@{
-                    Name = $name
-                    Vendor = if ([string]::IsNullOrWhiteSpace([string]$row.Vendor)) { 'Ubuntu' } else { [string]$row.Vendor }
-                    Version = if ([string]::IsNullOrWhiteSpace([string]$row.'Installed Version')) { '1.0.0' } else { [string]$row.'Installed Version' }
+                    Name = ConvertTo-WorkshopSafeCapturedValue -Value $name
+                    Vendor = if ([string]::IsNullOrWhiteSpace([string]$row.Vendor)) { 'Ubuntu' } else { ConvertTo-WorkshopSafeCapturedValue -Value ([string]$row.Vendor) }
+                    Version = if ([string]::IsNullOrWhiteSpace([string]$row.'Installed Version')) { '1.0.0' } else { ConvertTo-WorkshopSafeCapturedValue -Value ([string]$row.'Installed Version') }
                     CveId = ''
-                    Package = $package
+                    Package = ConvertTo-WorkshopSafeCapturedValue -Value $package
                     Risk = [Math]::Min(95, [Math]::Max(5, 10 + ($weaknesses * 2)))
                 }
             }
@@ -1540,8 +1540,8 @@ function ConvertTo-WorkshopSafeCapturedValue {
     cleaned.
 
     Any embedded GUID is replaced with a deterministic synthetic one, and any real
-    tenant's onmicrosoft.com domain is replaced with Microsoft's documented example
-    domain, so the traffic keeps its shape (students still see Log Analytics
+    tenant's onmicrosoft.com domain is replaced with the workshop's own fictional
+    tenant, so the traffic keeps its shape (students still see Log Analytics
     ingestion and Autodiscover traffic, and the exercise still works) while the
     identifiers stop being real. Deterministic because the generator's
     reproducibility guarantee depends on it: the same input must always produce the
@@ -1563,7 +1563,12 @@ function ConvertTo-WorkshopSafeCapturedValue {
 
     # Microsoft's documented example tenants are safe to emit verbatim and are what
     # the student instructions already use; anything else is a real tenant name.
-    $exampleTenants = @('contoso', 'fabrikam', 'adventureworks', 'northwind', 'example', 'tailwind', 'tailspin', 'woodgrove')
+    # `usag-wiesbaden-cysm27` is this workshop's own fictional tenant and is the
+    # value real tenants are rewritten to, so it has to be on the list as well or
+    # the rewrite would not survive being applied twice.
+    # Keep in step with $exampleTenantPattern in Test-TrackedContentSafety.ps1,
+    # which decides whether the same domain may appear in a tracked file.
+    $exampleTenants = @('usag-wiesbaden-cysm27', 'contoso', 'fabrikam', 'adventureworks', 'northwind', 'example', 'tailwind', 'tailspin', 'woodgrove')
 
     return [regex]::Replace(
         $safe,
@@ -1573,7 +1578,7 @@ function ConvertTo-WorkshopSafeCapturedValue {
             if ($exampleTenants -contains $match.Groups[1].Value.ToLowerInvariant()) {
                 return $match.Value
             }
-            return 'contoso.onmicrosoft.com'
+            return 'usag-wiesbaden-cysm27.onmicrosoft.com'
         })
 }
 
@@ -6166,7 +6171,12 @@ function New-NormalTelemetryValues {
             $values.Claims_d = $claimsBlock
             $values.Properties = $propertiesBlock
             $values.Properties_d = $propertiesBlock
-            $values.Hierarchy = '{0}/DibSecurity' -f $tenantId
+            # Hierarchy is "<root management group>/<management group>", and the root
+            # management group id is the tenant id. The second segment used to carry the
+            # real tenant's display name, which put that name on every AzureActivity row
+            # a student queries. It now carries the workshop's own fictional tenant so it
+            # agrees with the domain emitted by ConvertTo-WorkshopSafeCapturedValue.
+            $values.Hierarchy = '{0}/usag-wiesbaden-cysm27' -f $tenantId
             $values._ResourceId = $activityScope
             $values.Type = 'AzureActivity'
         }

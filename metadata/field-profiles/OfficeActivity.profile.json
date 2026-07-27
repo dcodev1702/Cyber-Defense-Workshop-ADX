@@ -1,7 +1,7 @@
 {
   "tableName": "OfficeActivity",
   "sources": [
-    "sample:OfficeActivity-RealTelemetry.csv"
+    "sample:OfficeActivity-GeneratedExport.csv"
   ],
   "sampledRows": 8000.0,
   "columnCount": 152,

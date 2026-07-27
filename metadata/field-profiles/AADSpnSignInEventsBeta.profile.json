@@ -1,7 +1,7 @@
 {
   "tableName": "AADSpnSignInEventsBeta",
   "sources": [
-    "sample:AADSpnSignInEventsBeta-RealTelemetry.csv"
+    "sample:AADSpnSignInEventsBeta-GeneratedExport.csv"
   ],
   "sampledRows": 7767.0,
   "columnCount": 28,
