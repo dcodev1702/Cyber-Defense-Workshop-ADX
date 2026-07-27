@@ -1522,6 +1522,61 @@ function Get-WorkshopIpAddressType {
     return 'Public'
 }
 
+function ConvertTo-WorkshopSafeCapturedValue {
+    <#
+    .SYNOPSIS
+    Neutralises tenant identifiers in a value copied verbatim from a raw capture.
+
+    .DESCRIPTION
+    Import-WorkshopDeviceNetworkEventProfileCatalog reads sample/*.csv, which is
+    RAW TENANT TELEMETRY, and its RemoteUrl / RemoteIP land directly in generated
+    rows. That path goes around the field-profile pipeline, so none of the
+    suppression in Export-WorkshopTelemetryProfiles.ps1 and none of the checking in
+    Test-FieldProfileSafety.ps1 applies to it.
+
+    It is how `<workspace-id>.ods.opinsights.azure.com` -- the live DIBSecCom
+    workspace id -- reached student-visible DeviceNetworkEvents rows and survived a
+    full regeneration on 2026-07-27, after the schema descriptions had already been
+    cleaned.
+
+    Any embedded GUID is replaced with a deterministic synthetic one, and any real
+    tenant's onmicrosoft.com domain is replaced with Microsoft's documented example
+    domain, so the traffic keeps its shape (students still see Log Analytics
+    ingestion and Autodiscover traffic, and the exercise still works) while the
+    identifiers stop being real. Deterministic because the generator's
+    reproducibility guarantee depends on it: the same input must always produce the
+    same output, in every worker process.
+
+    The domain rule was added after the GUID rule: the first regeneration cleared
+    `<workspace-id>.ods.opinsights.azure.com` and left
+    `autodiscover.<tenant>.onmicrosoft.com` sitting in the same column, because a
+    tenant name is not a GUID. Both classes travel this one path.
+    #>
+    param([AllowEmptyString()][string]$Value = '')
+
+    if ([string]::IsNullOrWhiteSpace($Value)) { return '' }
+
+    $safe = [regex]::Replace(
+        $Value,
+        '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}',
+        { param($match) New-StableGuid -Seed ('captured-identifier|' + $match.Value.ToLowerInvariant()) })
+
+    # Microsoft's documented example tenants are safe to emit verbatim and are what
+    # the student instructions already use; anything else is a real tenant name.
+    $exampleTenants = @('contoso', 'fabrikam', 'adventureworks', 'northwind', 'example', 'tailwind', 'tailspin', 'woodgrove')
+
+    return [regex]::Replace(
+        $safe,
+        '(?i)([a-z0-9][a-z0-9-]*)\.onmicrosoft\.com',
+        {
+            param($match)
+            if ($exampleTenants -contains $match.Groups[1].Value.ToLowerInvariant()) {
+                return $match.Value
+            }
+            return 'contoso.onmicrosoft.com'
+        })
+}
+
 function Import-WorkshopDeviceNetworkEventProfileCatalog {
     param([Parameter(Mandatory)][string]$Path)
 
@@ -1538,7 +1593,9 @@ function Import-WorkshopDeviceNetworkEventProfileCatalog {
     $seen = [System.Collections.Generic.HashSet[string]]::new([StringComparer]::OrdinalIgnoreCase)
     foreach ($row in $rows) {
         $remoteIP = ([string]$row.RemoteIP).Trim()
-        $remoteUrl = ([string]$row.RemoteUrl).Trim()
+        # Sanitise before the value goes anywhere: this catalog is copied verbatim
+        # into generated rows and never passes through the field-profile pipeline.
+        $remoteUrl = ConvertTo-WorkshopSafeCapturedValue -Value (([string]$row.RemoteUrl).Trim())
         [int]$remotePort = 0
         if (-not [int]::TryParse(([string]$row.RemotePort), [ref]$remotePort)) {
             $remotePort = 443
@@ -1667,7 +1724,9 @@ function Import-WorkshopDeviceInfoProfileCatalog {
     $profiles = foreach ($row in (Import-Csv -Path $Path)) {
         $profile = [ordered]@{}
         foreach ($column in $profileColumns) {
-            $profile[$column] = Get-WorkshopPropertyText -InputObject $row -Name $column
+            # Same raw-capture path as the network catalog above: these values are
+            # copied verbatim out of sample/ and never see the profile pipeline.
+            $profile[$column] = ConvertTo-WorkshopSafeCapturedValue -Value (Get-WorkshopPropertyText -InputObject $row -Name $column)
         }
 
         if ([string]::IsNullOrWhiteSpace($profile.OSPlatform) -and [string]::IsNullOrWhiteSpace($profile.DeviceCategory) -and [string]::IsNullOrWhiteSpace($profile.OnboardingStatus)) {
