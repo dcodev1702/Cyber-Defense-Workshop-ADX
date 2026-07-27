@@ -1,16 +1,17 @@
 {
   "tableName": "DeviceTvmInfoGathering",
   "sources": [
-    "sample:DeviceTvmInfoGathering-RealTelemetry.csv"
+    "sample:DeviceTvmInfoGathering-RealTelemetry.csv",
+    "XDR"
   ],
-  "sampledRows": 24.0,
+  "sampledRows": 48.0,
   "columnCount": 10,
   "emptyInProd": [
     "MachineGroup",
-    "TenantId",
-    "SourceSystem"
+    "SourceSystem",
+    "TenantId"
   ],
-  "generatedUtc": "2026-07-26T01:31:29.6997788Z",
+  "generatedUtc": "2026-07-26T23:18:08.6348804Z",
   "columns": {
     "Type": {
       "fillRate": 1.0,
@@ -24,22 +25,6 @@
       "pattern": null,
       "minLength": 22.0,
       "maxLength": 22.0
-    },
-    "DeviceId": {
-      "fillRate": 1.0,
-      "distinctCount": 24,
-      "topValues": [],
-      "pattern": "sha1",
-      "sensitive": true,
-      "minLength": 40.0,
-      "maxLength": 40.0
-    },
-    "MachineGroup": {
-      "fillRate": 0.0,
-      "distinctCount": 0,
-      "topValues": [],
-      "pattern": null,
-      "alwaysEmpty": true
     },
     "OSPlatform": {
       "fillRate": 1.0,
@@ -79,10 +64,10 @@
       "distinctCount": 24,
       "topValues": [],
       "pattern": "datetime",
-      "minLength": 20.0,
-      "maxLength": 21.0
+      "minLength": 19.0,
+      "maxLength": 19.0
     },
-    "TenantId": {
+    "MachineGroup": {
       "fillRate": 0.0,
       "distinctCount": 0,
       "topValues": [],
@@ -94,8 +79,40 @@
       "distinctCount": 1,
       "topValues": [],
       "pattern": "datetime",
-      "minLength": 21.0,
-      "maxLength": 21.0
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 36,
+      "topValues": [],
+      "pattern": "json",
+      "sensitive": true,
+      "minLength": 727.0,
+      "maxLength": 2483.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "TenantId": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "DeviceId": {
+      "fillRate": 1.0,
+      "distinctCount": 24,
+      "topValues": [],
+      "pattern": "sha1",
+      "sensitive": true,
+      "minLength": 40.0,
+      "maxLength": 40.0
     },
     "DeviceName": {
       "fillRate": 0.9167,
@@ -105,26 +122,6 @@
       "sensitive": true,
       "minLength": 5.0,
       "maxLength": 63.0
-    },
-    "AdditionalFields": {
-      "fillRate": 1.0,
-      "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "System.Collections.Hashtable",
-          "weight": 1.0
-        }
-      ],
-      "pattern": null,
-      "minLength": 28.0,
-      "maxLength": 28.0
-    },
-    "SourceSystem": {
-      "fillRate": 0.0,
-      "distinctCount": 0,
-      "topValues": [],
-      "pattern": null,
-      "alwaysEmpty": true
     }
   }
 }

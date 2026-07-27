@@ -1,634 +1,24 @@
 {
   "tableName": "CloudStorageAggregatedEvents",
   "sources": [
-    "sample:CloudStorageAggregatedEvents-RealTelemetry.csv"
+    "sample:CloudStorageAggregatedEvents-RealTelemetry.csv",
+    "XDR"
   ],
-  "sampledRows": 1577.0,
+  "sampledRows": 3152.0,
   "columnCount": 37,
   "emptyInProd": [
-    "SourceSystem",
-    "TenantId"
+    "Md5Hashes",
+    "TenantId",
+    "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:33:35.8077850Z",
+  "generatedUtc": "2026-07-26T23:18:40.5366912Z",
   "columns": {
-    "ReportId": {
-      "fillRate": 1.0,
-      "distinctCount": 1567,
-      "topValues": [],
-      "pattern": "guid",
-      "minLength": 36.0,
-      "maxLength": 36.0
-    },
-    "SuccessfulReadOperations": {
-      "fillRate": 0.9531,
-      "distinctCount": 22,
-      "topValues": [
-        {
-          "value": "0",
-          "weight": 0.88822
-        },
-        {
-          "value": "5",
-          "weight": 0.07319
-        },
-        {
-          "value": "1",
-          "weight": 0.01597
-        },
-        {
-          "value": "2",
-          "weight": 0.00865
-        },
-        {
-          "value": "4",
-          "weight": 0.00133
-        },
-        {
-          "value": "3",
-          "weight": 0.00133
-        },
-        {
-          "value": "104",
-          "weight": 0.00133
-        },
-        {
-          "value": "112",
-          "weight": 0.00067
-        },
-        {
-          "value": "19",
-          "weight": 0.00067
-        },
-        {
-          "value": "11",
-          "weight": 0.00067
-        },
-        {
-          "value": "22",
-          "weight": 0.00067
-        },
-        {
-          "value": "94",
-          "weight": 0.00067
-        },
-        {
-          "value": "10",
-          "weight": 0.00067
-        },
-        {
-          "value": "7",
-          "weight": 0.00067
-        },
-        {
-          "value": "82",
-          "weight": 0.00067
-        },
-        {
-          "value": "83",
-          "weight": 0.00067
-        },
-        {
-          "value": "84",
-          "weight": 0.00067
-        },
-        {
-          "value": "85",
-          "weight": 0.00067
-        },
-        {
-          "value": "88",
-          "weight": 0.00067
-        },
-        {
-          "value": "90",
-          "weight": 0.00067
-        },
-        {
-          "value": "110",
-          "weight": 0.00067
-        },
-        {
-          "value": "96",
-          "weight": 0.00067
-        }
-      ],
-      "pattern": null,
-      "minLength": 1.0,
-      "maxLength": 3.0
-    },
-    "OperationsCount": {
-      "fillRate": 1.0,
-      "distinctCount": 22,
-      "topValues": [
-        {
-          "value": "1",
-          "weight": 0.42613
-        },
-        {
-          "value": "2",
-          "weight": 0.37223
-        },
-        {
-          "value": "6",
-          "weight": 0.0799
-        },
-        {
-          "value": "5",
-          "weight": 0.07039
-        },
-        {
-          "value": "3",
-          "weight": 0.03614
-        },
-        {
-          "value": "4",
-          "weight": 0.0038
-        },
-        {
-          "value": "37",
-          "weight": 0.00127
-        },
-        {
-          "value": "104",
-          "weight": 0.00127
-        },
-        {
-          "value": "19",
-          "weight": 0.00063
-        },
-        {
-          "value": "112",
-          "weight": 0.00063
-        },
-        {
-          "value": "110",
-          "weight": 0.00063
-        },
-        {
-          "value": "94",
-          "weight": 0.00063
-        },
-        {
-          "value": "11",
-          "weight": 0.00063
-        },
-        {
-          "value": "7",
-          "weight": 0.00063
-        },
-        {
-          "value": "82",
-          "weight": 0.00063
-        },
-        {
-          "value": "83",
-          "weight": 0.00063
-        },
-        {
-          "value": "84",
-          "weight": 0.00063
-        },
-        {
-          "value": "85",
-          "weight": 0.00063
-        },
-        {
-          "value": "88",
-          "weight": 0.00063
-        },
-        {
-          "value": "90",
-          "weight": 0.00063
-        },
-        {
-          "value": "13",
-          "weight": 0.00063
-        },
-        {
-          "value": "96",
-          "weight": 0.00063
-        }
-      ],
-      "pattern": null,
-      "minLength": 1.0,
-      "maxLength": 3.0
-    },
-    "SuccessfulOperationsCount": {
-      "fillRate": 1.0,
-      "distinctCount": 22,
-      "topValues": [
-        {
-          "value": "0",
-          "weight": 0.79011
-        },
-        {
-          "value": "1",
-          "weight": 0.08751
-        },
-        {
-          "value": "5",
-          "weight": 0.06975
-        },
-        {
-          "value": "2",
-          "weight": 0.03805
-        },
-        {
-          "value": "4",
-          "weight": 0.0019
-        },
-        {
-          "value": "3",
-          "weight": 0.00127
-        },
-        {
-          "value": "37",
-          "weight": 0.00127
-        },
-        {
-          "value": "104",
-          "weight": 0.00127
-        },
-        {
-          "value": "19",
-          "weight": 0.00063
-        },
-        {
-          "value": "112",
-          "weight": 0.00063
-        },
-        {
-          "value": "110",
-          "weight": 0.00063
-        },
-        {
-          "value": "94",
-          "weight": 0.00063
-        },
-        {
-          "value": "11",
-          "weight": 0.00063
-        },
-        {
-          "value": "7",
-          "weight": 0.00063
-        },
-        {
-          "value": "82",
-          "weight": 0.00063
-        },
-        {
-          "value": "83",
-          "weight": 0.00063
-        },
-        {
-          "value": "84",
-          "weight": 0.00063
-        },
-        {
-          "value": "85",
-          "weight": 0.00063
-        },
-        {
-          "value": "88",
-          "weight": 0.00063
-        },
-        {
-          "value": "90",
-          "weight": 0.00063
-        },
-        {
-          "value": "13",
-          "weight": 0.00063
-        },
-        {
-          "value": "96",
-          "weight": 0.00063
-        }
-      ],
-      "pattern": null,
-      "minLength": 1.0,
-      "maxLength": 3.0
-    },
-    "AccountTenantId": {
-      "fillRate": 0.6931,
-      "distinctCount": 1,
-      "topValues": [],
-      "pattern": "guid",
-      "sensitive": true,
-      "minLength": 36.0,
-      "maxLength": 36.0
-    },
-    "Location": {
-      "fillRate": 1.0,
-      "distinctCount": 3,
-      "topValues": [],
-      "pattern": null,
-      "sensitive": true,
-      "minLength": 6.0,
-      "maxLength": 7.0
-    },
-    "SourceSystem": {
+    "Md5Hashes": {
       "fillRate": 0.0,
       "distinctCount": 0,
       "topValues": [],
       "pattern": null,
       "alwaysEmpty": true
-    },
-    "AuthenticationType": {
-      "fillRate": 1.0,
-      "distinctCount": 2,
-      "topValues": [
-        {
-          "value": "OAuth",
-          "weight": 0.69309
-        },
-        {
-          "value": "TrustedAccess",
-          "weight": 0.30691
-        }
-      ],
-      "pattern": null,
-      "minLength": 5.0,
-      "maxLength": 13.0
-    },
-    "ActionType": {
-      "fillRate": 1.0,
-      "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "Data Aggregation",
-          "weight": 1.0
-        }
-      ],
-      "pattern": null,
-      "minLength": 16.0,
-      "maxLength": 16.0
-    },
-    "DistinctGetOperations": {
-      "fillRate": 1.0,
-      "distinctCount": 6,
-      "topValues": [
-        {
-          "value": "0",
-          "weight": 0.91313
-        },
-        {
-          "value": "2",
-          "weight": 0.07039
-        },
-        {
-          "value": "1",
-          "weight": 0.00951
-        },
-        {
-          "value": "3",
-          "weight": 0.00444
-        },
-        {
-          "value": "50",
-          "weight": 0.00127
-        },
-        {
-          "value": "52",
-          "weight": 0.00127
-        }
-      ],
-      "pattern": null,
-      "minLength": 1.0,
-      "maxLength": 2.0
-    },
-    "StorageFileShare": {
-      "fillRate": 0.0025,
-      "distinctCount": 1,
-      "topValues": [],
-      "pattern": null,
-      "sensitive": true,
-      "minLength": 41.0,
-      "maxLength": 41.0
-    },
-    "ResourceGroup": {
-      "fillRate": 1.0,
-      "distinctCount": 12,
-      "topValues": [
-        {
-          "value": "foundry",
-          "weight": 0.45847
-        },
-        {
-          "value": "zolab-worker-botprd",
-          "weight": 0.11414
-        },
-        {
-          "value": "zolab-ai",
-          "weight": 0.09004
-        },
-        {
-          "value": "mcapsgovernance",
-          "weight": 0.05644
-        },
-        {
-          "value": "cybertriage",
-          "weight": 0.0539
-        },
-        {
-          "value": "rg-cmmc-evidence-agent-ai-flex",
-          "weight": 0.05263
-        },
-        {
-          "value": "playbook",
-          "weight": 0.03614
-        },
-        {
-          "value": "rg-cmmc-evidence-agent-ai-eus2",
-          "weight": 0.03171
-        },
-        {
-          "value": "adx",
-          "weight": 0.03044
-        },
-        {
-          "value": "cloud-shell-storage-eastus",
-          "weight": 0.02727
-        },
-        {
-          "value": "zolab-ai-u49gco",
-          "weight": 0.02663
-        },
-        {
-          "value": "rg-cmmc-evidence-agent-ai",
-          "weight": 0.02219
-        }
-      ],
-      "pattern": null,
-      "minLength": 3.0,
-      "maxLength": 30.0
-    },
-    "TimeGenerated": {
-      "fillRate": 1.0,
-      "distinctCount": 682,
-      "topValues": [],
-      "pattern": "datetime",
-      "minLength": 19.0,
-      "maxLength": 21.0
-    },
-    "AccountUpn": {
-      "fillRate": 0.0019,
-      "distinctCount": 1,
-      "topValues": [],
-      "pattern": "upn",
-      "sensitive": true,
-      "minLength": 36.0,
-      "maxLength": 36.0
-    },
-    "SubscriptionId": {
-      "fillRate": 1.0,
-      "distinctCount": 5,
-      "topValues": [],
-      "pattern": "guid",
-      "freeText": true,
-      "minLength": 36.0,
-      "maxLength": 36.0
-    },
-    "AccountObjectId": {
-      "fillRate": 0.6931,
-      "distinctCount": 13,
-      "topValues": [],
-      "pattern": "guid",
-      "sensitive": true,
-      "minLength": 36.0,
-      "maxLength": 36.0
-    },
-    "Md5Hashes": {
-      "fillRate": 1.0,
-      "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "System.Object[]",
-          "weight": 1.0
-        }
-      ],
-      "pattern": null,
-      "minLength": 15.0,
-      "maxLength": 15.0
-    },
-    "AdditionalFields": {
-      "fillRate": 1.0,
-      "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "System.Collections.Hashtable",
-          "weight": 1.0
-        }
-      ],
-      "pattern": null,
-      "minLength": 28.0,
-      "maxLength": 28.0
-    },
-    "HasAnonymousResourceNotFoundFailures": {
-      "fillRate": 0.9531,
-      "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "0",
-          "weight": 1.0
-        }
-      ],
-      "pattern": null,
-      "minLength": 1.0,
-      "maxLength": 1.0
-    },
-    "OperationNamesList": {
-      "fillRate": 1.0,
-      "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "System.Object[]",
-          "weight": 1.0
-        }
-      ],
-      "pattern": null,
-      "minLength": 15.0,
-      "maxLength": 15.0
-    },
-    "Type": {
-      "fillRate": 1.0,
-      "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "CloudStorageAggregatedEvents",
-          "weight": 1.0
-        }
-      ],
-      "pattern": null,
-      "minLength": 28.0,
-      "maxLength": 28.0
-    },
-    "AccountApplicationId": {
-      "fillRate": 0.6931,
-      "distinctCount": 14,
-      "topValues": [],
-      "pattern": "guid",
-      "sensitive": true,
-      "minLength": 36.0,
-      "maxLength": 36.0
-    },
-    "IPAddress": {
-      "fillRate": 1.0,
-      "distinctCount": 473,
-      "topValues": [],
-      "pattern": "ipv4",
-      "sensitive": true,
-      "minLength": 8.0,
-      "maxLength": 14.0
-    },
-    "DataAggregationEndTime": {
-      "fillRate": 1.0,
-      "distinctCount": 515,
-      "topValues": [],
-      "pattern": "datetime",
-      "minLength": 19.0,
-      "maxLength": 21.0
-    },
-    "AccountType": {
-      "fillRate": 0.6931,
-      "distinctCount": 2,
-      "topValues": [],
-      "pattern": null,
-      "sensitive": true,
-      "minLength": 3.0,
-      "maxLength": 4.0
-    },
-    "DataSource": {
-      "fillRate": 1.0,
-      "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "Azure Storage",
-          "weight": 1.0
-        }
-      ],
-      "pattern": null,
-      "minLength": 13.0,
-      "maxLength": 13.0
-    },
-    "UserAgentHeader": {
-      "fillRate": 0.9664,
-      "distinctCount": 23,
-      "topValues": [],
-      "pattern": null,
-      "sensitive": true,
-      "minLength": 7.0,
-      "maxLength": 131.0
-    },
-    "StorageAccount": {
-      "fillRate": 1.0,
-      "distinctCount": 14,
-      "topValues": [],
-      "pattern": null,
-      "sensitive": true,
-      "minLength": 14.0,
-      "maxLength": 24.0
     },
     "TotalResponseLength": {
       "fillRate": 1.0,
@@ -636,19 +26,19 @@
       "topValues": [
         {
           "value": "0",
-          "weight": 0.91313
+          "weight": 0.91117
         },
         {
           "value": "9514",
-          "weight": 0.06912
+          "weight": 0.0698
         },
         {
           "value": "7310",
-          "weight": 0.00317
+          "weight": 0.00381
         },
         {
           "value": "55363",
-          "weight": 0.00317
+          "weight": 0.00381
         },
         {
           "value": "45708850",
@@ -715,6 +105,160 @@
       "minLength": 1.0,
       "maxLength": 8.0
     },
+    "ActionType": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Data Aggregation",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 16.0,
+      "maxLength": 16.0
+    },
+    "StorageFileShare": {
+      "fillRate": 0.0025,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 41.0,
+      "maxLength": 41.0
+    },
+    "AccountType": {
+      "fillRate": 0.6999,
+      "distinctCount": 2,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 3.0,
+      "maxLength": 4.0
+    },
+    "IPAddress": {
+      "fillRate": 1.0,
+      "distinctCount": 473,
+      "topValues": [],
+      "pattern": "ipv4",
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 14.0
+    },
+    "SuccessfulOperationsCount": {
+      "fillRate": 1.0,
+      "distinctCount": 24,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.78109
+        },
+        {
+          "value": "1",
+          "weight": 0.09201
+        },
+        {
+          "value": "5",
+          "weight": 0.07043
+        },
+        {
+          "value": "2",
+          "weight": 0.04061
+        },
+        {
+          "value": "4",
+          "weight": 0.0019
+        },
+        {
+          "value": "3",
+          "weight": 0.00127
+        },
+        {
+          "value": "37",
+          "weight": 0.00127
+        },
+        {
+          "value": "104",
+          "weight": 0.00127
+        },
+        {
+          "value": "112",
+          "weight": 0.00063
+        },
+        {
+          "value": "95",
+          "weight": 0.00063
+        },
+        {
+          "value": "94",
+          "weight": 0.00063
+        },
+        {
+          "value": "90",
+          "weight": 0.00063
+        },
+        {
+          "value": "88",
+          "weight": 0.00063
+        },
+        {
+          "value": "85",
+          "weight": 0.00063
+        },
+        {
+          "value": "84",
+          "weight": 0.00063
+        },
+        {
+          "value": "82",
+          "weight": 0.00063
+        },
+        {
+          "value": "110",
+          "weight": 0.00063
+        },
+        {
+          "value": "7",
+          "weight": 0.00063
+        },
+        {
+          "value": "96",
+          "weight": 0.00063
+        },
+        {
+          "value": "11",
+          "weight": 0.00063
+        },
+        {
+          "value": "19",
+          "weight": 0.00063
+        },
+        {
+          "value": "13",
+          "weight": 0.00063
+        },
+        {
+          "value": "83",
+          "weight": 0.00063
+        },
+        {
+          "value": "97",
+          "weight": 0.00063
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 3.0
+    },
+    "AccountApplicationId": {
+      "fillRate": 0.6999,
+      "distinctCount": 15,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
     "TenantId": {
       "fillRate": 0.0,
       "distinctCount": 0,
@@ -724,21 +268,151 @@
     },
     "AzureResourceId": {
       "fillRate": 1.0,
-      "distinctCount": 14,
+      "distinctCount": 15,
       "topValues": [],
       "pattern": null,
       "sensitive": true,
       "minLength": 134.0,
       "maxLength": 162.0
     },
-    "StorageContainer": {
-      "fillRate": 0.8434,
-      "distinctCount": 10,
+    "AuthenticationType": {
+      "fillRate": 1.0,
+      "distinctCount": 2,
+      "topValues": [
+        {
+          "value": "OAuth",
+          "weight": 0.69987
+        },
+        {
+          "value": "TrustedAccess",
+          "weight": 0.30013
+        }
+      ],
+      "pattern": null,
+      "minLength": 5.0,
+      "maxLength": 13.0
+    },
+    "OperationsCount": {
+      "fillRate": 1.0,
+      "distinctCount": 24,
+      "topValues": [
+        {
+          "value": "1",
+          "weight": 0.4302
+        },
+        {
+          "value": "2",
+          "weight": 0.36802
+        },
+        {
+          "value": "6",
+          "weight": 0.07741
+        },
+        {
+          "value": "5",
+          "weight": 0.07107
+        },
+        {
+          "value": "3",
+          "weight": 0.0368
+        },
+        {
+          "value": "4",
+          "weight": 0.00381
+        },
+        {
+          "value": "37",
+          "weight": 0.00127
+        },
+        {
+          "value": "104",
+          "weight": 0.00127
+        },
+        {
+          "value": "112",
+          "weight": 0.00063
+        },
+        {
+          "value": "95",
+          "weight": 0.00063
+        },
+        {
+          "value": "94",
+          "weight": 0.00063
+        },
+        {
+          "value": "90",
+          "weight": 0.00063
+        },
+        {
+          "value": "88",
+          "weight": 0.00063
+        },
+        {
+          "value": "85",
+          "weight": 0.00063
+        },
+        {
+          "value": "84",
+          "weight": 0.00063
+        },
+        {
+          "value": "7",
+          "weight": 0.00063
+        },
+        {
+          "value": "82",
+          "weight": 0.00063
+        },
+        {
+          "value": "110",
+          "weight": 0.00063
+        },
+        {
+          "value": "96",
+          "weight": 0.00063
+        },
+        {
+          "value": "11",
+          "weight": 0.00063
+        },
+        {
+          "value": "19",
+          "weight": 0.00063
+        },
+        {
+          "value": "13",
+          "weight": 0.00063
+        },
+        {
+          "value": "83",
+          "weight": 0.00063
+        },
+        {
+          "value": "97",
+          "weight": 0.00063
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 3.0
+    },
+    "Timestamp": {
+      "fillRate": 1.0,
+      "distinctCount": 676,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "Location": {
+      "fillRate": 1.0,
+      "distinctCount": 3,
       "topValues": [],
       "pattern": null,
       "sensitive": true,
-      "minLength": 8.0,
-      "maxLength": 54.0
+      "minLength": 6.0,
+      "maxLength": 7.0
     },
     "ServiceType": {
       "fillRate": 1.0,
@@ -746,68 +420,299 @@
       "topValues": [
         {
           "value": "Blob",
-          "weight": 0.95308
+          "weight": 0.95241
         },
         {
           "value": "Files.REST",
-          "weight": 0.04692
+          "weight": 0.04759
         }
       ],
       "pattern": null,
       "minLength": 4.0,
       "maxLength": 10.0
     },
-    "Timestamp": {
+    "TimeGenerated": {
       "fillRate": 1.0,
-      "distinctCount": 682,
+      "distinctCount": 676,
       "topValues": [],
       "pattern": "datetime",
       "minLength": 19.0,
-      "maxLength": 21.0
+      "maxLength": 19.0
+    },
+    "AccountTenantId": {
+      "fillRate": 0.6999,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "StorageContainer": {
+      "fillRate": 0.8433,
+      "distinctCount": 11,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 8.0,
+      "maxLength": 54.0
+    },
+    "ReportId": {
+      "fillRate": 1.0,
+      "distinctCount": 1566,
+      "topValues": [],
+      "pattern": "guid",
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SubscriptionId": {
+      "fillRate": 1.0,
+      "distinctCount": 5,
+      "topValues": [],
+      "pattern": "guid",
+      "freeText": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
     },
     "DataAggregationStartTime": {
       "fillRate": 1.0,
-      "distinctCount": 515,
+      "distinctCount": 514,
       "topValues": [],
       "pattern": "datetime",
       "minLength": 19.0,
-      "maxLength": 21.0
+      "maxLength": 19.0
     },
-    "FailedOperationsCount": {
+    "AccountUpn": {
+      "fillRate": 0.0019,
+      "distinctCount": 1,
+      "topValues": [],
+      "pattern": "upn",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "ResourceGroup": {
       "fillRate": 1.0,
-      "distinctCount": 6,
+      "distinctCount": 13,
       "topValues": [
         {
-          "value": "1",
-          "weight": 0.36906
+          "value": "foundry",
+          "weight": 0.46256
         },
         {
-          "value": "2",
-          "weight": 0.36525
+          "value": "zolab-worker-botprd",
+          "weight": 0.11485
         },
         {
-          "value": "0",
-          "weight": 0.17882
+          "value": "zolab-ai",
+          "weight": 0.09074
         },
         {
-          "value": "6",
-          "weight": 0.0799
+          "value": "mcapsgovernance",
+          "weight": 0.05647
         },
         {
-          "value": "3",
-          "weight": 0.00507
+          "value": "rg-cmmc-evidence-agent-ai-flex",
+          "weight": 0.05266
         },
         {
-          "value": "4",
+          "value": "cybertriage",
+          "weight": 0.04886
+        },
+        {
+          "value": "playbook",
+          "weight": 0.03617
+        },
+        {
+          "value": "rg-cmmc-evidence-agent-ai-eus2",
+          "weight": 0.03173
+        },
+        {
+          "value": "adx",
+          "weight": 0.03109
+        },
+        {
+          "value": "zolab-ai-u49gco",
+          "weight": 0.02665
+        },
+        {
+          "value": "cloud-shell-storage-eastus",
+          "weight": 0.02475
+        },
+        {
+          "value": "rg-cmmc-evidence-agent-ai",
+          "weight": 0.02157
+        },
+        {
+          "value": "mdo-automation-test",
           "weight": 0.0019
         }
       ],
       "pattern": null,
+      "minLength": 3.0,
+      "maxLength": 30.0
+    },
+    "AdditionalFields": {
+      "fillRate": 1.0,
+      "distinctCount": 3132,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 252.0,
+      "maxLength": 350.0
+    },
+    "Type": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "CloudStorageAggregatedEvents",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 28.0,
+      "maxLength": 28.0
+    },
+    "DataAggregationEndTime": {
+      "fillRate": 1.0,
+      "distinctCount": 514,
+      "topValues": [],
+      "pattern": "datetime",
+      "minLength": 19.0,
+      "maxLength": 19.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "UserAgentHeader": {
+      "fillRate": 0.9651,
+      "distinctCount": 23,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 7.0,
+      "maxLength": 131.0
+    },
+    "AccountObjectId": {
+      "fillRate": 0.6999,
+      "distinctCount": 14,
+      "topValues": [],
+      "pattern": "guid",
+      "sensitive": true,
+      "minLength": 36.0,
+      "maxLength": 36.0
+    },
+    "SuccessfulReadOperations": {
+      "fillRate": 0.9524,
+      "distinctCount": 24,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.88341
+        },
+        {
+          "value": "5",
+          "weight": 0.07395
+        },
+        {
+          "value": "1",
+          "weight": 0.01732
+        },
+        {
+          "value": "2",
+          "weight": 0.00999
+        },
+        {
+          "value": "3",
+          "weight": 0.00133
+        },
+        {
+          "value": "4",
+          "weight": 0.00133
+        },
+        {
+          "value": "104",
+          "weight": 0.00133
+        },
+        {
+          "value": "112",
+          "weight": 0.00067
+        },
+        {
+          "value": "95",
+          "weight": 0.00067
+        },
+        {
+          "value": "94",
+          "weight": 0.00067
+        },
+        {
+          "value": "90",
+          "weight": 0.00067
+        },
+        {
+          "value": "88",
+          "weight": 0.00067
+        },
+        {
+          "value": "85",
+          "weight": 0.00067
+        },
+        {
+          "value": "84",
+          "weight": 0.00067
+        },
+        {
+          "value": "83",
+          "weight": 0.00067
+        },
+        {
+          "value": "82",
+          "weight": 0.00067
+        },
+        {
+          "value": "7",
+          "weight": 0.00067
+        },
+        {
+          "value": "10",
+          "weight": 0.00067
+        },
+        {
+          "value": "96",
+          "weight": 0.00067
+        },
+        {
+          "value": "22",
+          "weight": 0.00067
+        },
+        {
+          "value": "11",
+          "weight": 0.00067
+        },
+        {
+          "value": "19",
+          "weight": 0.00067
+        },
+        {
+          "value": "110",
+          "weight": 0.00067
+        },
+        {
+          "value": "97",
+          "weight": 0.00067
+        }
+      ],
+      "pattern": null,
       "minLength": 1.0,
-      "maxLength": 1.0
+      "maxLength": 3.0
     },
     "AnonymousSuccessfulOperations": {
-      "fillRate": 0.9531,
+      "fillRate": 0.9524,
       "distinctCount": 1,
       "topValues": [
         {
@@ -818,6 +723,184 @@
       "pattern": null,
       "minLength": 1.0,
       "maxLength": 1.0
+    },
+    "HasAnonymousResourceNotFoundFailures": {
+      "fillRate": 0.9524,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "DataSource": {
+      "fillRate": 1.0,
+      "distinctCount": 1,
+      "topValues": [
+        {
+          "value": "Azure Storage",
+          "weight": 1.0
+        }
+      ],
+      "pattern": null,
+      "minLength": 13.0,
+      "maxLength": 13.0
+    },
+    "FailedOperationsCount": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "1",
+          "weight": 0.36992
+        },
+        {
+          "value": "2",
+          "weight": 0.35977
+        },
+        {
+          "value": "0",
+          "weight": 0.18655
+        },
+        {
+          "value": "6",
+          "weight": 0.07741
+        },
+        {
+          "value": "3",
+          "weight": 0.00444
+        },
+        {
+          "value": "4",
+          "weight": 0.0019
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 1.0
+    },
+    "OperationNamesList": {
+      "fillRate": 1.0,
+      "distinctCount": 17,
+      "topValues": [
+        {
+          "value": "[\"GetContainerProperties\"]",
+          "weight": 0.66244
+        },
+        {
+          "value": "[\"ListContainers\"]",
+          "weight": 0.10914
+        },
+        {
+          "value": "[\"GetBlob\"]",
+          "weight": 0.09327
+        },
+        {
+          "value": "[\"ListShares\"]",
+          "weight": 0.04505
+        },
+        {
+          "value": "[\"PutBlob\",\"AppendBlock\"]",
+          "weight": 0.03173
+        },
+        {
+          "value": "[\"ListBlobs\"]",
+          "weight": 0.02094
+        },
+        {
+          "value": "[\"GetBlobTags\",\"GetBlobProperties\"]",
+          "weight": 0.01015
+        },
+        {
+          "value": "[\"ListBlobs\",\"GetBlob\"]",
+          "weight": 0.01015
+        },
+        {
+          "value": "[\"AppendBlock\"]",
+          "weight": 0.00381
+        },
+        {
+          "value": "[\"GetContainerProperties\",\"PutBlob\",\"GetBlob\"]",
+          "weight": 0.00317
+        },
+        {
+          "value": "[\"GetContainerProperties\",\"GetBlob\"]",
+          "weight": 0.00254
+        },
+        {
+          "value": "[\"ListFiles\"]",
+          "weight": 0.00254
+        },
+        {
+          "value": "[\"GetBlobProperties\"]",
+          "weight": 0.0019
+        },
+        {
+          "value": "[\"GetBlobTags\"]",
+          "weight": 0.00127
+        },
+        {
+          "value": "[\"GetContainerProperties\",\"PutBlock\"]",
+          "weight": 0.00063
+        },
+        {
+          "value": "[\"GetBlobProperties\",\"GetBlob\"]",
+          "weight": 0.00063
+        },
+        {
+          "value": "[\"PutBlock\",\"PutBlockList\"]",
+          "weight": 0.00063
+        }
+      ],
+      "pattern": "json",
+      "minLength": 11.0,
+      "maxLength": 46.0
+    },
+    "DistinctGetOperations": {
+      "fillRate": 1.0,
+      "distinctCount": 6,
+      "topValues": [
+        {
+          "value": "0",
+          "weight": 0.91117
+        },
+        {
+          "value": "2",
+          "weight": 0.07107
+        },
+        {
+          "value": "1",
+          "weight": 0.01079
+        },
+        {
+          "value": "3",
+          "weight": 0.00444
+        },
+        {
+          "value": "50",
+          "weight": 0.00127
+        },
+        {
+          "value": "52",
+          "weight": 0.00127
+        }
+      ],
+      "pattern": null,
+      "minLength": 1.0,
+      "maxLength": 2.0
+    },
+    "StorageAccount": {
+      "fillRate": 1.0,
+      "distinctCount": 15,
+      "topValues": [],
+      "pattern": null,
+      "sensitive": true,
+      "minLength": 14.0,
+      "maxLength": 24.0
     }
   }
 }

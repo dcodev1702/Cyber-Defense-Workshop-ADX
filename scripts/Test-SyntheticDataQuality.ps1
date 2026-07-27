@@ -56,6 +56,24 @@ if (Test-Path $OverridePath) {
     }
 }
 
+function ConvertTo-ProfileValueText {
+    <#
+        Must match Export-WorkshopTelemetryProfiles.ps1's function of the same name:
+        the profile stores what that one produced, and this compares against it.
+        `[string]` on an array joins with spaces and on a nested object yields
+        "@{a=b}", neither of which is what the column holds.
+    #>
+    param($Value)
+
+    if ($null -eq $Value) { return '' }
+    if ($Value -is [string]) { return $Value }
+    if ($Value -is [ValueType]) { return [string]$Value }
+
+    $json = ConvertTo-Json -InputObject $Value -Compress -Depth 12
+    if ($json -in @('[]', '{}', 'null')) { return '' }
+    return $json
+}
+
 function Read-NdjsonSample {
     param([Parameter(Mandatory)][string]$Path, [Parameter(Mandatory)][int]$Limit)
 
@@ -110,11 +128,18 @@ foreach ($file in $profileFiles) {
         if (-not $rows[0].PSObject.Properties[$column]) { continue }
         $checked++
 
-        $values = foreach ($row in $rows) {
+        # Rendered the same way the exporter renders a profiled value, or a dynamic
+        # column compares its JSON against PowerShell's space-joined `[string]` form
+        # and every row reads as foreign. Built in a loop because emitting an array
+        # to the pipeline unrolls it, which would count one cell several times.
+        $filled = [System.Collections.Generic.List[string]]::new()
+        foreach ($row in $rows) {
             $bag = $row.PSObject.Properties[$column]
-            if ($bag) { $bag.Value }
+            if (-not $bag) { continue }
+            $text = ConvertTo-ProfileValueText -Value $bag.Value
+            if ($text -match '^\s*$') { continue }
+            $filled.Add($text)
         }
-        $filled = @($values | Where-Object { $null -ne $_ -and -not ([string]$_ -match '^\s*$') })
         $actualFill = $filled.Count / $rows.Count
 
         $isEmptyInProd = [bool]$observed.PSObject.Properties['alwaysEmpty']
@@ -160,7 +185,7 @@ foreach ($file in $profileFiles) {
         $isEntityColumn = $column -match '(?i)(name$|id$|ids$|agent|service|role|principal|user|account|device|host|machine|resource|title$|source$|target$|^query$)'
 
         if (-not $isEntityColumn -and $vocabulary.Count -gt 0 -and $filled.Count -gt 0) {
-            $outside = @($filled | Where-Object { $vocabulary -notcontains [string]$_ })
+            $outside = @($filled | Where-Object { $vocabulary -notcontains $_ })
             $foreignRate = $outside.Count / $filled.Count
             if ($foreignRate -gt 0.5) {
                 $foreign.Add([pscustomobject]@{

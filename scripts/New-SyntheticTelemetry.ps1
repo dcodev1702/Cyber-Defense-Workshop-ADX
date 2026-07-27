@@ -964,7 +964,13 @@ function ConvertTo-WorkshopColumnValue {
     )
 
     if ($null -eq $Value) { return $null }
-    if ($DeclaredType -eq 'string' -or $DeclaredType -eq 'dynamic') { return $Value }
+    if ($DeclaredType -eq 'string' -or $DeclaredType -eq 'dynamic') {
+        # `return $array` unrolls a single-element array to a scalar, so a dynamic
+        # column holding ["ListFiles"] was written as "ListFiles" while multi-element
+        # values came through intact. The comma keeps the array whole.
+        if ($Value -is [array]) { return ,$Value }
+        return $Value
+    }
 
     switch ($DeclaredType) {
         { $_ -in @('int', 'long') } {
@@ -3627,20 +3633,79 @@ $graphActivityCatalog = @(
 
 # ExposureGraphNodes. Security recommendations dominate the real graph at 964 of 1000
 # nodes. The scenario asset types are added so attack paths terminate somewhere real.
+function Get-WorkshopExposureNodeName {
+    <#
+        A node's name has to belong to its label. Once the catalog was grounded in
+        real telemetry it gained Cve, subscription and role-assignment nodes, and the
+        old "user gets a UPN, everything else gets a device name" rule would have
+        produced a CVE node named after a workstation.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$Label,
+        [Parameter(Mandatory)][int]$Index,
+        [Parameter(Mandatory)]$Device,
+        [Parameter(Mandatory)]$User
+    )
+
+    switch ($Label) {
+        'Cve' { return 'CVE-{0}-{1}' -f (2023 + ($Index % 3)), (10000 + ($Index % 8999)) }
+        'user' { return $User.Upn }
+        'group' { return 'sg-usag-cyber-{0:d2}' -f ($Index % 12) }
+        'managedidentity' { return 'usag-cyber-mi-{0:d2}' -f ($Index % 8) }
+        'subscriptions' { return 'USAG Cyber {0}' -f @('Production', 'Platform', 'Security', 'Sandbox')[$Index % 4] }
+        'resourcegroups' { return @('usag-cyber', 'storage', 'platform', 'sentinel')[$Index % 4] }
+        'microsoft.authorization/roleassignments' { return New-StableGuid "exposure-roleassignment|$Index" }
+        'microsoft.containerregistry/registries' { return 'usagcyberacr{0}' -f ($Index % 3) }
+        'container-image' { return 'usagcyberacr{0}.azurecr.io/workload:{1}' -f ($Index % 3), (1 + ($Index % 24)) }
+        'microsoft.storage/storageaccounts' { return @('usagcyberdata', 'usagcyberbackup', 'usagcyberarchive')[$Index % 3] }
+        'mdcSecurityRecommendation' { return 'Machines should have vulnerability findings resolved' }
+        default { return $Device.Name }
+    }
+}
+
+# Node labels and their category tuples are taken from live ExposureGraphEdges rows
+# and kept paired as the product emits them: a device is compute/device/
+# physical_device, not the compute/endpoint this catalog used to invent. Repetition
+# approximates the observed mix, where Cve accounts for roughly a quarter of all
+# node references.
 $exposureNodeCatalog = @(
-    [pscustomobject]@{ Label = 'mdcSecurityRecommendation'; Categories = @('finding', 'security_finding') }
-    [pscustomobject]@{ Label = 'mdcSecurityRecommendation'; Categories = @('finding', 'security_finding') }
+    [pscustomobject]@{ Label = 'Cve'; Categories = @('finding', 'vulnerability_finding') }
+    [pscustomobject]@{ Label = 'Cve'; Categories = @('finding', 'vulnerability_finding') }
+    [pscustomobject]@{ Label = 'Cve'; Categories = @('finding', 'vulnerability_finding') }
+    [pscustomobject]@{ Label = 'Cve'; Categories = @('finding', 'vulnerability_finding') }
+    [pscustomobject]@{ Label = 'Cve'; Categories = @('finding', 'vulnerability_finding') }
+    [pscustomobject]@{ Label = 'device'; Categories = @('compute', 'device', 'physical_device') }
+    [pscustomobject]@{ Label = 'device'; Categories = @('compute', 'device', 'physical_device') }
+    [pscustomobject]@{ Label = 'device'; Categories = @('compute', 'device', 'physical_device') }
+    [pscustomobject]@{ Label = 'microsoft.compute/virtualmachines'; Categories = @('compute', 'device', 'environmentAzure', 'environmentCloud', 'virtual_machine') }
+    [pscustomobject]@{ Label = 'microsoft.compute/virtualmachines'; Categories = @('compute', 'device', 'environmentAzure', 'environmentCloud', 'virtual_machine') }
+    [pscustomobject]@{ Label = 'group'; Categories = @('environmentAzure', 'environmentCloud', 'identities', 'identity', 'user_group') }
+    [pscustomobject]@{ Label = 'managedidentity'; Categories = @('application_identity', 'environmentAzure', 'environmentCloud', 'identities', 'identity') }
+    [pscustomobject]@{ Label = 'subscriptions'; Categories = @('access', 'cloud_account', 'environmentAzure', 'environmentCloud', 'identity') }
+    [pscustomobject]@{ Label = 'microsoft.authorization/roleassignments'; Categories = @('access', 'environmentAzure', 'environmentCloud', 'identity', 'role_assignment') }
+    [pscustomobject]@{ Label = 'microsoft.containerregistry/registries'; Categories = @('container', 'container_registry', 'containerRegistry', 'containers', 'environmentAzure', 'environmentCloud') }
     [pscustomobject]@{ Label = 'mdcSecurityRecommendation'; Categories = @('finding', 'security_finding') }
     [pscustomobject]@{ Label = 'container-image'; Categories = @('container', 'container_image', 'containers') }
-    [pscustomobject]@{ Label = 'device'; Categories = @('compute', 'endpoint') }
-    [pscustomobject]@{ Label = 'user'; Categories = @('identity') }
-    [pscustomobject]@{ Label = 'serviceprincipal'; Categories = @('identity', 'application') }
-    [pscustomobject]@{ Label = 'microsoft.storage/storageaccounts'; Categories = @('storage', 'cloud_resource') }
+    [pscustomobject]@{ Label = 'user'; Categories = @('environmentAzure', 'environmentCloud', 'identities', 'identity', 'user_account') }
+    [pscustomobject]@{ Label = 'resourcegroups'; Categories = @('access', 'cloud_account', 'environmentAzure', 'environmentCloud', 'identity') }
+    [pscustomobject]@{ Label = 'microsoft.storage/storageaccounts'; Categories = @('data', 'environmentAzure', 'environmentCloud', 'object_storage') }
 )
 
+# Observed edge labels, weighted as observed: 'affecting' is 60% of real edges.
+# 'can access', 'has credentials to' and 'routes to' were invented and are gone;
+# the product says 'has permissions to', 'has credentials of' and 'routes traffic
+# to'. Length is coprime with the node catalog so source, target and label do not
+# advance in lockstep.
 $exposureEdgeLabelCatalog = @(
-    'affecting', 'has role on', 'can authenticate to', 'member of',
-    'contains', 'can access', 'has credentials to', 'routes to'
+    'affecting', 'affecting', 'affecting', 'affecting', 'affecting', 'affecting',
+    'affecting', 'affecting', 'affecting', 'affecting', 'affecting', 'affecting',
+    'affecting',
+    'contains', 'contains', 'contains',
+    'has role on',
+    'has permissions to',
+    'controls access to',
+    'has assignment',
+    'member of'
 )
 
 # CloudStorageAggregatedEvents. GetContainerProperties is 659 of 1000 real rows and
@@ -3654,7 +3719,7 @@ $cloudStorageOperationCatalog = @(
     [pscustomobject]@{ Operation = 'GetBlob'; Service = 'Blob'; Auth = 'OAuth' }
     [pscustomobject]@{ Operation = 'GetBlobProperties'; Service = 'Blob'; Auth = 'OAuth' }
     [pscustomobject]@{ Operation = 'ListBlobs'; Service = 'Blob'; Auth = 'OAuth' }
-    [pscustomobject]@{ Operation = 'GetFile'; Service = 'Files.REST'; Auth = 'TrustedAccess' }
+    [pscustomobject]@{ Operation = 'ListFiles'; Service = 'Files.REST'; Auth = 'TrustedAccess' }
 )
 
 # AzureDiagnostics. Logic App workflow runtime dominates the real table at 985 of 1000
@@ -6483,9 +6548,9 @@ function New-NormalTelemetryValues {
             $values.Type = 'ExposureGraphNodes'
         }
         'ExposureGraphEdges' {
-            # The real table times out through the advanced hunting API, so the shape
-            # comes from live getschema rather than a field profile. Edges reference the
-            # same node id space that ExposureGraphNodes generates.
+            # Shape and vocabulary come from a live capture of the table (7,000 rows via
+            # advanced hunting). Edges reference the same node id space that
+            # ExposureGraphNodes generates.
             $edgeLabel = $exposureEdgeLabelCatalog[$Index % $exposureEdgeLabelCatalog.Count]
             $sourceTemplate = $exposureNodeCatalog[$Index % $exposureNodeCatalog.Count]
             $targetTemplate = $exposureNodeCatalog[($Index + 3) % $exposureNodeCatalog.Count]
@@ -6495,16 +6560,19 @@ function New-NormalTelemetryValues {
             $values.EdgeId = (New-StableHex "exposure-edge|$Index" 32)
             $values.EdgeLabel = $edgeLabel
             $values.SourceNodeId = (New-StableHex "exposure-node|$Index" 32)
-            $values.SourceNodeName = if ($sourceTemplate.Label -eq 'user') { $edgeUser.Upn } else { $edgeDevice.Name }
+            $values.SourceNodeName = Get-WorkshopExposureNodeName -Label $sourceTemplate.Label -Index $Index -Device $edgeDevice -User $edgeUser
             $values.SourceNodeLabel = $sourceTemplate.Label
             $values.SourceNodeCategories = [object[]]$sourceTemplate.Categories
             $values.TargetNodeId = (New-StableHex "exposure-node|$($Index + 3)" 32)
-            $values.TargetNodeName = if ($targetTemplate.Label -eq 'serviceprincipal') { 'USAG Cyber Sync Helper' } else { 'usagcyberdata{0}' -f ($Index % 40) }
+            $values.TargetNodeName = Get-WorkshopExposureNodeName -Label $targetTemplate.Label -Index ($Index + 3) -Device $edgeDevice -User $edgeUser
             $values.TargetNodeLabel = $targetTemplate.Label
             $values.TargetNodeCategories = [object[]]$targetTemplate.Categories
+            # The observed payload is this stub on all but a handful of rows. The
+            # accessType/isDirect keys this used to emit appear nowhere in the real
+            # table.
             $values.EdgeProperties = @{
-                '@odata.type' = '#microsoft.graph.security.dynamicEdgeProperties'
-                rawData = @{ accessType = $edgeLabel; isDirect = (($Index % 3) -eq 0) }
+                '@odata.type' = '#microsoft.graph.security.dynamicColumnValue'
+                rawData = @{ '@odata.type' = '#microsoft.graph.security.dynamicColumnValue' }
             }
             $values.TenantId = $tenantId
             $values.SourceSystem = 'Azure'
@@ -6531,7 +6599,7 @@ function New-NormalTelemetryValues {
             $values.ServiceType = $storageTemplate.Service
             $values.IPAddress = if ($isBulkCollection) { $externalIp } else { '10.0.{0}.{1}' -f (($Index * 3) % 256), (1 + (($Index * 7) % 254)) }
             $values.UserAgentHeader = if ($isBulkCollection) { 'azcopy/10.24.0' } else { @('SRP/1.0', 'Azure-Storage/11.2.3 (.NET Core; Unix 6.6.13)')[$Index % 2] }
-            $values.OperationNamesList = $storageTemplate.Operation
+            $values.OperationNamesList = [object[]]@($storageTemplate.Operation)
             $values.AuthenticationType = $storageTemplate.Auth
             $values.AccountObjectId = if ($isBulkCollection) { $maliciousOAuthSpId } else { New-StableGuid "storage-account-object|$($Index % 14)" }
             $values.AccountTenantId = $tenantId

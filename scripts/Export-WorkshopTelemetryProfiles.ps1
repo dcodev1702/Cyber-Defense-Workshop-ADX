@@ -255,6 +255,32 @@ function Test-SensitiveContent {
     return $false
 }
 
+function ConvertTo-ProfileValueText {
+    <#
+        Renders a cell the way the column actually holds it.
+
+        `[string]` on a nested object or array yields "System.Collections.Hashtable"
+        or "System.Object[]" -- the name of a CLR type, not a value -- and Export-Csv
+        does exactly the same when it writes the sample cache. Every dynamic column
+        that went through that cache was therefore replaced by a type name, and the
+        next run read it back and recorded it as the column's entire vocabulary.
+
+        Complex values become compact JSON, which is what the column holds, what the
+        generator emits, and what survives a CSV round trip. Scalars keep their
+        existing rendering so no profile changes shape for no reason.
+    #>
+    param($Value)
+
+    if ($null -eq $Value) { return '' }
+    if ($Value -is [string]) { return $Value }
+    if ($Value -is [ValueType]) { return [string]$Value }
+
+    $json = ConvertTo-Json -InputObject $Value -Compress -Depth 12
+    # An empty bag or array is an unpopulated cell, not the literal text "[]".
+    if ($json -in @('[]', '{}', 'null')) { return '' }
+    return $json
+}
+
 function New-ColumnProfile {
     <#
         Values are gathered only from row sets that actually declare the column,
@@ -281,7 +307,18 @@ function New-ColumnProfile {
         }
     }
 
-    $present = @($values | Where-Object { $null -ne $_ -and -not ([string]$_ -match '^\s*$') })
+    # Rendered in a loop rather than a pipeline: emitting an array to the pipeline
+    # unrolls it, which would scatter one dynamic cell across several vocabulary
+    # entries and inflate the fill count.
+    $present = [System.Collections.Generic.List[object]]::new()
+    $strings = [System.Collections.Generic.List[string]]::new()
+    foreach ($value in $values) {
+        if ($null -eq $value) { continue }
+        $text = ConvertTo-ProfileValueText -Value $value
+        if ($text -match '^\s*$') { continue }
+        $present.Add($value)
+        $strings.Add($text)
+    }
     $denominator = [Math]::Max($considered, 1)
 
     $result = [ordered]@{
@@ -298,10 +335,9 @@ function New-ColumnProfile {
         return $result
     }
 
-    $strings = @($present | ForEach-Object { [string]$_ })
     $groups = @($strings | Group-Object | Sort-Object Count -Descending)
     $result.distinctCount = $groups.Count
-    $result.pattern = Get-ValuePattern -Values $strings
+    $result.pattern = Get-ValuePattern -Values @($strings)
 
     # Carry an explicit vocabulary only for low-cardinality categorical columns.
     # High cardinality values are regenerated from their pattern instead, and
@@ -311,7 +347,15 @@ function New-ColumnProfile {
     if ($isSensitive) { $result.sensitive = $true }
     if ($isFreeText) { $result.freeText = $true }
 
-    if ($groups.Count -le 200 -and -not $result.pattern -and -not $isSensitive -and -not $isFreeText) {
+    # A 'json' pattern alone is not a reason to drop the vocabulary. The pattern
+    # tests exist to stop high-cardinality structured identifiers -- guids, hashes,
+    # paths, timestamps -- being replayed literally, but a dynamic column holding a
+    # small set of category tuples is a real enumeration, and the vocabulary is the
+    # only thing that makes such a column checkable at all. The cardinality bound
+    # below still keeps genuine property bags out.
+    $patternBlocksVocabulary = $result.pattern -and $result.pattern -ne 'json'
+
+    if ($groups.Count -le 200 -and -not $patternBlocksVocabulary -and -not $isSensitive -and -not $isFreeText) {
         $candidate = @(
             $groups | Select-Object -First $TopValueCount | ForEach-Object {
                 [ordered]@{ value = $_.Name; weight = [Math]::Round($_.Count / $present.Count, 5) }
@@ -436,8 +480,16 @@ foreach ($table in $tables) {
             # authoritative and must not be silently truncated.
             if ($RefreshSamples -or -not $localPath) {
                 $samplePath = Join-Path $SampleDirectory "$table-RealTelemetry.csv"
-                $liveRows | Select-Object -First $SampleRowCap |
-                    Export-Csv -LiteralPath $samplePath -NoTypeInformation -Encoding utf8NoBOM
+                # Flatten dynamic columns to JSON first. Export-Csv calls ToString()
+                # on anything it does not recognise, so writing the rows straight out
+                # would cache the type name and lose the value permanently.
+                @($liveRows | Select-Object -First $SampleRowCap | ForEach-Object {
+                    $flat = [ordered]@{}
+                    foreach ($cell in $_.PSObject.Properties) {
+                        $flat[$cell.Name] = ConvertTo-ProfileValueText -Value $cell.Value
+                    }
+                    [pscustomobject]$flat
+                }) | Export-Csv -LiteralPath $samplePath -NoTypeInformation -Encoding utf8NoBOM
             }
         }
     }

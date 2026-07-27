@@ -1,165 +1,226 @@
 {
   "tableName": "ExposureGraphEdges",
   "sources": [
-    "sample:ExposureGraphEdges-RealTelemetry.csv"
+    "sample:ExposureGraphEdges-RealTelemetry.csv",
+    "XDR"
   ],
-  "sampledRows": 2000.0,
+  "sampledRows": 7000.0,
   "columnCount": 14,
   "emptyInProd": [
     "TenantId",
     "SourceSystem"
   ],
-  "generatedUtc": "2026-07-26T01:33:36.8003668Z",
+  "generatedUtc": "2026-07-26T23:23:20.1773051Z",
   "columns": {
+    "EdgeLabel": {
+      "fillRate": 1.0,
+      "distinctCount": 14,
+      "topValues": [
+        {
+          "value": "affecting",
+          "weight": 0.62057
+        },
+        {
+          "value": "contains",
+          "weight": 0.119
+        },
+        {
+          "value": "has role on",
+          "weight": 0.06886
+        },
+        {
+          "value": "has permissions to",
+          "weight": 0.05986
+        },
+        {
+          "value": "controls access to",
+          "weight": 0.03843
+        },
+        {
+          "value": "has assignment",
+          "weight": 0.03843
+        },
+        {
+          "value": "member of",
+          "weight": 0.02714
+        },
+        {
+          "value": "routes traffic to",
+          "weight": 0.00929
+        },
+        {
+          "value": "can authenticate as",
+          "weight": 0.00771
+        },
+        {
+          "value": "can authenticate to",
+          "weight": 0.00471
+        },
+        {
+          "value": "frequently logged in by",
+          "weight": 0.00229
+        },
+        {
+          "value": "has credentials of",
+          "weight": 0.00229
+        },
+        {
+          "value": "runs on",
+          "weight": 0.001
+        },
+        {
+          "value": "is running",
+          "weight": 0.00043
+        }
+      ],
+      "pattern": null,
+      "minLength": 7.0,
+      "maxLength": 23.0
+    },
+    "EdgeProperties": {
+      "fillRate": 1.0,
+      "distinctCount": 1136,
+      "topValues": [],
+      "pattern": "json",
+      "minLength": 135.0,
+      "maxLength": 7004.0
+    },
+    "TargetNodeName": {
+      "fillRate": 0.9616,
+      "distinctCount": 705,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 116.0
+    },
     "TargetNodeLabel": {
       "fillRate": 1.0,
-      "distinctCount": 47,
+      "distinctCount": 57,
       "topValues": [
         {
           "value": "device",
-          "weight": 0.3805
+          "weight": 0.33171
         },
         {
           "value": "microsoft.compute/virtualmachines",
-          "weight": 0.2485
+          "weight": 0.25214
         },
         {
           "value": "subscriptions",
-          "weight": 0.052
+          "weight": 0.06814
         },
         {
           "value": "container-image",
-          "weight": 0.052
+          "weight": 0.06243
         },
         {
           "value": "group",
-          "weight": 0.0465
+          "weight": 0.05286
         },
         {
           "value": "microsoft.authorization/roleassignments",
-          "weight": 0.036
-        },
-        {
-          "value": "vpc.securitygroup",
-          "weight": 0.0355
+          "weight": 0.03843
         },
         {
           "value": "microsoft.storage/storageaccounts",
-          "weight": 0.0235
+          "weight": 0.02643
+        },
+        {
+          "value": "vpc.securitygroup",
+          "weight": 0.02571
         },
         {
           "value": "user",
-          "weight": 0.016
+          "weight": 0.01657
         },
         {
           "value": "resourcegroups",
-          "weight": 0.0125
+          "weight": 0.01357
         },
         {
           "value": "microsoft.network/networkinterfaces",
-          "weight": 0.011
+          "weight": 0.01314
+        },
+        {
+          "value": "aws-keyspaces.table",
+          "weight": 0.00771
         },
         {
           "value": "microsoft.resources/deployments",
-          "weight": 0.006
+          "weight": 0.00686
+        },
+        {
+          "value": "managedidentity",
+          "weight": 0.00686
+        },
+        {
+          "value": "computer-account",
+          "weight": 0.00657
         },
         {
           "value": "microsoft.operationalinsights/workspaces",
           "weight": 0.006
         },
         {
-          "value": "computer-account",
-          "weight": 0.006
-        },
-        {
-          "value": "aws-keyspaces.table",
-          "weight": 0.006
+          "value": "microsoft.logic/workflows",
+          "weight": 0.00529
         },
         {
           "value": "microsoft.network/networksecuritygroups",
-          "weight": 0.0045
+          "weight": 0.00514
+        },
+        {
+          "value": "microsoft.keyvault/vaults",
+          "weight": 0.00486
         },
         {
           "value": "microsoft.cognitiveservices/accounts",
-          "weight": 0.0045
+          "weight": 0.00457
         },
         {
-          "value": "managedidentity",
+          "value": "iam.role",
           "weight": 0.004
         },
         {
           "value": "account",
-          "weight": 0.004
-        },
-        {
-          "value": "ec2.subnet",
-          "weight": 0.0035
-        },
-        {
-          "value": "microsoft.logic/workflows",
-          "weight": 0.0035
+          "weight": 0.00371
         },
         {
           "value": "ad-domain",
-          "weight": 0.003
-        },
-        {
-          "value": "microsoft.containerregistry/registries",
-          "weight": 0.003
-        },
-        {
-          "value": "microsoft.network/virtualnetworks",
-          "weight": 0.003
-        },
-        {
-          "value": "microsoft.keyvault/vaults",
-          "weight": 0.003
+          "weight": 0.00329
         },
         {
           "value": "ec2.securitygroup",
           "weight": 0.003
         },
         {
-          "value": "azure-logic-app-shared-access-signature",
-          "weight": 0.0025
+          "value": "ec2.subnet",
+          "weight": 0.003
         },
         {
-          "value": "cloudformation.stack",
-          "weight": 0.002
+          "value": "microsoft.containerregistry/registries",
+          "weight": 0.00271
         },
         {
-          "value": "s3.bucket",
-          "weight": 0.0015
+          "value": "microsoft.network/virtualnetworks/subnets",
+          "weight": 0.00257
         },
         {
-          "value": "aws-athena.workgroup",
-          "weight": 0.0015
+          "value": "microsoft.network/virtualnetworks",
+          "weight": 0.00214
+        },
+        {
+          "value": "iam.user",
+          "weight": 0.00171
+        },
+        {
+          "value": "microsoft.web/sites_azurefunction",
+          "weight": 0.00157
         }
       ],
       "pattern": null,
       "minLength": 4.0,
       "maxLength": 58.0
-    },
-    "EdgeProperties": {
-      "fillRate": 1.0,
-      "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "System.Collections.Hashtable",
-          "weight": 1.0
-        }
-      ],
-      "pattern": null,
-      "minLength": 28.0,
-      "maxLength": 28.0
-    },
-    "TargetNodeId": {
-      "fillRate": 1.0,
-      "distinctCount": 469,
-      "topValues": [],
-      "pattern": "md5",
-      "minLength": 32.0,
-      "maxLength": 32.0
     },
     "TenantId": {
       "fillRate": 0.0,
@@ -168,264 +229,134 @@
       "pattern": null,
       "alwaysEmpty": true
     },
-    "TargetNodeCategories": {
-      "fillRate": 1.0,
-      "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "System.Object[]",
-          "weight": 1.0
-        }
-      ],
-      "pattern": null,
-      "minLength": 15.0,
-      "maxLength": 15.0
-    },
-    "TargetNodeName": {
-      "fillRate": 0.964,
-      "distinctCount": 365,
-      "topValues": [],
-      "pattern": null,
-      "minLength": 2.0,
-      "maxLength": 116.0
-    },
-    "SourceSystem": {
-      "fillRate": 0.0,
-      "distinctCount": 0,
-      "topValues": [],
-      "pattern": null,
-      "alwaysEmpty": true
-    },
-    "SourceNodeCategories": {
-      "fillRate": 1.0,
-      "distinctCount": 1,
-      "topValues": [
-        {
-          "value": "System.Object[]",
-          "weight": 1.0
-        }
-      ],
-      "pattern": null,
-      "minLength": 15.0,
-      "maxLength": 15.0
-    },
-    "SourceNodeName": {
-      "fillRate": 0.967,
-      "distinctCount": 888,
-      "topValues": [],
-      "pattern": null,
-      "minLength": 2.0,
-      "maxLength": 107.0
-    },
     "SourceNodeLabel": {
       "fillRate": 1.0,
-      "distinctCount": 30,
+      "distinctCount": 37,
       "topValues": [
         {
           "value": "Cve",
-          "weight": 0.5955
-        },
-        {
-          "value": "mdcSecurityRecommendation",
-          "weight": 0.067
+          "weight": 0.546
         },
         {
           "value": "managedidentity",
-          "weight": 0.064
+          "weight": 0.07629
         },
         {
           "value": "microsoft.containerregistry/registries",
-          "weight": 0.052
+          "weight": 0.06243
+        },
+        {
+          "value": "mdcSecurityRecommendation",
+          "weight": 0.05971
         },
         {
           "value": "group",
-          "weight": 0.047
+          "weight": 0.05657
         },
         {
           "value": "user",
-          "weight": 0.04
+          "weight": 0.03986
         },
         {
           "value": "microsoft.authorization/roleassignments",
-          "weight": 0.033
+          "weight": 0.03843
         },
         {
           "value": "serviceprincipal",
-          "weight": 0.022
+          "weight": 0.02414
         },
         {
           "value": "account",
-          "weight": 0.018
+          "weight": 0.02243
         },
         {
           "value": "resourcegroups",
-          "weight": 0.0165
+          "weight": 0.02086
         },
         {
           "value": "mdcManagementRecommendation",
-          "weight": 0.0125
+          "weight": 0.01314
         },
         {
           "value": "subscriptions",
-          "weight": 0.008
+          "weight": 0.00929
         },
         {
           "value": "microsoft.compute/virtualmachines",
-          "weight": 0.004
+          "weight": 0.00486
         },
         {
           "value": "microsoft.logic/workflows",
-          "weight": 0.003
-        },
-        {
-          "value": "microsoft.resources/deployments",
-          "weight": 0.0025
-        },
-        {
-          "value": "IP address",
-          "weight": 0.0015
-        },
-        {
-          "value": "ec2.vpc",
-          "weight": 0.0015
+          "weight": 0.00343
         },
         {
           "value": "microsoft.network/networkinterfaces",
-          "weight": 0.0015
+          "weight": 0.00257
         },
         {
-          "value": "microsoft.cognitiveservices/accounts",
-          "weight": 0.0015
-        },
-        {
-          "value": "entra-userCookie",
-          "weight": 0.0015
-        },
-        {
-          "value": "microsoft.network/virtualnetworks",
-          "weight": 0.001
-        },
-        {
-          "value": "mde-healthFinding",
-          "weight": 0.001
-        },
-        {
-          "value": "mdcAuditingRecommendation",
-          "weight": 0.001
+          "value": "microsoft.network/virtualnetworks/subnets",
+          "weight": 0.00243
         },
         {
           "value": "device",
+          "weight": 0.00229
+        },
+        {
+          "value": "microsoft.network/virtualnetworks",
+          "weight": 0.00229
+        },
+        {
+          "value": "microsoft.cognitiveservices/accounts",
+          "weight": 0.00186
+        },
+        {
+          "value": "mde-healthFinding",
+          "weight": 0.00171
+        },
+        {
+          "value": "IP address",
           "weight": 0.001
         },
         {
-          "value": "azure-microsoft.machinelearningservices/workspaces-project",
+          "value": "microsoft.resources/deployments",
           "weight": 0.001
         },
         {
-          "value": "serverless.container",
-          "weight": 0.0005
+          "value": "ec2.vpc",
+          "weight": 0.001
         },
         {
           "value": "azure-microsoft.machinelearningservices/workspaces-hub",
-          "weight": 0.0005
+          "weight": 0.00086
         },
         {
-          "value": "ai-agent",
-          "weight": 0.0005
+          "value": "computer-account",
+          "weight": 0.00086
         },
         {
-          "value": "microsoft.app/containerapps",
-          "weight": 0.0005
+          "value": "microsoft.machinelearningservices/workspaces",
+          "weight": 0.00086
         },
         {
-          "value": "user-azure-cli-secret",
-          "weight": 0.0005
+          "value": "mdcAuditingRecommendation",
+          "weight": 0.00057
+        },
+        {
+          "value": "entra-userCookie",
+          "weight": 0.00057
+        },
+        {
+          "value": "azure-microsoft.machinelearningservices/workspaces-project",
+          "weight": 0.00043
+        },
+        {
+          "value": "microsoft.web/sites_azurefunction",
+          "weight": 0.00043
         }
       ],
       "pattern": null,
       "minLength": 3.0,
       "maxLength": 58.0
-    },
-    "EdgeId": {
-      "fillRate": 1.0,
-      "distinctCount": 1994,
-      "topValues": [],
-      "pattern": null,
-      "minLength": 69.0,
-      "maxLength": 69.0
-    },
-    "EdgeLabel": {
-      "fillRate": 1.0,
-      "distinctCount": 14,
-      "topValues": [
-        {
-          "value": "affecting",
-          "weight": 0.6765
-        },
-        {
-          "value": "contains",
-          "weight": 0.099
-        },
-        {
-          "value": "has permissions to",
-          "weight": 0.0565
-        },
-        {
-          "value": "has role on",
-          "weight": 0.049
-        },
-        {
-          "value": "has assignment",
-          "weight": 0.036
-        },
-        {
-          "value": "controls access to",
-          "weight": 0.033
-        },
-        {
-          "value": "member of",
-          "weight": 0.0275
-        },
-        {
-          "value": "can authenticate as",
-          "weight": 0.0065
-        },
-        {
-          "value": "routes traffic to",
-          "weight": 0.0055
-        },
-        {
-          "value": "can authenticate to",
-          "weight": 0.005
-        },
-        {
-          "value": "has credentials of",
-          "weight": 0.003
-        },
-        {
-          "value": "frequently logged in by",
-          "weight": 0.0015
-        },
-        {
-          "value": "is running",
-          "weight": 0.0005
-        },
-        {
-          "value": "runs on",
-          "weight": 0.0005
-        }
-      ],
-      "pattern": null,
-      "minLength": 7.0,
-      "maxLength": 23.0
-    },
-    "SourceNodeId": {
-      "fillRate": 1.0,
-      "distinctCount": 975,
-      "topValues": [],
-      "pattern": "md5",
-      "minLength": 32.0,
-      "maxLength": 32.0
     },
     "Type": {
       "fillRate": 1.0,
@@ -439,6 +370,299 @@
       "pattern": null,
       "minLength": 18.0,
       "maxLength": 18.0
+    },
+    "SourceSystem": {
+      "fillRate": 0.0,
+      "distinctCount": 0,
+      "topValues": [],
+      "pattern": null,
+      "alwaysEmpty": true
+    },
+    "SourceNodeName": {
+      "fillRate": 0.9616,
+      "distinctCount": 1323,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 2.0,
+      "maxLength": 108.0
+    },
+    "SourceNodeCategories": {
+      "fillRate": 1.0,
+      "distinctCount": 29,
+      "topValues": [
+        {
+          "value": "[\"finding\",\"vulnerability_finding\"]",
+          "weight": 0.546
+        },
+        {
+          "value": "[\"application_identity\",\"environmentAzure\",\"environmentCloud\",\"identities\",\"identity\"]",
+          "weight": 0.10043
+        },
+        {
+          "value": "[\"container\",\"container_registry\",\"containerRegistry\",\"containers\",\"environmentAzure\",\"environmentCloud\"]",
+          "weight": 0.06243
+        },
+        {
+          "value": "[\"finding\",\"security_finding\"]",
+          "weight": 0.05971
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"identities\",\"identity\",\"user_group\"]",
+          "weight": 0.05657
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"identities\",\"identity\",\"user_account\"]",
+          "weight": 0.03986
+        },
+        {
+          "value": "[\"access\",\"environmentAzure\",\"environmentCloud\",\"identity\",\"role_assignment\"]",
+          "weight": 0.03843
+        },
+        {
+          "value": "[\"access\",\"cloud_account\",\"environmentAzure\",\"environmentCloud\",\"identity\"]",
+          "weight": 0.03014
+        },
+        {
+          "value": "[\"access\",\"cloud_account\",\"environmentAws\",\"environmentCloud\",\"identity\"]",
+          "weight": 0.02243
+        },
+        {
+          "value": "[\"finding\",\"management_finding\"]",
+          "weight": 0.01486
+        },
+        {
+          "value": "[\"compute\",\"device\",\"environmentAzure\",\"environmentCloud\",\"virtual_machine\"]",
+          "weight": 0.00486
+        },
+        {
+          "value": "[\"automation_service\",\"compute\",\"environmentAzure\",\"environmentCloud\"]",
+          "weight": 0.00343
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"network\",\"network_interface\"]",
+          "weight": 0.00257
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"network\",\"network_group\",\"subnet\"]",
+          "weight": 0.00243
+        },
+        {
+          "value": "[\"AI\",\"ai_platform\",\"environmentAzure\",\"environmentCloud\"]",
+          "weight": 0.00243
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"network\",\"network_group\",\"virtual_network\"]",
+          "weight": 0.00229
+        },
+        {
+          "value": "[\"compute\",\"device\",\"physical_device\"]",
+          "weight": 0.00229
+        },
+        {
+          "value": "[\"AI\",\"ai_service\",\"cognitive_service\",\"environmentAzure\",\"environmentCloud\"]",
+          "weight": 0.00186
+        },
+        {
+          "value": "[\"ip_address\",\"network\"]",
+          "weight": 0.001
+        },
+        {
+          "value": "[\"cloud_deployments\",\"devops\",\"environmentAzure\",\"environmentCloud\"]",
+          "weight": 0.001
+        },
+        {
+          "value": "[\"environmentAws\",\"environmentCloud\",\"network\",\"network_group\",\"virtual_network\"]",
+          "weight": 0.001
+        },
+        {
+          "value": "[\"computer_account\",\"identities\",\"identity\"]",
+          "weight": 0.00086
+        },
+        {
+          "value": "[\"compute\",\"containerized_serverless\",\"environmentAzure\",\"environmentCloud\"]",
+          "weight": 0.00086
+        },
+        {
+          "value": "[\"cookies\",\"secret\"]",
+          "weight": 0.00057
+        },
+        {
+          "value": "[\"auditing_finding\",\"finding\"]",
+          "weight": 0.00057
+        },
+        {
+          "value": "[\"compute\",\"environmentAzure\",\"environmentCloud\",\"serverless\"]",
+          "weight": 0.00043
+        },
+        {
+          "value": "[\"AI\",\"ai_model\"]",
+          "weight": 0.00029
+        },
+        {
+          "value": "[\"AI\",\"ai_agent\",\"ai_service\",\"environmentAzure\",\"environmentCloud\"]",
+          "weight": 0.00029
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"key\",\"secret\"]",
+          "weight": 0.00014
+        }
+      ],
+      "pattern": "json",
+      "minLength": 17.0,
+      "maxLength": 105.0
+    },
+    "TargetNodeId": {
+      "fillRate": 1.0,
+      "distinctCount": 991,
+      "topValues": [],
+      "pattern": "md5",
+      "minLength": 32.0,
+      "maxLength": 32.0
+    },
+    "EdgeId": {
+      "fillRate": 1.0,
+      "distinctCount": 4977,
+      "topValues": [],
+      "pattern": null,
+      "minLength": 69.0,
+      "maxLength": 69.0
+    },
+    "SourceNodeId": {
+      "fillRate": 1.0,
+      "distinctCount": 1559,
+      "topValues": [],
+      "pattern": "md5",
+      "minLength": 32.0,
+      "maxLength": 32.0
+    },
+    "TargetNodeCategories": {
+      "fillRate": 1.0,
+      "distinctCount": 46,
+      "topValues": [
+        {
+          "value": "[\"compute\",\"device\",\"physical_device\"]",
+          "weight": 0.33171
+        },
+        {
+          "value": "[\"compute\",\"device\",\"environmentAzure\",\"environmentCloud\",\"virtual_machine\"]",
+          "weight": 0.25214
+        },
+        {
+          "value": "[\"access\",\"cloud_account\",\"environmentAzure\",\"environmentCloud\",\"identity\"]",
+          "weight": 0.08171
+        },
+        {
+          "value": "[\"container\",\"container_image\",\"containers\"]",
+          "weight": 0.06243
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"identities\",\"identity\",\"user_group\"]",
+          "weight": 0.05286
+        },
+        {
+          "value": "[\"access\",\"environmentAzure\",\"environmentCloud\",\"identity\",\"role_assignment\"]",
+          "weight": 0.03843
+        },
+        {
+          "value": "[\"environmentAws\",\"environmentCloud\",\"firewall\",\"network\"]",
+          "weight": 0.02914
+        },
+        {
+          "value": "[\"data\",\"environmentAzure\",\"environmentCloud\",\"object_storage\"]",
+          "weight": 0.02643
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"identities\",\"identity\",\"user_account\"]",
+          "weight": 0.01657
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"network\",\"network_interface\"]",
+          "weight": 0.01314
+        },
+        {
+          "value": "[\"data\",\"environmentAws\",\"environmentCloud\",\"managed_database\"]",
+          "weight": 0.00771
+        },
+        {
+          "value": "[\"application_identity\",\"environmentAzure\",\"environmentCloud\",\"identities\",\"identity\"]",
+          "weight": 0.007
+        },
+        {
+          "value": "[\"cloud_deployments\",\"devops\",\"environmentAzure\",\"environmentCloud\"]",
+          "weight": 0.00686
+        },
+        {
+          "value": "[\"computer_account\",\"identities\",\"identity\"]",
+          "weight": 0.00657
+        },
+        {
+          "value": "[\"automation_service\",\"compute\",\"environmentAzure\",\"environmentCloud\"]",
+          "weight": 0.006
+        },
+        {
+          "value": "[\"data\",\"environmentAzure\",\"environmentCloud\",\"log_storage\"]",
+          "weight": 0.006
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"firewall\",\"network\"]",
+          "weight": 0.00514
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"keys_management_service\",\"secret\"]",
+          "weight": 0.00486
+        },
+        {
+          "value": "[\"AI\",\"ai_service\",\"cognitive_service\",\"environmentAzure\",\"environmentCloud\"]",
+          "weight": 0.00457
+        },
+        {
+          "value": "[\"application_identity\",\"environmentAws\",\"environmentCloud\",\"identities\",\"identity\"]",
+          "weight": 0.004
+        },
+        {
+          "value": "[\"access\",\"cloud_account\",\"environmentAws\",\"environmentCloud\",\"identity\"]",
+          "weight": 0.00371
+        },
+        {
+          "value": "[\"AI\",\"ai_platform\",\"environmentAzure\",\"environmentCloud\"]",
+          "weight": 0.00329
+        },
+        {
+          "value": "[\"domain_account\",\"identities\",\"identity\"]",
+          "weight": 0.00329
+        },
+        {
+          "value": "[\"environmentAws\",\"environmentCloud\",\"network\",\"network_group\",\"subnet\"]",
+          "weight": 0.003
+        },
+        {
+          "value": "[\"container\",\"container_registry\",\"containerRegistry\",\"containers\",\"environmentAzure\",\"environmentCloud\"]",
+          "weight": 0.00271
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"network\",\"network_group\",\"subnet\"]",
+          "weight": 0.00257
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"network\",\"network_group\",\"virtual_network\"]",
+          "weight": 0.00214
+        },
+        {
+          "value": "[\"environmentAws\",\"environmentCloud\",\"identities\",\"identity\",\"user_account\"]",
+          "weight": 0.00171
+        },
+        {
+          "value": "[\"compute\",\"environmentAzure\",\"environmentCloud\",\"serverless\"]",
+          "weight": 0.00157
+        },
+        {
+          "value": "[\"environmentAzure\",\"environmentCloud\",\"ip_address\",\"network\"]",
+          "weight": 0.00129
+        }
+      ],
+      "pattern": "json",
+      "minLength": 20.0,
+      "maxLength": 105.0
     }
   }
 }
