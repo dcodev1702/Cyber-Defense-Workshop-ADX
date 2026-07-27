@@ -13,9 +13,9 @@
 5. Confirm `kusto-readonly-gateway` is healthy with `docker compose ps` and validate a pilot student proxy connection. Health only proves the process is listening, so also confirm the policy is live: `.show tables` must succeed and `.show queries` must return 403.
 6. Run `scripts\Test-WorkshopReadiness.ps1` and require a green verdict before the class starts. It checks the six things that are quiet when they break — containers, the rehearsed emulator build, whether the gateway is running its own source rather than a stale image, the table and row counts, the network boundary, and the student path — and reapplies the isolation rule, which does not survive a Docker engine restart.
 7. Distribute only `student-access.env`, `Start-StudentAdxProxy.ps1`, and the student lab instructions through the temporary class channel.
-8. Have students import `STUDENT-GUIDES\dashboard-CYBER-DEFEND-V4.json` as their dashboard; keep `dashboards\cyber-defense-workshop-dashboard.kql` open in the query editor for pinning tiles manually, and `docs\instructor_answer_key.kql` in a second tab for yourself.
+8. Import `dashboards\dashboard-CYBER-DEFEND-V4.json` yourself and present it; students orient to the dashboard rather than building it. Keep `dashboards\cyber-defense-workshop-dashboard.kql` open in the query editor for pinning tiles manually, and `docs\instructor_answer_key.kql` in a second tab for yourself.
 
-> The dashboard ships in two variants because a dashboard's data source names the cluster it queries, and importing the wrong one renders `Access denied` on all forty tiles. `dashboard-CYBER-DEFEND-V4.json` targets the container path at `http://127.0.0.1:8080`; `dashboard-CYBER-DEFEND-V4-azure.json` targets the managed Azure cluster. Use the one that matches the path you are delivering.
+> The dashboard ships in two variants because a dashboard's data source names the cluster it queries, and importing the wrong one renders `Access denied` on all forty tiles. `dashboards\dashboard-CYBER-DEFEND-V4.json` targets the container path at `http://127.0.0.1:8080`; `dashboards\dashboard-CYBER-DEFEND-V4-azure.json` targets the managed Azure cluster. Use the one that matches the path you are delivering.
 
 > `.show cluster` returns 403 by design. It is not part of the Azure Data Explorer **Add connection** handshake, so students connect and query normally, but clicking into cluster-level detail is refused. Expect the question in class.
 
@@ -29,7 +29,7 @@ Before an intentional Kustainer replacement, run `docker compose stop kusto`, `s
 4. Grant the participant group ADX database viewer access using `scripts\Grant-StudentAdxAccess.ps1` or an equivalent Kusto management command.
 5. Share the ADX dashboard with the participant group using dashboard `Can view` permission.
 6. Open the ADX Web UI URL with a pilot participant account and confirm the database, dashboard, and query results are visible.
-7. Have participants import `STUDENT-GUIDES\dashboard-CYBER-DEFEND-V4-azure.json`, which targets the managed cluster; keep `dashboards\cyber-defense-workshop-dashboard.kql` open in the query editor for manual tile pinning, and `docs\instructor_answer_key.kql` in a second tab for yourself.
+7. Import `dashboards\dashboard-CYBER-DEFEND-V4-azure.json`, which targets the managed cluster, and share it with the participant group as in step 5 rather than having participants import it. Keep `dashboards\cyber-defense-workshop-dashboard.kql` open in the query editor for manual tile pinning, and `docs\instructor_answer_key.kql` in a second tab for yourself.
 
 ## Instructor storyline
 

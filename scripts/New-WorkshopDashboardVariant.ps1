@@ -21,8 +21,8 @@ change in the diff, and risk altering values the portal wrote.
 
 .EXAMPLE
 .\scripts\New-WorkshopDashboardVariant.ps1 `
-  -InputPath .\STUDENT-GUIDES\dashboard-CYBER-DEFEND-V4.json `
-  -OutputPath .\STUDENT-GUIDES\dashboard-CYBER-DEFEND-V4-azure.json `
+  -InputPath .\dashboards\dashboard-CYBER-DEFEND-V4.json `
+  -OutputPath .\dashboards\dashboard-CYBER-DEFEND-V4-azure.json `
   -ClusterUri 'https://dibsecadx.eastus2.kusto.windows.net' `
   -DatabaseName 'cyber-defend-q0xxzc'
 

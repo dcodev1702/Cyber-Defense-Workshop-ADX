@@ -303,10 +303,10 @@ The repository includes an Azure Data Explorer dashboard template with a SOC-sty
 In the ADX Web UI, go to **Dashboards** > **New dashboard** > **Import dashboard from file**, and select:
 
 ```text
-STUDENT-GUIDES\dashboard-CYBER-DEFEND-V4.json
+dashboards\dashboard-CYBER-DEFEND-V4.json
 ```
 
-This is the dashboard students import, and the one the walkthrough screenshots in [`STUDENT-GUIDES\STUDENT-LAB-SETUP-GUIDE.md`](STUDENT-GUIDES/STUDENT-LAB-SETUP-GUIDE.md) match. If you already imported an older copy, open that dashboard and use **File** > **Replace dashboard with file** to update it in place.
+The instructor imports this dashboard and presents it; students orient to it rather than importing it themselves, and the walkthrough in [`STUDENT-GUIDES\STUDENT-LAB-SETUP-GUIDE.md`](STUDENT-GUIDES/STUDENT-LAB-SETUP-GUIDE.md) explains what each page shows. Its screenshots match this file. If you already imported an older copy, open that dashboard and use **File** > **Replace dashboard with file** to update it in place.
 
 If dashboard import is unavailable, use `dashboards\cyber-defense-workshop-dashboard.kql` to run and pin the same KQL tiles manually. The older `dashboards\cyber-defense-workshop-dashboard.json` export is kept for reference only and is superseded by the V4 file above.
 

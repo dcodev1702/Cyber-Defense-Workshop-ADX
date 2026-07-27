@@ -301,7 +301,7 @@ You should get back **80 records** &mdash; the 79 workshop tables plus a `__TOTA
 
 ## 🧭 Fast triage pattern
 
-Use this sequence while you work the scenario. It applies whether you query the tables directly or use the optional dashboard further down.
+Use this sequence while you work the scenario. It applies whether you query the tables directly or follow along on the Defender Dashboard your instructor provides.
 
 1. Scope the event by setting a focused time range and identifying the highest-severity alert or unusual trend.
 1. Validate the identity: identify the user, service principal, application, source IP, and whether the account is privileged or risky.
@@ -314,48 +314,22 @@ Use this sequence while you work the scenario. It applies whether you query the 
 ## 📊 Defender Dashboard
 
 <details>
-<summary><strong>📊 Optional extension</strong> &mdash; click to expand the Defender Dashboard walkthrough</summary>
+<summary><strong>📊 Dashboard orientation</strong> &mdash; click to expand the Defender Dashboard walkthrough</summary>
 
 <br>
 
-Use the Defender Dashboard after completing the connection steps above. It brings together the alert, identity, network, Graph API, and device inventory views needed to move from an initial signal to an evidence-based triage decision.
+Your instructor provides the Defender Dashboard. You do not need to build, import, or configure it — this section is here so you know what it shows you and how to read it.
 
-### Connect the dashboard to the lab data source
+The dashboard brings together the alert, identity, network, Graph API, and device inventory views needed to move from an initial signal to an evidence-based triage decision. Everything on it can also be answered by querying the tables directly, so treat it as a faster way to see the same data, not a separate source of truth.
 
-The dashboard depends on the same local Cloudflare tunnel as the query experience. Open **Data sources** in the dashboard and confirm that the data source connection URI is:
+### How to read it
 
-```text
-http://127.0.0.1:8080
-```
+- **Set the time range first.** Every tile obeys the dashboard-wide time range. Comparing two tiles across different windows is the most common way to reach a wrong conclusion.
+- **Keep the same window while pivoting** between pages, so counts on one page stay comparable to another.
+- **This is historical snapshot data, not live telemetry.** Sequence activity using the selected time range and the event timestamps, rather than the tile's **As of** label.
+- **A large count alone is not proof of compromise.** Look for a spike, an unusual combination of signals, or activity that does not match the baseline of the selected window.
 
-Azure Data Explorer may display the URI with a trailing `/`; that is expected. Do not replace the local address with the public tunnel hostname, use `https`, or add a path after the port. The local address routes dashboard queries through the tunnel running on your computer.
-
-Before you begin triage:
-
-1. Start the Cloudflare tunnel and leave that terminal window open.
-1. Verify the tunnel in a second terminal with `curl -fsS http://127.0.0.1:8080/v1/rest/ping` (use `curl.exe` on Windows).
-1. Complete the **Trust** and browser **Allow** prompts for the local endpoint.
-1. Confirm that `CyberDefendStudentSnapshot` is selected as the active database, then select **Refresh** in the dashboard.
-
-If every dashboard tile fails or stays blank, validate the tunnel first and then recheck the dashboard data source URI. If the tunnel test succeeds but only one tile has no rows, the connection is usually healthy; adjust the global time range and investigate that specific data source or query instead. The workshop uses historical snapshot data, so use the selected time range and event timestamps to sequence activity rather than treating the tile's **As of** label as live telemetry.
-
-### ADX dashboards
-
-The four views below form a practical SOC triage sequence. Set the dashboard-wide time range before comparing tiles, and keep the same window while pivoting between pages.
-
-#### Import the dashboard JSON
-
-In Azure Data Explorer, select **Dashboards** > **New dashboard** > **Import dashboard from file**, then choose [dashboard-CYBER-DEFEND-V4.json](dashboard-CYBER-DEFEND-V4.json). Importing this JSON creates the Defender Dashboard pages and tiles represented by the images below.
-
-> If every tile shows **Access denied**, you have imported the wrong variant. [dashboard-CYBER-DEFEND-V4.json](dashboard-CYBER-DEFEND-V4.json) queries the workshop cluster through your local proxy at `http://127.0.0.1:8080`, which is the one this guide sets up. [dashboard-CYBER-DEFEND-V4-azure.json](dashboard-CYBER-DEFEND-V4-azure.json) queries the managed Azure cluster and is only for the instructor-led Azure path.
-
-The JSON was exported with its authoring cloud data source, so set the lab connection before relying on the tiles:
-
-1. In the imported dashboard, select **Data sources** and edit **Cyber Defense Workshop ADX**.
-1. Replace the cluster address with exactly `http://127.0.0.1:8080`.
-1. Set the database to `CyberDefendStudentSnapshot`, then save the data source and select **Refresh**.
-
-The address must be the local tunnel endpoint, not the cloud cluster address saved in the JSON. The Cloudflare tunnel must still be running, and the local endpoint must already be trusted in Azure Data Explorer. When the data source is set correctly, the imported dashboard renders the SOC Overview, Identity and Sign-ins, Network and Graph, and Inventory and Posture views shown below.
+The four pages below form a practical SOC triage sequence.
 
 #### SOC Overview
 

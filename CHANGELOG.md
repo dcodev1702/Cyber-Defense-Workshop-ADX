@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### 2026-07-27 — the dashboard is presented to students, not assembled by them
+
+- **Removed the dashboard build from the student guide.** The guide walked students through importing a JSON, editing the `Cyber Defense Workshop ADX` data source, replacing the cluster address, and re-checking the tunnel before any tile would render — setup work that has nothing to do with learning KQL, and that fails in a room of twenty in ways only the instructor can fix. The section is now orientation: what the dashboard shows, how to read it, and the same four triage callouts.
+- **Kept the part that was actually teaching.** The four page walkthroughs and their triage callouts were the value in that section and are unchanged. What went is the build instructions, the data-source reconfiguration, and the "you imported the wrong variant" warning — a failure mode students can no longer have.
+- **Moved the two dashboard exports to `dashboards/` rather than deleting them.** They were asked to be removed from `STUDENT-GUIDES/`, and they are; but deleting them outright would have broken the instructor's own workflow, since the README and the instructor checklist both import `dashboard-CYBER-DEFEND-V4.json`, and `New-WorkshopDashboardVariant.ps1`, `Sync-WorkshopStudentDashboard.ps1` and `Test-WorkshopDashboardParity.ps1` all read it by default. The schema-76 export is also the only one that imports cleanly into a current portal. Moved with `git mv` so history follows the file.
+- **Repointed everything that referenced the old location** — both instructor checklists, the README import step, all three scripts, and the parity failure message that told the reader to re-export "what students import". Verified rather than assumed: `Test-WorkshopDashboardParity.ps1` resolves the moved files and passes 40 of 40 tile titles and 40 of 40 tile queries across all three copies.
+- **Left the two dated reports alone.** `REPO-EVALUATION-2026-07-26.md` and the earlier changelog entry still name the old path, because they are records of what was true on their date and rewriting them would make them lie.
+
 ### 2026-07-27 — the workspace name was in the telemetry too, and only a wider scan could see it
 
 - **`AgentsInfo.DeclaredDataSources` carried the real Log Analytics workspace name on 1,384 rows.** Two hardcoded catalog entries emitted `Sentinel: <workspace>` into generated telemetry. They now emit `Sentinel: USAG-Wiesbaden-SOC`, which is what the rest of that catalog already looked like — every neighbouring value is fictional (`usag-cyber.local`, `partner.example`, `USAG Cyber Defense`), so the real name was the single non-fictional string in it.

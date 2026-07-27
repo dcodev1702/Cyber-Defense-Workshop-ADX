@@ -35,7 +35,7 @@ result.
 [CmdletBinding(SupportsShouldProcess)]
 param(
     [string]$GeneratedJsonPath = (Join-Path $PSScriptRoot '..' 'dashboards' 'cyber-defense-workshop-dashboard.json'),
-    [string]$StudentJsonPath = (Join-Path $PSScriptRoot '..' 'STUDENT-GUIDES' 'dashboard-CYBER-DEFEND-V4.json')
+    [string]$StudentJsonPath = (Join-Path $PSScriptRoot '..' 'dashboards' 'dashboard-CYBER-DEFEND-V4.json')
 )
 
 Set-StrictMode -Version Latest
