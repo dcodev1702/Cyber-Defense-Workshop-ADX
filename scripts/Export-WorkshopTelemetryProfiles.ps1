@@ -87,6 +87,15 @@ function Get-LocalSamplePath {
         if (Test-Path -LiteralPath $aliased) { return $aliased }
     }
 
+    # NDJSON wins outright when present, regardless of size. CSV cannot represent a
+    # nested or typed value: arrays arrive space-joined, objects as "@{a=b}", numbers
+    # and booleans as text. A larger CSV is not a richer capture, it is a lossier one.
+    $ndjson = @(
+        "$Table-RealTelemetry.ndjson"
+        "$Table.ndjson"
+    ) | ForEach-Object { Join-Path $SampleDirectory $_ } | Where-Object { Test-Path -LiteralPath $_ }
+    if ($ndjson) { return @($ndjson)[0] }
+
     # Prefer the largest matching capture; "-RealTelemetry" exports are usually
     # richer than the older short exports.
     $candidates = @(
@@ -97,6 +106,30 @@ function Get-LocalSamplePath {
 
     if (-not $candidates) { return $null }
     return @($candidates | Sort-Object { (Get-Item -LiteralPath $_).Length } -Descending)[0]
+}
+
+function Import-WorkshopSampleRows {
+    <#
+        Reads a cached capture. NDJSON preserves nesting and type; CSV is kept as a
+        fallback so curated captures that predate the format change, and tables with
+        no live source to re-capture from, keep working.
+    #>
+    param(
+        [Parameter(Mandatory)][string]$Path,
+        [Parameter(Mandatory)][int]$Limit
+    )
+
+    if ([System.IO.Path]::GetExtension($Path) -eq '.ndjson') {
+        $rows = [System.Collections.Generic.List[object]]::new()
+        foreach ($line in [System.IO.File]::ReadLines($Path)) {
+            if ($rows.Count -ge $Limit) { break }
+            if ([string]::IsNullOrWhiteSpace($line)) { continue }
+            $rows.Add(($line | ConvertFrom-Json))
+        }
+        return $rows.ToArray()
+    }
+
+    return @(Import-Csv -LiteralPath $Path | Select-Object -First $Limit)
 }
 
 function Get-LogAnalyticsToken {
@@ -411,6 +444,7 @@ if (-not $LocalOnly) {
 }
 
 $summary = [System.Collections.Generic.List[object]]::new()
+$integrityFailures = [System.Collections.Generic.List[object]]::new()
 $index = 0
 
 foreach ($table in $tables) {
@@ -429,7 +463,7 @@ foreach ($table in $tables) {
     $localPath = Get-LocalSamplePath -Table $table
     if ($localPath) {
         try {
-            $localRows = @(Import-Csv -LiteralPath $localPath | Select-Object -First $MaxProfileRows)
+            $localRows = @(Import-WorkshopSampleRows -Path $localPath -Limit $MaxProfileRows)
             if ($localRows.Count -gt 0) {
                 $shape = Get-RowSetColumns -Rows $localRows
                 $rowSets.Add([pscustomobject]@{
@@ -479,17 +513,18 @@ foreach ($table in $tables) {
             # Only write a sample when none exists; curated captures on disk are
             # authoritative and must not be silently truncated.
             if ($RefreshSamples -or -not $localPath) {
-                $samplePath = Join-Path $SampleDirectory "$table-RealTelemetry.csv"
-                # Flatten dynamic columns to JSON first. Export-Csv calls ToString()
-                # on anything it does not recognise, so writing the rows straight out
-                # would cache the type name and lose the value permanently.
-                @($liveRows | Select-Object -First $SampleRowCap | ForEach-Object {
-                    $flat = [ordered]@{}
-                    foreach ($cell in $_.PSObject.Properties) {
-                        $flat[$cell.Name] = ConvertTo-ProfileValueText -Value $cell.Value
+                # NDJSON, one row per line: dynamic columns keep their nesting and
+                # their types. The previous Export-Csv cache called ToString() on
+                # anything it did not recognise, so a live capture was flattened on
+                # the way to disk and read back as the column's whole vocabulary.
+                $samplePath = Join-Path $SampleDirectory "$table-RealTelemetry.ndjson"
+                $writer = [System.IO.StreamWriter]::new($samplePath, $false, [System.Text.UTF8Encoding]::new($false))
+                try {
+                    foreach ($liveRow in @($liveRows | Select-Object -First $SampleRowCap)) {
+                        $writer.WriteLine((ConvertTo-Json -InputObject $liveRow -Compress -Depth 12))
                     }
-                    [pscustomobject]$flat
-                }) | Export-Csv -LiteralPath $samplePath -NoTypeInformation -Encoding utf8NoBOM
+                }
+                finally { $writer.Dispose() }
             }
         }
     }
@@ -509,6 +544,32 @@ foreach ($table in $tables) {
     }
 
     $emptyInProd = @($allColumns | Where-Object { $columnProfiles[$_].Contains('alwaysEmpty') })
+
+    # A vocabulary of CLR type names is not a vocabulary, and a profile that carries
+    # one silently disables every check on that column. Refuse to write it: the only
+    # thing that used to catch this was the quality gate, three steps and a 46-minute
+    # regeneration downstream, and by then the profile on disk already looked valid.
+    $brokenVocabulary = @()
+    foreach ($column in $allColumns) {
+        $vocabulary = @($columnProfiles[$column].topValues | ForEach-Object { [string]$_.value })
+        if ($vocabulary.Count -eq 0) { continue }
+        $typeNames = @($vocabulary | Where-Object { $_ -match '^System\.(Collections|Object|Management)' })
+        if ($typeNames.Count -gt 0) { $brokenVocabulary += ('{0} ({1})' -f $column, $typeNames[0]) }
+    }
+
+    if ($brokenVocabulary.Count -gt 0) {
+        Write-Host ("[{0,2}/{1}] {2,-44} NOT WRITTEN - flattened vocabulary" -f $index, $tables.Count, $table) -ForegroundColor Red
+        $brokenVocabulary | ForEach-Object { Write-Host ("          {0}" -f $_) -ForegroundColor Red }
+        Write-Host '          The capture lost its structure. Re-capture with -RefreshSamples so the' -ForegroundColor Red
+        Write-Host '          NDJSON cache is rebuilt; a CSV cache cannot represent a nested value.' -ForegroundColor Red
+        $integrityFailures.Add([pscustomobject]@{ Table = $table; Columns = $brokenVocabulary }) | Out-Null
+        $summary.Add([pscustomobject]@{
+            Table = $table; Rows = $totalRows; Columns = $allColumns.Count
+            EmptyInProd = $emptyInProd.Count; Sources = ($sources -join ' + ')
+            Note = 'profile not written: flattened vocabulary'
+        })
+        continue
+    }
 
     ([ordered]@{
         tableName    = $table
@@ -543,3 +604,10 @@ if ($noData.Count -gt 0) {
     $noData | ForEach-Object { Write-Host ("  {0,-44} {1}" -f $_.Table, $_.Note) }
 }
 Write-Host ("Profiles written to {0}" -f (Resolve-Path $ProfileDirectory))
+
+if ($integrityFailures.Count -gt 0) {
+    Write-Host ''
+    Write-Host ("{0} profile(s) refused: the capture had lost its structure." -f $integrityFailures.Count) -ForegroundColor Red
+    $integrityFailures | ForEach-Object { Write-Host ("  {0,-44} {1}" -f $_.Table, ($_.Columns -join ', ')) -ForegroundColor Red }
+    exit 1
+}

@@ -19,7 +19,9 @@ Name: Export-LogAnalyticsSamples.ps1
 Date: 2026-05-01
 Authors: dcodev1702 and GitHub Copilot CLI w/ ChatGPT 5.5 xhigh
 Dependencies: Az.Accounts, Az.OperationalInsights, Log Analytics workspace access, local schema JSON files.
-Key commands: Get-AzSubscription, Set-AzContext, Get-AzOperationalInsightsWorkspace, Invoke-AzOperationalInsightsQuery, Export-Csv.
+Key commands: Get-AzSubscription, Set-AzContext, Get-AzOperationalInsightsWorkspace, Invoke-AzOperationalInsightsQuery, ConvertTo-Json.
+Captures are written as NDJSON (one row per line) so nested dynamic columns keep
+their structure and their types; CSV flattened them to CLR type names.
 #>
 [CmdletBinding()]
 param(
@@ -145,7 +147,10 @@ $Table
 }
 
 $summary = foreach ($table in $schemaTables) {
-    $csvPath = Join-Path $OutputDirectory "$table.csv"
+    # NDJSON, not CSV: Export-Csv calls ToString() on values it does not recognise,
+    # so nested dynamic columns were cached as "System.Object[]" and every consumer
+    # downstream inherited a type name in place of the value.
+    $samplePath = Join-Path $OutputDirectory "$table.ndjson"
     $query = New-LogAnalyticsSampleQuery -Table $table -Schema $schemaByTable[$table]
     if ([string]::IsNullOrWhiteSpace($query)) {
         Write-Host "Skipping $table because it does not expose Linux device fields for $SampleProfile sampling"
@@ -163,8 +168,8 @@ $summary = foreach ($table in $schemaTables) {
         $result = Invoke-AzOperationalInsightsQuery -Workspace $workspace -Query $query -Timespan ([TimeSpan]::FromDays($LookbackDays)) -Wait 180
         $rows = @($result.Results)
         if ($rows.Count -eq 0) {
-            if (Test-Path $csvPath) {
-                Remove-Item -Path $csvPath -Force
+            if (Test-Path $samplePath) {
+                Remove-Item -Path $samplePath -Force
             }
             Write-Host "No rows found for $table"
             [pscustomobject]@{
@@ -176,13 +181,19 @@ $summary = foreach ($table in $schemaTables) {
             continue
         }
 
-        $rows | Export-Csv -Path $csvPath -NoTypeInformation -Encoding UTF8
-        Write-Host "Wrote $($rows.Count) rows to $csvPath"
+        $writer = [System.IO.StreamWriter]::new($samplePath, $false, [System.Text.UTF8Encoding]::new($false))
+        try {
+            foreach ($sampleRow in $rows) {
+                $writer.WriteLine((ConvertTo-Json -InputObject $sampleRow -Compress -Depth 12))
+            }
+        }
+        finally { $writer.Dispose() }
+        Write-Host "Wrote $($rows.Count) rows to $samplePath"
         [pscustomobject]@{
             TableName = $table
             Status = 'Exported'
             RowCount = $rows.Count
-            Path = $csvPath
+            Path = $samplePath
         }
     }
     catch {

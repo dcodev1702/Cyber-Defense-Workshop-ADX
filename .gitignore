@@ -1,7 +1,12 @@
 # Local student rosters can contain passwords or TAP values.
 students/*.csv
-sample/*.csv
 samples/*.csv
+
+# Raw tenant telemetry captures. The whole directory is ignored, not just *.csv:
+# the cache is moving to NDJSON so that nested dynamic columns survive the round
+# trip, and an extension-specific rule would have silently stopped covering it.
+# Test-RepositorySafety.ps1 blocks '^sample/' as the second layer.
+sample/
 
 # Dated tenant telemetry exports (real DIBSecCom user, device, and IP data).
 # Produced by scripts/Export-TenantTelemetrySamples.ps1.
