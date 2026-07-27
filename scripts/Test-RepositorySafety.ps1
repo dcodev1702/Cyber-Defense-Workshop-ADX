@@ -20,6 +20,12 @@ Two rules are enforced:
      Test-FieldProfileSafety.ps1. The profiles are tracked because they make the
      generated telemetry reproducible, so that scan is the last line of defence.
 
+  3. Every tracked text file is scanned for live tenant identifiers by
+     Test-TrackedContentSafety.ps1. Rule 2 only covered metadata/field-profiles/,
+     and on 2026-07-27 the tenant GUID, both subscription GUIDs, a managed-identity
+     object id and the Log Analytics workspace id were found across 21 tracked
+     .ps1, .md, .json and .bicep files -- entirely outside what was being checked.
+
 .PARAMETER Staged
 Scan the git staged set (git diff --cached) and the staged blob *contents* rather
 than the working tree. This is the pre-commit mode: it closes the "git add, then
@@ -89,29 +95,32 @@ try {
     $stagedProfiles = @($paths | Where-Object { ($_ -replace '\\', '/') -match '^metadata/field-profiles/.*\.profile\.json$' })
 
     if ($Staged) {
-        # Nothing to scan unless a profile is actually being committed.
+        # Nothing to scan for rule 2 unless a profile is actually being committed.
+        # This used to `exit 0` here, which would now skip rule 3 entirely -- and
+        # rule 3 is the one that covers .ps1 and .md, where the tenant identifiers
+        # were actually found. Fall through instead.
         if ($stagedProfiles.Count -eq 0) {
-            Write-Host 'Repository safety: no field profiles staged; path rules clean.' -ForegroundColor Green
-            exit 0
+            $status = 0
         }
+        else {
+            # Materialize the staged blob contents (not the working-tree files) into a
+            # temp directory, then run the exact same scanner against them. This is
+            # what closes the "staged content differs from working tree" gap.
+            $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("repo-safety-" + [guid]::NewGuid().ToString('N').Substring(0, 8))
+            New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
+            try {
+                foreach ($profile in $stagedProfiles) {
+                    $blob = git show ":$profile"
+                    $target = Join-Path $tempDir ([System.IO.Path]::GetFileName($profile))
+                    Set-Content -LiteralPath $target -Value $blob -Encoding UTF8
+                }
 
-        # Materialize the staged blob contents (not the working-tree files) into a
-        # temp directory, then run the exact same scanner against them. This is
-        # what closes the "staged content differs from working tree" gap.
-        $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ("repo-safety-" + [guid]::NewGuid().ToString('N').Substring(0, 8))
-        New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
-        try {
-            foreach ($profile in $stagedProfiles) {
-                $blob = git show ":$profile"
-                $target = Join-Path $tempDir ([System.IO.Path]::GetFileName($profile))
-                Set-Content -LiteralPath $target -Value $blob -Encoding UTF8
+                & $profileScanner -ProfileDirectory $tempDir -Quiet
+                $status = $LASTEXITCODE
             }
-
-            & $profileScanner -ProfileDirectory $tempDir -Quiet
-            $status = $LASTEXITCODE
-        }
-        finally {
-            Remove-Item -LiteralPath $tempDir -Recurse -Force -ErrorAction SilentlyContinue
+            finally {
+                Remove-Item -LiteralPath $tempDir -Recurse -Force -ErrorAction SilentlyContinue
+            }
         }
     }
     else {
@@ -121,6 +130,18 @@ try {
 
     if ($status -ne 0) {
         Write-Host 'BLOCKED: field profiles failed the tenant-data scan.' -ForegroundColor Red
+        exit 1
+    }
+
+    # ---- rule 3: tenant identifiers in tracked text -------------------------
+    # Rule 2 only ever looked at metadata/field-profiles/. On 2026-07-27 the tenant
+    # GUID, both subscriptions, a managed-identity object id and the Log Analytics
+    # workspace id were found in 21 tracked .ps1, .md, .json and .bicep files --
+    # every one of them outside anything this script inspected. That is the gap.
+    $contentScanner = Join-Path $PSScriptRoot 'Test-TrackedContentSafety.ps1'
+    & $contentScanner -Staged:$Staged -Quiet
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host 'BLOCKED: tracked files contain live tenant identifiers.' -ForegroundColor Red
         exit 1
     }
 
