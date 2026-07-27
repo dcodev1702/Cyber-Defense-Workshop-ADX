@@ -39,11 +39,18 @@ param(
     [int]$SampleRows = 1500,
     [double]$SparseTolerance = 0.25,
     [double]$MinimumScore = 0.80,
+    # Tables are scored independently, so they score in parallel. 8 matches the
+    # physical core count that the generator benchmarks settled on; beyond that the
+    # runspaces contend rather than help.
+    [ValidateRange(1, 64)]
+    [int]$ThrottleLimit = 8,
     [switch]$Detailed
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+. (Join-Path $PSScriptRoot 'WorkshopProgress.ps1')
 
 # Columns the workshop deliberately populates even though production leaves them
 # empty. Shared with the generator so the two cannot disagree about intent.
@@ -69,7 +76,7 @@ function ConvertTo-ProfileValueText {
     if ($Value -is [string]) { return $Value }
     if ($Value -is [ValueType]) { return [string]$Value }
 
-    $json = ConvertTo-Json -InputObject $Value -Compress -Depth 12
+    $json = ConvertTo-Json -InputObject $Value -Compress -Depth 15
     if ($json -in @('[]', '{}', 'null')) { return '' }
     return $json
 }
@@ -103,15 +110,34 @@ if ($TableName) {
 $results = [System.Collections.Generic.List[object]]::new()
 $skipped = [System.Collections.Generic.List[string]]::new()
 
-foreach ($file in $profileFiles) {
+# Runspaces do not inherit the functions defined in this script, so the two the
+# loop needs are carried across as text and rebuilt inside each one.
+$readNdjsonSample = ${function:Read-NdjsonSample}.ToString()
+$convertProfileValueText = ${function:ConvertTo-ProfileValueText}.ToString()
+
+$gateActivity = 'Scoring generated tables'
+$gateStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+$gateTotal = $profileFiles.Count
+$script:gateDone = 0
+Write-Host ''
+
+$parallelResults = @($profileFiles | ForEach-Object -ThrottleLimit $ThrottleLimit -Parallel {
+    ${function:Read-NdjsonSample} = $using:readNdjsonSample
+    ${function:ConvertTo-ProfileValueText} = $using:convertProfileValueText
+    $DataDirectory = $using:DataDirectory
+    $SampleRows = $using:SampleRows
+    $SparseTolerance = $using:SparseTolerance
+    $overrides = $using:overrides
+
+    $file = $_
     $doc = Get-Content -Raw $file.FullName | ConvertFrom-Json
     $table = [string]$doc.tableName
     $dataPath = Join-Path $DataDirectory "$table.json"
 
-    if (-not (Test-Path $dataPath)) { $skipped.Add("$table (no generated data)"); continue }
+    if (-not (Test-Path $dataPath)) { [pscustomobject]@{ Skipped = "$table (no generated data)" }; return }
 
     $rows = Read-NdjsonSample -Path $dataPath -Limit $SampleRows
-    if ($rows.Count -eq 0) { $skipped.Add("$table (empty file)"); continue }
+    if ($rows.Count -eq 0) { [pscustomobject]@{ Skipped = "$table (empty file)" }; return }
 
     $exempt = @()
     if ($overrides.ContainsKey($table)) { $exempt = $overrides[$table] }
@@ -199,16 +225,37 @@ foreach ($file in $profileFiles) {
     $defects = $sparse.Count + $overfull.Count + $foreign.Count
     $score = if ($checked -gt 0) { [Math]::Round(1.0 - ($defects / $checked), 4) } else { 1.0 }
 
-    $results.Add([pscustomobject]@{
+    [pscustomobject]@{
         Table = $table; Rows = $rows.Count; Columns = $checked
         Sparse = $sparse.Count; Overfull = $overfull.Count; Foreign = $foreign.Count
         Score = $score
         SparseDetail = $sparse; OverfullDetail = $overfull; ForeignDetail = $foreign
         UnusableVocabulary = $unusableVocabulary
-    })
-}
+    }
+} | ForEach-Object {
+    # Results stream back one at a time as each runspace finishes, which is the only
+    # point in a parallel pipeline where the main runspace regains control, so the
+    # meter is advanced from here.
+    $script:gateDone++
+    Write-WorkshopProgressBar -Activity $gateActivity -Completed $script:gateDone `
+        -Total $gateTotal -Elapsed $gateStopwatch.Elapsed
+    $_
+})
 
-$sorted = @($results | Sort-Object Score)
+$gateStopwatch.Stop()
+Complete-WorkshopProgressBar -Activity $gateActivity
+
+# Runspaces finish in whatever order they finish, so the report is put back into a
+# fixed order here. Score alone is not enough: tables that tie would otherwise
+# shuffle between runs and a diff of two reports would show phantom changes.
+$skipMessages = @()
+foreach ($item in $parallelResults) {
+    if ($item.PSObject.Properties['Skipped']) { $skipMessages += [string]$item.Skipped }
+    else { $results.Add($item) }
+}
+foreach ($message in ($skipMessages | Sort-Object)) { $skipped.Add($message) }
+
+$sorted = @($results | Sort-Object Score, Table)
 
 Write-Host ''
 Write-Host ('{0,-44} {1,6} {2,5} {3,6} {4,8} {5,7} {6,7}' -f 'Table', 'Rows', 'Cols', 'Sparse', 'Overfull', 'Foreign', 'Score')

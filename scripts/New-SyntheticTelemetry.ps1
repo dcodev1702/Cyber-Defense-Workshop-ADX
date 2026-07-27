@@ -63,9 +63,11 @@ $ErrorActionPreference = 'Stop'
 $script:Random = [System.Random]::new($RandomSeed)
 $script:TelemetryEndTime = $TelemetryEndTime.ToUniversalTime()
 
-# An explicit -NormalRowsPerTable applies to every table and outranks the per-table
-# defaults in -TableRowOverride, so small test runs stay small.
-$script:NormalRowsPerTableExplicit = $PSBoundParameters.ContainsKey('NormalRowsPerTable')
+# -NormalRowsPerTable sets the ambient default for tables that have no explicit
+# target. It used to also switch OFF -TableRowOverride, which meant any small test
+# run silently dropped DeviceProcessEvents from 32,000 rows to a random 5,000-10,000.
+# The two are separate knobs now: to shrink an overridden table, pass
+# -TableRowOverride explicitly (@{} clears every override).
 
 # Keep default telemetry bounded to the seven-day lookback ending at script runtime.
 $StartTime = $script:TelemetryEndTime.AddMinutes(-90)
@@ -951,6 +953,67 @@ function Get-WorkshopSchemaTypes {
     return $map
 }
 
+function ConvertTo-WorkshopStableDynamic {
+    <#
+        Gives a dynamic value a deterministic key order.
+
+        Nested values are built as plain @{} literals, and .NET randomises string
+        hashing per process, so a Hashtable enumerates in a different order in every
+        run. Two generations with identical inputs therefore produced identical VALUES
+        in a different byte order -- DeviceDetail came out
+        "@{operatingSystem=...; browser=...}" in one process and
+        "@{trustType=...; isCompliant=...}" in the next.
+
+        That defeats byte-comparison, which is the only practical way to prove a
+        parallel run matches a serial one, and it quietly contradicted the promise that
+        a fixed -RandomSeed reproduces the dataset. Key order carries no meaning in a
+        Kusto dynamic column, so sorting is free.
+    #>
+    param($Value)
+
+    if ($null -eq $Value) { return $null }
+    if ($Value -is [string] -or $Value -is [ValueType]) { return $Value }
+
+    if ($Value -is [System.Collections.IDictionary]) {
+        $ordered = [ordered]@{}
+        foreach ($key in @($Value.Keys | Sort-Object { [string]$_ })) {
+            $ordered[[string]$key] = ConvertTo-WorkshopStableDynamic -Value $Value[$key]
+        }
+        return $ordered
+    }
+
+    if ($Value -is [array]) {
+        # Array order is meaningful, so only the elements are normalised.
+        $items = @(foreach ($item in $Value) { ConvertTo-WorkshopStableDynamic -Value $item })
+        return ,$items
+    }
+
+    return $Value
+}
+
+function ConvertTo-WorkshopJsonValue {
+    <#
+        Serializes a column value to JSON with a stable key order.
+
+        Several columns hold JSON *text* rather than a live object, built at the point
+        of construction. Those strings never reach the dynamic normaliser, so they kept
+        the per-process key order of the hashtable they came from: LocationDetails and
+        LoggedOnUsers serialized their keys differently in every run, which is why two
+        identical generations produced different bytes. Use this instead of calling
+        ConvertTo-Json directly on a column value.
+    #>
+    param(
+        $InputObject,
+        # 15, not ConvertTo-Json's default of 2. Past the depth limit ConvertTo-Json
+        # does not fail, it substitutes the value's ToString() -- which is precisely
+        # how "System.Collections.Hashtable" ends up written into a data file. Deep
+        # enough for anything the generator builds, and free for shallow values.
+        [int]$Depth = 15
+    )
+
+    return ConvertTo-Json -InputObject (ConvertTo-WorkshopStableDynamic -Value $InputObject) -Compress -Depth $Depth
+}
+
 function ConvertTo-WorkshopColumnValue {
     <#
         Coerces a generated value to the declared ADX column type. Returns $null when
@@ -965,11 +1028,17 @@ function ConvertTo-WorkshopColumnValue {
 
     if ($null -eq $Value) { return $null }
     if ($DeclaredType -eq 'string' -or $DeclaredType -eq 'dynamic') {
+        # Applied to 'string' as well as 'dynamic', because several columns declared
+        # string in the schema are handed a nested object anyway -- LocationDetails on
+        # AADManagedIdentitySignInLogs and LoggedOnUsers on DeviceInfo among them --
+        # and those were still serializing in a per-process key order. Plain strings
+        # take the fast path out of the normaliser untouched.
+        $stable = ConvertTo-WorkshopStableDynamic -Value $Value
         # `return $array` unrolls a single-element array to a scalar, so a dynamic
         # column holding ["ListFiles"] was written as "ListFiles" while multi-element
         # values came through intact. The comma keeps the array whole.
-        if ($Value -is [array]) { return ,$Value }
-        return $Value
+        if ($stable -is [array]) { return ,$stable }
+        return $stable
     }
 
     switch ($DeclaredType) {
@@ -1667,7 +1736,7 @@ function New-WorkshopDeviceInfoDiscoverySources {
         $sources['Defender for Cloud'] = $date
     }
 
-    return ConvertTo-Json -InputObject $sources -Compress -Depth 4
+    return ConvertTo-WorkshopJsonValue -InputObject $sources -Depth 15
 }
 
 function New-WorkshopDeviceInfoDlpInfo {
@@ -1690,7 +1759,7 @@ function New-WorkshopDeviceInfoDlpInfo {
         DlpUpn = $dlpUpn
     }
 
-    return ConvertTo-Json -InputObject $info -Compress -Depth 4
+    return ConvertTo-WorkshopJsonValue -InputObject $info -Depth 15
 }
 
 function New-WorkshopDeviceInfoValues {
@@ -1765,7 +1834,7 @@ function New-WorkshopDeviceInfoValues {
     if ([string]::IsNullOrWhiteSpace($joinType) -and $isAzureJoined) { $joinType = if (($Index % 4) -eq 0) { 'AAD Joined' } else { 'Domain Joined' } }
     $aadDeviceId = if ($isAzureJoined -or (-not $Ambient -and $Device.Type -ne 'DomainController')) { New-StableGuid "aad-device|$deviceId" } else { '' }
     $loggedOnUsers = if ($onboardingStatus -eq 'Onboarded' -and $deviceCategory -eq 'Endpoint' -and ($Index % 3) -eq 0) {
-        ConvertTo-Json -InputObject @(@{ UserName = $User.Name; DomainName = if ($osPlatform -eq 'Linux') { $deviceName.Split('.')[0] } elseif ($isAzureJoined) { 'AzureAD' } else { $adDomain }; Sid = $User.Sid }) -Compress -Depth 4
+        ConvertTo-WorkshopJsonValue -InputObject @(@{ UserName = $User.Name; DomainName = if ($osPlatform -eq 'Linux') { $deviceName.Split('.')[0] } elseif ($isAzureJoined) { 'AzureAD' } else { $adDomain }; Sid = $User.Sid }) -Depth 15
     }
     else {
         '[]'
@@ -1801,7 +1870,7 @@ function New-WorkshopDeviceInfoValues {
         Vendor = $(if ($profile) { $text = Get-WorkshopPropertyText $profile 'Vendor'; if ($text) { $text } elseif ($deviceCategory -eq 'Endpoint') { 'Microsoft' } else { '' } } elseif ($deviceCategory -eq 'Endpoint') { 'Microsoft' } else { '' })
         OSDistribution = $osDistribution
         OSVersionInfo = $osVersionInfo
-        MergedDeviceIds = if (($Index % 11) -eq 0) { ConvertTo-Json -InputObject @((New-StableHex "merged|$deviceId|$Index" 40)) -Compress } else { '' }
+        MergedDeviceIds = if (($Index % 11) -eq 0) { ConvertTo-WorkshopJsonValue -InputObject @((New-StableHex "merged|$deviceId|$Index" 40)) } else { '' }
         MergedToDeviceId = if (($Index % 197) -eq 0) { New-StableHex "merged-to|$deviceId|$Index" 40 } else { '' }
         IsInternetFacing = $false
         SensorHealthState = $sensorHealth
@@ -2063,7 +2132,11 @@ function New-WorkshopRecordObject {
             if ($fill.FillRate -lt 1.0 -and $script:Random.NextDouble() -ge $fill.FillRate) { continue }
             $value = Get-WorkshopPatternValue -Pattern $fill.Pattern -Table $Table `
                 -ColumnName $fill.Name -Index $script:Random.Next() -Time $Time
-            if ($null -ne $value) { $record[$fill.Name] = $value }
+            # Normalised here as well as in ConvertTo-WorkshopColumnValue: this path
+            # writes straight into the record and never passes through the coercion,
+            # so a 'json' pattern column produced a hashtable whose key order came out
+            # differently in every process.
+            if ($null -ne $value) { $record[$fill.Name] = ConvertTo-WorkshopStableDynamic -Value $value }
         }
     }
 
@@ -2287,11 +2360,15 @@ function Initialize-WorkshopSignInFailurePlan {
     }
 
     # Lockout follows repeated failures, so it applies to a subset of the sprayed
-    # accounts rather than to arbitrary users.
+    # accounts rather than to arbitrary users. Walk the ordered list rather than the
+    # hashtable's keys: .NET randomises string hashing per process, so enumerating
+    # $script:SignInSprayTargets.Keys locked out a different quarter of the accounts
+    # in every run, and the same account produced 50053 in one generation and 50126
+    # in the next.
     $script:SignInLockedOut = @{}
     $lockoutIndex = 0
-    foreach ($upn in $script:SignInSprayTargets.Keys) {
-        if (($lockoutIndex % 4) -eq 0) { $script:SignInLockedOut[$upn] = $true }
+    foreach ($identity in ($ordered | Select-Object -First $sprayCount)) {
+        if (($lockoutIndex % 4) -eq 0) { $script:SignInLockedOut[$identity.Upn] = $true }
         $lockoutIndex++
     }
 
@@ -4629,7 +4706,7 @@ function New-NormalTelemetryValues {
             $values.AADTenantId = $tenantId
             $values.AppId = $appIdValue
             $values.AppOwnerTenantId = $tenantId
-            $values.AuthenticationProcessingDetails = ConvertTo-Json -InputObject $authenticationDetails -Compress -Depth 8
+            $values.AuthenticationProcessingDetails = ConvertTo-WorkshopJsonValue -InputObject $authenticationDetails -Depth 15
             $values.Category = 'ManagedIdentitySignInLogs'
             $values.ClientCredentialType = 'ManagedIdentity'
             $values.ConditionalAccessAudiences = '[]'
@@ -4643,8 +4720,8 @@ function New-NormalTelemetryValues {
             $values.IPAddress = $managedResource.PrivateIp
             $values.Level = if ($isFailure) { 'Warning' } else { 'Informational' }
             $values.Location = $managedResource.Region
-            $values.LocationDetails = ConvertTo-Json -InputObject $locationDetails -Compress -Depth 8
-            $values.ManagedServiceIdentity = ConvertTo-Json -InputObject $managedIdentityDetails -Compress -Depth 8
+            $values.LocationDetails = ConvertTo-WorkshopJsonValue -InputObject $locationDetails -Depth 15
+            $values.ManagedServiceIdentity = ConvertTo-WorkshopJsonValue -InputObject $managedIdentityDetails -Depth 15
             $values.NetworkLocationDetails = '[]'
             $values.OperationName = 'Sign-in activity'
             $values.OperationVersion = '1.0'
@@ -4808,25 +4885,25 @@ function New-NormalTelemetryValues {
             $values.AgentName = $archetype.Name
             $values.AgentId = '{0}:{1}' -f ($archetype.Name -replace '\s+', ''), (1 + ($Index % 40))
             $values.ModelName = $archetype.Model
-            $values.SystemInstructions = ConvertTo-Json -Compress -Depth 6 -InputObject `
+            $values.SystemInstructions = ConvertTo-WorkshopJsonValue -Depth 15 -InputObject `
                 ([object[]]@(@{ type = 'text'; content = $archetype.Instructions }))
 
             # Real spans carry the prompt and completion only on the chat operations;
             # the lifecycle spans leave them empty.
             if ($operation -in @('invoke_agent', 'chat')) {
                 $prompt = $script:AppGenAIPrompts[$Index % $script:AppGenAIPrompts.Count]
-                $values.InputMessages = ConvertTo-Json -Compress -Depth 6 -InputObject `
+                $values.InputMessages = ConvertTo-WorkshopJsonValue -Depth 15 -InputObject `
                     ([object[]]@(@{ role = 'user'; parts = @(@{ type = 'text'; content = $prompt.Ask }) }))
-                $values.OutputMessages = ConvertTo-Json -Compress -Depth 6 -InputObject `
+                $values.OutputMessages = ConvertTo-WorkshopJsonValue -Depth 15 -InputObject `
                     ([object[]]@(@{ role = 'assistant'; parts = @(@{ type = 'text'; content = $prompt.Answer }); finish_reason = 'stop' }))
             }
 
             if ($operation -eq 'execute_tool') {
                 $toolName = @($archetype.Tools)[$Index % @($archetype.Tools).Count]
-                $values.ToolDefinitions = ConvertTo-Json -Compress -Depth 6 -InputObject `
+                $values.ToolDefinitions = ConvertTo-WorkshopJsonValue -Depth 15 -InputObject `
                     ([object[]]@(@{ type = 'function'; name = $toolName; description = "Invokes $toolName" }))
-                $values.ToolCallArguments = ConvertTo-Json -Compress -InputObject @{ query = 'quarterly'; top = 5 }
-                $values.ToolCallResult = ConvertTo-Json -Compress -InputObject @{ status = 'succeeded'; itemCount = ($Index % 12) }
+                $values.ToolCallArguments = ConvertTo-WorkshopJsonValue -InputObject @{ query = 'quarterly'; top = 5 }
+                $values.ToolCallResult = ConvertTo-WorkshopJsonValue -InputObject @{ status = 'succeeded'; itemCount = ($Index % 12) }
             }
 
             $serviceName = '{0}.{1}' -f ($archetype.Publisher -replace '\s+', '-').ToLowerInvariant(), 'agent-framework'
@@ -6543,7 +6620,7 @@ function New-NormalTelemetryValues {
                 }
             }
             $values.EntityIds = [object[]]@(
-                (ConvertTo-Json -Compress -InputObject @{ type = 'AzureResourceId'; id = ('/subscriptions/{0}/resourceGroups/usag-cyber/providers/{1}' -f (Get-WorkshopSubscriptionId -Key $nodeTemplate.Label), $nodeTemplate.Label) })
+                (ConvertTo-WorkshopJsonValue -InputObject @{ type = 'AzureResourceId'; id = ('/subscriptions/{0}/resourceGroups/usag-cyber/providers/{1}' -f (Get-WorkshopSubscriptionId -Key $nodeTemplate.Label), $nodeTemplate.Label) })
             )
             $values.Type = 'ExposureGraphNodes'
         }
@@ -6713,8 +6790,8 @@ function New-NormalTelemetryValues {
             if (($Index % 100) -eq 0) {
                 $values.event_s = 'ShoeboxCallResult'
                 $values.Tenant_s = $values.Location
-                $values.properties_s = ConvertTo-Json -Compress -InputObject @{ apiName = 'Azure AI Projects API'; statusCode = 200 }
-                $values.EvaluationDetails_s = ConvertTo-Json -Compress -InputObject ([object[]]@(@{ AssignmentId = "/subscriptions/$subscriptionId/providers/Microsoft.Authorization/policyAssignments/security-baseline" }))
+                $values.properties_s = ConvertTo-WorkshopJsonValue -InputObject @{ apiName = 'Azure AI Projects API'; statusCode = 200 }
+                $values.EvaluationDetails_s = ConvertTo-WorkshopJsonValue -InputObject ([object[]]@(@{ AssignmentId = "/subscriptions/$subscriptionId/providers/Microsoft.Authorization/policyAssignments/security-baseline" }))
             }
         }
         'AADRiskyServicePrincipals' {
@@ -6799,9 +6876,10 @@ function Get-WorkshopTargetRowCount {
         return $existingCount
     }
 
-    # Per-table row targets, for example DeviceProcessEvents at 32000. Skipped when
-    # the caller passes -NormalRowsPerTable explicitly.
-    if (-not $script:NormalRowsPerTableExplicit -and $TableRowOverride -and $TableRowOverride.ContainsKey($Table)) {
+    # Per-table row targets, for example DeviceProcessEvents at 32000. These win over
+    # -NormalRowsPerTable: an explicit target for a named table is a stronger statement
+    # than a default for all tables.
+    if ($TableRowOverride -and $TableRowOverride.ContainsKey($Table)) {
         $overrideRows = [int]$TableRowOverride[$Table]
         if ($overrideRows -lt 0) {
             throw "TableRowOverride['$Table'] cannot be negative."
@@ -6835,15 +6913,20 @@ function Write-WorkshopTableData {
     param([Parameter(Mandatory)][string]$Table)
 
     $path = Join-Path $OutputDirectory "$Table.json"
+    $tableSeed = [Convert]::ToInt32((New-StableHex $Table 7), 16)
+    # Reseed per table BEFORE anything draws from the stream, so a table's output is
+    # identical whether the script generates every table or only this one.
+    #
+    # This reseed was already here, one line too late. The row target is itself a
+    # random draw when -NormalRowsPerTable is left at its default, and computing it
+    # first made a table's ROW COUNT depend on how many tables had run before it:
+    # DeviceImageLoadEvents came out 5,022 rows in a full run and 8,743 on its own.
+    # Row contents were reproducible; row counts were not. Ordering independence is
+    # what makes -TableName regeneration faithful and parallel workers safe.
+    $script:Random = [System.Random]::new($RandomSeed -bxor $tableSeed)
     $targetRows = Get-WorkshopTargetRowCount -Table $Table
     $existingCount = $script:Records[$Table].Count
     $rowsToAdd = [Math]::Max(0, $targetRows - $existingCount)
-    $tableSeed = [Convert]::ToInt32((New-StableHex $Table 7), 16)
-    # Reseed per table so a table's ambient rows are identical whether the script
-    # generates every table or only this one. Without this, the shared random stream
-    # makes output depend on how many tables ran first, which breaks both -TableName
-    # regeneration and parallel generation across worker processes.
-    $script:Random = [System.Random]::new($RandomSeed -bxor $tableSeed)
     # Cardinality targets are relative to the row count this table will actually write.
     $script:CurrentTargetRows = [Math]::Max(1, $targetRows)
     Set-WorkshopTableCardinality -Table $Table -TargetRows $script:CurrentTargetRows
@@ -6872,6 +6955,20 @@ function Write-WorkshopTableData {
     }
     finally {
         $writer.Dispose()
+    }
+
+    # A table with an explicit target must hit it. DeviceProcessEvents at 32,000 rows
+    # is the endpoint table the whole process-execution half of the workshop reads
+    # from, and it had two silent ways to come out short: -NormalRowsPerTable used to
+    # switch the override off, and a parallel worker that did not receive the override
+    # would fall back to the ambient 5,000-10,000. Failing here beats discovering it
+    # in the dashboard.
+    if ($TableRowOverride -and $TableRowOverride.ContainsKey($Table)) {
+        $required = [Math]::Max($existingCount, [int]$TableRowOverride[$Table])
+        if ($written -ne $required) {
+            throw ("$Table wrote $written row(s) but -TableRowOverride requires $required. " +
+                   'The per-table target was lost between the caller and the generator.')
+        }
     }
 
     Write-Host "Wrote $written row(s) to $path"

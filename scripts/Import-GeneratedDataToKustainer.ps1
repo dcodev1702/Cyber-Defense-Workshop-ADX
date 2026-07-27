@@ -30,6 +30,8 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+. (Join-Path $PSScriptRoot 'WorkshopProgress.ps1')
+
 function Invoke-KustoRest {
     param(
         [Parameter(Mandatory)][ValidateSet('mgmt', 'query')][string]$Endpoint,
@@ -74,6 +76,8 @@ Write-Host ''
 
 $failures = [System.Collections.Generic.List[string]]::new()
 $index = 0
+$ingestActivity = 'Ingesting tables into Kustainer'
+$ingestStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 
 foreach ($table in $tables) {
     $index++
@@ -98,13 +102,21 @@ foreach ($table in $tables) {
         Invoke-KustoRest -Endpoint mgmt -Command ".clear table ['$table'] data" | Out-Null
         Invoke-KustoRest -Endpoint mgmt -Command ".ingest into table ['$table'] (@`"$ContainerDataPath/$table.json`") with (format='multijson', ingestionMappingReference='$mappingName')" | Out-Null
 
-        Write-Host ("[{0,2}/{1}] {2,-46} ingested" -f $index, $tables.Count, $table)
+        # The meter replaces the old one-line-per-table log. Failures still print in
+        # full below, because a warning that scrolls past inside a progress bar is a
+        # warning nobody reads.
+        Write-WorkshopProgressBar -Activity $ingestActivity -Completed $index -Total $tables.Count `
+            -Elapsed $ingestStopwatch.Elapsed -Detail $table
     }
     catch {
+        Complete-WorkshopProgressBar -Activity $ingestActivity
         Write-Host ("[{0,2}/{1}] {2,-46} FAILED: {3}" -f $index, $tables.Count, $table, $_.Exception.Message) -ForegroundColor Red
         $failures.Add("$table ($($_.Exception.Message))")
     }
 }
+
+$ingestStopwatch.Stop()
+Complete-WorkshopProgressBar -Activity $ingestActivity
 
 Write-Host ''
 Write-Host 'Reconciling row counts...' -ForegroundColor Cyan

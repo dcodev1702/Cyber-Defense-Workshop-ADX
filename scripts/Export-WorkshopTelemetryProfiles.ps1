@@ -308,7 +308,7 @@ function ConvertTo-ProfileValueText {
     if ($Value -is [string]) { return $Value }
     if ($Value -is [ValueType]) { return [string]$Value }
 
-    $json = ConvertTo-Json -InputObject $Value -Compress -Depth 12
+    $json = ConvertTo-Json -InputObject $Value -Compress -Depth 15
     # An empty bag or array is an unpopulated cell, not the literal text "[]".
     if ($json -in @('[]', '{}', 'null')) { return '' }
     return $json
