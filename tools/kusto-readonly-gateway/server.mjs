@@ -221,7 +221,130 @@ const deniedCslPatterns = [
   }
 ];
 
-export function validateKql(csl, endpoint) {
+// Reads one Kusto string literal starting at `start`, returning its value and
+// the index just past the closing quote, or null when the text is not a literal
+// this gateway is willing to interpret.
+//
+// Escapes are decoded only where the decoding is unambiguous -- a doubled quote,
+// an escaped quote, an escaped backslash. Any other backslash escape returns
+// null, because a name the gateway decodes differently from Kusto is a name it
+// has not really checked.
+function readKustoStringLiteral(text, start) {
+  let index = start;
+
+  // h'...' marks an obfuscated literal and @'...' a verbatim one. Either may
+  // prefix the value, and neither changes which database is named.
+  if (text[index] === 'h' || text[index] === 'H') {
+    index += 1;
+  }
+
+  let verbatim = false;
+  if (text[index] === '@') {
+    verbatim = true;
+    index += 1;
+  }
+
+  const quote = text[index];
+  if (quote !== '"' && quote !== "'") {
+    return null;
+  }
+
+  index += 1;
+  let value = '';
+
+  while (index < text.length) {
+    const character = text[index];
+
+    // A verbatim literal has no escape character, so the backslash is data.
+    if (!verbatim && character === '\\') {
+      const escaped = text[index + 1];
+      if (escaped !== '"' && escaped !== "'" && escaped !== '\\') {
+        return null;
+      }
+
+      value += escaped;
+      index += 2;
+      continue;
+    }
+
+    if (character === quote) {
+      if (text[index + 1] === quote) {
+        value += quote;
+        index += 2;
+        continue;
+      }
+
+      return { value, end: index + 1 };
+    }
+
+    value += character;
+    index += 1;
+  }
+
+  return null;
+}
+
+// database() reaches across databases exactly as cluster() reaches across
+// clusters, but unlike cluster() it cannot simply be denied. The managed-ADX
+// database name contains hyphens, so the workshop's own material has to write
+// database("cyber-defend-...").Table, and the web UI qualifies queries the same
+// way -- a blanket deny would block the class rather than an attacker.
+//
+// Leaving it unhandled was worse. The allowlist inspected only payload.db, so a
+// student connected to the allowlisted database could read any other database on
+// the cluster with
+//
+//   database('SomeOtherDb').SomeTable | take 100
+//
+// while payload.db still read CyberDefendStudentSnapshot and passed. An
+// allowlist that inspects only the envelope is not an allowlist. So the names
+// are parsed out of the query text and every one of them must be on it.
+//
+// The argument has to be a literal: database(strcat(...)) and
+// database(toscalar(...)) resolve inside the engine, where this gateway cannot
+// see them, so an unresolvable reference is refused rather than guessed at.
+// Scanning raw text means a match inside a string literal is refused too, which
+// is the same fail-closed direction the deny scan above takes.
+export function referencedDatabases(csl) {
+  const names = [];
+  let unresolved = false;
+
+  if (typeof csl !== 'string') {
+    return { names, unresolved };
+  }
+
+  const pattern = /\bdatabase\s*\(/gi;
+  let match;
+
+  while ((match = pattern.exec(csl)) !== null) {
+    let index = match.index + match[0].length;
+    while (index < csl.length && /\s/.test(csl[index])) {
+      index += 1;
+    }
+
+    const literal = readKustoStringLiteral(csl, index);
+    if (literal === null) {
+      unresolved = true;
+      continue;
+    }
+
+    let end = literal.end;
+    while (end < csl.length && /\s/.test(csl[end])) {
+      end += 1;
+    }
+
+    if (csl[end] !== ')') {
+      unresolved = true;
+      continue;
+    }
+
+    names.push(literal.value);
+  }
+
+  return { names, unresolved };
+}
+
+export function validateKql(csl, endpoint, allowedDatabases = null) {
   if (typeof csl !== 'string' || csl.trim().length === 0) {
     return { allowed: false, reason: 'The KQL request must include a non-empty csl string.' };
   }
@@ -229,6 +352,26 @@ export function validateKql(csl, endpoint) {
   for (const { pattern, reason } of deniedCslPatterns) {
     if (pattern.test(csl)) {
       return { allowed: false, reason };
+    }
+  }
+
+  // Only when an allowlist is configured. With KUSTO_ALLOWED_DATABASES unset the
+  // operator has deliberately exposed every database on the cluster, and a
+  // database() reference reaches nothing that payload.db could not already name.
+  if (allowedDatabases) {
+    const { names, unresolved } = referencedDatabases(csl);
+
+    if (unresolved) {
+      return {
+        allowed: false,
+        reason: 'database() must name its database with a literal string through the read-only gateway, so the name can be checked against the allowlist.'
+      };
+    }
+
+    for (const name of names) {
+      if (!allowedDatabases.has(name.trim().toLowerCase())) {
+        return { allowed: false, reason: 'This database is not exposed through the read-only gateway.' };
+      }
     }
   }
 
@@ -676,7 +819,10 @@ export function createGatewayServer({
       }
     }
 
-    const validation = validateKql(payload.csl, endpoint);
+    // payload.db is only the envelope. The query text can name databases of its
+    // own through database(), so the allowlist is applied to both -- see
+    // referencedDatabases().
+    const validation = validateKql(payload.csl, endpoint, allowedDatabases);
     if (!validation.allowed) {
       logDecision({ source, endpoint, outcome: 'blocked-kql', reason: validation.reason, status: 403 });
       writeJson(response, 403, { error: validation.reason });

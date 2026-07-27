@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import http from 'node:http';
 import { once } from 'node:events';
 import test from 'node:test';
-import { buildForwardPayload, createGatewayServer, createRateLimiter, splitTopLevelStatements, timespanToSeconds, validateKql } from './server.mjs';
+import { buildForwardPayload, createGatewayServer, createRateLimiter, referencedDatabases, splitTopLevelStatements, timespanToSeconds, validateKql } from './server.mjs';
 
 async function withServer(options, run) {
   const server = createGatewayServer(options);
@@ -153,6 +153,89 @@ test('still allows harmless evaluate plugins such as bag_unpack', () => {
   assert.equal(validateKql('SecurityIncident | evaluate bag_unpack(AdditionalData)', 'query').allowed, true);
 });
 
+// ---- database() cross-database reads ----------------------------------------
+// The allowlist used to inspect only payload.db, so a student connected to the
+// allowlisted database could read any other database on the cluster by naming it
+// in the query text. Only the cluster('x').database('y') form was tested, and it
+// passed for the wrong reason -- the cluster() deny caught it, and the bare
+// database('x') form went straight through. Confirmed against the running
+// gateway on 2026-07-27: database('CyberDefendStudentSnapshot').AlertInfo | count
+// returned 200 and 6,033 rows, and the cross-database attempt was refused by
+// Kusto with a 400 rather than by the gateway with a 403.
+//
+// database() cannot simply be denied: the managed-ADX database name contains
+// hyphens, so the workshop's own material must write database("cyber-defend-...").
+
+const studentAllowlist = new Set(['cyberdefendstudentsnapshot']);
+
+for (const csl of [
+  "database('KustoMonitoringPersistentDatabase').Foo | take 100",
+  'database("KustoMonitoringPersistentDatabase").Foo | take 100',
+  "database( 'KustoMonitoringPersistentDatabase' ).Foo | take 100",
+  "DataBase('KustoMonitoringPersistentDatabase').Foo | take 100",
+  "database(@'KustoMonitoringPersistentDatabase').Foo | take 100",
+  "union database('KustoMonitoringPersistentDatabase').*",
+  "SecurityIncident | union database('KustoMonitoringPersistentDatabase').Foo",
+  "let d = database('KustoMonitoringPersistentDatabase'); d.Foo | take 1"
+]) {
+  test(`blocks cross-database read in ${csl.slice(0, 34)}...`, () => {
+    assert.equal(validateKql(csl, 'query', studentAllowlist).allowed, false);
+  });
+}
+
+test('allows database() when it names the allowlisted database', () => {
+  // The workshop needs this form, so the fix must not be a blanket deny.
+  for (const csl of [
+    "database('CyberDefendStudentSnapshot').AlertInfo | take 1",
+    'database("CyberDefendStudentSnapshot").AlertInfo | take 1',
+    "database('CYBERDEFENDSTUDENTSNAPSHOT').AlertInfo | take 1",
+    "database(@'CyberDefendStudentSnapshot').AlertInfo | take 1"
+  ]) {
+    assert.equal(validateKql(csl, 'query', studentAllowlist).allowed, true, `${csl} must still work`);
+  }
+});
+
+test('allows the hyphenated managed-ADX database name', () => {
+  // azure-data-explorer/cyber-defend-database.bicep names the database with
+  // hyphens, which forces students into database("...") syntax for every query.
+  // Denying database() outright would have broken the managed path entirely.
+  const managed = new Set(['cyber-defend-usagwsbdn-cys26']);
+  assert.equal(validateKql('database("cyber-defend-usagwsbdn-cys26").AlertInfo | take 1', 'query', managed).allowed, true);
+  assert.equal(validateKql('database("cyber-defend-other").AlertInfo | take 1', 'query', managed).allowed, false);
+});
+
+test('refuses a database name it cannot resolve rather than guessing', () => {
+  // These resolve inside the engine, where the gateway cannot see the result.
+  for (const csl of [
+    "database(strcat('Kusto', 'Monitoring')).Foo | take 1",
+    'database(toscalar(Names | take 1)).Foo | take 1',
+    'database(SomeIdentifier).Foo | take 1',
+    "database('unterminated).Foo | take 1"
+  ]) {
+    assert.equal(validateKql(csl, 'query', studentAllowlist).allowed, false, `${csl} must fail closed`);
+  }
+});
+
+test('applies the database() check on the management endpoint too', () => {
+  assert.equal(validateKql(".show database('KustoMonitoringPersistentDatabase') schema", 'mgmt', studentAllowlist).allowed, false);
+});
+
+test('leaves database() alone when no allowlist is configured', () => {
+  // With KUSTO_ALLOWED_DATABASES unset every database is deliberately exposed,
+  // so database() reaches nothing payload.db could not already name.
+  assert.equal(validateKql("database('Anything').Foo | take 1", 'query').allowed, true);
+});
+
+test('parses the database names out of a query', () => {
+  assert.deepEqual(referencedDatabases("database('A').T | union database(\"B\").T"), { names: ['A', 'B'], unresolved: false });
+  assert.deepEqual(referencedDatabases('SecurityIncident | take 1'), { names: [], unresolved: false });
+  assert.equal(referencedDatabases('database(strcat(1))').unresolved, true);
+
+  // A doubled quote is one quote, and mydatabase( is not database(.
+  assert.deepEqual(referencedDatabases("database('O''Brien').T").names, ["O'Brien"]);
+  assert.deepEqual(referencedDatabases('mydatabase(1) | take 1'), { names: [], unresolved: false });
+});
+
 test('rejects a statement hidden inside a string from reaching Kusto', () => {
   // This test previously asserted the opposite -- that the lexer saw one
   // statement and allowed the payload -- because it documented a known gap: the
@@ -268,6 +351,34 @@ test('rejects databases outside KUSTO_ALLOWED_DATABASES', async () => {
 
       const allowed = await fetch(`${base}/v1/rest/query`, { method: 'POST', body: JSON.stringify({ csl: 'print 1', db: 'CyberDefendStudentSnapshot' }) });
       assert.equal(allowed.status, 200);
+      assert.equal(received.length, 1);
+    });
+  });
+});
+
+test('an allowed db in the envelope does not license a cross-database read', async () => {
+  // The bypass this test exists for: payload.db is the allowlisted database, so
+  // the envelope check passes, and the real target is named in the query text.
+  await withUpstreamStub(async (upstream, received) => {
+    await withServer({ upstream, allowedDatabases: new Set(['cyberdefendstudentsnapshot']) }, async (base) => {
+      const bypass = await fetch(`${base}/v1/rest/query`, {
+        method: 'POST',
+        body: JSON.stringify({ db: 'CyberDefendStudentSnapshot', csl: "database('KustoMonitoringPersistentDatabase').Foo | take 100" })
+      });
+      assert.equal(bypass.status, 403, 'the cross-database read must be refused by the gateway');
+      assert.equal(received.length, 0, 'and it must never reach the cluster');
+
+      // The refusal has to be the gateway's own, not an upstream error that only
+      // looks like enforcement -- upstream errors arrive as 400, gateway policy
+      // as 403 with this JSON shape.
+      assert.match((await bypass.json()).error, /not exposed through the read-only gateway/);
+
+      // The same syntax naming the allowed database still works.
+      const legitimate = await fetch(`${base}/v1/rest/query`, {
+        method: 'POST',
+        body: JSON.stringify({ db: 'CyberDefendStudentSnapshot', csl: "database('CyberDefendStudentSnapshot').AlertInfo | take 1" })
+      });
+      assert.equal(legitimate.status, 200);
       assert.equal(received.length, 1);
     });
   });
