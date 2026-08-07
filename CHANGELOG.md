@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### 2026-08-07 - documented live CISA KEV JSON enrichment
+
+- **Added a reusable CISA KEV JSON query.** `docs/cisa-kev-json.kql` queries CISA's current Known Exploited Vulnerabilities catalog through `externaldata`, expands its `vulnerabilities` array, and returns the same columns as the CSV feed without persisting data in the workshop database. The root README now describes and links to the capability.
+
 ### 2026-08-06 - allowed `externaldata` through the student ADX gateway
 
 - **Permitted the `externaldata` operator and nothing else.** Students can now query public enrichment feeds such as CISA KEV through the read-only gateway. The gateway continues to reject all management commands, `evaluate` request/code-execution plugins, and `cluster()` cross-cluster pivots; the focused regression test covers both sides of that boundary.

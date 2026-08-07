@@ -1,0 +1,30 @@
+// CISA Known Exploited Vulnerabilities (KEV) catalog, JSON source.
+//
+// Reads CISA's current public feed through the workshop read-only gateway.
+// The query does not write to Kusto or persist a copy of the catalog.
+
+let CisaKev = externaldata(
+    vulnerabilities:dynamic
+)
+[
+    h@"https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+]
+with (
+    format="multijson",
+    ingestionMapping='[{"Column":"vulnerabilities","Properties":{"Path":"$.vulnerabilities"}}]'
+)
+| mv-expand vulnerability = vulnerabilities
+| project
+    cveID = tostring(vulnerability.cveID),
+    vendorProject = tostring(vulnerability.vendorProject),
+    product = tostring(vulnerability.product),
+    vulnerabilityName = tostring(vulnerability.vulnerabilityName),
+    dateAdded = todatetime(vulnerability.dateAdded),
+    shortDescription = tostring(vulnerability.shortDescription),
+    requiredAction = tostring(vulnerability.requiredAction),
+    dueDate = todatetime(vulnerability.dueDate),
+    knownRansomwareCampaignUse = tostring(vulnerability.knownRansomwareCampaignUse),
+    notes = tostring(vulnerability.notes),
+    cwes = strcat_array(todynamic(vulnerability.cwes), ", ");
+CisaKev
+| order by dateAdded desc

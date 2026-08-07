@@ -83,6 +83,7 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | Managed Azure access (secondary) | Documents the full managed Azure ADX build plus SFI-aligned B2B guest provisioning, MFA, access-package lifecycle, participant group access, ADX database viewer permissions, and dashboard sharing | [`docs\managed_azure_adx_setup.md`](docs/managed_azure_adx_setup.md), [`user_creation\README.md`](user_creation/README.md), [`docs\student_access.md`](docs/student_access.md), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1) |
 | Cloudflare ADX class access | Documents the shared Service Auth credential, student TCP proxy, read-only KQL gateway, rotation, and troubleshooting | [`docs\cloudflare_adx_access.md`](docs/cloudflare_adx_access.md) |
 | Kustainer gateway | Documents the read-only request policy, browser CORS/private-network support, default-database cleaner, configuration, and security boundary | [`tools\kusto-readonly-gateway\README.md`](tools/kusto-readonly-gateway/README.md) |
+| Live CISA KEV enrichment | Queries CISA's current Known Exploited Vulnerabilities JSON catalog from ADX without persisting a copy in the workshop database | [`docs\cisa-kev-json.kql`](docs/cisa-kev-json.kql) |
 | Scenario and MITRE | Documents the threat actor framing, infrastructure, and attack-vector to ATT&CK mapping | [`docs\threat-actor-midnight-blizzard.md`](docs/threat-actor-midnight-blizzard.md), [`metadata\mitre-attack-mapping.json`](metadata/mitre-attack-mapping.json), [`data\scenario-summary.json`](data/scenario-summary.json), [`docs\workshop_design.md`](docs/workshop_design.md) |
 | Workshop content | Provides the student setup guide, instructor guide, design notes, and diagrams | [`STUDENT-GUIDES\STUDENT-LAB-SETUP-GUIDE.md`](STUDENT-GUIDES/STUDENT-LAB-SETUP-GUIDE.md), [`docs\instructor_guide.md`](docs/instructor_guide.md), [`docs\workshop_design.md`](docs/workshop_design.md), [`docs\diagrams.md`](docs/diagrams.md) |
 | Slides | Provides the instructor-led deck and a PowerPoint generator for Windows systems with PowerPoint installed | [`STUDENT-GUIDES\Cyber_Defense_KQL_Workshop_v2.pptx`](STUDENT-GUIDES/Cyber_Defense_KQL_Workshop_v2.pptx), [`scripts\New-WorkshopDeck.ps1`](scripts/New-WorkshopDeck.ps1) |
@@ -284,6 +285,10 @@ Rotate the class credential after the workshop to invalidate the distributed pai
 ```
 
 See [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md) for the Service Auth setup, DNS routing, secret handling, and connection validation steps.
+
+## Live CISA KEV enrichment
+
+The read-only gateway permits ADX's `externaldata` operator, so analysts can query CISA's live Known Exploited Vulnerabilities (KEV) catalog without importing or persisting a copy in the workshop database. [docs/cisa-kev-json.kql](docs/cisa-kev-json.kql) reads CISA's official JSON feed, expands the `vulnerabilities` array, and returns the same columns as the CSV catalog.
 
 ## 📊 Import the ADX SOC threat protection dashboard
 
