@@ -199,18 +199,13 @@ export function isClusterScopedRequest(csl) {
 }
 
 // KQL query-language primitives that never start with a dot but still reach
-// outside the database: externaldata performs arbitrary outbound HTTP from the
-// lab host, the request plugins open attacker-supplied connections, python/r
-// execute code where the sandbox is enabled, and cluster() pivots laterally
-// using the host's own identity. The scan is deliberately applied to the raw
-// csl text rather than the lexed statements, so a match inside a string literal
-// is also rejected: that direction fails closed, which is the correct failure
-// mode for a policy boundary.
+// outside the database: request plugins open attacker-supplied connections,
+// python/r execute code where the sandbox is enabled, and cluster() pivots
+// laterally using the host's own identity. The scan is deliberately applied to
+// the raw csl text rather than the lexed statements, so a match inside a string
+// literal is also rejected: that direction fails closed, which is the correct
+// failure mode for a policy boundary.
 const deniedCslPatterns = [
-  {
-    pattern: /\bexternal_?data\b/i,
-    reason: 'externaldata is not permitted through the read-only gateway: it performs outbound requests from the lab host.'
-  },
   {
     pattern: /\bevaluate\s+(?:hint\s*\.\s*\S+\s+)*(?:python|r|http_request|http_request_post|sql_request|mysql_request|cosmosdb_sql_request|azure_digital_twins_query_request|ai_embeddings|ai_chat_completion[s]?)\b/i,
     reason: 'This evaluate plugin is not permitted through the read-only gateway: it executes code or reaches outside the cluster.'

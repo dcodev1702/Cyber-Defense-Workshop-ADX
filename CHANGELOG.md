@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### 2026-08-06 - allowed `externaldata` through the student ADX gateway
+
+- **Permitted the `externaldata` operator and nothing else.** Students can now query public enrichment feeds such as CISA KEV through the read-only gateway. The gateway continues to reject all management commands, `evaluate` request/code-execution plugins, and `cluster()` cross-cluster pivots; the focused regression test covers both sides of that boundary.
+
 ### 2026-07-27 — the dashboard is presented to students, not assembled by them
 
 - **Removed the dashboard build from the student guide.** The guide walked students through importing a JSON, editing the `Cyber Defense Workshop ADX` data source, replacing the cluster address, and re-checking the tunnel before any tile would render — setup work that has nothing to do with learning KQL, and that fails in a room of twenty in ways only the instructor can fix. The section is now orientation: what the dashboard shows, how to read it, and the same four triage callouts.

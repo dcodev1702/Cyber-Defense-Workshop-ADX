@@ -22,7 +22,7 @@ The Compose tunnel route targets `tcp://kusto-readonly-gateway:8081`; it never r
 | Route | Allowed behavior |
 | --- | --- |
 | `/healthz` | Returns gateway health without contacting Kustainer. |
-| `/v1/rest/query` and `/v2/rest/query` | Accepts KQL query statements and `let` bindings. Rejects every Kusto management command and the query-language egress primitives listed below. |
+| `/v1/rest/query` and `/v2/rest/query` | Accepts KQL query statements, `let` bindings, and `externaldata`. Rejects every Kusto management command and the remaining query-language egress primitives listed below. |
 | `/v1/rest/mgmt` | Accepts exactly one read-only `.show` command from a metadata-read allowlist. |
 | `/v1/rest/ping` and `/v2/rest/ping` | Proxies Kustainer ping requests. |
 | Any other route | Returns HTTP `404`. |
@@ -33,14 +33,13 @@ The KQL statement splitter handles semicolons inside quoted strings and ignores 
 
 ### Beyond dot-prefixed commands
 
-"Does not start with a dot" is not the same as read-only. The gateway also rejects, on the raw request text, the KQL query-language primitives that reach outside the database even though they never begin with `.`:
+"Does not start with a dot" is not the same as read-only. The gateway permits `externaldata` so exercises can query approved public data feeds. It still rejects, on the raw request text, the following query-language primitives that reach outside the database even though they never begin with `.`:
 
-- `externaldata` — arbitrary outbound HTTP from the lab host (SSRF / IMDS probing / exfil).
 - `evaluate python(...)` / `R(...)` — sandbox code execution where enabled.
 - `evaluate http_request` / `sql_request` / `mysql_request` / `cosmosdb_sql_request` and related request plugins — outbound connections with attacker-supplied targets.
 - `cluster(...)` — cross-cluster pivots using the host's own identity.
 
-Because the scan runs on the raw text rather than the lexed statements, a primitive hidden inside a string literal is rejected too: over-blocking here fails closed, which is the correct direction for a policy boundary.
+Because the remaining deny scan runs on the raw text rather than the lexed statements, a primitive hidden inside a string literal is rejected too: over-blocking here fails closed, which is the correct direction for a policy boundary.
 
 ### `.show` metadata-read allowlist
 

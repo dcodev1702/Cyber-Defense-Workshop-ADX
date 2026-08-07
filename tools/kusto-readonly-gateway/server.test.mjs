@@ -143,8 +143,13 @@ for (const command of ['.show queries', '.show commands-and-queries', '.show jou
 
 // ---- query-language egress and code-execution primitives ---------------------
 
-for (const csl of ['externaldata (x:string) ["http://169.254.169.254/latest"]', 'print 1 | evaluate python(typeof(x:int), "code")', 'evaluate http_request("http://example.com")', 'T | evaluate sql_request("Server=x", "select 1")', "cluster('other.kusto.windows.net').database('x').T | take 1"]) {
-  test(`blocks egress primitive in ${csl.slice(0, 24)}...`, () => {
+test('allows the externaldata operator', () => {
+  const csl = 'externaldata (cveID:string) [h@"https://www.cisa.gov/sites/default/files/csv/known_exploited_vulnerabilities.csv"] with (format="csv", ignoreFirstRecord=true)';
+  assert.equal(validateKql(csl, 'query').allowed, true);
+});
+
+for (const csl of ['print 1 | evaluate python(typeof(x:int), "code")', 'evaluate http_request("http://example.com")', 'T | evaluate sql_request("Server=x", "select 1")', "cluster('other.kusto.windows.net').database('x').T | take 1"]) {
+  test(`blocks remaining egress primitive in ${csl.slice(0, 24)}...`, () => {
     assert.equal(validateKql(csl, 'query').allowed, false);
   });
 }
