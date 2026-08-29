@@ -4,6 +4,7 @@
 
 ### 2026-08-29 - hardened TTP correlations and validation
 
+- Refreshed the README's ADX SOC Overview screenshot to show the current dashboard navigation and 14-day workshop metrics while reducing the image asset from 518,774 to 123,046 bytes.
 - Expanded the trainee hunt-query header into a purpose-led guide that documents all 19 hunts, the 3/10/6 email-identity-application category split, the seven canonical and 12 extension hunts, the behavior-first pivot workflow, and a direct link to the complete Cyber Range design and ATT&CK mapping.
 - Replaced the synthetic-only cross-tenant application join with the shared Graph and CloudAppEvents `ReportId`, while keeping the acted-on file in `ObjectId`. For SharePoint collection, kept Graph `ReportId` event-specific and correlated the file ID from `RequestUri` to CloudAppEvents `ObjectId` and OfficeActivity `OfficeObjectId`. Conditional Access evidence now uses an array of policy objects and expands `Policy.id` instead of comparing a dynamic list to a scalar.
 - Correlated the inbox-rule interactive and non-interactive sign-ins by their shared, non-empty `SessionId` while retaining distinct request-scoped `CorrelationId` values; both sides reject blank session keys so unrelated ambient rows cannot join. Normalized Azure Run Command ARM resource names against Defender endpoint FQDNs with case-insensitive keys, emitted valid provider/type ARM resource IDs, and constrained cloud enumeration to three providers within a two-minute span in one five-minute bucket.
