@@ -376,25 +376,28 @@ SigninLogs
 // KEY TAKEAWAY: Directory reads generally do not appear as directory-change audit
 // events. Identity query and Graph API telemetry show who enumerated privilege paths.
 // PIVOT LOGIC:
-//   Step 1 -> 2: AccountObjectId plus IPAddress attributes the directory query to
-//   the exact cloud sign-in and yields the token used by the same identity.
+//   Step 1 -> 2: AccountObjectId, IPAddress, the Graph CLI application, and a
+//   five-minute window attribute the directory query to one cloud sign-in and token.
 //   Step 2 -> 3: UniqueTokenIdentifier carries that authentication into Graph and
 //   reveals which role and membership endpoints were queried.
 // BIG PICTURE: The chain links low-noise discovery across hybrid and cloud identity
 // planes, showing that the actor is mapping power rather than merely listing names.
 // ============================================================================
 
-// Step 1: Find privileged-account enumeration. Record account and IP values.
+// Step 1: Find privileged-account enumeration. Record timestamp, account, and IP.
 IdentityQueryEvents
 | where QueryType == "EnumerateUsers"
 | where Query has "adminCount=1"
 | project Timestamp, AccountUpn, AccountObjectId, IPAddress, Query, QueryTarget
 
-// Step 2: Substitute account and source IP. Record UniqueTokenIdentifier.
+// Step 2: Substitute timestamp, account, and source IP. Record the non-empty token.
+let ReconTime = datetime(<Timestamp>);
 let ReconAccountId = "<AccountObjectId>";
 let SourceIp = "<IPAddress>";
 SigninLogs
 | where UserId == ReconAccountId and IPAddress == SourceIp
+| where AppDisplayName == "Microsoft Graph Command Line Tools" and isnotempty(UniqueTokenIdentifier)
+| where TimeGenerated between (ReconTime .. ReconTime + 5m)
 | project TimeGenerated, UserPrincipalName, UniqueTokenIdentifier, AppDisplayName
 
 // Step 3: Substitute UniqueTokenIdentifier. Inspect Evidence.

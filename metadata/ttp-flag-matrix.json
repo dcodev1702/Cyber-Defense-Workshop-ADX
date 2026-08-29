@@ -482,13 +482,13 @@
           "pivotSteps": [
             {
               "table": "IdentityQueryEvents",
-              "purpose": "Find privileged-account enumeration and collect the actor's Entra object ID and source IP.",
+              "purpose": "Find privileged-account enumeration and collect its timestamp, actor Entra object ID, and source IP.",
               "kql": "IdentityQueryEvents\n| where QueryType == \"EnumerateUsers\"\n| where Query has \"adminCount=1\"\n| project Timestamp, AccountUpn, AccountObjectId, IPAddress, Query, QueryTarget"
             },
             {
               "table": "SigninLogs",
-              "purpose": "Pivot on AccountObjectId and IPAddress to recover the token used by the enumerating identity.",
-              "kql": "SigninLogs\n| where UserId == \"<AccountObjectId>\" and IPAddress == \"<IPAddress>\"\n| project TimeGenerated, UserPrincipalName, UniqueTokenIdentifier, AppDisplayName"
+              "purpose": "Pivot on AccountObjectId, IPAddress, and the five-minute event window to recover the non-empty token used by the Graph CLI sign-in.",
+              "kql": "let ReconTime = datetime(<Timestamp>);\nSigninLogs\n| where UserId == \"<AccountObjectId>\" and IPAddress == \"<IPAddress>\"\n| where AppDisplayName == \"Microsoft Graph Command Line Tools\" and isnotempty(UniqueTokenIdentifier)\n| where TimeGenerated between (ReconTime .. ReconTime + 5m)\n| project TimeGenerated, UserPrincipalName, UniqueTokenIdentifier, AppDisplayName"
             },
             {
               "table": "GraphAPIAuditEvents",
@@ -496,7 +496,7 @@
               "kql": "GraphAPIAuditEvents\n| where UniqueTokenIdentifier == \"<UniqueTokenIdentifier>\"\n| project TimeGenerated, ApplicationId, RequestMethod, RequestUri, ResponseStatusCode"
             }
           ],
-          "validationKql": "let Recon = IdentityQueryEvents | where QueryType == \"EnumerateUsers\" and Query has \"adminCount=1\" | project UserId=AccountObjectId, IPAddress;\nlet Token = SigninLogs | project UserId, IPAddress, UniqueTokenIdentifier | join kind=inner Recon on UserId, IPAddress | project UniqueTokenIdentifier;\nGraphAPIAuditEvents | project UniqueTokenIdentifier, Flag=RequestUri | join kind=inner Token on UniqueTokenIdentifier | project Flag"
+          "validationKql": "let Recon = IdentityQueryEvents | where QueryType == \"EnumerateUsers\" and Query has \"adminCount=1\" | where Application == \"Microsoft Graph PowerShell\" and QueryTarget == \"Privileged cloud accounts\" | project ReconTime=Timestamp, UserId=AccountObjectId, IPAddress;\nlet Token = SigninLogs | where AppDisplayName == \"Microsoft Graph Command Line Tools\" and isnotempty(UniqueTokenIdentifier) | project SignInTime=TimeGenerated, UserId, IPAddress, UniqueTokenIdentifier | join kind=inner Recon on UserId, IPAddress | where SignInTime between (ReconTime .. ReconTime + 5m) | project UniqueTokenIdentifier;\nGraphAPIAuditEvents | where isnotempty(UniqueTokenIdentifier) | project UniqueTokenIdentifier, Flag=RequestUri | join kind=inner Token on UniqueTokenIdentifier | project Flag"
         },
         {
           "id": "session-persistence-continuous-access",
