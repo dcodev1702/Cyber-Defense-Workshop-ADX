@@ -91,7 +91,14 @@ if ([string]::IsNullOrWhiteSpace($SummaryPath)) {
 # ---- which tables ------------------------------------------------------------
 
 $tables = if ($TableName -and $TableName.Count -gt 0) {
-    @($TableName)
+    @(
+        foreach ($entry in $TableName) {
+            foreach ($part in ([string]$entry -split ',')) {
+                $trimmed = $part.Trim()
+                if (-not [string]::IsNullOrWhiteSpace($trimmed)) { $trimmed }
+            }
+        }
+    )
 }
 else {
     @((Get-Content -Raw -LiteralPath $ManifestPath | ConvertFrom-Json) | ForEach-Object { [string]$_.name })

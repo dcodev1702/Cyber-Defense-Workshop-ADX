@@ -2,6 +2,10 @@
 students/*.csv
 samples/*.csv
 
+# Source training decks and other TTP authoring material are local inputs. The
+# reviewed Markdown catalog and implementation matrix live under docs/metadata.
+TTPs/
+
 # Raw tenant telemetry captures. The whole directory is ignored, not just *.csv:
 # the cache is moving to NDJSON so that nested dynamic columns survive the round
 # trip, and an extension-specific rule would have silently stopped covering it.

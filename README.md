@@ -160,11 +160,11 @@ The script defaults to `usag-wiesbaden-cys26.northeurope.kusto.windows.net`, dat
 
 > [!WARNING]
 > **Preserve the Kustainer container.** The mounted files and Kustainer's database registration work together. Use `docker compose stop kusto` and `docker compose start kusto` for routine shutdown and startup. Do not use `docker compose down`, `docker compose rm`, `docker compose up` after a Compose configuration change, or `--force-recreate` for `kusto` while retaining the local snapshot. If a Kusto container replacement is required, first run `Backup-LocalKustoSnapshot.ps1`, then rebuild the database after the replacement by one of two routes: rerun `Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` to re-copy from the Student cluster, or rebuild offline from the backup archive. Prefer the offline route on site, because the Azure route needs cluster access and an entitled sign-in, and those are unavailable exactly when a rebuild is most likely to be needed:
->
-> ```powershell
-> .\scripts\Restore-LocalKustoSnapshot.ps1 -ExtractPayloadTo .\data\generated
-> .\scripts\Import-GeneratedDataToKustainer.ps1
-> ```
+
+```powershell
+.\scripts\Restore-LocalKustoSnapshot.ps1 -ExtractPayloadTo .\data\generated
+.\scripts\Import-GeneratedDataToKustainer.ps1
+```
 
 `kusto-defaultdb-cleaner` runs continuously in Compose. Once `CyberDefendStudentSnapshot` exists, it drops `NetDefaultDB` and removes its residual directory under `data\local-kusto\dbs`. On a fresh emulator, it leaves the default database in place until the Student import has created the retained snapshot database.
 
@@ -222,24 +222,24 @@ The same [compose.yaml](compose.yaml) runs a private read-only Kusto gateway and
 
 > [!IMPORTANT]
 > The gateway is a `build:` service, not a pulled image. `docker compose up --detach` reuses the last image built on this host, so after pulling or editing anything under [tools/kusto-readonly-gateway](tools/kusto-readonly-gateway) you must rebuild it explicitly:
->
-> ```powershell
-> docker compose up --detach --build kusto-readonly-gateway
-> ```
->
-> The tracked `post-merge` hook does this automatically when a pull changes the gateway, provided [scripts/Install-WorkshopGitHooks.ps1](scripts/Install-WorkshopGitHooks.ps1) has been run in this clone. Set `CDW_SKIP_GATEWAY_REBUILD=1` to opt out.
->
-> Neither `docker compose ps` nor the container health check can tell a current policy build from a stale one — both report healthy either way, because the health check only proves the process answers on `/healthz`. Confirm the policy itself is live: `.show tables` must succeed and `.show queries` must return 403. Rebuilding the gateway alone does not disturb the `kusto` container or the persistent Student snapshot.
+
+```powershell
+docker compose up --detach --build kusto-readonly-gateway
+```
+
+The tracked `post-merge` hook does this automatically when a pull changes the gateway, provided [scripts/Install-WorkshopGitHooks.ps1](scripts/Install-WorkshopGitHooks.ps1) has been run in this clone. Set `CDW_SKIP_GATEWAY_REBUILD=1` to opt out.
+
+Neither `docker compose ps` nor the container health check can tell a current policy build from a stale one — both report healthy either way, because the health check only proves the process answers on `/healthz`. Confirm the policy itself is live: `.show tables` must succeed and `.show queries` must return 403. Rebuilding the gateway alone does not disturb the `kusto` container or the persistent Student snapshot.
 
 > [!IMPORTANT]
 > The gateway is only a boundary if the connector cannot route around it. Kustainer publishes `8080`, and publishing a port makes Docker insert a firewall accept ahead of its own cross-bridge isolation that is **not** restricted by source network — so the connector can reach the engine by IP and skip the gateway entirely. Binding the host side to `127.0.0.1` constrains the host, not other containers. Close it and prove it:
->
-> ```powershell
-> .\scripts\Set-WorkshopNetworkIsolation.ps1
-> .\scripts\Test-WorkshopNetworkIsolation.ps1
-> ```
->
-> `Start-CloudflareAdxTunnel.ps1 -Apply` does both automatically. The rule lives in the host firewall, so reapply it after a Docker engine restart or anything that recreates the networks. Details in [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md).
+
+```powershell
+.\scripts\Set-WorkshopNetworkIsolation.ps1
+.\scripts\Test-WorkshopNetworkIsolation.ps1
+```
+
+`Start-CloudflareAdxTunnel.ps1 -Apply` does both automatically. The rule lives in the host firewall, so reapply it after a Docker engine restart or anything that recreates the networks. Details in [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md).
 
 Provision the shared class credential, read-only gateway route, and connector token once from the repository root:
 
@@ -286,16 +286,17 @@ Rotate the class credential after the workshop to invalidate the distributed pai
 
 See [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md) for the Service Auth setup, DNS routing, secret handling, and connection validation steps.
 
+## TTP cyber-range challenges
+
+The cloud-adversary section of the source training deck is preserved as a [MarkItDown extract](docs/ttp-slide-extract.md) and reviewed in the [TTP cyber-range catalog](docs/ttp-cyber-range.md). Six challenges span email, identity, and application tradecraft. Each starts with flag-free evidence and requires one or two cross-table pivots before the final telemetry field reveals its themed flag.
+
+Trainees use [the sequential TTP hunt query pack](docs/ttp-hunt-queries.kql). Instructors validate the matrix, unique flag placement, and Kusto join paths with `scripts\Test-WorkshopTtpFlags.ps1`.
+
 ## Live CISA KEV enrichment
 
 The read-only gateway permits ADX's `externaldata` operator, so analysts can query CISA's live Known Exploited Vulnerabilities (KEV) catalog without importing or persisting a copy in the workshop database. [docs/cisa-kev-json.kql](docs/cisa-kev-json.kql) reads CISA's official JSON feed, expands the `vulnerabilities` array, and returns the same columns as the CSV catalog.
 
 ## 📊 Import the ADX SOC threat protection dashboard
-
-<details>
-<summary><strong>📊 Dashboard import and sharing</strong> &mdash; click to expand</summary>
-
-<br>
 
 The repository includes an Azure Data Explorer dashboard template with a SOC-style landing page plus drilldown pages for identity/sign-ins, network/Graph activity, alert timeline review, and inventory/posture:
 
@@ -320,8 +321,6 @@ On the managed Azure route, share the dashboard with the participant security gr
 After import, the **SOC Overview** page should provide a threat-protection landing view with alert, sign-in, identity, Graph, egress, MITRE, and scenario timeline tiles:
 
 ![ADX SOC Overview dashboard for the cyber defense workshop](images/adx-soc-overview-dashboard.png)
-
-</details>
 
 ## ✅ Validate the package
 
@@ -391,4 +390,4 @@ The package creates 79 tables (JSON) from Microsoft Security & Operational Servi
 
 ---
 
-<sub>Cyber Defense KQL Workshop for Azure Data Explorer · synthetic telemetry only, no production data · 79 tables · ~624K rows</sub>
+Cyber Defense KQL Workshop for Azure Data Explorer · synthetic telemetry only, no production data · 79 tables · ~624K rows

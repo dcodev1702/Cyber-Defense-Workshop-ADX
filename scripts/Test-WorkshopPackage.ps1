@@ -626,6 +626,20 @@ else {
     Test-GeneratedFileDoesNotContainText -DataDirectory $DataDirectory -FileName 'AlertEvidence.json' -Needles @('MIDNIGHT-BLIZZARD-', 'XDR-CORR-', 'LINUX-001', 'LINUX-002', 'BASE-') -Description 'opaque AlertEvidence alert IDs'
 }
 
+Write-TestPhase 'Validating TTP pivot and flag contract...'
+$ttpValidator = Join-Path $PSScriptRoot 'Test-WorkshopTtpFlags.ps1'
+try {
+    if (Test-Path -LiteralPath $DataDirectory -PathType Container) {
+        & $ttpValidator -DataDirectory $DataDirectory
+    }
+    else {
+        & $ttpValidator
+    }
+}
+catch {
+    Add-TestError "TTP flag validation failed: $($_.Exception.Message)"
+}
+
 if ($errors.Count -gt 0) {
     $errors | ForEach-Object { Write-Error $_ }
     throw "Workshop package validation failed with $($errors.Count) error(s)."

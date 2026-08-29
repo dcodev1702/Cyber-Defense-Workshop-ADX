@@ -3059,6 +3059,33 @@ else {
     @($script:Schemas.Keys)
 }
 
+$ttpMatrixPath = Join-Path $PSScriptRoot '..' 'metadata' 'ttp-flag-matrix.json'
+if (-not (Test-Path -LiteralPath $ttpMatrixPath -PathType Leaf)) {
+    throw "TTP flag matrix not found: $ttpMatrixPath"
+}
+
+$ttpMatrix = Get-Content -LiteralPath $ttpMatrixPath -Raw | ConvertFrom-Json
+$script:TtpIntegrationsById = @{}
+foreach ($category in $ttpMatrix.categories) {
+    foreach ($ttp in $category.ttps) {
+        if (-not [bool]$ttp.selected) { continue }
+        if ($script:TtpIntegrationsById.ContainsKey([string]$ttp.id)) {
+            throw "Duplicate selected TTP id in flag matrix: $($ttp.id)"
+        }
+        $script:TtpIntegrationsById[[string]$ttp.id] = $ttp
+    }
+}
+
+function Get-WorkshopTtpFlag {
+    param([Parameter(Mandatory)][string]$Id)
+
+    if (-not $script:TtpIntegrationsById.ContainsKey($Id)) {
+        throw "Selected TTP '$Id' is missing from $ttpMatrixPath"
+    }
+
+    return [string]$script:TtpIntegrationsById[$Id].flag
+}
+
 # One Microsoft Entra tenant backs the whole estate, so this GUID must appear in
 # every table that carries a tenant identifier. It is a fixed random value rather
 # than a patterned placeholder, and it is hard-coded rather than minted per run so
@@ -7991,6 +8018,393 @@ foreach ($request in $graphAbuseRequests) {
         UniqueTokenId = New-StableGuid "graph-abuse-token-$($request.Offset)"
         Type = 'MicrosoftGraphActivityLogs'
     }
+}
+
+# ---------------------------------------------------------------------------
+# TTP challenge chains. Seed and intermediate records carry no flag. Each flag
+# appears only in the final event reached after one or two correlation pivots.
+# metadata/ttp-flag-matrix.json owns the selected TTPs, flags, and hunt queries.
+# ---------------------------------------------------------------------------
+$mailForwardingFlag = Get-WorkshopTtpFlag -Id 'mailbox-email-forwarding'
+$inboxRuleFlag = Get-WorkshopTtpFlag -Id 'malicious-inbox-rules'
+$tokenAbuseFlag = Get-WorkshopTtpFlag -Id 'token-abuse'
+$conditionalAccessFlag = Get-WorkshopTtpFlag -Id 'conditional-access-policy-abuse'
+$apiAccessFlag = Get-WorkshopTtpFlag -Id 'api-access-abuse'
+$cloudCollectionFlag = Get-WorkshopTtpFlag -Id 'cloud-data-collection-non-mail'
+
+$mailForwardingTime = $StartTime.AddMinutes(17)
+$mailForwardingAppId = New-StableGuid 'ttp-mail-forwarding-app'
+$mailForwardingServicePrincipalId = New-StableGuid 'ttp-mail-forwarding-service-principal'
+Add-Record -Table 'OfficeActivity' -Time $mailForwardingTime -Values @{
+    TenantId = $tenantId
+    TimeGenerated = Format-WorkshopTime $mailForwardingTime
+    RecordType = 'ExchangeAdmin'
+    Operation = 'Set-Mailbox'
+    OfficeWorkload = 'Exchange'
+    ResultStatus = 'True'
+    UserType = 'Regular'
+    UserId = $victor.Upn
+    UserKey = $victor.ObjectId
+    ClientIP = $externalIp
+    OfficeObjectId = $victor.Upn
+    MailboxOwnerUPN = $victor.Upn
+    Parameters = 'Identity=victor.alvarez;ForwardingSmtpAddress=archive@proton-mail.example;DeliverToMailboxAndForward=True'
+}
+Add-Record -Table 'CloudAppEvents' -Time $mailForwardingTime.AddSeconds(12) -Values @{
+    Timestamp = Format-WorkshopTime $mailForwardingTime.AddSeconds(12)
+    ActionType = 'MailboxForwardingConfigured'
+    ActivityType = 'Set mailbox forwarding'
+    Application = 'Microsoft Exchange Online'
+    ApplicationId = 11161
+    AccountObjectId = $victor.ObjectId
+    AccountId = $victor.Upn
+    AccountDisplayName = $victor.DisplayName
+    AccountType = 'Regular'
+    IPAddress = $externalIp
+    ObjectName = $victor.Upn
+    ObjectType = 'Mailbox'
+    ObjectId = $victor.ObjectId
+    OAuthAppId = $mailForwardingAppId
+    IsAdminOperation = $false
+    RawEventData = @{ Operation = 'Set-Mailbox'; ForwardingDestination = 'archive@proton-mail.example' }
+}
+Add-Record -Table 'AADServicePrincipalSignInLogs' -Time $mailForwardingTime.AddSeconds(25) -Values @{
+    TimeGenerated = Format-WorkshopTime $mailForwardingTime.AddSeconds(25)
+    CreatedDateTime = Format-WorkshopTime $mailForwardingTime.AddSeconds(25)
+    AADTenantId = $tenantId
+    AppId = $mailForwardingAppId
+    AppOwnerTenantId = $tenantId
+    ClientCredentialType = 'client secret'
+    CorrelationId = New-StableGuid 'ttp-mail-forwarding-signin'
+    Id = New-StableGuid 'ttp-mail-forwarding-signin-id'
+    Identity = 'USAG Cyber Sync Helper'
+    IPAddress = $externalIp
+    Location = 'DE'
+    OperationName = 'Sign-in activity'
+    ResourceDisplayName = 'Office 365 Exchange Online'
+    ResourceIdentity = '00000002-0000-0ff1-ce00-000000000000'
+    ResultDescription = 'Success'
+    ResultType = '0'
+    ServicePrincipalCredentialKeyId = $maliciousOAuthKeyId
+    ServicePrincipalId = $mailForwardingServicePrincipalId
+    ServicePrincipalName = 'Exchange Archive Connector'
+    SessionId = New-StableGuid 'ttp-mail-forwarding-session'
+    UniqueTokenIdentifier = New-StableGuid 'ttp-mail-forwarding-token'
+    UserAgent = "$graphClientUserAgent $mailForwardingFlag"
+}
+
+$inboxRuleTime = $StartTime.AddMinutes(18)
+$inboxRuleCorrelationId = New-StableGuid 'ttp-inbox-rule-correlation'
+Add-Record -Table 'OfficeActivity' -Time $inboxRuleTime -Values @{
+    TenantId = $tenantId
+    TimeGenerated = Format-WorkshopTime $inboxRuleTime
+    RecordType = 'ExchangeAdmin'
+    Operation = 'New-InboxRule'
+    OfficeWorkload = 'Exchange'
+    ResultStatus = 'True'
+    UserType = 'Regular'
+    UserId = $victor.Upn
+    UserKey = $victor.ObjectId
+    ClientIP = $externalIp
+    OfficeObjectId = $victor.Upn
+    MailboxOwnerUPN = $victor.Upn
+    Parameters = 'Name=Hide security notices;SubjectContainsWords=MFA,password,alert;MoveToFolder=RSS Feeds;DeleteMessage=True'
+}
+Add-Record -Table 'SigninLogs' -Time $inboxRuleTime.AddSeconds(8) -Values @{
+    TimeGenerated = Format-WorkshopTime $inboxRuleTime.AddSeconds(8)
+    CreatedDateTime = Format-WorkshopTime $inboxRuleTime.AddSeconds(8)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Office 365 Exchange Online'
+    AppId = '00000002-0000-0ff1-ce00-000000000000'
+    AuthenticationProtocol = 'none'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Browser'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = $inboxRuleCorrelationId
+    Id = New-StableGuid 'ttp-inbox-rule-signin'
+    IPAddress = $externalIp
+    IsInteractive = $true
+    IsRisky = $true
+    ResultType = '0'
+    ResultDescription = 'Success'
+    SessionId = New-StableGuid 'ttp-inbox-rule-session'
+    UserPrincipalName = $victor.Upn
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+}
+Add-Record -Table 'AADNonInteractiveUserSignInLogs' -Time $inboxRuleTime.AddSeconds(21) -Values @{
+    TimeGenerated = Format-WorkshopTime $inboxRuleTime.AddSeconds(21)
+    CreatedDateTime = Format-WorkshopTime $inboxRuleTime.AddSeconds(21)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Office 365 Exchange Online'
+    AppId = '00000002-0000-0ff1-ce00-000000000000'
+    AuthenticationDetails = "Exchange automation continued after the rule change; $inboxRuleFlag"
+    AuthenticationProtocol = 'none'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Browser'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = $inboxRuleCorrelationId
+    Id = New-StableGuid 'ttp-inbox-rule-noninteractive'
+    IncomingTokenType = 'refreshToken'
+    IPAddress = $externalIp
+    IsInteractive = $false
+    ResultType = '0'
+    ResultDescription = 'Success'
+    SessionId = New-StableGuid 'ttp-inbox-rule-session'
+    UserPrincipalName = $victor.Upn
+    UserId = $victor.ObjectId
+}
+
+$tokenAbuseTime = $StartTime.AddMinutes(19)
+$tokenAbuseSessionId = New-StableGuid 'ttp-token-abuse-session'
+Add-Record -Table 'SigninLogs' -Time $tokenAbuseTime -Values @{
+    TimeGenerated = Format-WorkshopTime $tokenAbuseTime
+    CreatedDateTime = Format-WorkshopTime $tokenAbuseTime
+    AADTenantId = $tenantId
+    AppDisplayName = $deviceCodeAppName
+    AppId = $deviceCodeAppId
+    AuthenticationProtocol = 'deviceCode'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-token-abuse-correlation'
+    Id = New-StableGuid 'ttp-token-abuse-signin'
+    IPAddress = $externalIp
+    IsInteractive = $true
+    IsRisky = $true
+    ResultType = '0'
+    ResultDescription = 'Success'
+    SessionId = $tokenAbuseSessionId
+    UserPrincipalName = $victor.Upn
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+}
+Add-Record -Table 'AADNonInteractiveUserSignInLogs' -Time $tokenAbuseTime.AddMinutes(14) -Values @{
+    TimeGenerated = Format-WorkshopTime $tokenAbuseTime.AddMinutes(14)
+    CreatedDateTime = Format-WorkshopTime $tokenAbuseTime.AddMinutes(14)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Microsoft Graph Command Line Tools'
+    AppId = '14d82eec-204b-4c2f-b7e8-296a70dab67e'
+    AuthenticationDetails = "Refresh token accepted after password reset without a new MFA challenge; $tokenAbuseFlag"
+    AuthenticationProtocol = 'none'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'notApplied'
+    CorrelationId = New-StableGuid 'ttp-token-abuse-redemption'
+    Id = New-StableGuid 'ttp-token-abuse-redemption-id'
+    IncomingTokenType = 'refreshToken'
+    IPAddress = $externalIp
+    IsInteractive = $false
+    ResultType = '0'
+    ResultDescription = 'Success'
+    SessionId = $tokenAbuseSessionId
+    UserPrincipalName = $victor.Upn
+    UserId = $victor.ObjectId
+}
+
+$conditionalAccessTime = $StartTime.AddMinutes(20)
+$conditionalAccessCorrelationId = New-StableGuid 'ttp-conditional-access-correlation'
+$conditionalAccessPolicyId = New-StableGuid 'ttp-conditional-access-policy'
+Add-Record -Table 'AuditLogs' -Time $conditionalAccessTime -Values @{
+    TimeGenerated = Format-WorkshopTime $conditionalAccessTime
+    ActivityDateTime = Format-WorkshopTime $conditionalAccessTime
+    AADOperationType = 'Update'
+    AADTenantId = $tenantId
+    ActivityDisplayName = 'Update conditional access policy'
+    AdditionalDetails = @(
+        @{ key = 'Control'; value = 'MFA' },
+        @{ key = 'Change'; value = 'Exclude service account from grant controls' }
+    )
+    Category = 'Policy'
+    CorrelationId = $conditionalAccessCorrelationId
+    Id = New-StableGuid 'ttp-conditional-access-audit'
+    Identity = $victor.Upn
+    InitiatedBy = @{ user = @{ userPrincipalName = $victor.Upn; id = $victor.ObjectId; ipAddress = $externalIp } }
+    LoggedByService = 'Conditional Access'
+    OperationName = 'Update conditional access policy'
+    Result = 'success'
+    ResultType = 'Success'
+    TargetResources = @(@{ displayName = 'Require MFA for administrative access'; type = 'Policy'; id = $conditionalAccessPolicyId })
+    Type = 'AuditLogs'
+}
+Add-Record -Table 'CloudAppEvents' -Time $conditionalAccessTime.AddSeconds(11) -Values @{
+    Timestamp = Format-WorkshopTime $conditionalAccessTime.AddSeconds(11)
+    ActionType = 'UpdateConditionalAccessPolicy'
+    ActivityType = 'Update conditional access policy'
+    Application = 'Microsoft Entra ID'
+    ApplicationId = 20892
+    AccountObjectId = $victor.ObjectId
+    AccountId = $victor.Upn
+    AccountDisplayName = $victor.DisplayName
+    AccountType = 'Admin'
+    IPAddress = $externalIp
+    ObjectName = 'Require MFA for administrative access'
+    ObjectType = 'ConditionalAccessPolicy'
+    ObjectId = $conditionalAccessPolicyId
+    IsAdminOperation = $true
+    RawEventData = @{ AuditCorrelationId = [string]$conditionalAccessCorrelationId; ExcludedControl = 'MFA' }
+}
+Add-Record -Table 'SigninLogs' -Time $conditionalAccessTime.AddMinutes(3) -Values @{
+    TimeGenerated = Format-WorkshopTime $conditionalAccessTime.AddMinutes(3)
+    CreatedDateTime = Format-WorkshopTime $conditionalAccessTime.AddMinutes(3)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Azure Portal'
+    AppId = '797f4846-ba00-4fd7-ba43-dac1f8f63013'
+    AuthenticationDetails = "Previously enforced MFA grant control was excluded; $conditionalAccessFlag"
+    AuthenticationProtocol = 'none'
+    AuthenticationRequirement = 'singleFactorAuthentication'
+    ClientAppUsed = 'Browser'
+    ConditionalAccessPolicies = $conditionalAccessPolicyId
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-conditional-access-signin'
+    Id = New-StableGuid 'ttp-conditional-access-signin-id'
+    IPAddress = $externalIp
+    IsInteractive = $true
+    IsRisky = $true
+    ResultType = '0'
+    ResultDescription = 'Success'
+    SessionId = New-StableGuid 'ttp-conditional-access-session'
+    UserPrincipalName = $victor.Upn
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+}
+
+$apiAccessTime = $StartTime.AddMinutes(22)
+$apiAccessAppId = New-StableGuid 'ttp-api-access-app'
+$apiAccessServicePrincipalId = New-StableGuid 'ttp-api-access-service-principal'
+$apiAccessTokenId = New-StableGuid 'ttp-api-access-token'
+Add-Record -Table 'AuditLogs' -Time $apiAccessTime -Values @{
+    TimeGenerated = Format-WorkshopTime $apiAccessTime
+    ActivityDateTime = Format-WorkshopTime $apiAccessTime
+    AADOperationType = 'Add'
+    AADTenantId = $tenantId
+    ActivityDisplayName = 'Consent to application'
+    AdditionalDetails = @(
+        @{ key = 'ConsentType'; value = 'User' },
+        @{ key = 'Scopes'; value = 'Mail.Read Files.Read.All Directory.Read.All offline_access' }
+    )
+    Category = 'ApplicationManagement'
+    CorrelationId = New-StableGuid 'ttp-api-access-consent'
+    Id = New-StableGuid 'ttp-api-access-audit'
+    Identity = $victor.Upn
+    InitiatedBy = @{ user = @{ userPrincipalName = $victor.Upn; id = $victor.ObjectId; ipAddress = $externalIp } }
+    LoggedByService = 'Core Directory'
+    OperationName = 'Consent to application'
+    Result = 'success'
+    ResultType = 'Success'
+    TargetResources = @(@{ displayName = 'USAG Records Automation'; type = 'ServicePrincipal'; id = $apiAccessServicePrincipalId; appId = $apiAccessAppId })
+    Type = 'AuditLogs'
+}
+Add-Record -Table 'AADServicePrincipalSignInLogs' -Time $apiAccessTime.AddSeconds(19) -Values @{
+    TimeGenerated = Format-WorkshopTime $apiAccessTime.AddSeconds(19)
+    CreatedDateTime = Format-WorkshopTime $apiAccessTime.AddSeconds(19)
+    AADTenantId = $tenantId
+    AppId = $apiAccessAppId
+    AppOwnerTenantId = $tenantId
+    ClientCredentialType = 'client secret'
+    CorrelationId = New-StableGuid 'ttp-api-access-signin'
+    Id = New-StableGuid 'ttp-api-access-signin-id'
+    Identity = 'USAG Records Automation'
+    IPAddress = $externalIp
+    Location = 'DE'
+    OperationName = 'Sign-in activity'
+    ResourceDisplayName = 'Microsoft Graph'
+    ResourceIdentity = $graphResourceId
+    ResultDescription = 'Success'
+    ResultType = '0'
+    ServicePrincipalId = $apiAccessServicePrincipalId
+    ServicePrincipalName = 'USAG Records Automation'
+    SessionId = New-StableGuid 'ttp-api-access-session'
+    UniqueTokenIdentifier = $apiAccessTokenId
+    UserAgent = 'GraphBulkExporter/1.4'
+}
+Add-Record -Table 'GraphAPIAuditEvents' -Time $apiAccessTime.AddSeconds(34) -Values @{
+    TimeGenerated = Format-WorkshopTime $apiAccessTime.AddSeconds(34)
+    Timestamp = Format-WorkshopTime $apiAccessTime.AddSeconds(34)
+    IdentityProvider = 'AAD'
+    ApiVersion = 'v1.0'
+    ApplicationId = $apiAccessAppId
+    IpAddress = $externalIp
+    ClientRequestId = New-StableGuid 'ttp-api-access-client-request'
+    EntityType = 'servicePrincipal'
+    ReportId = New-StableGuid 'ttp-api-access-report'
+    RequestUri = "https://graph.microsoft.com/v1.0/users/$($victor.Upn)/drive/root:/Exports/$apiAccessFlag.zip:/content"
+    AccountObjectId = $victor.ObjectId
+    OperationId = New-StableGuid 'ttp-api-access-operation'
+    Location = 'Germany West Central'
+    RequestDuration = '488'
+    RequestId = New-StableGuid 'ttp-api-access-request'
+    RequestMethod = 'GET'
+    ResponseStatusCode = '200'
+    Scopes = 'Files.Read.All Directory.Read.All'
+    UniqueTokenIdentifier = $apiAccessTokenId
+    TargetWorkload = 'Microsoft.FileServices'
+    ServicePrincipalId = $apiAccessServicePrincipalId
+    ResponseSize = 16777216
+    Type = 'GraphAPIAuditEvents'
+}
+
+$cloudCollectionTime = $StartTime.AddMinutes(24)
+$cloudCollectionObjectId = New-StableGuid 'ttp-cloud-collection-object'
+$cloudCollectionTokenId = New-StableGuid 'ttp-cloud-collection-token'
+Add-Record -Table 'CloudAppEvents' -Time $cloudCollectionTime -Values @{
+    Timestamp = Format-WorkshopTime $cloudCollectionTime
+    ActionType = 'FileAccessed'
+    ActivityType = 'Access file'
+    Application = 'Microsoft SharePoint Online'
+    ApplicationId = 20893
+    AccountObjectId = $apiAccessServicePrincipalId
+    AccountId = $apiAccessServicePrincipalId
+    AccountDisplayName = 'USAG Records Automation'
+    AccountType = 'ServicePrincipal'
+    IPAddress = $externalIp
+    ObjectName = 'FY26-Acquisition-Archive.zip'
+    ObjectType = 'File'
+    ObjectId = $cloudCollectionObjectId
+    OAuthAppId = $apiAccessAppId
+    IsAdminOperation = $false
+    RawEventData = @{ Workload = 'SharePoint'; AccessMode = 'ApplicationOnly' }
+}
+Add-Record -Table 'GraphAPIAuditEvents' -Time $cloudCollectionTime.AddSeconds(9) -Values @{
+    TimeGenerated = Format-WorkshopTime $cloudCollectionTime.AddSeconds(9)
+    Timestamp = Format-WorkshopTime $cloudCollectionTime.AddSeconds(9)
+    IdentityProvider = 'AAD'
+    ApiVersion = 'v1.0'
+    ApplicationId = $apiAccessAppId
+    IpAddress = $externalIp
+    ClientRequestId = New-StableGuid 'ttp-cloud-collection-client-request'
+    EntityType = 'servicePrincipal'
+    ReportId = $cloudCollectionObjectId
+    RequestUri = "https://graph.microsoft.com/v1.0/sites/usag-cyber.sharepoint.example/drive/items/$cloudCollectionObjectId/content"
+    AccountObjectId = $victor.ObjectId
+    OperationId = New-StableGuid 'ttp-cloud-collection-operation'
+    Location = 'Germany West Central'
+    RequestDuration = '731'
+    RequestId = New-StableGuid 'ttp-cloud-collection-request'
+    RequestMethod = 'GET'
+    ResponseStatusCode = '200'
+    Scopes = 'Files.Read.All Sites.Read.All'
+    UniqueTokenIdentifier = $cloudCollectionTokenId
+    TargetWorkload = 'Microsoft.FileServices'
+    ServicePrincipalId = $apiAccessServicePrincipalId
+    ResponseSize = 50331648
+    Type = 'GraphAPIAuditEvents'
+}
+Add-Record -Table 'OfficeActivity' -Time $cloudCollectionTime.AddSeconds(17) -Values @{
+    TenantId = $tenantId
+    TimeGenerated = Format-WorkshopTime $cloudCollectionTime.AddSeconds(17)
+    RecordType = 'SharePointFileOperation'
+    Operation = 'FileDownloaded'
+    OfficeWorkload = 'SharePoint'
+    ResultStatus = 'Succeeded'
+    UserType = 'ServicePrincipal'
+    UserId = $apiAccessServicePrincipalId
+    UserKey = $apiAccessServicePrincipalId
+    ClientIP = $externalIp
+    OfficeObjectId = $cloudCollectionObjectId
+    SourceRelativeUrl = '/sites/Acquisition/Shared Documents/Controlled'
+    SourceFileName = "FY26-Acquisition-$cloudCollectionFlag.zip"
+    SourceFileExtension = 'zip'
 }
 
 $alerts = @(

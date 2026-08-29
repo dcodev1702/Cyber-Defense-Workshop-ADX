@@ -1,0 +1,272 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "presentation": "TTPs/Elisha - Threat Hunting Training v3.pptx",
+    "slideRange": "16-39",
+    "convertedWith": "markitdown 0.1.7"
+  },
+  "categories": [
+    {
+      "id": "email",
+      "name": "Email-Based Adversary Tradecraft",
+      "description": "How attackers abuse Exchange Online for persistence, access, and evasion.",
+      "ttps": [
+        {
+          "id": "mailbox-email-forwarding",
+          "slide": 18,
+          "name": "Mailbox Email Forwarding",
+          "selected": true,
+          "description": "Attackers configure mailbox forwarding to maintain persistent access to communications without continued authentication or malware.",
+          "finalTable": "AADServicePrincipalSignInLogs",
+          "flag": "FLAG:{SilentMailRelay}",
+          "flagColumn": "UserAgent",
+          "pivotSteps": [
+            {
+              "table": "OfficeActivity",
+              "purpose": "Find an external forwarding change and collect the affected user and source IP.",
+              "kql": "OfficeActivity\n| where Operation == \"Set-Mailbox\"\n| where tostring(Parameters) has \"ForwardingSmtpAddress\"\n| project TimeGenerated, UserId, ClientIP, Parameters"
+            },
+            {
+              "table": "CloudAppEvents",
+              "purpose": "Pivot on UserId and ClientIP to identify the OAuth application that made the change.",
+              "kql": "CloudAppEvents\n| where ActionType == \"MailboxForwardingConfigured\"\n| where AccountId == \"<UserId>\" and IPAddress == \"<ClientIP>\"\n| project Timestamp, OAuthAppId, ObjectName, IPAddress"
+            },
+            {
+              "table": "AADServicePrincipalSignInLogs",
+              "purpose": "Pivot on OAuthAppId and IPAddress to the application sign-in that contains the flag.",
+              "kql": "AADServicePrincipalSignInLogs\n| where AppId == \"<OAuthAppId>\" and IPAddress == \"<IPAddress>\"\n| project TimeGenerated, ServicePrincipalName, UserAgent"
+            }
+          ],
+          "validationKql": "let Seed = OfficeActivity | where Operation == \"Set-Mailbox\" and tostring(Parameters) has \"ForwardingSmtpAddress\" | project AccountId=UserId, IPAddress=ClientIP;\nlet App = CloudAppEvents | where ActionType == \"MailboxForwardingConfigured\" | project AccountId, IPAddress, OAuthAppId | join kind=inner Seed on AccountId, IPAddress | project OAuthAppId, IPAddress;\nAADServicePrincipalSignInLogs | project OAuthAppId=AppId, IPAddress, Flag=UserAgent | join kind=inner App on OAuthAppId, IPAddress | project Flag"
+        },
+        {
+          "id": "malicious-inbox-rules",
+          "slide": 19,
+          "name": "Malicious Inbox Rules",
+          "selected": true,
+          "description": "Attackers create or modify inbox rules to hide security notifications, intercept messages, or redirect mail while avoiding user awareness.",
+          "finalTable": "AADNonInteractiveUserSignInLogs",
+          "flag": "FLAG:{InboxShadowRule}",
+          "flagColumn": "AuthenticationDetails",
+          "pivotSteps": [
+            {
+              "table": "OfficeActivity",
+              "purpose": "Find a rule that suppresses security mail and collect the mailbox identity and source IP.",
+              "kql": "OfficeActivity\n| where Operation == \"New-InboxRule\"\n| where tostring(Parameters) has_any (\"DeleteMessage\", \"MoveToFolder\")\n| project TimeGenerated, UserId, ClientIP, Parameters"
+            },
+            {
+              "table": "SigninLogs",
+              "purpose": "Pivot on UserId and ClientIP to recover the authentication correlation ID.",
+              "kql": "SigninLogs\n| where UserPrincipalName == \"<UserId>\" and IPAddress == \"<ClientIP>\"\n| where AppDisplayName == \"Office 365 Exchange Online\"\n| project TimeGenerated, CorrelationId, UserPrincipalName, IPAddress"
+            },
+            {
+              "table": "AADNonInteractiveUserSignInLogs",
+              "purpose": "Pivot on CorrelationId to the automated session event that contains the flag.",
+              "kql": "AADNonInteractiveUserSignInLogs\n| where CorrelationId == \"<CorrelationId>\"\n| project TimeGenerated, AppDisplayName, IncomingTokenType, AuthenticationDetails"
+            }
+          ],
+          "validationKql": "let Seed = OfficeActivity | where Operation == \"New-InboxRule\" and tostring(Parameters) has_any (\"DeleteMessage\", \"MoveToFolder\") | project UserPrincipalName=UserId, IPAddress=ClientIP;\nlet Auth = SigninLogs | where AppDisplayName == \"Office 365 Exchange Online\" | project UserPrincipalName, IPAddress, CorrelationId | join kind=inner Seed on UserPrincipalName, IPAddress | project CorrelationId;\nAADNonInteractiveUserSignInLogs | project CorrelationId, Flag=AuthenticationDetails | join kind=inner Auth on CorrelationId | project Flag"
+        },
+        {
+          "id": "delegated-mailbox-permissions",
+          "slide": 20,
+          "name": "Delegated Mailbox Permissions",
+          "selected": false
+        }
+      ]
+    },
+    {
+      "id": "identity",
+      "name": "Identity-Based Adversary Tradecraft",
+      "description": "How attackers abuse identity, authentication, and authorization to gain access and persist in cloud environments.",
+      "ttps": [
+        {
+          "id": "suspicious-sign-in-patterns",
+          "slide": 22,
+          "name": "Suspicious Sign-In Patterns",
+          "selected": false
+        },
+        {
+          "id": "token-abuse",
+          "slide": 23,
+          "name": "Token Abuse",
+          "selected": true,
+          "description": "Attackers steal or reuse authentication tokens to maintain access without repeated sign-ins or MFA challenges.",
+          "finalTable": "AADNonInteractiveUserSignInLogs",
+          "flagColumn": "AuthenticationDetails",
+          "flag": "FLAG:{GhostSession}",
+          "pivotSteps": [
+            {
+              "table": "SigninLogs",
+              "purpose": "Find the risky device-code authentication and collect its session ID.",
+              "kql": "SigninLogs\n| where AuthenticationProtocol == \"deviceCode\" and ResultType == \"0\"\n| where IsRisky and IsInteractive\n| project TimeGenerated, UserPrincipalName, SessionId, IPAddress"
+            },
+            {
+              "table": "AADNonInteractiveUserSignInLogs",
+              "purpose": "Pivot on SessionId to the refresh-token activity that contains the flag.",
+              "kql": "AADNonInteractiveUserSignInLogs\n| where SessionId == \"<SessionId>\" and not(IsInteractive)\n| project TimeGenerated, UserPrincipalName, IncomingTokenType, AuthenticationDetails"
+            }
+          ],
+          "validationKql": "let Seed = SigninLogs | where AuthenticationProtocol == \"deviceCode\" and ResultType == \"0\" and IsRisky and IsInteractive and isnotempty(SessionId) | project SessionId;\nAADNonInteractiveUserSignInLogs | where not(IsInteractive) and isnotempty(SessionId) | project SessionId, Flag=AuthenticationDetails | join kind=inner Seed on SessionId | project Flag"
+        },
+        {
+          "id": "oauth-app-consent-abuse",
+          "slide": 24,
+          "name": "OAuth / App Consent Abuse",
+          "selected": false
+        },
+        {
+          "id": "privileged-role-abuse",
+          "slide": 25,
+          "name": "Privileged Role Abuse",
+          "selected": false
+        },
+        {
+          "id": "service-principal-privilege-escalation",
+          "slide": 26,
+          "name": "Service Principal Privilege Escalation",
+          "selected": false
+        },
+        {
+          "id": "conditional-access-policy-abuse",
+          "slide": 27,
+          "name": "Conditional Access Policy Abuse",
+          "selected": true,
+          "description": "Attackers modify Conditional Access policies to weaken MFA, device compliance, or location enforcement while access still appears policy-compliant.",
+          "finalTable": "SigninLogs",
+          "flagColumn": "AuthenticationDetails",
+          "flag": "FLAG:{MfaExclusion}",
+          "pivotSteps": [
+            {
+              "table": "AuditLogs",
+              "purpose": "Find the Conditional Access policy update and collect its audit correlation ID.",
+              "kql": "AuditLogs\n| where OperationName == \"Update conditional access policy\"\n| project TimeGenerated, Identity, CorrelationId, TargetResources"
+            },
+            {
+              "table": "CloudAppEvents",
+              "purpose": "Pivot on CorrelationId to recover the changed policy object ID.",
+              "kql": "CloudAppEvents\n| extend AuditCorrelationId=tostring(RawEventData.AuditCorrelationId)\n| where AuditCorrelationId == \"<CorrelationId>\"\n| project Timestamp, ObjectId, AccountId, IPAddress"
+            },
+            {
+              "table": "SigninLogs",
+              "purpose": "Pivot on ObjectId to a sign-in evaluated against the weakened policy; this row contains the flag.",
+              "kql": "SigninLogs\n| where tostring(ConditionalAccessPolicies) == \"<ObjectId>\"\n| project TimeGenerated, UserPrincipalName, ConditionalAccessStatus, AuthenticationDetails"
+            }
+          ],
+          "validationKql": "let Audit = AuditLogs | where OperationName == \"Update conditional access policy\" | project AuditCorrelationId=tostring(CorrelationId);\nlet Policy = CloudAppEvents | extend AuditCorrelationId=tostring(RawEventData.AuditCorrelationId) | project AuditCorrelationId, PolicyId=tostring(ObjectId) | join kind=inner Audit on AuditCorrelationId | project PolicyId;\nSigninLogs | project PolicyId=tostring(ConditionalAccessPolicies), Flag=AuthenticationDetails | join kind=inner Policy on PolicyId | project Flag"
+        },
+        {
+          "id": "directory-reconnaissance",
+          "slide": 28,
+          "name": "Directory Reconnaissance",
+          "selected": false
+        },
+        {
+          "id": "session-persistence-continuous-access",
+          "slide": 29,
+          "name": "Session Persistence / Continuous Access",
+          "selected": false
+        },
+        {
+          "id": "cross-tenant-b2b-identity-abuse",
+          "slide": 30,
+          "name": "Cross-Tenant / B2B Identity Abuse",
+          "selected": false
+        },
+        {
+          "id": "identity-to-infrastructure-access",
+          "slide": 31,
+          "name": "Identity to Infrastructure Access",
+          "selected": false
+        }
+      ]
+    },
+    {
+      "id": "application",
+      "name": "Application-Based Adversary Tradecraft",
+      "description": "How attackers abuse cloud applications, APIs, and automation to access data and persist without interactive users.",
+      "ttps": [
+        {
+          "id": "api-access-abuse",
+          "slide": 34,
+          "name": "API Access Abuse",
+          "selected": true,
+          "description": "Attackers abuse application API permissions or service principals to access cloud resources without interactive user sign-ins.",
+          "finalTable": "GraphAPIAuditEvents",
+          "flagColumn": "RequestUri",
+          "flag": "FLAG:{GraphApiSweep}",
+          "pivotSteps": [
+            {
+              "table": "AuditLogs",
+              "purpose": "Find the application consent and recover the service principal object ID.",
+              "kql": "AuditLogs\n| where OperationName == \"Consent to application\"\n| where tostring(AdditionalDetails) has_all (\"Files.Read.All\", \"Directory.Read.All\")\n| extend ServicePrincipalId=tostring(TargetResources[0].id)\n| project TimeGenerated, Identity, ServicePrincipalId"
+            },
+            {
+              "table": "AADServicePrincipalSignInLogs",
+              "purpose": "Pivot on ServicePrincipalId to recover the issued token identifier.",
+              "kql": "AADServicePrincipalSignInLogs\n| where ServicePrincipalId == \"<ServicePrincipalId>\"\n| project TimeGenerated, AppId, UniqueTokenIdentifier, IPAddress"
+            },
+            {
+              "table": "GraphAPIAuditEvents",
+              "purpose": "Pivot on UniqueTokenIdentifier to the Graph request that contains the flag.",
+              "kql": "GraphAPIAuditEvents\n| where UniqueTokenIdentifier == \"<UniqueTokenIdentifier>\"\n| project TimeGenerated, ApplicationId, RequestMethod, RequestUri, ResponseStatusCode"
+            }
+          ],
+          "validationKql": "let Consent = AuditLogs | where OperationName == \"Consent to application\" and tostring(AdditionalDetails) has_all (\"Files.Read.All\", \"Directory.Read.All\") | extend ServicePrincipalId=tostring(TargetResources[0].id) | project ServicePrincipalId;\nlet Token = AADServicePrincipalSignInLogs | project ServicePrincipalId, UniqueTokenIdentifier | join kind=inner Consent on ServicePrincipalId | project UniqueTokenIdentifier;\nGraphAPIAuditEvents | project UniqueTokenIdentifier, Flag=RequestUri | join kind=inner Token on UniqueTokenIdentifier | project Flag"
+        },
+        {
+          "id": "application-impersonation-obo-abuse",
+          "slide": 35,
+          "name": "Application Impersonation (On-Behalf-Of Abuse)",
+          "selected": false
+        },
+        {
+          "id": "cross-tenant-b2b-application-impersonation",
+          "slide": 36,
+          "name": "Cross-Tenant / B2B Application Impersonation",
+          "selected": false
+        },
+        {
+          "id": "illicit-consent-grants",
+          "slide": 37,
+          "name": "Illicit Consent Grants",
+          "selected": false
+        },
+        {
+          "id": "cloud-resource-enumeration",
+          "slide": 38,
+          "name": "Cloud Resource Enumeration",
+          "selected": false
+        },
+        {
+          "id": "cloud-data-collection-non-mail",
+          "slide": 39,
+          "name": "Cloud Data Collection (Non-Mail)",
+          "selected": true,
+          "description": "Attackers access SharePoint, OneDrive, or storage data through legitimate APIs or application access without traditional endpoint activity.",
+          "finalTable": "OfficeActivity",
+          "flagColumn": "SourceFileName",
+          "flag": "FLAG:{SharePointHarvest}",
+          "pivotSteps": [
+            {
+              "table": "CloudAppEvents",
+              "purpose": "Find suspicious application-based file access and collect the object ID.",
+              "kql": "CloudAppEvents\n| where ActionType == \"FileAccessed\" and AccountType == \"ServicePrincipal\"\n| project Timestamp, ObjectId, OAuthAppId, IPAddress"
+            },
+            {
+              "table": "GraphAPIAuditEvents",
+              "purpose": "Pivot on ObjectId to confirm API retrieval and its application context.",
+              "kql": "GraphAPIAuditEvents\n| where ReportId == \"<ObjectId>\"\n| project TimeGenerated, ReportId, ApplicationId, RequestMethod, RequestUri"
+            },
+            {
+              "table": "OfficeActivity",
+              "purpose": "Pivot on ReportId to the corresponding file-download audit row that contains the flag.",
+              "kql": "OfficeActivity\n| where OfficeObjectId == \"<ReportId>\" and Operation == \"FileDownloaded\"\n| project TimeGenerated, UserId, OfficeObjectId, SourceFileName, ClientIP"
+            }
+          ],
+          "validationKql": "let FileAccess = CloudAppEvents | where ActionType == \"FileAccessed\" and AccountType == \"ServicePrincipal\" | project ObjectId;\nlet Api = GraphAPIAuditEvents | project ObjectId=ReportId | join kind=inner FileAccess on ObjectId | project ObjectId;\nOfficeActivity | where Operation == \"FileDownloaded\" | project ObjectId=OfficeObjectId, Flag=SourceFileName | join kind=inner Api on ObjectId | project Flag"
+        }
+      ]
+    }
+  ]
+}

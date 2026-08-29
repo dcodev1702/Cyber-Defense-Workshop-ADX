@@ -1,0 +1,146 @@
+// Cyber Range TTP Hunt Queries
+// Run one numbered query at a time. Copy the requested value into the next query.
+// No query contains a flag literal; the final projected telemetry field reveals it.
+
+// ============================================================================
+// EMAIL-01: Mailbox Email Forwarding
+// TTP-ID: mailbox-email-forwarding
+// OfficeActivity -> CloudAppEvents -> AADServicePrincipalSignInLogs
+// ============================================================================
+
+// Step 1: Find external mailbox forwarding. Record UserId and ClientIP.
+OfficeActivity
+| where Operation == "Set-Mailbox"
+| where tostring(Parameters) has "ForwardingSmtpAddress"
+| project TimeGenerated, UserId, ClientIP, Parameters
+
+// Step 2: Substitute values from step 1. Record OAuthAppId and IPAddress.
+let TargetAccountId = "<UserId>";
+let SourceIp = "<ClientIP>";
+CloudAppEvents
+| where ActionType == "MailboxForwardingConfigured"
+| where AccountId == TargetAccountId and IPAddress == SourceIp
+| project Timestamp, OAuthAppId, ObjectName, IPAddress
+
+// Step 3: Substitute OAuthAppId and IPAddress. Inspect Evidence.
+let ApplicationId = "<OAuthAppId>";
+let SourceIp = "<IPAddress>";
+AADServicePrincipalSignInLogs
+| where AppId == ApplicationId and IPAddress == SourceIp
+| project TimeGenerated, ServicePrincipalName, Evidence=UserAgent
+
+// ============================================================================
+// EMAIL-02: Malicious Inbox Rules
+// TTP-ID: malicious-inbox-rules
+// OfficeActivity -> SigninLogs -> AADNonInteractiveUserSignInLogs
+// ============================================================================
+
+// Step 1: Find rules that suppress security messages. Record UserId and ClientIP.
+OfficeActivity
+| where Operation == "New-InboxRule"
+| where tostring(Parameters) has_any ("DeleteMessage", "MoveToFolder")
+| project TimeGenerated, UserId, ClientIP, Parameters
+
+// Step 2: Substitute values from step 1. Record CorrelationId.
+let MailboxUser = "<UserId>";
+let SourceIp = "<ClientIP>";
+SigninLogs
+| where UserPrincipalName == MailboxUser and IPAddress == SourceIp
+| where AppDisplayName == "Office 365 Exchange Online"
+| project TimeGenerated, CorrelationId, UserPrincipalName, IPAddress
+
+// Step 3: Substitute CorrelationId. Inspect Evidence.
+let AuthCorrelationId = "<CorrelationId>";
+AADNonInteractiveUserSignInLogs
+| where CorrelationId == AuthCorrelationId
+| project TimeGenerated, AppDisplayName, IncomingTokenType, Evidence=AuthenticationDetails
+
+// ============================================================================
+// IDENTITY-01: Token Abuse
+// TTP-ID: token-abuse
+// SigninLogs -> AADNonInteractiveUserSignInLogs
+// ============================================================================
+
+// Step 1: Find the risky interactive device-code sign-in. Record SessionId.
+SigninLogs
+| where AuthenticationProtocol == "deviceCode" and ResultType == "0"
+| where IsRisky and IsInteractive and isnotempty(SessionId)
+| project TimeGenerated, UserPrincipalName, SessionId, IPAddress
+
+// Step 2: Substitute SessionId. Inspect Evidence.
+let CompromisedSessionId = "<SessionId>";
+AADNonInteractiveUserSignInLogs
+| where SessionId == CompromisedSessionId and not(IsInteractive)
+| project TimeGenerated, UserPrincipalName, IncomingTokenType, Evidence=AuthenticationDetails
+
+// ============================================================================
+// IDENTITY-02: Conditional Access Policy Abuse
+// TTP-ID: conditional-access-policy-abuse
+// AuditLogs -> CloudAppEvents -> SigninLogs
+// ============================================================================
+
+// Step 1: Find the policy update. Record CorrelationId.
+AuditLogs
+| where OperationName == "Update conditional access policy"
+| project TimeGenerated, Identity, CorrelationId, TargetResources
+
+// Step 2: Substitute CorrelationId. Record ObjectId.
+let PolicyAuditCorrelationId = "<CorrelationId>";
+CloudAppEvents
+| extend AuditCorrelationId=tostring(RawEventData.AuditCorrelationId)
+| where AuditCorrelationId == PolicyAuditCorrelationId
+| project Timestamp, ObjectId, AccountId, IPAddress
+
+// Step 3: Substitute ObjectId. Inspect Evidence.
+let PolicyId = "<ObjectId>";
+SigninLogs
+| where tostring(ConditionalAccessPolicies) == PolicyId
+| project TimeGenerated, UserPrincipalName, ConditionalAccessStatus, Evidence=AuthenticationDetails
+
+// ============================================================================
+// APPLICATION-01: API Access Abuse
+// TTP-ID: api-access-abuse
+// AuditLogs -> AADServicePrincipalSignInLogs -> GraphAPIAuditEvents
+// ============================================================================
+
+// Step 1: Find suspicious application consent. Record ServicePrincipalId.
+AuditLogs
+| where OperationName == "Consent to application"
+| where tostring(AdditionalDetails) has_all ("Files.Read.All", "Directory.Read.All")
+| extend ServicePrincipalId=tostring(TargetResources[0].id)
+| project TimeGenerated, Identity, ServicePrincipalId, TargetResources
+
+// Step 2: Substitute ServicePrincipalId. Record UniqueTokenIdentifier.
+let ConsentedServicePrincipalId = "<ServicePrincipalId>";
+AADServicePrincipalSignInLogs
+| where ServicePrincipalId == ConsentedServicePrincipalId
+| project TimeGenerated, AppId, UniqueTokenIdentifier, IPAddress
+
+// Step 3: Substitute UniqueTokenIdentifier. Inspect Evidence.
+let IssuedTokenId = "<UniqueTokenIdentifier>";
+GraphAPIAuditEvents
+| where UniqueTokenIdentifier == IssuedTokenId
+| project TimeGenerated, ApplicationId, RequestMethod, Evidence=RequestUri, ResponseStatusCode
+
+// ============================================================================
+// APPLICATION-02: Cloud Data Collection (Non-Mail)
+// TTP-ID: cloud-data-collection-non-mail
+// CloudAppEvents -> GraphAPIAuditEvents -> OfficeActivity
+// ============================================================================
+
+// Step 1: Find application-only file access. Record ObjectId.
+CloudAppEvents
+| where ActionType == "FileAccessed" and AccountType == "ServicePrincipal"
+| project Timestamp, ObjectId, OAuthAppId, IPAddress
+
+// Step 2: Substitute ObjectId. Record ReportId.
+let AccessedObjectId = "<ObjectId>";
+GraphAPIAuditEvents
+| where ReportId == AccessedObjectId
+| project TimeGenerated, ReportId, ApplicationId, RequestMethod, RequestUri
+
+// Step 3: Substitute ReportId. Inspect Evidence.
+let DownloadReportId = "<ReportId>";
+OfficeActivity
+| where OfficeObjectId == DownloadReportId and Operation == "FileDownloaded"
+| project TimeGenerated, UserId, OfficeObjectId, Evidence=SourceFileName, ClientIP

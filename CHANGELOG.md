@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### 2026-08-28 - added pivot-driven TTP cyber-range flags
+
+- Converted slides 16-39 of the local cloud threat-hunting deck with MarkItDown and preserved both a generated Markdown extract and a reviewed, categorized TTP catalog. The source `TTPs/` authoring directory is now ignored.
+- Selected six challenges, two each for email, identity, and application tradecraft. Every challenge begins with flag-free behavioral evidence and requires one or two cross-table pivots before one unique themed `FLAG:{...}` appears in downstream telemetry.
+- Added a machine-readable TTP/table/flag matrix, sequential trainee KQL with no flag literals, deterministic scenario telemetry, and validators for category coverage, schema alignment, pivot depth, unique flag placement, and executable multi-table Kusto results.
+- Added a focused generation harness that reports explicit generator and validator exit codes and counts NDJSON records correctly. The parallel wrapper now accepts comma-separated table filters, and progress rendering supports wider consoles.
+
 ### 2026-08-07 - documented live CISA KEV JSON enrichment
 
 - **Added a reusable CISA KEV JSON query.** `docs/cisa-kev-json.kql` queries CISA's current Known Exploited Vulnerabilities catalog through `externaldata`, expands its `vulnerabilities` array, and returns the same columns as the CSV feed without persisting data in the workshop database. The root README now describes and links to the capability.

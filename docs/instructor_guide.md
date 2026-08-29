@@ -1,10 +1,11 @@
 # Instructor guide
 
 > **Primary delivery path:** Use the containerized class lab and [Shared Class Credential Guide](cloudflare_adx_access.md) for security conferences with mixed or random participants. Distribute the temporary shared credential and student proxy script, have students connect through `http://127.0.0.1:8080`, and verify the `kusto-readonly-gateway` service is healthy.
->
 > **Secondary delivery path:** Use managed Azure ADX plus B2B participant setup only when the event requires per-person identity governance, tenant access policy, and managed ADX database authorization.
 
 ## Primary conference setup checklist
+
+Use [`ttp-hunt-queries.kql`](ttp-hunt-queries.kql) for trainee TTP challenges. Keep the exact flags in [`ttp-cyber-range.md`](ttp-cyber-range.md) and joined validation queries in [`../metadata/ttp-flag-matrix.json`](../metadata/ttp-flag-matrix.json) instructor-only; every hunt must carry a correlation value through one or two table pivots.
 
 1. Start the Docker host with `docker compose up --detach --wait kusto` for the initial setup.
 2. Run `scripts\Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` to build and validate the local Student snapshot.
@@ -15,9 +16,9 @@
 7. Distribute only `student-access.env`, `Start-StudentAdxProxy.ps1`, and the student lab instructions through the temporary class channel.
 8. Import `dashboards\dashboard-CYBER-DEFEND-V4.json` yourself and present it; students orient to the dashboard rather than building it. Keep `dashboards\cyber-defense-workshop-dashboard.kql` open in the query editor for pinning tiles manually, and `docs\instructor_answer_key.kql` in a second tab for yourself.
 
-> The dashboard ships in two variants because a dashboard's data source names the cluster it queries, and importing the wrong one renders `Access denied` on all forty tiles. `dashboards\dashboard-CYBER-DEFEND-V4.json` targets the container path at `http://127.0.0.1:8080`; `dashboards\dashboard-CYBER-DEFEND-V4-azure.json` targets the managed Azure cluster. Use the one that matches the path you are delivering.
+**Dashboard data source:** The dashboard ships in two variants because a dashboard's data source names the cluster it queries, and importing the wrong one renders `Access denied` on all forty tiles. `dashboards\dashboard-CYBER-DEFEND-V4.json` targets the container path at `http://127.0.0.1:8080`; `dashboards\dashboard-CYBER-DEFEND-V4-azure.json` targets the managed Azure cluster. Use the one that matches the path you are delivering.
 
-> `.show cluster` returns 403 by design. It is not part of the Azure Data Explorer **Add connection** handshake, so students connect and query normally, but clicking into cluster-level detail is refused. Expect the question in class.
+**Expected gateway restriction:** `.show cluster` returns 403 by design. It is not part of the Azure Data Explorer **Add connection** handshake, so students connect and query normally, but clicking into cluster-level detail is refused. Expect the question in class.
 
 Before an intentional Kustainer replacement, run `docker compose stop kusto`, `scripts\Backup-LocalKustoSnapshot.ps1`, and `docker compose start kusto`; copy the resulting ZIP to secure storage. Rehearse the restore before the event with `scripts\Restore-LocalKustoSnapshot.ps1`, which rebuilds the database in a throwaway container and reconciles the row counts. If the snapshot is lost on site, rebuild it without Azure by running `scripts\Restore-LocalKustoSnapshot.ps1 -ExtractPayloadTo .\data\generated` followed by `scripts\Import-GeneratedDataToKustainer.ps1`.
 

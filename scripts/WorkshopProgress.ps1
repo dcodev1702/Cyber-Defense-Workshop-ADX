@@ -46,7 +46,7 @@ function Write-WorkshopProgressBar {
         [Parameter(Mandatory)][int]$Total,
         [Parameter(Mandatory)][timespan]$Elapsed,
         [string]$Detail = '',
-        [ValidateRange(10, 100)]
+        [ValidateRange(10, 240)]
         [int]$Width = 32
     )
 
