@@ -1,4 +1,4 @@
-// Cyber Range TTP Hunt Queries
+// Cyber Range - 19 TTP Hunt Queries
 // Run one numbered query at a time. Copy the requested value into the next query.
 // No query contains a flag literal; the final projected telemetry field reveals it.
 
