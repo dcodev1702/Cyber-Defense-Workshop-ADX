@@ -91,6 +91,65 @@ datatable(Act:int, Phase:string, PrimaryTables:string, ExpectedPivot:string, MIT
 
 
 // =============================================================================
+// Query 01A - Cloud TTP challenge answer key
+// Why it matters:
+// Proves that every researched challenge has one unique flag in its declared
+// downstream field and identifies the seven challenges in the canonical scenario.
+// Instructor note:
+// Keep this section away from trainees. All 19 rows must say PresentOnce with both
+// occurrence counts equal to one, and Scenario must contain exactly seven true
+// values. Missing means absent everywhere, Misplaced means present only in another
+// declared evidence field, and Duplicate means present more than once across those
+// fields. The validator separately scans every generated top-level field. Trainees
+// receive only docs\ttp-hunt-queries.kql, which contains no mapping or flag literal.
+// =============================================================================
+let TtpAnswerKey = datatable(ChallengeId:string, Scenario:bool, RequiredPath:string, MITRE:string, FinalField:string, ExpectedFlag:string)
+[
+    'mailbox-email-forwarding',                    true,  'OfficeActivity -> CloudAppEvents -> AADServicePrincipalSignInLogs',              'T1114.003',            'AADServicePrincipalSignInLogs.UserAgent',                'FLAG:{SilentMailRelay}',
+    'malicious-inbox-rules',                       true,  'OfficeActivity -> SigninLogs -> AADNonInteractiveUserSignInLogs',                'T1070.008,T1114.003',  'AADNonInteractiveUserSignInLogs.AuthenticationDetails', 'FLAG:{InboxShadowRule}',
+    'delegated-mailbox-permissions',               false, 'OfficeActivity -> CloudAppEvents -> AADNonInteractiveUserSignInLogs',           'T1098.002',            'AADNonInteractiveUserSignInLogs.AuthenticationDetails', 'FLAG:{DelegateShadow}',
+    'suspicious-sign-in-patterns',                 false, 'SigninLogs -> EntraIdSignInEvents',                                               'T1078.004',            'EntraIdSignInEvents.AuthenticationProcessingDetails',   'FLAG:{UnfamiliarAccess}',
+    'token-abuse',                                 true,  'SigninLogs -> AADNonInteractiveUserSignInLogs',                                  'T1528,T1550.001',      'AADNonInteractiveUserSignInLogs.AuthenticationDetails', 'FLAG:{GhostSession}',
+    'oauth-app-consent-abuse',                     true,  'AuditLogs -> CloudAppEvents -> AADServicePrincipalSignInLogs',                   'T1098.003,T1550.001',  'AADServicePrincipalSignInLogs.UserAgent',                'FLAG:{ConsentPhantom}',
+    'privileged-role-abuse',                       false, 'AuditLogs -> SigninLogs -> AADNonInteractiveUserSignInLogs',                     'T1098.003',            'AADNonInteractiveUserSignInLogs.AuthenticationDetails', 'FLAG:{RoleCrown}',
+    'service-principal-privilege-escalation',      false, 'AuditLogs -> AADServicePrincipalSignInLogs -> GraphAPIAuditEvents',              'T1098.003',            'GraphAPIAuditEvents.RequestUri',                          'FLAG:{AppAdminAscend}',
+    'conditional-access-policy-abuse',             true,  'AuditLogs -> CloudAppEvents -> SigninLogs',                                      'T1556.009',            'SigninLogs.AuthenticationDetails',                       'FLAG:{MfaExclusion}',
+    'directory-reconnaissance',                    false, 'IdentityQueryEvents -> SigninLogs -> GraphAPIAuditEvents',                       'T1087.004,T1069.003',  'GraphAPIAuditEvents.RequestUri',                          'FLAG:{DirectoryCartographer}',
+    'session-persistence-continuous-access',       false, 'SigninLogs -> CloudAppEvents -> AADNonInteractiveUserSignInLogs',               'T1550.001',            'AADNonInteractiveUserSignInLogs.AuthenticationDetails', 'FLAG:{SessionAfterglow}',
+    'cross-tenant-b2b-identity-abuse',             false, 'AuditLogs -> SigninLogs -> CloudAppEvents',                                      'T1078.004,T1098.003',  'CloudAppEvents.RawEventData',                             'FLAG:{GuestBackdoor}',
+    'identity-to-infrastructure-access',           false, 'SigninLogs -> AzureActivity -> DeviceProcessEvents',                             'T1651',                'DeviceProcessEvents.ProcessCommandLine',                  'FLAG:{ControlPlaneShell}',
+    'api-access-abuse',                            true,  'AuditLogs -> AADServicePrincipalSignInLogs -> GraphAPIAuditEvents',              'T1059.009,T1550.001',  'GraphAPIAuditEvents.RequestUri',                          'FLAG:{GraphApiSweep}',
+    'application-impersonation-obo-abuse',         false, 'SigninLogs -> AADNonInteractiveUserSignInLogs -> GraphAPIAuditEvents',          'T1550.001',            'GraphAPIAuditEvents.RequestUri',                          'FLAG:{BorrowedIdentity}',
+    'cross-tenant-b2b-application-impersonation', false, 'AADServicePrincipalSignInLogs -> GraphAPIAuditEvents -> CloudAppEvents',        'T1199,T1550.001',      'CloudAppEvents.RawEventData',                             'FLAG:{ForeignAppProxy}',
+    'illicit-consent-grants',                      false, 'AuditLogs -> CloudAppEvents -> AADNonInteractiveUserSignInLogs',                 'T1528,T1550.001',      'AADNonInteractiveUserSignInLogs.AuthenticationDetails', 'FLAG:{ConsentLatch}',
+    'cloud-resource-enumeration',                  false, 'AzureActivity -> SigninLogs -> AADNonInteractiveUserSignInLogs',                'T1580,T1059.009',      'AADNonInteractiveUserSignInLogs.AuthenticationDetails', 'FLAG:{CloudMapBurst}',
+    'cloud-data-collection-non-mail',               true,  'CloudAppEvents -> GraphAPIAuditEvents -> OfficeActivity',                        'T1530,T1213.002',      'OfficeActivity.SourceFileName',                           'FLAG:{SharePointHarvest}'
+];
+let ObservedTtpFlags = union
+    (AADServicePrincipalSignInLogs | where UserAgent has 'FLAG:' | project FinalField='AADServicePrincipalSignInLogs.UserAgent', Evidence=tostring(UserAgent)),
+    (AADNonInteractiveUserSignInLogs | where AuthenticationDetails has 'FLAG:' | project FinalField='AADNonInteractiveUserSignInLogs.AuthenticationDetails', Evidence=tostring(AuthenticationDetails)),
+    (EntraIdSignInEvents | where AuthenticationProcessingDetails has 'FLAG:' | project FinalField='EntraIdSignInEvents.AuthenticationProcessingDetails', Evidence=tostring(AuthenticationProcessingDetails)),
+    (GraphAPIAuditEvents | where RequestUri has 'FLAG:' | project FinalField='GraphAPIAuditEvents.RequestUri', Evidence=tostring(RequestUri)),
+    (SigninLogs | where AuthenticationDetails has 'FLAG:' | project FinalField='SigninLogs.AuthenticationDetails', Evidence=tostring(AuthenticationDetails)),
+    (CloudAppEvents | where tostring(RawEventData) has 'FLAG:' | project FinalField='CloudAppEvents.RawEventData', Evidence=tostring(RawEventData)),
+    (DeviceProcessEvents | where ProcessCommandLine has 'FLAG:' | project FinalField='DeviceProcessEvents.ProcessCommandLine', Evidence=tostring(ProcessCommandLine)),
+    (OfficeActivity | where SourceFileName has 'FLAG:' | project FinalField='OfficeActivity.SourceFileName', Evidence=tostring(SourceFileName))
+| extend ObservedFlags=extract_all(@'(FLAG:\{[A-Za-z0-9]+\})', Evidence)
+| mv-expand ObservedFlag=ObservedFlags to typeof(string)
+| summarize Occurrences=count() by FinalField, ObservedFlag;
+let ObservedTtpFlagTotals = ObservedTtpFlags
+| summarize TotalOccurrences=sum(Occurrences) by ObservedFlag;
+TtpAnswerKey
+| join kind=leftouter ObservedTtpFlags on $left.ExpectedFlag == $right.ObservedFlag, $left.FinalField == $right.FinalField
+| join kind=leftouter ObservedTtpFlagTotals on $left.ExpectedFlag == $right.ObservedFlag
+| extend Occurrences=coalesce(Occurrences, 0)
+| extend TotalOccurrences=coalesce(TotalOccurrences, 0)
+| extend Status=case(TotalOccurrences == 0, 'Missing', Occurrences == 0, 'Misplaced', TotalOccurrences > 1, 'Duplicate', Occurrences == 1, 'PresentOnce', 'Invalid')
+| project ChallengeId, Scenario, RequiredPath, MITRE, FinalField, ExpectedFlag, Occurrences, TotalOccurrences, Status
+| order by Scenario desc, ChallengeId asc
+
+
+// =============================================================================
 // Query 02 - Static AlertId answer key, verified against AlertInfo
 // Why it matters:
 // Confirms the data loaded correctly and gives you the authoritative mapping

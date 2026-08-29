@@ -5,7 +5,7 @@
 
 ## Primary conference setup checklist
 
-Use [`ttp-hunt-queries.kql`](ttp-hunt-queries.kql) for trainee TTP challenges. Keep the exact flags in [`ttp-cyber-range.md`](ttp-cyber-range.md) and joined validation queries in [`../metadata/ttp-flag-matrix.json`](../metadata/ttp-flag-matrix.json) instructor-only; every hunt must carry a correlation value through one or two table pivots.
+Use [`ttp-hunt-queries.kql`](ttp-hunt-queries.kql) for all 19 trainee TTP challenges. Seven are woven into the canonical scenario and 12 are extension hunts over the same dataset. Keep the exact unique flags in [`ttp-cyber-range.md`](ttp-cyber-range.md), the live presence inventory in [`instructor_answer_key.kql`](instructor_answer_key.kql), and the executable joined contract queries in [`../metadata/ttp-flag-matrix.json`](../metadata/ttp-flag-matrix.json) instructor-only; every hunt must carry a correlation value through one or two table pivots.
 
 1. Start the Docker host with `docker compose up --detach --wait kusto` for the initial setup.
 2. Run `scripts\Copy-StudentAdxToLocalKusto.ps1 -ForceRecreate` to build and validate the local Student snapshot.
@@ -13,8 +13,9 @@ Use [`ttp-hunt-queries.kql`](ttp-hunt-queries.kql) for trainee TTP challenges. K
 4. Rebuild the gateway from source with `docker compose up --detach --build kusto-readonly-gateway`. The gateway is a `build:` service, so a plain `docker compose up` reuses whatever image was built last and silently serves a stale policy.
 5. Confirm `kusto-readonly-gateway` is healthy with `docker compose ps` and validate a pilot student proxy connection. Health only proves the process is listening, so also confirm the policy is live: `.show tables` must succeed and `.show queries` must return 403.
 6. Run `scripts\Test-WorkshopReadiness.ps1` and require a green verdict before the class starts. It checks the six things that are quiet when they break — containers, the rehearsed emulator build, whether the gateway is running its own source rather than a stale image, the table and row counts, the network boundary, and the student path — and reapplies the isolation rule, which does not survive a Docker engine restart.
-7. Distribute only `student-access.env`, `Start-StudentAdxProxy.ps1`, and the student lab instructions through the temporary class channel.
-8. Import `dashboards\dashboard-CYBER-DEFEND-V4.json` yourself and present it; students orient to the dashboard rather than building it. Keep `dashboards\cyber-defense-workshop-dashboard.kql` open in the query editor for pinning tiles manually, and `docs\instructor_answer_key.kql` in a second tab for yourself.
+7. Run `scripts\Test-WorkshopTtpFlags.ps1 -DataDirectory .\data\generated -ClusterUri http://127.0.0.1:8080 -Database CyberDefendStudentSnapshot`. Require 19 selected TTPs, 19 unique one-time flags, and 19 successful joined live results.
+8. Distribute only `student-access.env`, `Start-StudentAdxProxy.ps1`, and the student lab instructions through the temporary class channel.
+9. Import `dashboards\dashboard-CYBER-DEFEND-V4.json` yourself and present it; students orient to the dashboard rather than building it. Keep `dashboards\cyber-defense-workshop-dashboard.kql` open in the query editor for pinning tiles manually, and `docs\instructor_answer_key.kql` in a second tab for yourself.
 
 **Dashboard data source:** The dashboard ships in two variants because a dashboard's data source names the cluster it queries, and importing the wrong one renders `Access denied` on all forty tiles. `dashboards\dashboard-CYBER-DEFEND-V4.json` targets the container path at `http://127.0.0.1:8080`; `dashboards\dashboard-CYBER-DEFEND-V4-azure.json` targets the managed Azure cluster. Use the one that matches the path you are delivering.
 
@@ -51,6 +52,12 @@ The intrusion opens at **Act 2** with delivery. A device-code phishing mail reac
 **Acts 10-12 close the case.** Act 10 establishes impact with storage account key listing, bulk blob read via `azcopy`, and `MailItemsAccessed`, so the class ends on data actually moving rather than on credential theft. Act 11 joins `ThreatIntelIndicators` against the attacker IP and C2 host the students already found by hand, teaching TI as a join rather than a separate silo. Act 12 lands in Defender XDR: introduce `SecurityIncident` as the SOC incident queue, where titles are generic and analyst-friendly while `AlertIds` and `AdditionalData` tie the incidents back to the scenario evidence and supporting TVM tables.
 
 Use the Ubuntu branch as an optional comparison pivot after the Windows path is understood. Students should see that `UBUNTU-03.usag-cyber.local` emits MDE device telemetry, not MDI telemetry: SSH/PAM logons in `DeviceLogonEvents`, `sudo` and shell execution in `DeviceProcessEvents`, audit artifacts in `DeviceEvents` and `DeviceFileEvents`, Linux `.so` image loads in `DeviceImageLoadEvents`, CUPS/IPP network context in `DeviceNetworkEvents`, and Linux package/CVE context in TVM tables. The additive Oracle branch stages a synthetic Python helper and Go binary on `UBUNTU-03`, connects to Oracle TNS on `UBUNTU-05:1521`, and creates a synthetic sensitive export under `/tmp/.oracle`.
+
+## TTP challenge storyline
+
+The canonical TTP arc uses exactly seven challenges in this order: mailbox forwarding, malicious inbox rules, token abuse, Conditional Access policy abuse, app-only OAuth permission abuse, API access abuse, and non-mail cloud data collection. This sequence moves from mailbox persistence through session and policy control into non-human authorization, Graph execution, and collection. `data/scenario-summary.json` records the same seven IDs under `ttpScenario`.
+
+The other 12 challenges are extension hunts, not disconnected sample data. They cover delegated mailbox access, anomalous valid-account use, privileged user and service-principal roles, directory discovery, long-lived sessions, guest/B2B abuse, Azure Run Command, OBO token exchange, foreign-owned applications, deceptive user consent, and multi-provider Azure enumeration. Every one has its own flag and matrix-backed joined instructor validation. The corrections and source links are documented in [`ttp-cyber-range.md`](ttp-cyber-range.md).
 
 ## Pacing and scope control
 

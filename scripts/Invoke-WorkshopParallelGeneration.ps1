@@ -65,6 +65,7 @@ param(
     [int]$AadUserRiskEventCount = 5500,
     [string[]]$TableName,
     [string]$ManifestPath = (Join-Path $PSScriptRoot '..' 'metadata' 'tables.manifest.json'),
+    [switch]$DisableTableRowOverrides,
     [switch]$DisableProfileGrounding,
     [switch]$KeepWorkerLogs
 )
@@ -121,10 +122,11 @@ $WorkerCount = [Math]::Min($WorkerCount, $tables.Count)
 # in force in every worker -- one source of truth for the 32,000, and no way for
 # a copy here to drift away from it. The generator asserts the count it wrote.
 $midpoint = [int](($NormalMinRowsPerTable + $NormalMaxRowsPerTable) / 2)
+$effectiveTableRowOverride = if ($DisableTableRowOverrides) { @{} } else { $TableRowOverride }
 $weights = @{}
 foreach ($table in $tables) {
-    $weights[$table] = if ($TableRowOverride -and $TableRowOverride.ContainsKey($table)) {
-        [int]$TableRowOverride[$table]
+    $weights[$table] = if ($effectiveTableRowOverride -and $effectiveTableRowOverride.ContainsKey($table)) {
+        [int]$effectiveTableRowOverride[$table]
     }
     else { $midpoint }
 }
@@ -166,7 +168,10 @@ foreach ($name in @('SchemaDirectory', 'FieldProfileDirectory')) {
     }
 }
 if ($DisableProfileGrounding) { $forwarded.Add('-DisableProfileGrounding') }
-if ($PSBoundParameters.ContainsKey('TableRowOverride')) {
+if ($DisableTableRowOverrides) {
+    $forwarded.Add('-TableRowOverride @{}')
+}
+elseif ($PSBoundParameters.ContainsKey('TableRowOverride')) {
     $pairs = @($TableRowOverride.GetEnumerator() | Sort-Object Key | ForEach-Object { "'{0}'={1}" -f $_.Key, [int]$_.Value })
     $forwarded.Add('-TableRowOverride @{' + ($pairs -join '; ') + '}')
 }
@@ -187,35 +192,7 @@ Write-Host ("End time  : {0}" -f $endTime)
 Write-Host ''
 
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-$workers = @()
-
-foreach ($bucket in $buckets) {
-    # Each worker writes its own summary. They all compute the same one, but eight
-    # processes writing a single path concurrently is a truncated file waiting to
-    # happen; one is copied to the canonical location once every worker succeeds.
-    $workerSummary = Join-Path $workDirectory ('summary-{0}.json' -f $bucket.Index)
-    $workerLog = Join-Path $workDirectory ('worker-{0}.log' -f $bucket.Index)
-    $tableList = ($bucket.Tables | ForEach-Object { "'" + $_ + "'" }) -join ','
-
-    $command = "& '$generator' -OutputDirectory '$OutputDirectory' -SummaryPath '$workerSummary' $common -TableName $tableList"
-
-    $process = Start-Process -FilePath 'pwsh' `
-        -ArgumentList '-NoProfile', '-Command', $command `
-        -PassThru -WindowStyle Hidden `
-        -RedirectStandardOutput $workerLog `
-        -RedirectStandardError ($workerLog + '.err')
-
-    $workers += [pscustomobject]@{
-        Index    = $bucket.Index
-        Process  = $process
-        Tables   = @($bucket.Tables)
-        Load     = $bucket.Load
-        Log      = $workerLog
-        Summary  = $workerSummary
-    }
-
-    Write-Host ("  worker {0}: {1,2} table(s), ~{2,7:n0} rows" -f $bucket.Index, $bucket.Tables.Count, $bucket.Load)
-}
+$workers = [System.Collections.Generic.List[object]]::new()
 
 function Get-WorkshopCompletedTableCount {
     <#
@@ -264,33 +241,96 @@ $activity = 'Generating workshop telemetry'
 $totalTables = $tables.Count
 $lastDone = -1
 $progressStyle = Get-WorkshopProgressStyle
+$stoppedWorkerCount = 0
+try {
+    foreach ($bucket in $buckets) {
+        # Each worker writes its own summary. They all compute the same one, but eight
+        # processes writing a single path concurrently is a truncated file waiting to
+        # happen; one is copied to the canonical location once every worker succeeds.
+        $workerSummary = Join-Path $workDirectory ('summary-{0}.json' -f $bucket.Index)
+        $workerLog = Join-Path $workDirectory ('worker-{0}.log' -f $bucket.Index)
+        $tableList = ($bucket.Tables | ForEach-Object { "'" + $_ + "'" }) -join ','
 
-while ($true) {
-    $live = @($workers | Where-Object { -not $_.Process.HasExited })
-    $done = Get-WorkshopCompletedTableCount -Workers $workers
+        $command = "& '$generator' -OutputDirectory '$OutputDirectory' -SummaryPath '$workerSummary' $common -TableName $tableList"
 
-    # Inline redraw refreshes on every tick, so the elapsed clock keeps moving between
-    # completions -- tables take about eleven seconds each here and a completion-driven
-    # clock looks frozen. Line mode refreshes only when a table finishes, because one
-    # line every 500 ms over a fourteen minute run is 1,700 lines of noise.
-    if ($progressStyle -eq 'Inline' -or $done -ne $lastDone) {
-        Write-WorkshopProgressBar -Activity $activity -Completed $done -Total $totalTables `
-            -Elapsed $stopwatch.Elapsed -Detail ("{0} worker(s) busy" -f $live.Count)
+        $process = Start-Process -FilePath 'pwsh' `
+            -ArgumentList '-NoProfile', '-Command', $command `
+            -PassThru -WindowStyle Hidden `
+            -RedirectStandardOutput $workerLog `
+            -RedirectStandardError ($workerLog + '.err')
+
+        $workers.Add([pscustomobject]@{
+                Index    = $bucket.Index
+                Process  = $process
+                ExitCode = $null
+                Tables   = @($bucket.Tables)
+                Load     = $bucket.Load
+                Log      = $workerLog
+                Summary  = $workerSummary
+            })
+
+        Write-Host ("  worker {0}: {1,2} table(s), ~{2,7:n0} rows" -f $bucket.Index, $bucket.Tables.Count, $bucket.Load)
     }
-    $lastDone = $done
 
-    if ($live.Count -eq 0) { break }
-    $null = $live[0].Process.WaitForExit(500)
+    while ($true) {
+        $live = @($workers | Where-Object { -not $_.Process.HasExited })
+        $done = Get-WorkshopCompletedTableCount -Workers $workers
+
+        # Inline redraw refreshes on every tick, so the elapsed clock keeps moving between
+        # completions -- tables take about eleven seconds each here and a completion-driven
+        # clock looks frozen. Line mode refreshes only when a table finishes, because one
+        # line every 500 ms over a fourteen minute run is 1,700 lines of noise.
+        if ($progressStyle -eq 'Inline' -or $done -ne $lastDone) {
+            Write-WorkshopProgressBar -Activity $activity -Completed $done -Total $totalTables `
+                -Elapsed $stopwatch.Elapsed -Detail ("{0} worker(s) busy" -f $live.Count)
+        }
+        $lastDone = $done
+
+        if ($live.Count -eq 0) { break }
+        $null = $live[0].Process.WaitForExit(500)
+    }
+
+    foreach ($worker in $workers) {
+        $worker.Process.WaitForExit()
+        $worker.ExitCode = $worker.Process.ExitCode
+    }
 }
+finally {
+    foreach ($worker in $workers) {
+        try {
+            if (-not $worker.Process.HasExited) {
+                $worker.Process.Kill($true)
+                $stoppedWorkerCount++
+            }
+            $worker.Process.WaitForExit()
+        }
+        catch {
+            try {
+                Stop-Process -Id $worker.Process.Id -Force -ErrorAction Stop
+                $worker.Process.WaitForExit()
+                $stoppedWorkerCount++
+            }
+            catch {
+                Write-Warning "Could not stop telemetry worker $($worker.Index) (PID $($worker.Process.Id)): $($_.Exception.Message)"
+            }
+        }
+        finally {
+            $worker.Process.Dispose()
+        }
+    }
 
-Complete-WorkshopProgressBar -Activity $activity
-$stopwatch.Stop()
+    Complete-WorkshopProgressBar -Activity $activity
+    $stopwatch.Stop()
+    if ($stoppedWorkerCount -gt 0) {
+        Write-Warning "Stopped $stoppedWorkerCount telemetry worker(s). The output directory is incomplete; do not import it. Worker logs remain at $workDirectory."
+    }
+}
 
 # ---- reconcile ---------------------------------------------------------------
 
-$failed = @($workers | Where-Object { $_.Process.ExitCode -ne 0 })
+$failed = @($workers | Where-Object { $_.ExitCode -ne 0 })
 foreach ($worker in $failed) {
-    Write-Host ("worker {0} exited {1}" -f $worker.Index, $worker.Process.ExitCode) -ForegroundColor Red
+    Write-Host ("worker {0} exited {1}" -f $worker.Index, $worker.ExitCode) -ForegroundColor Red
     foreach ($path in @($worker.Log, ($worker.Log + '.err'))) {
         if (Test-Path -LiteralPath $path) {
             $tail = @(Get-Content -LiteralPath $path -Tail 15)

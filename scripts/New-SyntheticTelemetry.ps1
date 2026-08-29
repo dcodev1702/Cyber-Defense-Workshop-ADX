@@ -8027,9 +8027,22 @@ foreach ($request in $graphAbuseRequests) {
 # ---------------------------------------------------------------------------
 $mailForwardingFlag = Get-WorkshopTtpFlag -Id 'mailbox-email-forwarding'
 $inboxRuleFlag = Get-WorkshopTtpFlag -Id 'malicious-inbox-rules'
+$delegatedMailboxFlag = Get-WorkshopTtpFlag -Id 'delegated-mailbox-permissions'
+$suspiciousSignInFlag = Get-WorkshopTtpFlag -Id 'suspicious-sign-in-patterns'
 $tokenAbuseFlag = Get-WorkshopTtpFlag -Id 'token-abuse'
+$oauthConsentFlag = Get-WorkshopTtpFlag -Id 'oauth-app-consent-abuse'
+$privilegedRoleFlag = Get-WorkshopTtpFlag -Id 'privileged-role-abuse'
+$servicePrincipalPrivilegeFlag = Get-WorkshopTtpFlag -Id 'service-principal-privilege-escalation'
 $conditionalAccessFlag = Get-WorkshopTtpFlag -Id 'conditional-access-policy-abuse'
+$directoryReconFlag = Get-WorkshopTtpFlag -Id 'directory-reconnaissance'
+$sessionPersistenceFlag = Get-WorkshopTtpFlag -Id 'session-persistence-continuous-access'
+$crossTenantIdentityFlag = Get-WorkshopTtpFlag -Id 'cross-tenant-b2b-identity-abuse'
+$identityInfrastructureFlag = Get-WorkshopTtpFlag -Id 'identity-to-infrastructure-access'
 $apiAccessFlag = Get-WorkshopTtpFlag -Id 'api-access-abuse'
+$oboAbuseFlag = Get-WorkshopTtpFlag -Id 'application-impersonation-obo-abuse'
+$crossTenantApplicationFlag = Get-WorkshopTtpFlag -Id 'cross-tenant-b2b-application-impersonation'
+$illicitConsentFlag = Get-WorkshopTtpFlag -Id 'illicit-consent-grants'
+$cloudEnumerationFlag = Get-WorkshopTtpFlag -Id 'cloud-resource-enumeration'
 $cloudCollectionFlag = Get-WorkshopTtpFlag -Id 'cloud-data-collection-non-mail'
 
 $mailForwardingTime = $StartTime.AddMinutes(17)
@@ -8095,7 +8108,7 @@ Add-Record -Table 'AADServicePrincipalSignInLogs' -Time $mailForwardingTime.AddS
 }
 
 $inboxRuleTime = $StartTime.AddMinutes(18)
-$inboxRuleCorrelationId = New-StableGuid 'ttp-inbox-rule-correlation'
+$inboxRuleSessionId = New-StableGuid 'ttp-inbox-rule-session'
 Add-Record -Table 'OfficeActivity' -Time $inboxRuleTime -Values @{
     TenantId = $tenantId
     TimeGenerated = Format-WorkshopTime $inboxRuleTime
@@ -8121,14 +8134,14 @@ Add-Record -Table 'SigninLogs' -Time $inboxRuleTime.AddSeconds(8) -Values @{
     AuthenticationRequirement = 'multiFactorAuthentication'
     ClientAppUsed = 'Browser'
     ConditionalAccessStatus = 'success'
-    CorrelationId = $inboxRuleCorrelationId
+    CorrelationId = New-StableGuid 'ttp-inbox-rule-interactive-correlation'
     Id = New-StableGuid 'ttp-inbox-rule-signin'
     IPAddress = $externalIp
     IsInteractive = $true
     IsRisky = $true
     ResultType = '0'
     ResultDescription = 'Success'
-    SessionId = New-StableGuid 'ttp-inbox-rule-session'
+    SessionId = $inboxRuleSessionId
     UserPrincipalName = $victor.Upn
     UserDisplayName = $victor.DisplayName
     UserId = $victor.ObjectId
@@ -8144,14 +8157,14 @@ Add-Record -Table 'AADNonInteractiveUserSignInLogs' -Time $inboxRuleTime.AddSeco
     AuthenticationRequirement = 'multiFactorAuthentication'
     ClientAppUsed = 'Browser'
     ConditionalAccessStatus = 'success'
-    CorrelationId = $inboxRuleCorrelationId
+    CorrelationId = New-StableGuid 'ttp-inbox-rule-noninteractive-correlation'
     Id = New-StableGuid 'ttp-inbox-rule-noninteractive'
     IncomingTokenType = 'refreshToken'
     IPAddress = $externalIp
     IsInteractive = $false
     ResultType = '0'
     ResultDescription = 'Success'
-    SessionId = New-StableGuid 'ttp-inbox-rule-session'
+    SessionId = $inboxRuleSessionId
     UserPrincipalName = $victor.Upn
     UserId = $victor.ObjectId
 }
@@ -8255,7 +8268,13 @@ Add-Record -Table 'SigninLogs' -Time $conditionalAccessTime.AddMinutes(3) -Value
     AuthenticationProtocol = 'none'
     AuthenticationRequirement = 'singleFactorAuthentication'
     ClientAppUsed = 'Browser'
-    ConditionalAccessPolicies = $conditionalAccessPolicyId
+    ConditionalAccessPolicies = @(@{
+        id = $conditionalAccessPolicyId
+        displayName = 'Require MFA for administrative access'
+        enforcedGrantControls = @()
+        enforcedSessionControls = @()
+        result = 'success'
+    })
     ConditionalAccessStatus = 'success'
     CorrelationId = New-StableGuid 'ttp-conditional-access-signin'
     Id = New-StableGuid 'ttp-conditional-access-signin-id'
@@ -8375,7 +8394,7 @@ Add-Record -Table 'GraphAPIAuditEvents' -Time $cloudCollectionTime.AddSeconds(9)
     IpAddress = $externalIp
     ClientRequestId = New-StableGuid 'ttp-cloud-collection-client-request'
     EntityType = 'servicePrincipal'
-    ReportId = $cloudCollectionObjectId
+    ReportId = New-StableGuid 'ttp-cloud-collection-graph-report'
     RequestUri = "https://graph.microsoft.com/v1.0/sites/usag-cyber.sharepoint.example/drive/items/$cloudCollectionObjectId/content"
     AccountObjectId = $victor.ObjectId
     OperationId = New-StableGuid 'ttp-cloud-collection-operation'
@@ -8406,6 +8425,975 @@ Add-Record -Table 'OfficeActivity' -Time $cloudCollectionTime.AddSeconds(17) -Va
     SourceRelativeUrl = '/sites/Acquisition/Shared Documents/Controlled'
     SourceFileName = "FY26-Acquisition-$cloudCollectionFlag.zip"
     SourceFileExtension = 'zip'
+}
+
+$ina = $users | Where-Object Name -eq 'ina.hoffmann' | Select-Object -First 1
+
+$delegatedMailboxTime = $StartTime.AddMinutes(25)
+$delegatedMailboxSessionId = New-StableGuid 'ttp-delegated-mailbox-session'
+Add-Record -Table 'OfficeActivity' -Time $delegatedMailboxTime -Values @{
+    TenantId = $tenantId
+    TimeGenerated = Format-WorkshopTime $delegatedMailboxTime
+    RecordType = 'ExchangeAdmin'
+    Operation = 'Add-MailboxPermission'
+    OfficeWorkload = 'Exchange'
+    ResultStatus = 'True'
+    UserType = 'Admin'
+    UserId = $victor.Upn
+    UserKey = $victor.ObjectId
+    ClientIP = $externalIp
+    OfficeObjectId = $victor.Upn
+    MailboxOwnerUPN = $victor.Upn
+    Parameters = "Identity=$($victor.Upn);User=$($ina.Upn);AccessRights=FullAccess;InheritanceType=All"
+}
+Add-Record -Table 'CloudAppEvents' -Time $delegatedMailboxTime.AddSeconds(11) -Values @{
+    Timestamp = Format-WorkshopTime $delegatedMailboxTime.AddSeconds(11)
+    ActionType = 'MailboxPermissionGranted'
+    ActivityType = 'Grant mailbox permission'
+    Application = 'Microsoft Exchange Online'
+    ApplicationId = 11161
+    AccountObjectId = $ina.ObjectId
+    AccountId = $ina.Upn
+    AccountDisplayName = $ina.DisplayName
+    AccountType = 'Regular'
+    IPAddress = $externalIp
+    ObjectName = $victor.Upn
+    ObjectType = 'Mailbox'
+    ObjectId = $victor.ObjectId
+    IsAdminOperation = $true
+    SessionData = @{ SessionId = $delegatedMailboxSessionId; InLineSessionId = $delegatedMailboxSessionId }
+    RawEventData = @{ AccessRights = @('FullAccess'); Delegate = $ina.Upn; Mailbox = $victor.Upn }
+}
+Add-Record -Table 'AADNonInteractiveUserSignInLogs' -Time $delegatedMailboxTime.AddSeconds(24) -Values @{
+    TimeGenerated = Format-WorkshopTime $delegatedMailboxTime.AddSeconds(24)
+    CreatedDateTime = Format-WorkshopTime $delegatedMailboxTime.AddSeconds(24)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Office 365 Exchange Online'
+    AppId = '00000002-0000-0ff1-ce00-000000000000'
+    AppOwnerTenantId = $tenantId
+    AuthenticationDetails = "Delegate opened Victor Alvarez's mailbox through a background Exchange session; $delegatedMailboxFlag"
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-delegated-mailbox-correlation'
+    HomeTenantId = $tenantId
+    Id = New-StableGuid 'ttp-delegated-mailbox-signin'
+    IncomingTokenType = 'refreshToken'
+    IPAddress = $externalIp
+    IsInteractive = $false
+    ResourceTenantId = $tenantId
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = $delegatedMailboxSessionId
+    UniqueTokenIdentifier = New-StableGuid 'ttp-delegated-mailbox-token'
+    UserDisplayName = $ina.DisplayName
+    UserId = $ina.ObjectId
+    UserPrincipalName = $ina.Upn
+}
+
+$suspiciousSignInTime = $StartTime.AddMinutes(26)
+$suspiciousSignInCorrelationId = New-StableGuid 'ttp-suspicious-signin-correlation'
+$suspiciousSignInSessionId = New-StableGuid 'ttp-suspicious-signin-session'
+$suspiciousSignInIp = '203.0.113.140'
+Add-Record -Table 'SigninLogs' -Time $suspiciousSignInTime -Values @{
+    TimeGenerated = Format-WorkshopTime $suspiciousSignInTime
+    CreatedDateTime = Format-WorkshopTime $suspiciousSignInTime
+    AADTenantId = $tenantId
+    AppDisplayName = 'Microsoft 365'
+    AppId = '00000003-0000-0ff1-ce00-000000000000'
+    AuthenticationProcessingDetails = 'Password validated from an unfamiliar autonomous system'
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'singleFactorAuthentication'
+    ClientAppUsed = 'Browser'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = $suspiciousSignInCorrelationId
+    DeviceDetail = @{ operatingSystem = 'Windows'; browser = 'Chrome'; isCompliant = $false; isManaged = $false; trustType = 'Unmanaged' }
+    HomeTenantId = $tenantId
+    Id = New-StableGuid 'ttp-suspicious-signin-id'
+    IPAddress = $suspiciousSignInIp
+    IsInteractive = $true
+    IsRisky = $true
+    Location = 'RU'
+    ResourceTenantId = $tenantId
+    ResultDescription = 'Success'
+    ResultType = '0'
+    RiskLevelAggregated = 'high'
+    RiskState = 'atRisk'
+    SessionId = $suspiciousSignInSessionId
+    UniqueTokenIdentifier = New-StableGuid 'ttp-suspicious-signin-token'
+    UserDisplayName = $ina.DisplayName
+    UserId = $ina.ObjectId
+    UserPrincipalName = $ina.Upn
+}
+Add-Record -Table 'EntraIdSignInEvents' -Time $suspiciousSignInTime.AddSeconds(5) -Values @{
+    Timestamp = Format-WorkshopTime $suspiciousSignInTime.AddSeconds(5)
+    Application = 'Microsoft 365'
+    ApplicationId = '00000003-0000-0ff1-ce00-000000000000'
+    LogonType = 'Interactive'
+    ErrorCode = 0
+    CorrelationId = $suspiciousSignInCorrelationId
+    SessionId = $suspiciousSignInSessionId
+    AccountDisplayName = $ina.DisplayName
+    AccountObjectId = $ina.ObjectId
+    AccountUpn = $ina.Upn
+    IsConfidentialClient = $false
+    IsExternalUser = 0
+    IsGuestUser = $false
+    ResourceDisplayName = 'Microsoft 365'
+    ResourceId = '00000003-0000-0ff1-ce00-000000000000'
+    ResourceTenantId = $tenantId
+    DeviceName = 'UNMANAGED-RU-01'
+    EntraIdDeviceId = New-StableGuid 'ttp-suspicious-signin-device'
+    OSPlatform = 'Windows11'
+    DeviceTrustType = 'Workplace'
+    IsManaged = 0
+    IsCompliant = 0
+    AuthenticationProcessingDetails = "Successful valid-account use from an unmanaged, previously unseen device; $suspiciousSignInFlag"
+    AuthenticationRequirement = 'singleFactorAuthentication'
+    RiskLevelAggregated = 100
+    RiskState = 4
+    UserAgent = $browserUserAgent
+    ClientAppUsed = 'Browser'
+    Browser = 'Chrome 124'
+    ConditionalAccessStatus = 2
+    IPAddress = $suspiciousSignInIp
+    Country = 'RU'
+    State = 'Moscow'
+    City = 'Moscow'
+}
+
+$oauthConsentTime = $StartTime.AddMinutes(21)
+$oauthConsentCorrelationId = New-StableGuid 'ttp-oauth-consent-correlation'
+$oauthConsentAppId = New-StableGuid 'ttp-oauth-consent-app'
+$oauthConsentServicePrincipalId = New-StableGuid 'ttp-oauth-consent-service-principal'
+Add-Record -Table 'AuditLogs' -Time $oauthConsentTime -Values @{
+    TimeGenerated = Format-WorkshopTime $oauthConsentTime
+    ActivityDateTime = Format-WorkshopTime $oauthConsentTime
+    AADOperationType = 'Add'
+    AADTenantId = $tenantId
+    ActivityDisplayName = 'Add app role assignment to service principal'
+    AdditionalDetails = @(
+        @{ key = 'ConsentType'; value = 'AllPrincipals' },
+        @{ key = 'AppRole.Value'; value = 'Mail.Read Files.Read.All' },
+        @{ key = 'Resource'; value = 'Microsoft Graph' }
+    )
+    Category = 'ApplicationManagement'
+    CorrelationId = $oauthConsentCorrelationId
+    Id = New-StableGuid 'ttp-oauth-consent-audit'
+    Identity = $victor.Upn
+    InitiatedBy = @{ user = @{ userPrincipalName = $victor.Upn; id = $victor.ObjectId; ipAddress = $externalIp } }
+    LoggedByService = 'Core Directory'
+    OperationName = 'Add app role assignment to service principal'
+    Result = 'success'
+    ResultType = 'Success'
+    TargetResources = @(@{ displayName = 'USAG Workflow Metrics'; type = 'ServicePrincipal'; id = $oauthConsentServicePrincipalId; appId = $oauthConsentAppId })
+    Type = 'AuditLogs'
+}
+Add-Record -Table 'CloudAppEvents' -Time $oauthConsentTime.AddSeconds(9) -Values @{
+    Timestamp = Format-WorkshopTime $oauthConsentTime.AddSeconds(9)
+    ActionType = 'OAuthAppPermissionGranted'
+    ActivityType = 'Grant application permission'
+    Application = 'Microsoft Entra ID'
+    ApplicationId = 20892
+    AccountObjectId = $victor.ObjectId
+    AccountId = $victor.Upn
+    AccountDisplayName = $victor.DisplayName
+    AccountType = 'Admin'
+    IPAddress = $externalIp
+    ObjectName = 'USAG Workflow Metrics'
+    ObjectType = 'ServicePrincipal'
+    ObjectId = $oauthConsentServicePrincipalId
+    OAuthAppId = $oauthConsentAppId
+    IsAdminOperation = $true
+    RawEventData = @{ AuditCorrelationId = [string]$oauthConsentCorrelationId; ConsentType = 'AllPrincipals'; Scopes = 'Mail.Read Files.Read.All' }
+}
+Add-Record -Table 'AADServicePrincipalSignInLogs' -Time $oauthConsentTime.AddSeconds(22) -Values @{
+    TimeGenerated = Format-WorkshopTime $oauthConsentTime.AddSeconds(22)
+    CreatedDateTime = Format-WorkshopTime $oauthConsentTime.AddSeconds(22)
+    AADTenantId = $tenantId
+    AppId = $oauthConsentAppId
+    AppOwnerTenantId = $tenantId
+    ClientCredentialType = 'client secret'
+    CorrelationId = New-StableGuid 'ttp-oauth-consent-signin'
+    Id = New-StableGuid 'ttp-oauth-consent-signin-id'
+    Identity = 'USAG Workflow Metrics'
+    IPAddress = $externalIp
+    Location = 'DE'
+    OperationName = 'Sign-in activity'
+    ResourceDisplayName = 'Microsoft Graph'
+    ResourceIdentity = $graphResourceId
+    ResultDescription = 'Success'
+    ResultType = '0'
+    ServicePrincipalId = $oauthConsentServicePrincipalId
+    ServicePrincipalName = 'USAG Workflow Metrics'
+    SessionId = New-StableGuid 'ttp-oauth-consent-session'
+    UniqueTokenIdentifier = New-StableGuid 'ttp-oauth-consent-token'
+    UserAgent = "WorkflowMetrics/3.2 $oauthConsentFlag"
+}
+
+$privilegedRoleTime = $StartTime.AddMinutes(27)
+$privilegedRoleSessionId = New-StableGuid 'ttp-privileged-role-session'
+Add-Record -Table 'AuditLogs' -Time $privilegedRoleTime -Values @{
+    TimeGenerated = Format-WorkshopTime $privilegedRoleTime
+    ActivityDateTime = Format-WorkshopTime $privilegedRoleTime
+    AADOperationType = 'Add'
+    AADTenantId = $tenantId
+    ActivityDisplayName = 'Add member to role'
+    AdditionalDetails = @(@{ key = 'Role.DisplayName'; value = 'Global Administrator' })
+    Category = 'RoleManagement'
+    CorrelationId = New-StableGuid 'ttp-privileged-role-audit-correlation'
+    Id = New-StableGuid 'ttp-privileged-role-audit'
+    Identity = $victor.Upn
+    InitiatedBy = @{ user = @{ userPrincipalName = $victor.Upn; id = $victor.ObjectId; ipAddress = $externalIp } }
+    LoggedByService = 'Core Directory'
+    OperationName = 'Add member to role'
+    Result = 'success'
+    ResultType = 'Success'
+    TargetResources = @(@{ displayName = $victor.DisplayName; userPrincipalName = $victor.Upn; type = 'User'; id = $victor.ObjectId; modifiedProperties = @(@{ displayName = 'Role.DisplayName'; newValue = 'Global Administrator'; oldValue = '' }) })
+    Type = 'AuditLogs'
+}
+Add-Record -Table 'SigninLogs' -Time $privilegedRoleTime.AddSeconds(12) -Values @{
+    TimeGenerated = Format-WorkshopTime $privilegedRoleTime.AddSeconds(12)
+    CreatedDateTime = Format-WorkshopTime $privilegedRoleTime.AddSeconds(12)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Azure Portal'
+    AppId = '797f4846-ba00-4fd7-ba43-dac1f8f63013'
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Browser'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-privileged-role-signin-correlation'
+    Id = New-StableGuid 'ttp-privileged-role-signin'
+    IPAddress = $externalIp
+    IsInteractive = $true
+    IsRisky = $true
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = $privilegedRoleSessionId
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+    UserPrincipalName = $victor.Upn
+}
+Add-Record -Table 'AADNonInteractiveUserSignInLogs' -Time $privilegedRoleTime.AddSeconds(26) -Values @{
+    TimeGenerated = Format-WorkshopTime $privilegedRoleTime.AddSeconds(26)
+    CreatedDateTime = Format-WorkshopTime $privilegedRoleTime.AddSeconds(26)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Microsoft Graph Command Line Tools'
+    AppId = '14d82eec-204b-4c2f-b7e8-296a70dab67e'
+    AuthenticationDetails = "Global Administrator session continued through a background token redemption; $privilegedRoleFlag"
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-privileged-role-noninteractive-correlation'
+    Id = New-StableGuid 'ttp-privileged-role-noninteractive'
+    IncomingTokenType = 'refreshToken'
+    IPAddress = $externalIp
+    IsInteractive = $false
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = $privilegedRoleSessionId
+    UniqueTokenIdentifier = New-StableGuid 'ttp-privileged-role-token'
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+    UserPrincipalName = $victor.Upn
+}
+
+$servicePrincipalPrivilegeTime = $StartTime.AddMinutes(28)
+$servicePrincipalPrivilegeAppId = New-StableGuid 'ttp-service-principal-privilege-app'
+$servicePrincipalPrivilegeId = New-StableGuid 'ttp-service-principal-privilege-object'
+$servicePrincipalPrivilegeToken = New-StableGuid 'ttp-service-principal-privilege-token'
+Add-Record -Table 'AuditLogs' -Time $servicePrincipalPrivilegeTime -Values @{
+    TimeGenerated = Format-WorkshopTime $servicePrincipalPrivilegeTime
+    ActivityDateTime = Format-WorkshopTime $servicePrincipalPrivilegeTime
+    AADOperationType = 'Add'
+    AADTenantId = $tenantId
+    ActivityDisplayName = 'Add app role assignment to service principal'
+    AdditionalDetails = @(
+        @{ key = 'AppRole.Value'; value = 'RoleManagement.ReadWrite.Directory' },
+        @{ key = 'Resource'; value = 'Microsoft Graph' }
+    )
+    Category = 'ApplicationManagement'
+    CorrelationId = New-StableGuid 'ttp-service-principal-privilege-audit-correlation'
+    Id = New-StableGuid 'ttp-service-principal-privilege-audit'
+    Identity = $victor.Upn
+    InitiatedBy = @{ user = @{ userPrincipalName = $victor.Upn; id = $victor.ObjectId; ipAddress = $externalIp } }
+    LoggedByService = 'Core Directory'
+    OperationName = 'Add app role assignment to service principal'
+    Result = 'success'
+    ResultType = 'Success'
+    TargetResources = @(@{ displayName = 'USAG Tenant Lifecycle'; type = 'ServicePrincipal'; id = $servicePrincipalPrivilegeId; appId = $servicePrincipalPrivilegeAppId })
+    Type = 'AuditLogs'
+}
+Add-Record -Table 'AADServicePrincipalSignInLogs' -Time $servicePrincipalPrivilegeTime.AddSeconds(13) -Values @{
+    TimeGenerated = Format-WorkshopTime $servicePrincipalPrivilegeTime.AddSeconds(13)
+    CreatedDateTime = Format-WorkshopTime $servicePrincipalPrivilegeTime.AddSeconds(13)
+    AADTenantId = $tenantId
+    AppId = $servicePrincipalPrivilegeAppId
+    AppOwnerTenantId = $tenantId
+    ClientCredentialType = 'client secret'
+    CorrelationId = New-StableGuid 'ttp-service-principal-privilege-signin-correlation'
+    Id = New-StableGuid 'ttp-service-principal-privilege-signin'
+    Identity = 'USAG Tenant Lifecycle'
+    IPAddress = $externalIp
+    Location = 'DE'
+    OperationName = 'Sign-in activity'
+    ResourceDisplayName = 'Microsoft Graph'
+    ResourceIdentity = $graphResourceId
+    ResultDescription = 'Success'
+    ResultType = '0'
+    ServicePrincipalId = $servicePrincipalPrivilegeId
+    ServicePrincipalName = 'USAG Tenant Lifecycle'
+    SessionId = New-StableGuid 'ttp-service-principal-privilege-session'
+    UniqueTokenIdentifier = $servicePrincipalPrivilegeToken
+    UserAgent = 'TenantLifecycle/1.8'
+}
+Add-Record -Table 'GraphAPIAuditEvents' -Time $servicePrincipalPrivilegeTime.AddSeconds(29) -Values @{
+    TimeGenerated = Format-WorkshopTime $servicePrincipalPrivilegeTime.AddSeconds(29)
+    Timestamp = Format-WorkshopTime $servicePrincipalPrivilegeTime.AddSeconds(29)
+    IdentityProvider = 'AAD'
+    ApiVersion = 'v1.0'
+    ApplicationId = $servicePrincipalPrivilegeAppId
+    IpAddress = $externalIp
+    ClientRequestId = New-StableGuid 'ttp-service-principal-privilege-client-request'
+    EntityType = 'servicePrincipal'
+    ReportId = New-StableGuid 'ttp-service-principal-privilege-report'
+    RequestUri = "https://graph.microsoft.com/v1.0/directoryRoles/$servicePrincipalPrivilegeFlag/members"
+    AccountObjectId = $servicePrincipalPrivilegeId
+    OperationId = New-StableGuid 'ttp-service-principal-privilege-operation'
+    Location = 'Germany West Central'
+    RequestDuration = '441'
+    RequestId = New-StableGuid 'ttp-service-principal-privilege-request'
+    RequestMethod = 'POST'
+    ResponseStatusCode = '204'
+    Scopes = 'RoleManagement.ReadWrite.Directory'
+    UniqueTokenIdentifier = $servicePrincipalPrivilegeToken
+    TargetWorkload = 'Microsoft.DirectoryServices'
+    ServicePrincipalId = $servicePrincipalPrivilegeId
+    ResponseSize = 0
+    Type = 'GraphAPIAuditEvents'
+}
+
+$directoryReconTime = $StartTime.AddMinutes(29)
+$directoryReconToken = New-StableGuid 'ttp-directory-recon-token'
+Add-Record -Table 'IdentityQueryEvents' -Time $directoryReconTime -Values @{
+    Timestamp = Format-WorkshopTime $directoryReconTime
+    ActionType = 'LDAP query'
+    Application = 'Microsoft Graph PowerShell'
+    QueryType = 'EnumerateUsers'
+    QueryTarget = 'Privileged cloud accounts'
+    Query = '(&(objectCategory=person)(adminCount=1))'
+    Protocol = 'LDAP'
+    AccountName = $victor.Name
+    AccountDomain = $adDomain
+    AccountUpn = $victor.Upn
+    AccountSid = $victor.Sid
+    AccountObjectId = $victor.ObjectId
+    AccountDisplayName = $victor.DisplayName
+    DeviceName = $win04.Name
+    IPAddress = $externalIp
+    Port = 50344
+    DestinationDeviceName = $dc01.Name
+    DestinationIPAddress = $dc01.IP
+    DestinationPort = 389
+    TargetAccountUpn = $svcSync.Upn
+    TargetAccountDisplayName = $svcSync.DisplayName
+    Location = 'Wiesbaden'
+    ReportId = New-StableGuid 'ttp-directory-recon-query-report'
+    AdditionalFields = @{ QueryScope = 'Subtree'; ResultCount = 47; SensitiveFilter = 'adminCount=1' }
+}
+Add-Record -Table 'SigninLogs' -Time $directoryReconTime.AddSeconds(7) -Values @{
+    TimeGenerated = Format-WorkshopTime $directoryReconTime.AddSeconds(7)
+    CreatedDateTime = Format-WorkshopTime $directoryReconTime.AddSeconds(7)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Microsoft Graph Command Line Tools'
+    AppId = '14d82eec-204b-4c2f-b7e8-296a70dab67e'
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-directory-recon-signin-correlation'
+    Id = New-StableGuid 'ttp-directory-recon-signin'
+    IPAddress = $externalIp
+    IsInteractive = $true
+    IsRisky = $true
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = New-StableGuid 'ttp-directory-recon-session'
+    UniqueTokenIdentifier = $directoryReconToken
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+    UserPrincipalName = $victor.Upn
+}
+Add-Record -Table 'GraphAPIAuditEvents' -Time $directoryReconTime.AddSeconds(18) -Values @{
+    TimeGenerated = Format-WorkshopTime $directoryReconTime.AddSeconds(18)
+    Timestamp = Format-WorkshopTime $directoryReconTime.AddSeconds(18)
+    IdentityProvider = 'AAD'
+    ApiVersion = 'v1.0'
+    ApplicationId = '14d82eec-204b-4c2f-b7e8-296a70dab67e'
+    IpAddress = $externalIp
+    ClientRequestId = New-StableGuid 'ttp-directory-recon-client-request'
+    EntityType = 'user'
+    ReportId = New-StableGuid 'ttp-directory-recon-graph-report'
+    RequestUri = "https://graph.microsoft.com/v1.0/directoryRoles?`$expand=members&workshopEvidence=$directoryReconFlag"
+    AccountObjectId = $victor.ObjectId
+    OperationId = New-StableGuid 'ttp-directory-recon-operation'
+    Location = 'Germany West Central'
+    RequestDuration = '689'
+    RequestId = New-StableGuid 'ttp-directory-recon-request'
+    RequestMethod = 'GET'
+    ResponseStatusCode = '200'
+    Scopes = 'Directory.Read.All RoleManagement.Read.Directory'
+    UniqueTokenIdentifier = $directoryReconToken
+    TargetWorkload = 'Microsoft.DirectoryServices'
+    ResponseSize = 114688
+    Type = 'GraphAPIAuditEvents'
+}
+
+$sessionPersistenceTime = $StartTime.AddMinutes(30)
+$sessionPersistenceSessionId = New-StableGuid 'ttp-session-persistence-session'
+Add-Record -Table 'SigninLogs' -Time $sessionPersistenceTime -Values @{
+    TimeGenerated = Format-WorkshopTime $sessionPersistenceTime
+    CreatedDateTime = Format-WorkshopTime $sessionPersistenceTime
+    AADTenantId = $tenantId
+    AppDisplayName = 'Microsoft 365'
+    AppId = '00000003-0000-0ff1-ce00-000000000000'
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Browser'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-session-persistence-signin-correlation'
+    Id = New-StableGuid 'ttp-session-persistence-signin'
+    IPAddress = $externalIp
+    IsInteractive = $true
+    IsRisky = $true
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = $sessionPersistenceSessionId
+    UniqueTokenIdentifier = New-StableGuid 'ttp-session-persistence-initial-token'
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+    UserPrincipalName = $victor.Upn
+}
+Add-Record -Table 'CloudAppEvents' -Time $sessionPersistenceTime.AddMinutes(46) -Values @{
+    Timestamp = Format-WorkshopTime $sessionPersistenceTime.AddMinutes(46)
+    ActionType = 'FileAccessed'
+    ActivityType = 'Access file'
+    Application = 'Microsoft SharePoint Online'
+    ApplicationId = 20893
+    AccountObjectId = $victor.ObjectId
+    AccountId = $victor.Upn
+    AccountDisplayName = $victor.DisplayName
+    AccountType = 'Regular'
+    IPAddress = $externalIp
+    ObjectName = 'Executive-Travel-Brief.docx'
+    ObjectType = 'File'
+    ObjectId = New-StableGuid 'ttp-session-persistence-file'
+    IsAdminOperation = $false
+    SessionData = @{ SessionId = $sessionPersistenceSessionId; InLineSessionId = $sessionPersistenceSessionId }
+    RawEventData = @{ AccessMode = 'Delegated'; AuthenticationAgeMinutes = 46; NewInteractiveSignIn = $false }
+}
+Add-Record -Table 'AADNonInteractiveUserSignInLogs' -Time $sessionPersistenceTime.AddMinutes(46).AddSeconds(8) -Values @{
+    TimeGenerated = Format-WorkshopTime $sessionPersistenceTime.AddMinutes(46).AddSeconds(8)
+    CreatedDateTime = Format-WorkshopTime $sessionPersistenceTime.AddMinutes(46).AddSeconds(8)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Microsoft SharePoint Online'
+    AppId = '00000003-0000-0ff1-ce00-000000000000'
+    AuthenticationDetails = "Long-lived session crossed into SharePoint without a new interactive authentication; $sessionPersistenceFlag"
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Browser'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-session-persistence-refresh-correlation'
+    Id = New-StableGuid 'ttp-session-persistence-refresh'
+    IncomingTokenType = 'refreshToken'
+    IPAddress = $externalIp
+    IsInteractive = $false
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = $sessionPersistenceSessionId
+    UniqueTokenIdentifier = New-StableGuid 'ttp-session-persistence-refresh-token'
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+    UserPrincipalName = $victor.Upn
+}
+
+$crossTenantIdentityTime = $StartTime.AddMinutes(31)
+$crossTenantHomeTenantId = New-StableGuid 'ttp-cross-tenant-home-tenant'
+$crossTenantGuestId = New-StableGuid 'ttp-cross-tenant-guest'
+$crossTenantGuestUpn = 'marina.petrovic@partner.example'
+$crossTenantIdentitySessionId = New-StableGuid 'ttp-cross-tenant-identity-session'
+Add-Record -Table 'AuditLogs' -Time $crossTenantIdentityTime -Values @{
+    TimeGenerated = Format-WorkshopTime $crossTenantIdentityTime
+    ActivityDateTime = Format-WorkshopTime $crossTenantIdentityTime
+    AADOperationType = 'Add'
+    AADTenantId = $tenantId
+    ActivityDisplayName = 'Add member to group'
+    AdditionalDetails = @(@{ key = 'Group.DisplayName'; value = 'Incident Response Administrators' }, @{ key = 'UserType'; value = 'Guest' })
+    Category = 'GroupManagement'
+    CorrelationId = New-StableGuid 'ttp-cross-tenant-identity-audit-correlation'
+    Id = New-StableGuid 'ttp-cross-tenant-identity-audit'
+    Identity = $victor.Upn
+    InitiatedBy = @{ user = @{ userPrincipalName = $victor.Upn; id = $victor.ObjectId; ipAddress = $externalIp } }
+    LoggedByService = 'Core Directory'
+    OperationName = 'Add member to group'
+    Result = 'success'
+    ResultType = 'Success'
+    TargetResources = @(
+        @{ displayName = 'Marina Petrovic (Partner Guest)'; userPrincipalName = $crossTenantGuestUpn; type = 'Guest'; id = $crossTenantGuestId },
+        @{ displayName = 'Incident Response Administrators'; type = 'Group'; id = New-StableGuid 'ttp-cross-tenant-sensitive-group' }
+    )
+    Type = 'AuditLogs'
+}
+Add-Record -Table 'SigninLogs' -Time $crossTenantIdentityTime.AddSeconds(14) -Values @{
+    TimeGenerated = Format-WorkshopTime $crossTenantIdentityTime.AddSeconds(14)
+    CreatedDateTime = Format-WorkshopTime $crossTenantIdentityTime.AddSeconds(14)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Microsoft 365'
+    AppId = '00000003-0000-0ff1-ce00-000000000000'
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'singleFactorAuthentication'
+    ClientAppUsed = 'Browser'
+    ConditionalAccessStatus = 'notApplied'
+    CorrelationId = New-StableGuid 'ttp-cross-tenant-identity-signin-correlation'
+    CrossTenantAccessType = 'b2bCollaboration'
+    HomeTenantId = $crossTenantHomeTenantId
+    Id = New-StableGuid 'ttp-cross-tenant-identity-signin'
+    IPAddress = '198.51.100.214'
+    IsInteractive = $true
+    IsRisky = $true
+    ResourceTenantId = $tenantId
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = $crossTenantIdentitySessionId
+    UniqueTokenIdentifier = New-StableGuid 'ttp-cross-tenant-identity-token'
+    UserDisplayName = 'Marina Petrovic (Partner Guest)'
+    UserId = $crossTenantGuestId
+    UserPrincipalName = $crossTenantGuestUpn
+}
+Add-Record -Table 'CloudAppEvents' -Time $crossTenantIdentityTime.AddSeconds(28) -Values @{
+    Timestamp = Format-WorkshopTime $crossTenantIdentityTime.AddSeconds(28)
+    ActionType = 'FileDownloaded'
+    ActivityType = 'Download file'
+    Application = 'Microsoft SharePoint Online'
+    ApplicationId = 20893
+    AccountObjectId = $crossTenantGuestId
+    AccountId = $crossTenantGuestUpn
+    AccountDisplayName = 'Marina Petrovic (Partner Guest)'
+    AccountType = 'External'
+    IPAddress = '198.51.100.214'
+    IsExternalUser = $true
+    ObjectName = 'IR-Privileged-Contacts.xlsx'
+    ObjectType = 'File'
+    ObjectId = New-StableGuid 'ttp-cross-tenant-identity-file'
+    IsAdminOperation = $false
+    SessionData = @{ SessionId = $crossTenantIdentitySessionId; InLineSessionId = $crossTenantIdentitySessionId }
+    RawEventData = @{ HomeTenantId = $crossTenantHomeTenantId; ResourceTenantId = $tenantId; CrossTenantAccessType = 'b2bCollaboration'; InvestigationEvidence = $crossTenantIdentityFlag }
+}
+
+$identityInfrastructureTime = $StartTime.AddMinutes(32)
+$identityInfrastructureIp = '203.0.113.141'
+$identityInfrastructureCorrelationId = New-StableGuid 'ttp-identity-infrastructure-correlation'
+$identityInfrastructureResourceId = "/subscriptions/$subscriptionId/resourceGroups/ADDS/providers/Microsoft.Compute/virtualMachines/$($win04.ShortName)"
+Add-Record -Table 'SigninLogs' -Time $identityInfrastructureTime -Values @{
+    TimeGenerated = Format-WorkshopTime $identityInfrastructureTime
+    CreatedDateTime = Format-WorkshopTime $identityInfrastructureTime
+    AADTenantId = $tenantId
+    AppDisplayName = 'Azure Portal'
+    AppId = '797f4846-ba00-4fd7-ba43-dac1f8f63013'
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Browser'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-identity-infrastructure-signin-correlation'
+    Id = New-StableGuid 'ttp-identity-infrastructure-signin'
+    IPAddress = $identityInfrastructureIp
+    IsInteractive = $true
+    IsRisky = $true
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = New-StableGuid 'ttp-identity-infrastructure-session'
+    UserDisplayName = $ina.DisplayName
+    UserId = $ina.ObjectId
+    UserPrincipalName = $ina.Upn
+}
+Add-Record -Table 'AzureActivity' -Time $identityInfrastructureTime.AddSeconds(16) -Values @{
+    TimeGenerated = Format-WorkshopTime $identityInfrastructureTime.AddSeconds(16)
+    EventSubmissionTimestamp = Format-WorkshopTime $identityInfrastructureTime.AddSeconds(17)
+    TenantId = $tenantId
+    OperationName = 'Run Command on Virtual Machine'
+    OperationNameValue = 'MICROSOFT.COMPUTE/VIRTUALMACHINES/RUNCOMMAND/ACTION'
+    Level = 'Information'
+    ActivityStatus = 'Succeeded'
+    ActivityStatusValue = 'Success'
+    ResourceGroup = 'ADDS'
+    SubscriptionId = $subscriptionId
+    CorrelationId = $identityInfrastructureCorrelationId
+    Caller = $ina.Upn
+    CallerIpAddress = $identityInfrastructureIp
+    Category = 'Administrative'
+    CategoryValue = 'Administrative'
+    HTTPRequest = @{ clientIpAddress = $identityInfrastructureIp; method = 'POST' }
+    Properties = @{ eventCategory = 'Administrative'; statusCode = 'OK'; commandId = $identityInfrastructureCorrelationId }
+    Properties_d = @{ eventCategory = 'Administrative'; statusCode = 'OK'; commandId = $identityInfrastructureCorrelationId }
+    ResourceId = $identityInfrastructureResourceId
+    Resource = $win04.ShortName
+    ResourceProvider = 'Microsoft.Compute'
+    ResourceProviderValue = 'MICROSOFT.COMPUTE'
+    EventDataId = New-StableGuid 'ttp-identity-infrastructure-event'
+    OperationId = New-StableGuid 'ttp-identity-infrastructure-operation'
+    SourceSystem = 'Azure'
+    Type = 'AzureActivity'
+    _ResourceId = $identityInfrastructureResourceId
+}
+Add-Record -Table 'DeviceProcessEvents' -Time $identityInfrastructureTime.AddSeconds(28) -Values @{
+    Timestamp = Format-WorkshopTime $identityInfrastructureTime.AddSeconds(28)
+    DeviceId = $win04.DeviceId
+    DeviceName = $win04.Name
+    ActionType = 'ProcessCreated'
+    FileName = 'powershell.exe'
+    FolderPath = 'C:\Packages\Plugins\Microsoft.CPlat.Core.RunCommandWindows\1.1.18\Downloads\script1.ps1'
+    ProcessCommandLine = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\\Packages\\Plugins\\Microsoft.CPlat.Core.RunCommandWindows\\1.1.18\\Downloads\\script1.ps1 -WorkshopEvidence $identityInfrastructureFlag"
+    ProcessId = 4860
+    ProcessIntegrityLevel = 'System'
+    ProcessTokenElevation = 'TokenElevationTypeFull'
+    ProcessCreationTime = Format-WorkshopTime $identityInfrastructureTime.AddSeconds(28)
+    AccountDomain = 'NT AUTHORITY'
+    AccountName = 'SYSTEM'
+    AccountSid = 'S-1-5-18'
+    InitiatingProcessAccountDomain = 'NT AUTHORITY'
+    InitiatingProcessAccountName = 'SYSTEM'
+    InitiatingProcessAccountSid = 'S-1-5-18'
+    InitiatingProcessIntegrityLevel = 'System'
+    InitiatingProcessTokenElevation = 'TokenElevationTypeFull'
+    InitiatingProcessFileName = 'RunCommandExtension.exe'
+    InitiatingProcessFolderPath = 'C:\Packages\Plugins\Microsoft.CPlat.Core.RunCommandWindows\1.1.18'
+    InitiatingProcessCommandLine = "RunCommandExtension.exe -commandId $identityInfrastructureCorrelationId"
+    InitiatingProcessParentFileName = 'WindowsAzureGuestAgent.exe'
+    ReportId = 1651001
+    AADTenantId = $tenantId
+    Type = 'DeviceProcessEvents'
+    AdditionalFields = @{ InitiatedBy = 'Azure Run Command'; CorrelationId = $identityInfrastructureCorrelationId }
+}
+
+$oboAbuseTime = $StartTime.AddMinutes(33)
+$oboAbuseSessionId = New-StableGuid 'ttp-obo-abuse-session'
+$oboAbuseToken = New-StableGuid 'ttp-obo-abuse-token'
+$oboAbuseAppId = New-StableGuid 'ttp-obo-abuse-app'
+Add-Record -Table 'SigninLogs' -Time $oboAbuseTime -Values @{
+    TimeGenerated = Format-WorkshopTime $oboAbuseTime
+    CreatedDateTime = Format-WorkshopTime $oboAbuseTime
+    AADTenantId = $tenantId
+    AppDisplayName = 'USAG Travel Portal'
+    AppId = $oboAbuseAppId
+    AuthenticationProcessingDetails = 'OAuth 2.0 On-Behalf-Of token exchange initiated by middle tier'
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Browser'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-obo-abuse-signin-correlation'
+    Id = New-StableGuid 'ttp-obo-abuse-signin'
+    IPAddress = $externalIp
+    IsInteractive = $true
+    IsRisky = $true
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = $oboAbuseSessionId
+    UniqueTokenIdentifier = New-StableGuid 'ttp-obo-abuse-user-token'
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+    UserPrincipalName = $victor.Upn
+}
+Add-Record -Table 'AADNonInteractiveUserSignInLogs' -Time $oboAbuseTime.AddSeconds(10) -Values @{
+    TimeGenerated = Format-WorkshopTime $oboAbuseTime.AddSeconds(10)
+    CreatedDateTime = Format-WorkshopTime $oboAbuseTime.AddSeconds(10)
+    AADTenantId = $tenantId
+    AppDisplayName = 'USAG Travel Portal API'
+    AppId = $oboAbuseAppId
+    AppOwnerTenantId = $tenantId
+    AuthenticationDetails = 'User assertion exchanged by a confidential middle-tier application'
+    AuthenticationProcessingDetails = 'OAuth 2.0 On-Behalf-Of flow'
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-obo-abuse-token-correlation'
+    Id = New-StableGuid 'ttp-obo-abuse-token-signin'
+    IncomingTokenType = 'onBehalfOf'
+    IPAddress = $externalIp
+    IsInteractive = $false
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = $oboAbuseSessionId
+    UniqueTokenIdentifier = $oboAbuseToken
+    UserDisplayName = $victor.DisplayName
+    UserId = $victor.ObjectId
+    UserPrincipalName = $victor.Upn
+}
+Add-Record -Table 'GraphAPIAuditEvents' -Time $oboAbuseTime.AddSeconds(22) -Values @{
+    TimeGenerated = Format-WorkshopTime $oboAbuseTime.AddSeconds(22)
+    Timestamp = Format-WorkshopTime $oboAbuseTime.AddSeconds(22)
+    IdentityProvider = 'AAD'
+    ApiVersion = 'v1.0'
+    ApplicationId = $oboAbuseAppId
+    IpAddress = $externalIp
+    ClientRequestId = New-StableGuid 'ttp-obo-abuse-client-request'
+    EntityType = 'user'
+    ReportId = New-StableGuid 'ttp-obo-abuse-report'
+    RequestUri = "https://graph.microsoft.com/v1.0/users/$($victor.ObjectId)/messages?workshopEvidence=$oboAbuseFlag"
+    AccountObjectId = $victor.ObjectId
+    OperationId = New-StableGuid 'ttp-obo-abuse-operation'
+    Location = 'Germany West Central'
+    RequestDuration = '526'
+    RequestId = New-StableGuid 'ttp-obo-abuse-request'
+    RequestMethod = 'GET'
+    ResponseStatusCode = '200'
+    Scopes = 'Mail.Read User.Read'
+    UniqueTokenIdentifier = $oboAbuseToken
+    TargetWorkload = 'Microsoft.Exchange'
+    ServicePrincipalId = New-StableGuid 'ttp-obo-abuse-service-principal'
+    ResponseSize = 131072
+    Type = 'GraphAPIAuditEvents'
+}
+
+$crossTenantApplicationTime = $StartTime.AddMinutes(34)
+$crossTenantApplicationOwnerTenantId = New-StableGuid 'ttp-cross-tenant-application-owner-tenant'
+$crossTenantApplicationAppId = New-StableGuid 'ttp-cross-tenant-application-app'
+$crossTenantApplicationServicePrincipalId = New-StableGuid 'ttp-cross-tenant-application-service-principal'
+$crossTenantApplicationToken = New-StableGuid 'ttp-cross-tenant-application-token'
+$crossTenantApplicationReportId = New-StableGuid 'ttp-cross-tenant-application-report'
+Add-Record -Table 'AADServicePrincipalSignInLogs' -Time $crossTenantApplicationTime -Values @{
+    TimeGenerated = Format-WorkshopTime $crossTenantApplicationTime
+    CreatedDateTime = Format-WorkshopTime $crossTenantApplicationTime
+    AADTenantId = $tenantId
+    AppId = $crossTenantApplicationAppId
+    AppOwnerTenantId = $crossTenantApplicationOwnerTenantId
+    ClientCredentialType = 'client assertion'
+    CorrelationId = New-StableGuid 'ttp-cross-tenant-application-signin-correlation'
+    Id = New-StableGuid 'ttp-cross-tenant-application-signin'
+    Identity = 'Contoso Partner Case Exchange'
+    IPAddress = '198.51.100.215'
+    Location = 'NL'
+    OperationName = 'Sign-in activity'
+    ResourceDisplayName = 'Microsoft Graph'
+    ResourceIdentity = $graphResourceId
+    ResourceOwnerTenantId = $tenantId
+    ResultDescription = 'Success'
+    ResultType = '0'
+    ServicePrincipalId = $crossTenantApplicationServicePrincipalId
+    ServicePrincipalName = 'Contoso Partner Case Exchange'
+    SessionId = New-StableGuid 'ttp-cross-tenant-application-session'
+    UniqueTokenIdentifier = $crossTenantApplicationToken
+    UserAgent = 'PartnerCaseExchange/5.1'
+}
+Add-Record -Table 'GraphAPIAuditEvents' -Time $crossTenantApplicationTime.AddSeconds(12) -Values @{
+    TimeGenerated = Format-WorkshopTime $crossTenantApplicationTime.AddSeconds(12)
+    Timestamp = Format-WorkshopTime $crossTenantApplicationTime.AddSeconds(12)
+    IdentityProvider = 'AAD'
+    ApiVersion = 'v1.0'
+    ApplicationId = $crossTenantApplicationAppId
+    IpAddress = '198.51.100.215'
+    ClientRequestId = New-StableGuid 'ttp-cross-tenant-application-client-request'
+    EntityType = 'servicePrincipal'
+    ReportId = $crossTenantApplicationReportId
+    RequestUri = 'https://graph.microsoft.com/v1.0/sites/usag-cyber.sharepoint.example/lists/PartnerCases/items'
+    AccountObjectId = $crossTenantApplicationServicePrincipalId
+    OperationId = New-StableGuid 'ttp-cross-tenant-application-operation'
+    Location = 'Netherlands'
+    RequestDuration = '602'
+    RequestId = New-StableGuid 'ttp-cross-tenant-application-request'
+    RequestMethod = 'GET'
+    ResponseStatusCode = '200'
+    Scopes = 'Sites.Read.All'
+    UniqueTokenIdentifier = $crossTenantApplicationToken
+    TargetWorkload = 'Microsoft.FileServices'
+    ServicePrincipalId = $crossTenantApplicationServicePrincipalId
+    ResponseSize = 262144
+    Type = 'GraphAPIAuditEvents'
+}
+Add-Record -Table 'CloudAppEvents' -Time $crossTenantApplicationTime.AddSeconds(24) -Values @{
+    Timestamp = Format-WorkshopTime $crossTenantApplicationTime.AddSeconds(24)
+    ActionType = 'FileAccessed'
+    ActivityType = 'Access file through external application'
+    Application = 'Microsoft SharePoint Online'
+    ApplicationId = 20893
+    AccountObjectId = $crossTenantApplicationServicePrincipalId
+    AccountId = $crossTenantApplicationServicePrincipalId
+    AccountDisplayName = 'Contoso Partner Case Exchange'
+    AccountType = 'ServicePrincipal'
+    IPAddress = '198.51.100.215'
+    IsExternalUser = $true
+    ObjectName = 'Partner-Incident-Cases.xlsx'
+    ObjectType = 'File'
+    ObjectId = New-StableGuid 'ttp-cross-tenant-application-file'
+    ReportId = $crossTenantApplicationReportId
+    OAuthAppId = $crossTenantApplicationAppId
+    IsAdminOperation = $false
+    RawEventData = @{ AppOwnerTenantId = $crossTenantApplicationOwnerTenantId; ResourceTenantId = $tenantId; TrustType = 'B2B application'; InvestigationEvidence = $crossTenantApplicationFlag }
+}
+
+$illicitConsentTime = $StartTime.AddMinutes(35)
+$illicitConsentCorrelationId = New-StableGuid 'ttp-illicit-consent-correlation'
+$illicitConsentSessionId = New-StableGuid 'ttp-illicit-consent-session'
+$illicitConsentAppId = New-StableGuid 'ttp-illicit-consent-app'
+$illicitConsentServicePrincipalId = New-StableGuid 'ttp-illicit-consent-service-principal'
+Add-Record -Table 'AuditLogs' -Time $illicitConsentTime -Values @{
+    TimeGenerated = Format-WorkshopTime $illicitConsentTime
+    ActivityDateTime = Format-WorkshopTime $illicitConsentTime
+    AADOperationType = 'Add'
+    AADTenantId = $tenantId
+    ActivityDisplayName = 'Consent to application'
+    AdditionalDetails = @(
+        @{ key = 'ConsentType'; value = 'Principal' },
+        @{ key = 'Scopes'; value = 'Mail.Read Files.Read.All offline_access' },
+        @{ key = 'UserAgent'; value = $browserUserAgent }
+    )
+    Category = 'ApplicationManagement'
+    CorrelationId = $illicitConsentCorrelationId
+    Id = New-StableGuid 'ttp-illicit-consent-audit'
+    Identity = $ina.Upn
+    InitiatedBy = @{ user = @{ userPrincipalName = $ina.Upn; id = $ina.ObjectId; ipAddress = '203.0.113.143' } }
+    LoggedByService = 'Core Directory'
+    OperationName = 'Consent to application'
+    Result = 'success'
+    ResultType = 'Success'
+    TargetResources = @(@{ displayName = 'Secure Document Preview'; type = 'ServicePrincipal'; id = $illicitConsentServicePrincipalId; appId = $illicitConsentAppId })
+    Type = 'AuditLogs'
+}
+Add-Record -Table 'CloudAppEvents' -Time $illicitConsentTime.AddSeconds(8) -Values @{
+    Timestamp = Format-WorkshopTime $illicitConsentTime.AddSeconds(8)
+    ActionType = 'OAuthAppConsentGranted'
+    ActivityType = 'Grant delegated application consent'
+    Application = 'Microsoft Entra ID'
+    ApplicationId = 20892
+    AccountObjectId = $ina.ObjectId
+    AccountId = $ina.Upn
+    AccountDisplayName = $ina.DisplayName
+    AccountType = 'Regular'
+    IPAddress = '203.0.113.143'
+    ObjectName = 'Secure Document Preview'
+    ObjectType = 'ServicePrincipal'
+    ObjectId = $illicitConsentServicePrincipalId
+    OAuthAppId = $illicitConsentAppId
+    IsAdminOperation = $false
+    SessionData = @{ SessionId = $illicitConsentSessionId; InLineSessionId = $illicitConsentSessionId }
+    RawEventData = @{ AuditCorrelationId = [string]$illicitConsentCorrelationId; ConsentType = 'Principal'; Scopes = 'Mail.Read Files.Read.All offline_access' }
+}
+Add-Record -Table 'AADNonInteractiveUserSignInLogs' -Time $illicitConsentTime.AddSeconds(21) -Values @{
+    TimeGenerated = Format-WorkshopTime $illicitConsentTime.AddSeconds(21)
+    CreatedDateTime = Format-WorkshopTime $illicitConsentTime.AddSeconds(21)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Secure Document Preview'
+    AppId = $illicitConsentAppId
+    AppOwnerTenantId = New-StableGuid 'ttp-illicit-consent-owner-tenant'
+    AuthenticationDetails = "Delegated refresh token redeemed immediately after deceptive user consent; $illicitConsentFlag"
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'notApplied'
+    CorrelationId = New-StableGuid 'ttp-illicit-consent-signin-correlation'
+    Id = New-StableGuid 'ttp-illicit-consent-signin'
+    IncomingTokenType = 'refreshToken'
+    IPAddress = '203.0.113.143'
+    IsInteractive = $false
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = $illicitConsentSessionId
+    UniqueTokenIdentifier = New-StableGuid 'ttp-illicit-consent-token'
+    UserDisplayName = $ina.DisplayName
+    UserId = $ina.ObjectId
+    UserPrincipalName = $ina.Upn
+}
+
+$cloudEnumerationTime = $StartTime.AddMinutes(36)
+$cloudEnumerationTime = $cloudEnumerationTime.AddTicks(-($cloudEnumerationTime.Ticks % [TimeSpan]::TicksPerMinute))
+$cloudEnumerationIp = '203.0.113.142'
+$cloudEnumerationSessionId = New-StableGuid 'ttp-cloud-enumeration-session'
+$cloudEnumerationOperations = @(
+    [pscustomobject]@{ Offset = 0; Provider = 'MICROSOFT.COMPUTE'; Namespace = 'Microsoft.Compute'; ResourceType = 'virtualMachines'; Operation = 'MICROSOFT.COMPUTE/VIRTUALMACHINES/READ'; ResourceGroup = 'ADDS'; Resource = $win04.ShortName },
+    [pscustomobject]@{ Offset = 4; Provider = 'MICROSOFT.STORAGE'; Namespace = 'Microsoft.Storage'; ResourceType = 'storageAccounts'; Operation = 'MICROSOFT.STORAGE/STORAGEACCOUNTS/READ'; ResourceGroup = 'STORAGE'; Resource = 'usagarchive01' },
+    [pscustomobject]@{ Offset = 8; Provider = 'MICROSOFT.NETWORK'; Namespace = 'Microsoft.Network'; ResourceType = 'virtualNetworks'; Operation = 'MICROSOFT.NETWORK/VIRTUALNETWORKS/READ'; ResourceGroup = 'NETWORK'; Resource = 'hub-vnet' }
+)
+foreach ($enumerationOperation in $cloudEnumerationOperations) {
+    $enumerationTime = $cloudEnumerationTime.AddSeconds($enumerationOperation.Offset)
+    $enumerationResourceId = "/subscriptions/$subscriptionId/resourceGroups/$($enumerationOperation.ResourceGroup)/providers/$($enumerationOperation.Namespace)/$($enumerationOperation.ResourceType)/$($enumerationOperation.Resource)"
+    Add-Record -Table 'AzureActivity' -Time $enumerationTime -Values @{
+        TimeGenerated = Format-WorkshopTime $enumerationTime
+        EventSubmissionTimestamp = Format-WorkshopTime $enumerationTime.AddSeconds(1)
+        TenantId = $tenantId
+        OperationName = 'Read cloud resource'
+        OperationNameValue = $enumerationOperation.Operation
+        Level = 'Information'
+        ActivityStatus = 'Succeeded'
+        ActivityStatusValue = 'Success'
+        ResourceGroup = $enumerationOperation.ResourceGroup
+        SubscriptionId = $subscriptionId
+        CorrelationId = New-StableGuid "ttp-cloud-enumeration-correlation-$($enumerationOperation.Offset)"
+        Caller = $ina.Upn
+        CallerIpAddress = $cloudEnumerationIp
+        Category = 'Administrative'
+        CategoryValue = 'Administrative'
+        HTTPRequest = @{ clientIpAddress = $cloudEnumerationIp; method = 'GET' }
+        Properties = @{ eventCategory = 'Administrative'; statusCode = 'OK'; enumeration = $true }
+        Properties_d = @{ eventCategory = 'Administrative'; statusCode = 'OK'; enumeration = $true }
+        ResourceId = $enumerationResourceId
+        Resource = $enumerationOperation.Resource
+        ResourceProvider = $enumerationOperation.Namespace
+        ResourceProviderValue = $enumerationOperation.Provider
+        EventDataId = New-StableGuid "ttp-cloud-enumeration-event-$($enumerationOperation.Offset)"
+        OperationId = New-StableGuid "ttp-cloud-enumeration-operation-$($enumerationOperation.Offset)"
+        SourceSystem = 'Azure'
+        Type = 'AzureActivity'
+        _ResourceId = $enumerationResourceId
+    }
+}
+Add-Record -Table 'SigninLogs' -Time $cloudEnumerationTime.AddSeconds(12) -Values @{
+    TimeGenerated = Format-WorkshopTime $cloudEnumerationTime.AddSeconds(12)
+    CreatedDateTime = Format-WorkshopTime $cloudEnumerationTime.AddSeconds(12)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Microsoft Azure CLI'
+    AppId = $deviceCodeAppId
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-cloud-enumeration-signin-correlation'
+    Id = New-StableGuid 'ttp-cloud-enumeration-signin'
+    IPAddress = $cloudEnumerationIp
+    IsInteractive = $true
+    IsRisky = $true
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = $cloudEnumerationSessionId
+    UniqueTokenIdentifier = New-StableGuid 'ttp-cloud-enumeration-interactive-token'
+    UserDisplayName = $ina.DisplayName
+    UserId = $ina.ObjectId
+    UserPrincipalName = $ina.Upn
+}
+Add-Record -Table 'AADNonInteractiveUserSignInLogs' -Time $cloudEnumerationTime.AddSeconds(19) -Values @{
+    TimeGenerated = Format-WorkshopTime $cloudEnumerationTime.AddSeconds(19)
+    CreatedDateTime = Format-WorkshopTime $cloudEnumerationTime.AddSeconds(19)
+    AADTenantId = $tenantId
+    AppDisplayName = 'Microsoft Azure CLI'
+    AppId = $deviceCodeAppId
+    AuthenticationDetails = "Azure CLI token used for rapid multi-provider infrastructure discovery; $cloudEnumerationFlag"
+    AuthenticationProtocol = 'oAuth2'
+    AuthenticationRequirement = 'multiFactorAuthentication'
+    ClientAppUsed = 'Mobile Apps and Desktop clients'
+    ConditionalAccessStatus = 'success'
+    CorrelationId = New-StableGuid 'ttp-cloud-enumeration-refresh-correlation'
+    Id = New-StableGuid 'ttp-cloud-enumeration-refresh'
+    IncomingTokenType = 'refreshToken'
+    IPAddress = $cloudEnumerationIp
+    IsInteractive = $false
+    ResultDescription = 'Success'
+    ResultType = '0'
+    SessionId = $cloudEnumerationSessionId
+    UniqueTokenIdentifier = New-StableGuid 'ttp-cloud-enumeration-refresh-token'
+    UserDisplayName = $ina.DisplayName
+    UserId = $ina.ObjectId
+    UserPrincipalName = $ina.Upn
 }
 
 $alerts = @(
@@ -9270,6 +10258,15 @@ $summary = [ordered]@{
     }
     compromisedUser = $victor.Upn
     initialDevice = $win04.Name
+    ttpScenario = @(
+        [ordered]@{ Id = 'mailbox-email-forwarding'; Title = 'External mailbox forwarding established for persistent collection'; Technique = 'T1114.003'; Offset = 17; Command = "OfficeActivity and CloudAppEvents forward victor.alvarez mail to $mailForwardingDestination" }
+        [ordered]@{ Id = 'malicious-inbox-rules'; Title = 'Inbox rule suppresses security notifications'; Technique = 'T1070.008,T1114.003'; Offset = 18; Command = 'OfficeActivity creates a rule that moves and deletes MFA, password, and alert messages' }
+        [ordered]@{ Id = 'token-abuse'; Title = 'Refresh token continues access without another MFA challenge'; Technique = 'T1528,T1550.001'; Offset = 19; Command = 'SigninLogs session continues in AADNonInteractiveUserSignInLogs after the interactive device-code sign-in' }
+        [ordered]@{ Id = 'conditional-access-policy-abuse'; Title = 'Conditional Access policy excludes an identity from MFA'; Technique = 'T1556.009'; Offset = 20; Command = 'AuditLogs and CloudAppEvents record the policy change before SigninLogs shows the weakened control' }
+        [ordered]@{ Id = 'oauth-app-consent-abuse'; Title = 'Application gains app-only mail and file permissions'; Technique = 'T1098.003,T1550.001'; Offset = 21; Command = 'AuditLogs and CloudAppEvents grant app roles before USAG Workflow Metrics signs in as a service principal' }
+        [ordered]@{ Id = 'api-access-abuse'; Title = 'Service principal automates Microsoft Graph collection'; Technique = 'T1059.009,T1550.001'; Offset = 22; Command = 'AADServicePrincipalSignInLogs token pivots to a privileged GraphAPIAuditEvents request' }
+        [ordered]@{ Id = 'cloud-data-collection-non-mail'; Title = 'Application collects a controlled SharePoint archive'; Technique = 'T1530,T1213.002'; Offset = 24; Command = 'CloudAppEvents and GraphAPIAuditEvents converge on the OfficeActivity file download' }
+    )
     identityAttackVectors = @(
         [ordered]@{ Title = 'Benign device code sign-in from a compliant device (teaching twin)'; Technique = 'None'; Offset = -52; Command = 'EntraIdSignInEvents deviceCode sign-in for alice.weber from 198.51.100.50 on a compliant, Azure AD joined device' }
         [ordered]@{ Title = 'Device code phishing mail delivered with a genuine microsoft.com/devicelogin lure'; Technique = 'T1566.002,T1078.004'; Offset = -45; Command = 'EmailEvents and EmailUrlInfo inbound mail from secure-docs@usag-cyber-portal.example to victor.alvarez' }

@@ -15,7 +15,7 @@ prove the challenge chains before a full workshop regeneration.
 [CmdletBinding()]
 param(
     [string]$OutputDirectory = (Join-Path ([System.IO.Path]::GetTempPath()) 'cyber-conf-ttp-scenario'),
-    [ValidateRange(1, 7)]
+    [ValidateRange(1, 11)]
     [int]$WorkerCount = 1
 )
 
@@ -24,6 +24,8 @@ $ErrorActionPreference = 'Stop'
 
 $generatorRunner = Join-Path $PSScriptRoot 'Invoke-WorkshopParallelGeneration.ps1'
 $validator = Join-Path $PSScriptRoot 'Test-WorkshopTtpFlags.ps1'
+$trackedSummaryPath = Join-Path $PSScriptRoot '..' 'data' 'scenario-summary.json'
+$expectedRowCount = 113
 $tables = @(
     'OfficeActivity'
     'CloudAppEvents'
@@ -32,6 +34,10 @@ $tables = @(
     'SigninLogs'
     'AuditLogs'
     'GraphAPIAuditEvents'
+    'EntraIdSignInEvents'
+    'IdentityQueryEvents'
+    'AzureActivity'
+    'DeviceProcessEvents'
 )
 
 $activeWorkers = @(
@@ -70,7 +76,8 @@ foreach ($argument in @(
         '-WorkerCount', [string]$WorkerCount,
         '-OutputDirectory', $OutputDirectory,
         '-SummaryPath', $summaryPath,
-        '-TableName', ($tables -join ',')
+        '-TableName', ($tables -join ','),
+        '-DisableTableRowOverrides'
     )) {
     $arguments.Add($argument)
 }
@@ -108,9 +115,15 @@ if ($files.Count -ne $tables.Count) {
     throw "Expected $($tables.Count) generated files, found $($files.Count)."
 }
 
+$totalRowCount = 0
 foreach ($file in $files) {
     $rowCount = [System.Linq.Enumerable]::Count([System.IO.File]::ReadLines($file.FullName))
+    $totalRowCount += $rowCount
     Write-Host "FILE=$($file.Name);ROWS=$rowCount"
+}
+Write-Host "TOTAL_ROWS=$totalRowCount"
+if ($totalRowCount -ne $expectedRowCount) {
+    throw "Expected $expectedRowCount focused TTP rows, found $totalRowCount."
 }
 
 $forwardingAddress = 'archive@threat-actor.diaries.cn'
@@ -143,6 +156,71 @@ if ($officeForwardingRows -ne 1 -or $cloudForwardingRows -ne 1) {
 }
 
 $summary = Get-Content -LiteralPath $summaryPath -Raw | ConvertFrom-Json
+$trackedSummary = Get-Content -LiteralPath $trackedSummaryPath -Raw | ConvertFrom-Json
+$matrix = Get-Content -LiteralPath (Join-Path $PSScriptRoot '..' 'metadata' 'ttp-flag-matrix.json') -Raw | ConvertFrom-Json
+$inboxTtp = @($matrix.categories.ttps | Where-Object { [string]$_.id -ceq 'malicious-inbox-rules' })
+if ($inboxTtp.Count -ne 1) {
+    throw "Expected one malicious-inbox-rules matrix entry; found $($inboxTtp.Count)."
+}
+
+$officeRows = @([System.IO.File]::ReadLines((Join-Path $OutputDirectory 'OfficeActivity.json')) | ForEach-Object { $_ | ConvertFrom-Json })
+$signinRows = @([System.IO.File]::ReadLines((Join-Path $OutputDirectory 'SigninLogs.json')) | ForEach-Object { $_ | ConvertFrom-Json })
+$nonInteractiveRows = @([System.IO.File]::ReadLines((Join-Path $OutputDirectory 'AADNonInteractiveUserSignInLogs.json')) | ForEach-Object { $_ | ConvertFrom-Json })
+$inboxRuleRows = @($officeRows | Where-Object {
+        [string]$_.Operation -ceq 'New-InboxRule' -and
+        [string]$_.Parameters -like '*MoveToFolder*' -and
+        [string]$_.Parameters -like '*DeleteMessage*'
+    })
+if ($inboxRuleRows.Count -ne 1) {
+    throw "Expected one malicious inbox-rule seed row; found $($inboxRuleRows.Count)."
+}
+
+$inboxRule = $inboxRuleRows[0]
+$inboxSigninRows = @($signinRows | Where-Object {
+        [string]$_.UserPrincipalName -ceq [string]$inboxRule.UserId -and
+        [string]$_.IPAddress -ceq [string]$inboxRule.ClientIP -and
+        [string]$_.AppDisplayName -ceq 'Office 365 Exchange Online' -and
+        -not [string]::IsNullOrWhiteSpace([string]$_.SessionId)
+    })
+if ($inboxSigninRows.Count -ne 1) {
+    throw "Expected one non-empty inbox-rule authentication session; found $($inboxSigninRows.Count)."
+}
+
+$inboxSessionId = [string]$inboxSigninRows[0].SessionId
+$inboxContinuationRows = @($nonInteractiveRows | Where-Object {
+        -not [string]::IsNullOrWhiteSpace([string]$_.SessionId) -and
+        [string]$_.SessionId -ceq $inboxSessionId
+    })
+if ($inboxContinuationRows.Count -ne 1) {
+    throw "Expected one inbox-rule continuation for SessionId '$inboxSessionId'; found $($inboxContinuationRows.Count)."
+}
+
+$interactiveCorrelationId = [string]$inboxSigninRows[0].CorrelationId
+$continuationCorrelationId = [string]$inboxContinuationRows[0].CorrelationId
+if ([string]::IsNullOrWhiteSpace($interactiveCorrelationId) -or
+    [string]::IsNullOrWhiteSpace($continuationCorrelationId) -or
+    $interactiveCorrelationId -ceq $continuationCorrelationId) {
+    throw 'Inbox-rule events must share a non-empty SessionId and retain distinct non-empty request CorrelationId values.'
+}
+if ([string]$inboxContinuationRows[0].AuthenticationDetails -notlike "*$([string]$inboxTtp[0].flag)*") {
+    throw 'Inbox-rule continuation does not contain the matrix-declared final evidence flag.'
+}
+Write-Host 'INBOX_RULE_CORRELATION=SharedNonEmptySessionId:True;DistinctCorrelationIds:True'
+
+$expectedScenarioIds = @($matrix.categories.ttps | Where-Object { [bool]$_.scenario } | ForEach-Object { [string]$_.id } | Sort-Object)
+$actualScenarioIds = @($summary.ttpScenario | ForEach-Object { [string]$_.Id } | Sort-Object)
+if ($actualScenarioIds.Count -ne 7 -or (Compare-Object -ReferenceObject $expectedScenarioIds -DifferenceObject $actualScenarioIds)) {
+    throw "Generated TTP scenario does not match the seven matrix-designated challenges."
+}
+Write-Host "TTP_SCENARIO_COUNT=$($actualScenarioIds.Count)"
+
+$expectedScenarioJson = ConvertTo-Json -InputObject @($trackedSummary.ttpScenario) -Depth 5 -Compress
+$actualScenarioJson = ConvertTo-Json -InputObject @($summary.ttpScenario) -Depth 5 -Compress
+if ($actualScenarioJson -cne $expectedScenarioJson) {
+    throw 'Generated TTP scenario does not exactly match the tracked scenario narrative.'
+}
+Write-Host 'TTP_SCENARIO_FULL_MATCH=True'
+
 $summaryMatches = @($summary.identityAttackVectors | Where-Object {
         [string]$_.Technique -eq 'T1114.003' -and [string]$_.Command -like "*$forwardingAddress*"
     })
@@ -151,7 +229,7 @@ if ($summaryMatches.Count -ne 1) {
 }
 Write-Host "FORWARDING_ADDRESS_VALIDATION=OfficeActivity:$officeForwardingRows;CloudAppEvents:$cloudForwardingRows;ScenarioSummary:$($summaryMatches.Count)"
 
-& pwsh -NoProfile -File $validator -DataDirectory $OutputDirectory
+& pwsh -NoProfile -File $validator -DataDirectory $OutputDirectory -ScenarioSummaryPath $summaryPath
 $validatorExitCode = $LASTEXITCODE
 Write-Host "VALIDATOR_EXIT_CODE=$validatorExitCode"
 if ($validatorExitCode -ne 0) {

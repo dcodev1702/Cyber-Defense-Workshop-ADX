@@ -16,7 +16,26 @@
           "slide": 18,
           "name": "Mailbox Email Forwarding",
           "selected": true,
+          "scenario": true,
           "description": "Attackers configure Victor Alvarez's mailbox to forward communications to archive@threat-actor.diaries.cn, maintaining persistent collection without continued authentication or malware.",
+          "enhancement": "Retained and grounded in ATT&CK's exact Email Forwarding Rule sub-technique; the existing app-attribution pivots already exceed the source slide's single-table example.",
+          "mitreAttack": [
+            {
+              "id": "T1114.003",
+              "name": "Email Collection: Email Forwarding Rule",
+              "url": "https://attack.mitre.org/techniques/T1114/003/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Mail flow rules in Exchange Online",
+              "url": "https://learn.microsoft.com/exchange/security-and-compliance/mail-flow-rules/mail-flow-rules"
+            },
+            {
+              "title": "CloudAppEvents advanced hunting table",
+              "url": "https://learn.microsoft.com/defender-xdr/advanced-hunting-cloudappevents-table"
+            }
+          ],
           "finalTable": "AADServicePrincipalSignInLogs",
           "flag": "FLAG:{SilentMailRelay}",
           "flagColumn": "UserAgent",
@@ -45,6 +64,30 @@
           "name": "Malicious Inbox Rules",
           "selected": true,
           "description": "Attackers create or modify inbox rules to hide security notifications, intercept messages, or redirect mail while avoiding user awareness.",
+          "scenario": true,
+          "enhancement": "Expanded the source slide's broad rule hunt into a correlation chain that distinguishes mailbox manipulation from the interactive and background sessions that sustain it.",
+          "mitreAttack": [
+            {
+              "id": "T1070.008",
+              "name": "Indicator Removal: Clear Mailbox Data",
+              "url": "https://attack.mitre.org/techniques/T1070/008/"
+            },
+            {
+              "id": "T1114.003",
+              "name": "Email Collection: Email Forwarding Rule",
+              "url": "https://attack.mitre.org/techniques/T1114/003/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Get-InboxRule",
+              "url": "https://learn.microsoft.com/powershell/module/exchange/get-inboxrule"
+            },
+            {
+              "title": "Microsoft Entra non-interactive sign-ins",
+              "url": "https://learn.microsoft.com/entra/identity/monitoring-health/concept-noninteractive-sign-ins"
+            }
+          ],
           "finalTable": "AADNonInteractiveUserSignInLogs",
           "flag": "FLAG:{InboxShadowRule}",
           "flagColumn": "AuthenticationDetails",
@@ -56,22 +99,63 @@
             },
             {
               "table": "SigninLogs",
-              "purpose": "Pivot on UserId and ClientIP to recover the authentication correlation ID.",
-              "kql": "SigninLogs\n| where UserPrincipalName == \"<UserId>\" and IPAddress == \"<ClientIP>\"\n| where AppDisplayName == \"Office 365 Exchange Online\"\n| project TimeGenerated, CorrelationId, UserPrincipalName, IPAddress"
+              "purpose": "Pivot on UserId and ClientIP to recover the authentication session ID.",
+              "kql": "SigninLogs\n| where UserPrincipalName == \"<UserId>\" and IPAddress == \"<ClientIP>\"\n| where AppDisplayName == \"Office 365 Exchange Online\"\n| where isnotempty(SessionId)\n| project TimeGenerated, SessionId, UserPrincipalName, IPAddress"
             },
             {
               "table": "AADNonInteractiveUserSignInLogs",
-              "purpose": "Pivot on CorrelationId to the automated session event that contains the flag.",
-              "kql": "AADNonInteractiveUserSignInLogs\n| where CorrelationId == \"<CorrelationId>\"\n| project TimeGenerated, AppDisplayName, IncomingTokenType, AuthenticationDetails"
+              "purpose": "Pivot on SessionId to the automated continuation that contains the flag while each request retains a distinct CorrelationId.",
+              "kql": "AADNonInteractiveUserSignInLogs\n| where isnotempty(SessionId) and SessionId == \"<SessionId>\"\n| project TimeGenerated, AppDisplayName, IncomingTokenType, AuthenticationDetails"
             }
           ],
-          "validationKql": "let Seed = OfficeActivity | where Operation == \"New-InboxRule\" and tostring(Parameters) has_any (\"DeleteMessage\", \"MoveToFolder\") | project UserPrincipalName=UserId, IPAddress=ClientIP;\nlet Auth = SigninLogs | where AppDisplayName == \"Office 365 Exchange Online\" | project UserPrincipalName, IPAddress, CorrelationId | join kind=inner Seed on UserPrincipalName, IPAddress | project CorrelationId;\nAADNonInteractiveUserSignInLogs | project CorrelationId, Flag=AuthenticationDetails | join kind=inner Auth on CorrelationId | project Flag"
+          "validationKql": "let Seed = OfficeActivity | where Operation == \"New-InboxRule\" and tostring(Parameters) has_any (\"DeleteMessage\", \"MoveToFolder\") | project UserPrincipalName=UserId, IPAddress=ClientIP;\nlet Auth = SigninLogs | where AppDisplayName == \"Office 365 Exchange Online\" and isnotempty(SessionId) | project UserPrincipalName, IPAddress, SessionId | join kind=inner Seed on UserPrincipalName, IPAddress | project SessionId;\nAADNonInteractiveUserSignInLogs | where isnotempty(SessionId) | project SessionId, Flag=AuthenticationDetails | join kind=inner Auth on SessionId | project Flag"
         },
         {
           "id": "delegated-mailbox-permissions",
           "slide": 20,
           "name": "Delegated Mailbox Permissions",
-          "selected": false
+          "selected": true,
+          "scenario": false,
+          "description": "Attackers grant an adversary-controlled identity FullAccess, SendAs, or SendOnBehalf rights so it can operate on a victim mailbox without authenticating as the mailbox owner.",
+          "enhancement": "Mapped to the exact ATT&CK sub-technique for added email delegation and expanded from a single audit event into a delegate-to-session investigation path.",
+          "mitreAttack": [
+            {
+              "id": "T1098.002",
+              "name": "Account Manipulation: Additional Email Delegate Permissions",
+              "url": "https://attack.mitre.org/techniques/T1098/002/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Add-MailboxPermission",
+              "url": "https://learn.microsoft.com/powershell/module/exchange/add-mailboxpermission"
+            },
+            {
+              "title": "CloudAppEvents advanced hunting table",
+              "url": "https://learn.microsoft.com/defender-xdr/advanced-hunting-cloudappevents-table"
+            }
+          ],
+          "finalTable": "AADNonInteractiveUserSignInLogs",
+          "flag": "FLAG:{DelegateShadow}",
+          "flagColumn": "AuthenticationDetails",
+          "pivotSteps": [
+            {
+              "table": "OfficeActivity",
+              "purpose": "Find a mailbox permission grant and extract the delegate identity and source IP.",
+              "kql": "OfficeActivity\n| where Operation == \"Add-MailboxPermission\"\n| where tostring(Parameters) has_any (\"FullAccess\", \"SendAs\", \"SendOnBehalf\")\n| extend DelegateUpn=extract(@\"User=([^;]+)\", 1, tostring(Parameters))\n| project TimeGenerated, Mailbox=OfficeObjectId, DelegateUpn, IPAddress=ClientIP"
+            },
+            {
+              "table": "CloudAppEvents",
+              "purpose": "Pivot on the delegate and source IP to recover the Defender for Cloud Apps session ID.",
+              "kql": "CloudAppEvents\n| where ActionType == \"MailboxPermissionGranted\"\n| where AccountId == \"<DelegateUpn>\" and IPAddress == \"<IPAddress>\"\n| extend SessionId=tostring(SessionData.SessionId)\n| project Timestamp, AccountId, ObjectName, SessionId, IPAddress"
+            },
+            {
+              "table": "AADNonInteractiveUserSignInLogs",
+              "purpose": "Pivot on SessionId to the delegate's background Exchange access that contains the flag.",
+              "kql": "AADNonInteractiveUserSignInLogs\n| where SessionId == \"<SessionId>\"\n| project TimeGenerated, UserPrincipalName, AppDisplayName, AuthenticationDetails"
+            }
+          ],
+          "validationKql": "let Seed = OfficeActivity | where Operation == \"Add-MailboxPermission\" and tostring(Parameters) has_any (\"FullAccess\", \"SendAs\", \"SendOnBehalf\") | extend DelegateUpn=extract(@\"User=([^;]+)\", 1, tostring(Parameters)) | project DelegateUpn, IPAddress=ClientIP;\nlet Session = CloudAppEvents | where ActionType == \"MailboxPermissionGranted\" | extend SessionId=tostring(SessionData.SessionId) | project DelegateUpn=AccountId, IPAddress, SessionId | join kind=inner Seed on DelegateUpn, IPAddress | project SessionId;\nAADNonInteractiveUserSignInLogs | project SessionId, Flag=AuthenticationDetails | join kind=inner Session on SessionId | project Flag"
         }
       ]
     },
@@ -84,7 +168,43 @@
           "id": "suspicious-sign-in-patterns",
           "slide": 22,
           "name": "Suspicious Sign-In Patterns",
-          "selected": false
+          "selected": true,
+          "scenario": false,
+          "description": "Attackers use valid cloud credentials from unfamiliar infrastructure or unmanaged devices; the suspicious pattern is an analytic signal whose underlying ATT&CK behavior is valid cloud-account use.",
+          "enhancement": "Corrected the source framing: Suspicious Sign-In Patterns is not a standalone ATT&CK technique. The challenge now maps the observed anomaly to T1078.004 and requires corroboration in Defender XDR sign-in telemetry.",
+          "mitreAttack": [
+            {
+              "id": "T1078.004",
+              "name": "Valid Accounts: Cloud Accounts",
+              "url": "https://attack.mitre.org/techniques/T1078/004/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Microsoft Entra sign-in log activity details",
+              "url": "https://learn.microsoft.com/entra/identity/monitoring-health/concept-sign-in-log-activity-details"
+            },
+            {
+              "title": "EntraIdSignInEvents advanced hunting table",
+              "url": "https://learn.microsoft.com/defender-xdr/advanced-hunting-entraidsigninevents-table"
+            }
+          ],
+          "finalTable": "EntraIdSignInEvents",
+          "flag": "FLAG:{UnfamiliarAccess}",
+          "flagColumn": "AuthenticationProcessingDetails",
+          "pivotSteps": [
+            {
+              "table": "SigninLogs",
+              "purpose": "Find a successful risky sign-in from an unmanaged device and collect its correlation ID.",
+              "kql": "SigninLogs\n| where ResultType == \"0\" and IsRisky and IsInteractive\n| where tobool(parse_json(DeviceDetail).isManaged) == false\n| project TimeGenerated, UserPrincipalName, IPAddress, CorrelationId, DeviceDetail"
+            },
+            {
+              "table": "EntraIdSignInEvents",
+              "purpose": "Pivot on CorrelationId to the Defender XDR view and inspect the authentication evidence containing the flag.",
+              "kql": "EntraIdSignInEvents\n| where CorrelationId == \"<CorrelationId>\"\n| project Timestamp, AccountUpn, IPAddress, DeviceName, RiskLevelAggregated, AuthenticationProcessingDetails"
+            }
+          ],
+          "validationKql": "let Seed = SigninLogs | where ResultType == \"0\" and IsRisky and IsInteractive and tobool(parse_json(DeviceDetail).isManaged) == false | project CorrelationId;\nEntraIdSignInEvents | project CorrelationId, Flag=AuthenticationProcessingDetails | join kind=inner Seed on CorrelationId | project Flag"
         },
         {
           "id": "token-abuse",
@@ -92,6 +212,30 @@
           "name": "Token Abuse",
           "selected": true,
           "description": "Attackers steal or reuse authentication tokens to maintain access without repeated sign-ins or MFA challenges.",
+          "scenario": true,
+          "enhancement": "Separated token acquisition from token use: T1528 describes theft, while T1550.001 describes using the application access token represented by the challenge's refresh-token continuation.",
+          "mitreAttack": [
+            {
+              "id": "T1528",
+              "name": "Steal Application Access Token",
+              "url": "https://attack.mitre.org/techniques/T1528/"
+            },
+            {
+              "id": "T1550.001",
+              "name": "Use Alternate Authentication Material: Application Access Token",
+              "url": "https://attack.mitre.org/techniques/T1550/001/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Microsoft identity platform access tokens",
+              "url": "https://learn.microsoft.com/entra/identity-platform/access-tokens"
+            },
+            {
+              "title": "Microsoft Entra non-interactive sign-ins",
+              "url": "https://learn.microsoft.com/entra/identity/monitoring-health/concept-noninteractive-sign-ins"
+            }
+          ],
           "finalTable": "AADNonInteractiveUserSignInLogs",
           "flagColumn": "AuthenticationDetails",
           "flag": "FLAG:{GhostSession}",
@@ -113,19 +257,147 @@
           "id": "oauth-app-consent-abuse",
           "slide": 24,
           "name": "OAuth / App Consent Abuse",
-          "selected": false
+          "selected": true,
+          "scenario": true,
+          "description": "Attackers grant a service principal broad application permissions, shifting durable access from a compromised user to a non-human identity that can authenticate and act without user interaction.",
+          "enhancement": "Narrowed this challenge to app-only permission persistence so it remains distinct from the user-deception and delegated-token behavior in Illicit Consent Grants.",
+          "mitreAttack": [
+            {
+              "id": "T1098.003",
+              "name": "Account Manipulation: Additional Cloud Roles",
+              "url": "https://attack.mitre.org/techniques/T1098/003/"
+            },
+            {
+              "id": "T1550.001",
+              "name": "Use Alternate Authentication Material: Application Access Token",
+              "url": "https://attack.mitre.org/techniques/T1550/001/"
+            }
+          ],
+          "references": [
+            {
+              "title": "View activity logs of application permissions",
+              "url": "https://learn.microsoft.com/entra/identity/enterprise-apps/app-perms-audit-logs"
+            },
+            {
+              "title": "Microsoft Entra security operations for applications",
+              "url": "https://learn.microsoft.com/entra/architecture/security-operations-applications"
+            }
+          ],
+          "finalTable": "AADServicePrincipalSignInLogs",
+          "flag": "FLAG:{ConsentPhantom}",
+          "flagColumn": "UserAgent",
+          "pivotSteps": [
+            {
+              "table": "AuditLogs",
+              "purpose": "Find an app-only Microsoft Graph permission grant and collect its audit correlation and application IDs.",
+              "kql": "AuditLogs\n| where OperationName == \"Add app role assignment to service principal\"\n| where tostring(AdditionalDetails) has_all (\"Mail.Read\", \"Files.Read.All\")\n| extend OAuthAppId=tostring(TargetResources[0].appId)\n| project TimeGenerated, Identity, AuditCorrelationId=tostring(CorrelationId), OAuthAppId"
+            },
+            {
+              "table": "CloudAppEvents",
+              "purpose": "Pivot on the audit correlation and application IDs to confirm the permission grant and capture its source IP.",
+              "kql": "CloudAppEvents\n| where ActionType == \"OAuthAppPermissionGranted\"\n| extend AuditCorrelationId=tostring(RawEventData.AuditCorrelationId)\n| where AuditCorrelationId == \"<AuditCorrelationId>\" and OAuthAppId == \"<OAuthAppId>\"\n| project Timestamp, OAuthAppId, IPAddress, ObjectName"
+            },
+            {
+              "table": "AADServicePrincipalSignInLogs",
+              "purpose": "Pivot on AppId and IPAddress to the app-only sign-in whose user agent contains the flag.",
+              "kql": "AADServicePrincipalSignInLogs\n| where AppId == \"<OAuthAppId>\" and IPAddress == \"<IPAddress>\"\n| project TimeGenerated, ServicePrincipalName, ResourceDisplayName, UserAgent"
+            }
+          ],
+          "validationKql": "let Audit = AuditLogs | where OperationName == \"Add app role assignment to service principal\" and tostring(AdditionalDetails) has_all (\"Mail.Read\", \"Files.Read.All\") | extend OAuthAppId=tostring(TargetResources[0].appId) | project AuditCorrelationId=tostring(CorrelationId), OAuthAppId;\nlet Grant = CloudAppEvents | where ActionType == \"OAuthAppPermissionGranted\" | extend AuditCorrelationId=tostring(RawEventData.AuditCorrelationId) | project AuditCorrelationId, OAuthAppId, IPAddress | join kind=inner Audit on AuditCorrelationId, OAuthAppId | project OAuthAppId, IPAddress;\nAADServicePrincipalSignInLogs | project OAuthAppId=AppId, IPAddress, Flag=UserAgent | join kind=inner Grant on OAuthAppId, IPAddress | project Flag"
         },
         {
           "id": "privileged-role-abuse",
           "slide": 25,
           "name": "Privileged Role Abuse",
-          "selected": false
+          "selected": true,
+          "scenario": false,
+          "description": "Attackers assign a powerful Microsoft Entra role to a compromised user and then use the elevated session for background administrative access.",
+          "enhancement": "Separated permanent role assignment from PIM activation. This challenge models the former and maps it directly to Additional Cloud Roles rather than implying every privileged action is privilege escalation.",
+          "mitreAttack": [
+            {
+              "id": "T1098.003",
+              "name": "Account Manipulation: Additional Cloud Roles",
+              "url": "https://attack.mitre.org/techniques/T1098/003/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Security operations for privileged accounts",
+              "url": "https://learn.microsoft.com/entra/architecture/security-operations-privileged-accounts"
+            },
+            {
+              "title": "Microsoft Entra audit log activities",
+              "url": "https://learn.microsoft.com/entra/identity/monitoring-health/reference-audit-activities"
+            }
+          ],
+          "finalTable": "AADNonInteractiveUserSignInLogs",
+          "flag": "FLAG:{RoleCrown}",
+          "flagColumn": "AuthenticationDetails",
+          "pivotSteps": [
+            {
+              "table": "AuditLogs",
+              "purpose": "Find a Global Administrator assignment and collect the target user and initiating IP.",
+              "kql": "AuditLogs\n| where OperationName == \"Add member to role\"\n| where tostring(TargetResources) has \"Global Administrator\"\n| extend UserId=tostring(TargetResources[0].id), IPAddress=tostring(InitiatedBy.user.ipAddress)\n| project TimeGenerated, Identity, UserId, IPAddress, TargetResources"
+            },
+            {
+              "table": "SigninLogs",
+              "purpose": "Pivot on the elevated user and source IP to recover the privileged interactive session ID.",
+              "kql": "SigninLogs\n| where UserId == \"<UserId>\" and IPAddress == \"<IPAddress>\"\n| where AppDisplayName == \"Azure Portal\"\n| project TimeGenerated, UserPrincipalName, SessionId, IPAddress"
+            },
+            {
+              "table": "AADNonInteractiveUserSignInLogs",
+              "purpose": "Pivot on SessionId to the elevated background session that contains the flag.",
+              "kql": "AADNonInteractiveUserSignInLogs\n| where SessionId == \"<SessionId>\"\n| project TimeGenerated, UserPrincipalName, AppDisplayName, AuthenticationDetails"
+            }
+          ],
+          "validationKql": "let Role = AuditLogs | where OperationName == \"Add member to role\" and tostring(TargetResources) has \"Global Administrator\" | extend UserId=tostring(TargetResources[0].id), IPAddress=tostring(InitiatedBy.user.ipAddress) | project UserId, IPAddress;\nlet Session = SigninLogs | where AppDisplayName == \"Azure Portal\" | project UserId, IPAddress, SessionId | join kind=inner Role on UserId, IPAddress | project SessionId;\nAADNonInteractiveUserSignInLogs | project SessionId, Flag=AuthenticationDetails | join kind=inner Session on SessionId | project Flag"
         },
         {
           "id": "service-principal-privilege-escalation",
           "slide": 26,
           "name": "Service Principal Privilege Escalation",
-          "selected": false
+          "selected": true,
+          "scenario": false,
+          "description": "Attackers grant a service principal a privileged directory role or application role, then use the non-human identity to perform sensitive Microsoft Graph operations without MFA.",
+          "enhancement": "Focused on a service-principal role assignment rather than conflating role grants with added credentials; the latter is separately mapped to T1098.001 when it occurs.",
+          "mitreAttack": [
+            {
+              "id": "T1098.003",
+              "name": "Account Manipulation: Additional Cloud Roles",
+              "url": "https://attack.mitre.org/techniques/T1098/003/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Microsoft Entra security operations for applications",
+              "url": "https://learn.microsoft.com/entra/architecture/security-operations-applications"
+            },
+            {
+              "title": "View activity logs of application permissions",
+              "url": "https://learn.microsoft.com/entra/identity/enterprise-apps/app-perms-audit-logs"
+            }
+          ],
+          "finalTable": "GraphAPIAuditEvents",
+          "flag": "FLAG:{AppAdminAscend}",
+          "flagColumn": "RequestUri",
+          "pivotSteps": [
+            {
+              "table": "AuditLogs",
+              "purpose": "Find a privileged app-role assignment and collect the target service-principal object ID.",
+              "kql": "AuditLogs\n| where OperationName == \"Add app role assignment to service principal\"\n| where tostring(AdditionalDetails) has \"RoleManagement.ReadWrite.Directory\"\n| extend ServicePrincipalId=tostring(TargetResources[0].id)\n| project TimeGenerated, Identity, ServicePrincipalId, TargetResources"
+            },
+            {
+              "table": "AADServicePrincipalSignInLogs",
+              "purpose": "Pivot on ServicePrincipalId to the app-only sign-in and record its token identifier.",
+              "kql": "AADServicePrincipalSignInLogs\n| where ServicePrincipalId == \"<ServicePrincipalId>\"\n| project TimeGenerated, ServicePrincipalName, UniqueTokenIdentifier, IPAddress"
+            },
+            {
+              "table": "GraphAPIAuditEvents",
+              "purpose": "Pivot on UniqueTokenIdentifier to the privileged Graph request whose URI contains the flag.",
+              "kql": "GraphAPIAuditEvents\n| where UniqueTokenIdentifier == \"<UniqueTokenIdentifier>\"\n| project TimeGenerated, ApplicationId, RequestMethod, RequestUri, ResponseStatusCode"
+            }
+          ],
+          "validationKql": "let Role = AuditLogs | where OperationName == \"Add app role assignment to service principal\" and tostring(AdditionalDetails) has \"RoleManagement.ReadWrite.Directory\" | extend ServicePrincipalId=tostring(TargetResources[0].id) | project ServicePrincipalId;\nlet Token = AADServicePrincipalSignInLogs | project ServicePrincipalId, UniqueTokenIdentifier | join kind=inner Role on ServicePrincipalId | project UniqueTokenIdentifier;\nGraphAPIAuditEvents | project UniqueTokenIdentifier, Flag=RequestUri | join kind=inner Token on UniqueTokenIdentifier | project Flag"
         },
         {
           "id": "conditional-access-policy-abuse",
@@ -133,6 +405,25 @@
           "name": "Conditional Access Policy Abuse",
           "selected": true,
           "description": "Attackers modify Conditional Access policies to weaken MFA, device compliance, or location enforcement while access still appears policy-compliant.",
+          "scenario": true,
+          "enhancement": "Narrowed the generic Impair Defenses mapping to the dedicated ATT&CK Conditional Access Policies sub-technique and retained the policy-object-to-sign-in proof path.",
+          "mitreAttack": [
+            {
+              "id": "T1556.009",
+              "name": "Modify Authentication Process: Conditional Access Policies",
+              "url": "https://attack.mitre.org/techniques/T1556/009/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Conditional Access policies",
+              "url": "https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-policies"
+            },
+            {
+              "title": "Microsoft Graph sign-in resource",
+              "url": "https://learn.microsoft.com/graph/api/resources/signin"
+            }
+          ],
           "finalTable": "SigninLogs",
           "flagColumn": "AuthenticationDetails",
           "flag": "FLAG:{MfaExclusion}",
@@ -149,35 +440,209 @@
             },
             {
               "table": "SigninLogs",
-              "purpose": "Pivot on ObjectId to a sign-in evaluated against the weakened policy; this row contains the flag.",
-              "kql": "SigninLogs\n| where tostring(ConditionalAccessPolicies) == \"<ObjectId>\"\n| project TimeGenerated, UserPrincipalName, ConditionalAccessStatus, AuthenticationDetails"
+              "purpose": "Expand the evaluated policy list and pivot on ObjectId to the weakened policy; this row contains the flag.",
+              "kql": "SigninLogs\n| mv-expand Policy=ConditionalAccessPolicies\n| where tostring(Policy.id) == \"<ObjectId>\"\n| project TimeGenerated, UserPrincipalName, ConditionalAccessStatus, AuthenticationDetails"
             }
           ],
-          "validationKql": "let Audit = AuditLogs | where OperationName == \"Update conditional access policy\" | project AuditCorrelationId=tostring(CorrelationId);\nlet Policy = CloudAppEvents | extend AuditCorrelationId=tostring(RawEventData.AuditCorrelationId) | project AuditCorrelationId, PolicyId=tostring(ObjectId) | join kind=inner Audit on AuditCorrelationId | project PolicyId;\nSigninLogs | project PolicyId=tostring(ConditionalAccessPolicies), Flag=AuthenticationDetails | join kind=inner Policy on PolicyId | project Flag"
+          "validationKql": "let Audit = AuditLogs | where OperationName == \"Update conditional access policy\" | project AuditCorrelationId=tostring(CorrelationId);\nlet Policy = CloudAppEvents | extend AuditCorrelationId=tostring(RawEventData.AuditCorrelationId) | project AuditCorrelationId, PolicyId=tostring(ObjectId) | join kind=inner Audit on AuditCorrelationId | project PolicyId;\nSigninLogs | mv-expand EvaluatedPolicy=ConditionalAccessPolicies | project PolicyId=tostring(EvaluatedPolicy.id), Flag=AuthenticationDetails | join kind=inner Policy on PolicyId | project Flag"
         },
         {
           "id": "directory-reconnaissance",
           "slide": 28,
           "name": "Directory Reconnaissance",
-          "selected": false
+          "selected": true,
+          "scenario": false,
+          "description": "Attackers enumerate cloud users, groups, roles, and privilege relationships to identify high-value accounts and paths for expansion.",
+          "enhancement": "Replaced the source slide's AuditLogs List/Get example because directory reads generally are not directory-change audit events. The challenge now correlates Defender for Identity query telemetry to the actor's Entra token and Graph directory requests.",
+          "mitreAttack": [
+            {
+              "id": "T1087.004",
+              "name": "Account Discovery: Cloud Account",
+              "url": "https://attack.mitre.org/techniques/T1087/004/"
+            },
+            {
+              "id": "T1069.003",
+              "name": "Permission Groups Discovery: Cloud Groups",
+              "url": "https://attack.mitre.org/techniques/T1069/003/"
+            }
+          ],
+          "references": [
+            {
+              "title": "IdentityQueryEvents advanced hunting table",
+              "url": "https://learn.microsoft.com/defender-xdr/advanced-hunting-identityqueryevents-table"
+            },
+            {
+              "title": "GraphAPIAuditEvents advanced hunting table",
+              "url": "https://learn.microsoft.com/defender-xdr/advanced-hunting-graphapiauditevents-table"
+            }
+          ],
+          "finalTable": "GraphAPIAuditEvents",
+          "flag": "FLAG:{DirectoryCartographer}",
+          "flagColumn": "RequestUri",
+          "pivotSteps": [
+            {
+              "table": "IdentityQueryEvents",
+              "purpose": "Find privileged-account enumeration and collect the actor's Entra object ID and source IP.",
+              "kql": "IdentityQueryEvents\n| where QueryType == \"EnumerateUsers\"\n| where Query has \"adminCount=1\"\n| project Timestamp, AccountUpn, AccountObjectId, IPAddress, Query, QueryTarget"
+            },
+            {
+              "table": "SigninLogs",
+              "purpose": "Pivot on AccountObjectId and IPAddress to recover the token used by the enumerating identity.",
+              "kql": "SigninLogs\n| where UserId == \"<AccountObjectId>\" and IPAddress == \"<IPAddress>\"\n| project TimeGenerated, UserPrincipalName, UniqueTokenIdentifier, AppDisplayName"
+            },
+            {
+              "table": "GraphAPIAuditEvents",
+              "purpose": "Pivot on UniqueTokenIdentifier to the Graph role-membership query whose URI contains the flag.",
+              "kql": "GraphAPIAuditEvents\n| where UniqueTokenIdentifier == \"<UniqueTokenIdentifier>\"\n| project TimeGenerated, ApplicationId, RequestMethod, RequestUri, ResponseStatusCode"
+            }
+          ],
+          "validationKql": "let Recon = IdentityQueryEvents | where QueryType == \"EnumerateUsers\" and Query has \"adminCount=1\" | project UserId=AccountObjectId, IPAddress;\nlet Token = SigninLogs | project UserId, IPAddress, UniqueTokenIdentifier | join kind=inner Recon on UserId, IPAddress | project UniqueTokenIdentifier;\nGraphAPIAuditEvents | project UniqueTokenIdentifier, Flag=RequestUri | join kind=inner Token on UniqueTokenIdentifier | project Flag"
         },
         {
           "id": "session-persistence-continuous-access",
           "slide": 29,
           "name": "Session Persistence / Continuous Access",
-          "selected": false
+          "selected": true,
+          "scenario": false,
+          "description": "Attackers reuse an established cloud session across services so activity continues without another interactive authentication or MFA prompt.",
+          "enhancement": "Clarified that continuous access is an observable timeline pattern rather than a standalone ATT&CK technique; this challenge specifically models application-token reuse under T1550.001.",
+          "mitreAttack": [
+            {
+              "id": "T1550.001",
+              "name": "Use Alternate Authentication Material: Application Access Token",
+              "url": "https://attack.mitre.org/techniques/T1550/001/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Microsoft Entra non-interactive sign-ins",
+              "url": "https://learn.microsoft.com/entra/identity/monitoring-health/concept-noninteractive-sign-ins"
+            },
+            {
+              "title": "CloudAppEvents advanced hunting table",
+              "url": "https://learn.microsoft.com/defender-xdr/advanced-hunting-cloudappevents-table"
+            }
+          ],
+          "finalTable": "AADNonInteractiveUserSignInLogs",
+          "flag": "FLAG:{SessionAfterglow}",
+          "flagColumn": "AuthenticationDetails",
+          "pivotSteps": [
+            {
+              "table": "SigninLogs",
+              "purpose": "Find the last interactive authentication for a suspicious session and record its session ID.",
+              "kql": "SigninLogs\n| where ResultType == \"0\" and IsInteractive\n| where AppDisplayName == \"Microsoft 365\"\n| project TimeGenerated, UserPrincipalName, SessionId, IPAddress"
+            },
+            {
+              "table": "CloudAppEvents",
+              "purpose": "Pivot on SessionId to activity in another cloud service without a new interactive sign-in.",
+              "kql": "CloudAppEvents\n| extend SessionId=tostring(SessionData.SessionId)\n| where SessionId == \"<SessionId>\"\n| project Timestamp, AccountId, Application, ActionType, SessionId"
+            },
+            {
+              "table": "AADNonInteractiveUserSignInLogs",
+              "purpose": "Carry SessionId to the refresh-token continuation whose authentication details contain the flag.",
+              "kql": "AADNonInteractiveUserSignInLogs\n| where SessionId == \"<SessionId>\" and not(IsInteractive)\n| project TimeGenerated, UserPrincipalName, IncomingTokenType, AuthenticationDetails"
+            }
+          ],
+          "validationKql": "let Auth = SigninLogs | where ResultType == \"0\" and IsInteractive and AppDisplayName == \"Microsoft 365\" | project SessionId;\nlet Activity = CloudAppEvents | extend SessionId=tostring(SessionData.SessionId) | project SessionId | join kind=inner Auth on SessionId | distinct SessionId;\nAADNonInteractiveUserSignInLogs | where not(IsInteractive) | project SessionId, Flag=AuthenticationDetails | join kind=inner Activity on SessionId | project Flag"
         },
         {
           "id": "cross-tenant-b2b-identity-abuse",
           "slide": 30,
           "name": "Cross-Tenant / B2B Identity Abuse",
-          "selected": false
+          "selected": true,
+          "scenario": false,
+          "description": "Attackers retain access through an external guest identity that is added to a sensitive group and authenticates from a different home tenant.",
+          "enhancement": "Made cross-tenant status provable through HomeTenantId, ResourceTenantId, and CrossTenantAccessType instead of inferring it from a guest-looking UPN alone.",
+          "mitreAttack": [
+            {
+              "id": "T1078.004",
+              "name": "Valid Accounts: Cloud Accounts",
+              "url": "https://attack.mitre.org/techniques/T1078/004/"
+            },
+            {
+              "id": "T1098.003",
+              "name": "Account Manipulation: Additional Cloud Roles",
+              "url": "https://attack.mitre.org/techniques/T1098/003/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Microsoft Entra sign-in log activity details",
+              "url": "https://learn.microsoft.com/entra/identity/monitoring-health/concept-sign-in-log-activity-details"
+            },
+            {
+              "title": "What are interactive user sign-ins in Microsoft Entra",
+              "url": "https://learn.microsoft.com/entra/identity/monitoring-health/concept-interactive-sign-ins"
+            }
+          ],
+          "finalTable": "CloudAppEvents",
+          "flag": "FLAG:{GuestBackdoor}",
+          "flagColumn": "RawEventData",
+          "pivotSteps": [
+            {
+              "table": "AuditLogs",
+              "purpose": "Find an external guest added to a sensitive group and collect the guest object ID.",
+              "kql": "AuditLogs\n| where OperationName == \"Add member to group\"\n| where tostring(TargetResources) has_all (\"Guest\", \"Incident Response Administrators\")\n| extend GuestUserId=tostring(TargetResources[0].id)\n| project TimeGenerated, Identity, GuestUserId, TargetResources"
+            },
+            {
+              "table": "SigninLogs",
+              "purpose": "Pivot on the guest object ID and prove that its home and resource tenants differ.",
+              "kql": "SigninLogs\n| where UserId == \"<GuestUserId>\"\n| where HomeTenantId != ResourceTenantId and CrossTenantAccessType == \"b2bCollaboration\"\n| project TimeGenerated, UserPrincipalName, SessionId, HomeTenantId, ResourceTenantId, IPAddress"
+            },
+            {
+              "table": "CloudAppEvents",
+              "purpose": "Pivot on SessionId to the guest's sensitive cloud activity whose raw event evidence contains the flag.",
+              "kql": "CloudAppEvents\n| extend SessionId=tostring(SessionData.SessionId)\n| where SessionId == \"<SessionId>\" and IsExternalUser\n| project Timestamp, AccountId, Application, ActionType, RawEventData"
+            }
+          ],
+          "validationKql": "let Guest = AuditLogs | where OperationName == \"Add member to group\" and tostring(TargetResources) has_all (\"Guest\", \"Incident Response Administrators\") | extend GuestUserId=tostring(TargetResources[0].id) | project GuestUserId;\nlet Session = SigninLogs | where HomeTenantId != ResourceTenantId and CrossTenantAccessType == \"b2bCollaboration\" | project GuestUserId=UserId, SessionId | join kind=inner Guest on GuestUserId | project SessionId;\nCloudAppEvents | where IsExternalUser | extend SessionId=tostring(SessionData.SessionId) | project SessionId, Flag=RawEventData | join kind=inner Session on SessionId | project Flag"
         },
         {
           "id": "identity-to-infrastructure-access",
           "slide": 31,
           "name": "Identity to Infrastructure Access",
-          "selected": false
+          "selected": true,
+          "scenario": false,
+          "description": "Attackers use a compromised cloud identity to invoke Azure Run Command, causing code execution inside a virtual machine without an interactive operating-system logon.",
+          "enhancement": "Narrowed the broad source concept to Azure Run Command and added the endpoint process proof ATT&CK explicitly recommends for cloud administration commands.",
+          "mitreAttack": [
+            {
+              "id": "T1651",
+              "name": "Cloud Administration Command",
+              "url": "https://attack.mitre.org/techniques/T1651/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Run scripts in a Windows VM with Run Command",
+              "url": "https://learn.microsoft.com/azure/virtual-machines/windows/run-command"
+            },
+            {
+              "title": "DeviceProcessEvents advanced hunting table",
+              "url": "https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceprocessevents-table"
+            }
+          ],
+          "finalTable": "DeviceProcessEvents",
+          "flag": "FLAG:{ControlPlaneShell}",
+          "flagColumn": "ProcessCommandLine",
+          "pivotSteps": [
+            {
+              "table": "SigninLogs",
+              "purpose": "Find the compromised Azure management sign-in and collect the caller identity and source IP.",
+              "kql": "SigninLogs\n| where ResultType == \"0\" and AppDisplayName == \"Azure Portal\"\n| project TimeGenerated, UserPrincipalName, IPAddress"
+            },
+            {
+              "table": "AzureActivity",
+              "purpose": "Pivot on Caller and CallerIpAddress to the Azure VM Run Command operation and record the ARM resource name.",
+              "kql": "AzureActivity\n| where Caller == \"<UserPrincipalName>\" and CallerIpAddress == \"<IPAddress>\"\n| where OperationNameValue =~ \"MICROSOFT.COMPUTE/VIRTUALMACHINES/RUNCOMMAND/ACTION\"\n| project TimeGenerated, Caller, ResourceName=Resource, CorrelationId, ResourceId"
+            },
+            {
+              "table": "DeviceProcessEvents",
+              "purpose": "Normalize the endpoint FQDN to its first DNS label and pivot on the ARM resource name to the Run Command guest process whose command line contains the flag.",
+              "kql": "DeviceProcessEvents\n| extend ResourceName=tostring(split(DeviceName, \".\")[0])\n| where ResourceName =~ \"<ResourceName>\"\n| where FolderPath has \"RunCommandWindows\"\n| project Timestamp, DeviceName, FileName, ProcessCommandLine, InitiatingProcessCommandLine"
+            }
+          ],
+          "validationKql": "let Identity = SigninLogs | where ResultType == \"0\" and AppDisplayName == \"Azure Portal\" | project Caller=UserPrincipalName, CallerIpAddress=IPAddress;\nlet Command = AzureActivity | where OperationNameValue =~ \"MICROSOFT.COMPUTE/VIRTUALMACHINES/RUNCOMMAND/ACTION\" | project Caller, CallerIpAddress, ResourceKey=tolower(tostring(Resource)) | join kind=inner Identity on Caller, CallerIpAddress | project ResourceKey;\nDeviceProcessEvents | where FolderPath has \"RunCommandWindows\" | extend ResourceKey=tolower(tostring(split(DeviceName, \".\")[0])) | project ResourceKey, Flag=ProcessCommandLine | join kind=inner Command on ResourceKey | project Flag"
         }
       ]
     },
@@ -192,6 +657,30 @@
           "name": "API Access Abuse",
           "selected": true,
           "description": "Attackers abuse application API permissions or service principals to access cloud resources without interactive user sign-ins.",
+          "scenario": true,
+          "enhancement": "Retained the Graph-focused implementation but distinguishes API execution (T1059.009) from the token material used to authorize it (T1550.001).",
+          "mitreAttack": [
+            {
+              "id": "T1059.009",
+              "name": "Command and Scripting Interpreter: Cloud API",
+              "url": "https://attack.mitre.org/techniques/T1059/009/"
+            },
+            {
+              "id": "T1550.001",
+              "name": "Use Alternate Authentication Material: Application Access Token",
+              "url": "https://attack.mitre.org/techniques/T1550/001/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Microsoft Graph authentication and authorization basics",
+              "url": "https://learn.microsoft.com/graph/auth/auth-concepts"
+            },
+            {
+              "title": "GraphAPIAuditEvents advanced hunting table",
+              "url": "https://learn.microsoft.com/defender-xdr/advanced-hunting-graphapiauditevents-table"
+            }
+          ],
           "finalTable": "GraphAPIAuditEvents",
           "flagColumn": "RequestUri",
           "flag": "FLAG:{GraphApiSweep}",
@@ -218,25 +707,204 @@
           "id": "application-impersonation-obo-abuse",
           "slide": 35,
           "name": "Application Impersonation (On-Behalf-Of Abuse)",
-          "selected": false
+          "selected": true,
+          "scenario": false,
+          "description": "Attackers abuse an OAuth On-Behalf-Of flow so a trusted middle-tier application exchanges a user's token and calls downstream APIs with that user's delegated permissions.",
+          "enhancement": "Clarified that OBO is a legitimate protocol flow, not an ATT&CK technique by itself. The malicious behavior is use of an acquired application access token under T1550.001.",
+          "mitreAttack": [
+            {
+              "id": "T1550.001",
+              "name": "Use Alternate Authentication Material: Application Access Token",
+              "url": "https://attack.mitre.org/techniques/T1550/001/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Microsoft identity platform OAuth 2.0 On-Behalf-Of flow",
+              "url": "https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow"
+            },
+            {
+              "title": "Microsoft Entra non-interactive sign-ins",
+              "url": "https://learn.microsoft.com/entra/identity/monitoring-health/concept-noninteractive-sign-ins"
+            }
+          ],
+          "finalTable": "GraphAPIAuditEvents",
+          "flag": "FLAG:{BorrowedIdentity}",
+          "flagColumn": "RequestUri",
+          "pivotSteps": [
+            {
+              "table": "SigninLogs",
+              "purpose": "Find an interactive sign-in whose processing details identify an On-Behalf-Of exchange and record its session ID.",
+              "kql": "SigninLogs\n| where ResultType == \"0\"\n| where AuthenticationProcessingDetails has \"On-Behalf-Of\"\n| project TimeGenerated, UserPrincipalName, AppDisplayName, SessionId, IPAddress"
+            },
+            {
+              "table": "AADNonInteractiveUserSignInLogs",
+              "purpose": "Pivot on SessionId to the background OBO token exchange and capture the issued token identifier.",
+              "kql": "AADNonInteractiveUserSignInLogs\n| where SessionId == \"<SessionId>\"\n| where AuthenticationProtocol == \"oAuth2\"\n| project TimeGenerated, UserPrincipalName, AppDisplayName, UniqueTokenIdentifier, IncomingTokenType"
+            },
+            {
+              "table": "GraphAPIAuditEvents",
+              "purpose": "Pivot on UniqueTokenIdentifier to the delegated Graph request whose URI contains the flag.",
+              "kql": "GraphAPIAuditEvents\n| where UniqueTokenIdentifier == \"<UniqueTokenIdentifier>\"\n| project TimeGenerated, ApplicationId, AccountObjectId, RequestMethod, RequestUri"
+            }
+          ],
+          "validationKql": "let Auth = SigninLogs | where ResultType == \"0\" and AuthenticationProcessingDetails has \"On-Behalf-Of\" | project SessionId;\nlet Token = AADNonInteractiveUserSignInLogs | where AuthenticationProtocol == \"oAuth2\" | project SessionId, UniqueTokenIdentifier | join kind=inner Auth on SessionId | project UniqueTokenIdentifier;\nGraphAPIAuditEvents | project UniqueTokenIdentifier, Flag=RequestUri | join kind=inner Token on UniqueTokenIdentifier | project Flag"
         },
         {
           "id": "cross-tenant-b2b-application-impersonation",
           "slide": 36,
           "name": "Cross-Tenant / B2B Application Impersonation",
-          "selected": false
+          "selected": true,
+          "scenario": false,
+          "description": "Attackers use an application owned by an external tenant and an accepted trust relationship to call internal APIs as an apparently legitimate partner application.",
+          "enhancement": "Made both sides of the boundary explicit with AppOwnerTenantId versus AADTenantId and tied the external app's token to its Graph and cloud-app activity.",
+          "mitreAttack": [
+            {
+              "id": "T1199",
+              "name": "Trusted Relationship",
+              "url": "https://attack.mitre.org/techniques/T1199/"
+            },
+            {
+              "id": "T1550.001",
+              "name": "Use Alternate Authentication Material: Application Access Token",
+              "url": "https://attack.mitre.org/techniques/T1550/001/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Cross-tenant access overview",
+              "url": "https://learn.microsoft.com/entra/external-id/cross-tenant-access-overview"
+            },
+            {
+              "title": "Microsoft Entra service principal sign-ins",
+              "url": "https://learn.microsoft.com/entra/identity/monitoring-health/concept-service-principal-sign-ins"
+            }
+          ],
+          "finalTable": "CloudAppEvents",
+          "flag": "FLAG:{ForeignAppProxy}",
+          "flagColumn": "RawEventData",
+          "pivotSteps": [
+            {
+              "table": "AADServicePrincipalSignInLogs",
+              "purpose": "Find an app-only sign-in whose application owner tenant differs from the resource tenant and collect its token and app IDs.",
+              "kql": "AADServicePrincipalSignInLogs\n| where AppOwnerTenantId != AADTenantId\n| project TimeGenerated, AppId, ServicePrincipalName, UniqueTokenIdentifier, IPAddress, AppOwnerTenantId, AADTenantId"
+            },
+            {
+              "table": "GraphAPIAuditEvents",
+              "purpose": "Pivot on UniqueTokenIdentifier to the external application's Graph request and record its report ID.",
+              "kql": "GraphAPIAuditEvents\n| where UniqueTokenIdentifier == \"<UniqueTokenIdentifier>\"\n| project TimeGenerated, ApplicationId, ReportId, IpAddress, RequestUri"
+            },
+            {
+              "table": "CloudAppEvents",
+              "purpose": "Pivot on the application and report IDs to the external app's SaaS action whose raw event data contains the flag.",
+              "kql": "CloudAppEvents\n| where OAuthAppId == \"<ApplicationId>\" and ReportId == \"<ReportId>\"\n| project Timestamp, Application, AccountId, ActionType, ObjectName, RawEventData"
+            }
+          ],
+          "validationKql": "let SignIn = AADServicePrincipalSignInLogs | where AppOwnerTenantId != AADTenantId | project AppId, UniqueTokenIdentifier;\nlet Api = GraphAPIAuditEvents | project AppId=ApplicationId, UniqueTokenIdentifier, ReportId | join kind=inner SignIn on AppId, UniqueTokenIdentifier | project AppId, ReportId;\nCloudAppEvents | project AppId=OAuthAppId, ReportId, Flag=RawEventData | join kind=inner Api on AppId, ReportId | project Flag"
         },
         {
           "id": "illicit-consent-grants",
           "slide": 37,
           "name": "Illicit Consent Grants",
-          "selected": false
+          "selected": true,
+          "scenario": false,
+          "description": "Attackers deceive a user into granting delegated OAuth scopes, then redeem the resulting refresh token for background access without another user interaction.",
+          "enhancement": "Separated deceptive user consent from app-only administrator permission grants. This challenge follows the user consent through Defender for Cloud Apps to a delegated non-interactive sign-in.",
+          "mitreAttack": [
+            {
+              "id": "T1528",
+              "name": "Steal Application Access Token",
+              "url": "https://attack.mitre.org/techniques/T1528/"
+            },
+            {
+              "id": "T1550.001",
+              "name": "Use Alternate Authentication Material: Application Access Token",
+              "url": "https://attack.mitre.org/techniques/T1550/001/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Microsoft Entra security operations for applications",
+              "url": "https://learn.microsoft.com/entra/architecture/security-operations-applications"
+            },
+            {
+              "title": "View activity logs of application permissions",
+              "url": "https://learn.microsoft.com/entra/identity/enterprise-apps/app-perms-audit-logs"
+            }
+          ],
+          "finalTable": "AADNonInteractiveUserSignInLogs",
+          "flag": "FLAG:{ConsentLatch}",
+          "flagColumn": "AuthenticationDetails",
+          "pivotSteps": [
+            {
+              "table": "AuditLogs",
+              "purpose": "Find a user consent granting high-risk delegated scopes and collect the audit correlation ID.",
+              "kql": "AuditLogs\n| where OperationName == \"Consent to application\"\n| where tostring(AdditionalDetails) has_all (\"Principal\", \"Mail.Read\", \"offline_access\")\n| project TimeGenerated, Identity, AuditCorrelationId=tostring(CorrelationId), TargetResources"
+            },
+            {
+              "table": "CloudAppEvents",
+              "purpose": "Pivot on the audit correlation ID to recover the consent session ID and OAuth application ID.",
+              "kql": "CloudAppEvents\n| where ActionType == \"OAuthAppConsentGranted\"\n| extend AuditCorrelationId=tostring(RawEventData.AuditCorrelationId), SessionId=tostring(SessionData.SessionId)\n| where AuditCorrelationId == \"<AuditCorrelationId>\"\n| project Timestamp, AccountId, OAuthAppId, SessionId, IPAddress"
+            },
+            {
+              "table": "AADNonInteractiveUserSignInLogs",
+              "purpose": "Pivot on SessionId to the delegated refresh-token sign-in whose authentication details contain the flag.",
+              "kql": "AADNonInteractiveUserSignInLogs\n| where SessionId == \"<SessionId>\" and IncomingTokenType == \"refreshToken\"\n| project TimeGenerated, UserPrincipalName, AppDisplayName, AuthenticationDetails"
+            }
+          ],
+          "validationKql": "let Consent = AuditLogs | where OperationName == \"Consent to application\" and tostring(AdditionalDetails) has_all (\"Principal\", \"Mail.Read\", \"offline_access\") | project AuditCorrelationId=tostring(CorrelationId);\nlet Session = CloudAppEvents | where ActionType == \"OAuthAppConsentGranted\" | extend AuditCorrelationId=tostring(RawEventData.AuditCorrelationId), SessionId=tostring(SessionData.SessionId) | project AuditCorrelationId, SessionId | join kind=inner Consent on AuditCorrelationId | project SessionId;\nAADNonInteractiveUserSignInLogs | where IncomingTokenType == \"refreshToken\" | project SessionId, Flag=AuthenticationDetails | join kind=inner Session on SessionId | project Flag"
         },
         {
           "id": "cloud-resource-enumeration",
           "slide": 38,
           "name": "Cloud Resource Enumeration",
-          "selected": false
+          "selected": true,
+          "scenario": false,
+          "description": "Attackers issue a burst of Azure Resource Manager list and read operations across compute, storage, and network providers to map reachable infrastructure.",
+          "enhancement": "Mapped the behavior to Cloud Infrastructure Discovery and changed the hunt from isolated List/Get strings to a multi-provider burst tied back to the caller's Azure CLI session.",
+          "mitreAttack": [
+            {
+              "id": "T1580",
+              "name": "Cloud Infrastructure Discovery",
+              "url": "https://attack.mitre.org/techniques/T1580/"
+            },
+            {
+              "id": "T1059.009",
+              "name": "Command and Scripting Interpreter: Cloud API",
+              "url": "https://attack.mitre.org/techniques/T1059/009/"
+            }
+          ],
+          "references": [
+            {
+              "title": "AzureActivity table",
+              "url": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/azureactivity"
+            },
+            {
+              "title": "Azure CLI resource command reference",
+              "url": "https://learn.microsoft.com/cli/azure/resource"
+            }
+          ],
+          "finalTable": "AADNonInteractiveUserSignInLogs",
+          "flag": "FLAG:{CloudMapBurst}",
+          "flagColumn": "AuthenticationDetails",
+          "pivotSteps": [
+            {
+              "table": "AzureActivity",
+              "purpose": "Find a caller rapidly listing resources across at least three Azure resource providers.",
+              "kql": "AzureActivity\n| where OperationNameValue contains \"/LIST\" or OperationNameValue contains \"/READ\"\n| summarize Operations=make_set(OperationNameValue), Providers=dcount(ResourceProviderValue), FirstSeen=min(TimeGenerated), LastSeen=max(TimeGenerated) by Caller, CallerIpAddress, WindowStart=bin(TimeGenerated, 5m)\n| where array_length(Operations) >= 3 and Providers >= 3 and LastSeen - FirstSeen <= 2m"
+            },
+            {
+              "table": "SigninLogs",
+              "purpose": "Pivot on Caller and CallerIpAddress to the Azure CLI session used for enumeration.",
+              "kql": "SigninLogs\n| where UserPrincipalName == \"<Caller>\" and IPAddress == \"<CallerIpAddress>\"\n| where AppDisplayName == \"Microsoft Azure CLI\"\n| project TimeGenerated, UserPrincipalName, SessionId, IPAddress"
+            },
+            {
+              "table": "AADNonInteractiveUserSignInLogs",
+              "purpose": "Pivot on SessionId to the CLI token continuation whose authentication details contain the flag.",
+              "kql": "AADNonInteractiveUserSignInLogs\n| where SessionId == \"<SessionId>\"\n| project TimeGenerated, UserPrincipalName, AppDisplayName, IncomingTokenType, AuthenticationDetails"
+            }
+          ],
+          "validationKql": "let Enumeration = AzureActivity | where OperationNameValue contains \"/LIST\" or OperationNameValue contains \"/READ\" | summarize Operations=make_set(OperationNameValue), Providers=dcount(ResourceProviderValue), FirstSeen=min(TimeGenerated), LastSeen=max(TimeGenerated) by Caller, CallerIpAddress, WindowStart=bin(TimeGenerated, 5m) | where array_length(Operations) >= 3 and Providers >= 3 and LastSeen - FirstSeen <= 2m | project Caller, CallerIpAddress;\nlet Session = SigninLogs | where AppDisplayName == \"Microsoft Azure CLI\" | project Caller=UserPrincipalName, CallerIpAddress=IPAddress, SessionId | join kind=inner Enumeration on Caller, CallerIpAddress | project SessionId;\nAADNonInteractiveUserSignInLogs | project SessionId, Flag=AuthenticationDetails | join kind=inner Session on SessionId | project Flag"
         },
         {
           "id": "cloud-data-collection-non-mail",
@@ -244,6 +912,30 @@
           "name": "Cloud Data Collection (Non-Mail)",
           "selected": true,
           "description": "Attackers access SharePoint, OneDrive, or storage data through legitimate APIs or application access without traditional endpoint activity.",
+          "scenario": true,
+          "enhancement": "Retained and clarified as collection from cloud storage and SharePoint, rather than treating every file API request as generic API abuse.",
+          "mitreAttack": [
+            {
+              "id": "T1530",
+              "name": "Data from Cloud Storage",
+              "url": "https://attack.mitre.org/techniques/T1530/"
+            },
+            {
+              "id": "T1213.002",
+              "name": "Data from Information Repositories: SharePoint",
+              "url": "https://attack.mitre.org/techniques/T1213/002/"
+            }
+          ],
+          "references": [
+            {
+              "title": "Download driveItem content",
+              "url": "https://learn.microsoft.com/graph/api/driveitem-get-content"
+            },
+            {
+              "title": "OfficeActivity table",
+              "url": "https://learn.microsoft.com/azure/azure-monitor/reference/tables/officeactivity"
+            }
+          ],
           "finalTable": "OfficeActivity",
           "flagColumn": "SourceFileName",
           "flag": "FLAG:{SharePointHarvest}",
@@ -255,16 +947,16 @@
             },
             {
               "table": "GraphAPIAuditEvents",
-              "purpose": "Pivot on ObjectId to confirm API retrieval and its application context.",
-              "kql": "GraphAPIAuditEvents\n| where ReportId == \"<ObjectId>\"\n| project TimeGenerated, ReportId, ApplicationId, RequestMethod, RequestUri"
+              "purpose": "Extract the drive-item ID from RequestUri and pivot on ObjectId to confirm API retrieval and its application context.",
+              "kql": "GraphAPIAuditEvents\n| extend ApiObjectId=extract(@\"/drive/items/([^/]+)/content\", 1, RequestUri)\n| where ApiObjectId == \"<ObjectId>\"\n| project TimeGenerated, ApiObjectId, ReportId, ApplicationId, RequestMethod, RequestUri"
             },
             {
               "table": "OfficeActivity",
-              "purpose": "Pivot on ReportId to the corresponding file-download audit row that contains the flag.",
-              "kql": "OfficeActivity\n| where OfficeObjectId == \"<ReportId>\" and Operation == \"FileDownloaded\"\n| project TimeGenerated, UserId, OfficeObjectId, SourceFileName, ClientIP"
+              "purpose": "Pivot on the Graph drive-item ID to the corresponding file-download audit row that contains the flag.",
+              "kql": "OfficeActivity\n| where OfficeObjectId == \"<ApiObjectId>\" and Operation == \"FileDownloaded\"\n| project TimeGenerated, UserId, OfficeObjectId, SourceFileName, ClientIP"
             }
           ],
-          "validationKql": "let FileAccess = CloudAppEvents | where ActionType == \"FileAccessed\" and AccountType == \"ServicePrincipal\" | project ObjectId;\nlet Api = GraphAPIAuditEvents | project ObjectId=ReportId | join kind=inner FileAccess on ObjectId | project ObjectId;\nOfficeActivity | where Operation == \"FileDownloaded\" | project ObjectId=OfficeObjectId, Flag=SourceFileName | join kind=inner Api on ObjectId | project Flag"
+          "validationKql": "let FileAccess = CloudAppEvents | where ActionType == \"FileAccessed\" and AccountType == \"ServicePrincipal\" | project AppId=OAuthAppId, ObjectId;\nlet Api = GraphAPIAuditEvents | extend ObjectId=extract(@\"/drive/items/([^/]+)/content\", 1, RequestUri) | project AppId=ApplicationId, ObjectId | join kind=inner FileAccess on AppId, ObjectId | project ObjectId;\nOfficeActivity | where Operation == \"FileDownloaded\" | project ObjectId=OfficeObjectId, Flag=SourceFileName | join kind=inner Api on ObjectId | project Flag"
         }
       ]
     }

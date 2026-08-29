@@ -61,8 +61,9 @@ AADServicePrincipalSignInLogs
 // PIVOT LOGIC:
 //   Step 1 -> 2: UserId anchors the affected mailbox and ClientIP anchors the
 //   source. Using both avoids attributing another user's nearby sign-in to the rule.
-//   Step 2 -> 3: CorrelationId is the request-chain identifier. It links the
-//   interactive Exchange sign-in to the exact non-interactive continuation.
+//   Step 2 -> 3: SessionId survives the transition from the interactive Exchange
+//   sign-in to its non-interactive continuation; each request keeps its own
+//   CorrelationId.
 // BIG PICTURE: The pivots connect mailbox manipulation, the initiating session,
 // and automated follow-on access, showing both defense evasion and persistence.
 // ============================================================================
@@ -73,22 +74,97 @@ OfficeActivity
 | where tostring(Parameters) has_any ("DeleteMessage", "MoveToFolder")
 | project TimeGenerated, UserId, ClientIP, Parameters
 
-// Step 2: Substitute values from step 1. Record CorrelationId.
+// Step 2: Substitute values from step 1. Record SessionId.
 let MailboxUser = "<UserId>";
 let SourceIp = "<ClientIP>";
 SigninLogs
 | where UserPrincipalName == MailboxUser and IPAddress == SourceIp
 | where AppDisplayName == "Office 365 Exchange Online"
-| project TimeGenerated, CorrelationId, UserPrincipalName, IPAddress
+| where isnotempty(SessionId)
+| project TimeGenerated, SessionId, UserPrincipalName, IPAddress
 
-// Step 3: Substitute CorrelationId. Inspect Evidence.
-let AuthCorrelationId = "<CorrelationId>";
+// Step 3: Substitute SessionId. Inspect Evidence.
+let AuthSessionId = "<SessionId>";
 AADNonInteractiveUserSignInLogs
-| where CorrelationId == AuthCorrelationId
+| where isnotempty(SessionId) and SessionId == AuthSessionId
 | project TimeGenerated, AppDisplayName, IncomingTokenType, Evidence=AuthenticationDetails
 
 // ============================================================================
-// IDENTITY-01: Token Abuse
+// EMAIL-03: Delegated Mailbox Permissions
+// TTP-ID: delegated-mailbox-permissions
+// OfficeActivity -> CloudAppEvents -> AADNonInteractiveUserSignInLogs
+// MITRE ATT&CK: T1098.002 - Account Manipulation: Additional Email Delegate Permissions
+// References:
+//   https://attack.mitre.org/techniques/T1098/002/
+//   https://learn.microsoft.com/powershell/module/exchange/add-mailboxpermission
+//   https://learn.microsoft.com/defender-xdr/advanced-hunting-cloudappevents-table
+//
+// KEY TAKEAWAY: Mailbox ownership and mailbox access are different facts. A
+// permission grant can let another identity read mail without using the owner's login.
+// PIVOT LOGIC:
+//   Step 1 -> 2: DelegateUpn identifies who received access, while IPAddress ties
+//   the permission change to the cloud-app event that opened the delegated session.
+//   Step 2 -> 3: SessionId follows that delegate into background Exchange activity;
+//   this avoids attributing the owner's normal sign-ins to the delegated access.
+// BIG PICTURE: The chain proves permission change, acting identity, and subsequent
+// access, which is stronger than treating Add-MailboxPermission as compromise alone.
+// ============================================================================
+
+// Step 1: Find suspicious mailbox grants. Record DelegateUpn and IPAddress.
+OfficeActivity
+| where Operation == "Add-MailboxPermission"
+| where tostring(Parameters) has_any ("FullAccess", "SendAs", "SendOnBehalf")
+| extend DelegateUpn=extract(@"User=([^;]+)", 1, tostring(Parameters))
+| project TimeGenerated, Mailbox=OfficeObjectId, DelegateUpn, IPAddress=ClientIP
+
+// Step 2: Substitute delegate and source values. Record SessionId.
+let DelegateAccount = "<DelegateUpn>";
+let SourceIp = "<IPAddress>";
+CloudAppEvents
+| where ActionType == "MailboxPermissionGranted"
+| where AccountId == DelegateAccount and IPAddress == SourceIp
+| extend SessionId=tostring(SessionData.SessionId)
+| project Timestamp, AccountId, ObjectName, SessionId, IPAddress
+
+// Step 3: Substitute SessionId. Inspect Evidence.
+let DelegateSessionId = "<SessionId>";
+AADNonInteractiveUserSignInLogs
+| where SessionId == DelegateSessionId
+| project TimeGenerated, UserPrincipalName, AppDisplayName, Evidence=AuthenticationDetails
+
+// ============================================================================
+// IDENTITY-01: Suspicious Sign-In Patterns
+// TTP-ID: suspicious-sign-in-patterns
+// SigninLogs -> EntraIdSignInEvents
+// MITRE ATT&CK: T1078.004 - Valid Accounts: Cloud Accounts
+// References:
+//   https://attack.mitre.org/techniques/T1078/004/
+//   https://learn.microsoft.com/entra/identity/monitoring-health/concept-sign-in-log-activity-details
+//   https://learn.microsoft.com/defender-xdr/advanced-hunting-entraidsigninevents-table
+//
+// KEY TAKEAWAY: "Suspicious sign-in" is an analytic description, not its own
+// ATT&CK technique. The adversary behavior is successful use of a valid cloud account.
+// PIVOT LOGIC:
+//   Step 1 -> 2: CorrelationId links the Entra record to Defender XDR's enriched
+//   view of the same authentication, preserving device and risk context exactly.
+// BIG PICTURE: A successful login becomes defensible evidence only when its new
+// device, source, risk, and authentication processing differ from the user's norm.
+// ============================================================================
+
+// Step 1: Find successful risky sign-ins from unmanaged devices. Record CorrelationId.
+SigninLogs
+| where ResultType == "0" and IsRisky and IsInteractive
+| where tobool(parse_json(DeviceDetail).isManaged) == false
+| project TimeGenerated, UserPrincipalName, IPAddress, CorrelationId, DeviceDetail
+
+// Step 2: Substitute CorrelationId. Inspect Evidence.
+let SignInCorrelationId = "<CorrelationId>";
+EntraIdSignInEvents
+| where CorrelationId == SignInCorrelationId
+| project Timestamp, AccountUpn, IPAddress, DeviceName, RiskLevelAggregated, Evidence=AuthenticationProcessingDetails
+
+// ============================================================================
+// IDENTITY-02: Token Abuse
 // TTP-ID: token-abuse
 // SigninLogs -> AADNonInteractiveUserSignInLogs
 // MITRE ATT&CK: T1528 - Steal Application Access Token
@@ -120,12 +196,139 @@ AADNonInteractiveUserSignInLogs
 | project TimeGenerated, UserPrincipalName, IncomingTokenType, Evidence=AuthenticationDetails
 
 // ============================================================================
-// IDENTITY-02: Conditional Access Policy Abuse
+// IDENTITY-03: OAuth / App Consent Abuse
+// TTP-ID: oauth-app-consent-abuse
+// AuditLogs -> CloudAppEvents -> AADServicePrincipalSignInLogs
+// MITRE ATT&CK: T1098.003 - Account Manipulation: Additional Cloud Roles
+// MITRE ATT&CK: T1550.001 - Use Alternate Authentication Material: Application Access Token
+// References:
+//   https://attack.mitre.org/techniques/T1098/003/
+//   https://attack.mitre.org/techniques/T1550/001/
+//   https://learn.microsoft.com/entra/identity/enterprise-apps/app-perms-audit-logs
+//
+// KEY TAKEAWAY: App-only consent is durable authorization. The meaningful question
+// is not only who approved it, but whether the service principal then authenticated.
+// PIVOT LOGIC:
+//   Step 1 -> 2: AuditCorrelationId and OAuthAppId identify one permission grant
+//   across Entra audit and Defender for Cloud Apps without relying on display names.
+//   Step 2 -> 3: OAuthAppId plus IPAddress identifies the app-only authentication
+//   that exercised the new permissions and excludes unrelated uses of the same app.
+// BIG PICTURE: The chain shows a human-granted permission becoming persistent,
+// non-human access that survives password changes and does not require user MFA.
+// ============================================================================
+
+// Step 1: Find app-only Graph permission grants. Record both IDs.
+AuditLogs
+| where OperationName == "Add app role assignment to service principal"
+| where tostring(AdditionalDetails) has_all ("Mail.Read", "Files.Read.All")
+| extend OAuthAppId=tostring(TargetResources[0].appId)
+| project TimeGenerated, Identity, AuditCorrelationId=tostring(CorrelationId), OAuthAppId
+
+// Step 2: Substitute the audit and app IDs. Record IPAddress.
+let PermissionAuditId = "<AuditCorrelationId>";
+let ConsentedAppId = "<OAuthAppId>";
+CloudAppEvents
+| where ActionType == "OAuthAppPermissionGranted"
+| extend AuditCorrelationId=tostring(RawEventData.AuditCorrelationId)
+| where AuditCorrelationId == PermissionAuditId and OAuthAppId == ConsentedAppId
+| project Timestamp, OAuthAppId, IPAddress, ObjectName
+
+// Step 3: Substitute application and source IP. Inspect Evidence.
+let ConsentedAppId = "<OAuthAppId>";
+let SourceIp = "<IPAddress>";
+AADServicePrincipalSignInLogs
+| where AppId == ConsentedAppId and IPAddress == SourceIp
+| project TimeGenerated, ServicePrincipalName, ResourceDisplayName, Evidence=UserAgent
+
+// ============================================================================
+// IDENTITY-04: Privileged Role Abuse
+// TTP-ID: privileged-role-abuse
+// AuditLogs -> SigninLogs -> AADNonInteractiveUserSignInLogs
+// MITRE ATT&CK: T1098.003 - Account Manipulation: Additional Cloud Roles
+// References:
+//   https://attack.mitre.org/techniques/T1098/003/
+//   https://learn.microsoft.com/entra/architecture/security-operations-privileged-accounts
+//   https://learn.microsoft.com/entra/identity/monitoring-health/reference-audit-activities
+//
+// KEY TAKEAWAY: A role grant changes authorization; the sign-in trail proves that
+// the newly privileged identity established and continued an administrative session.
+// PIVOT LOGIC:
+//   Step 1 -> 2: UserId and IPAddress bind the assigned role to the target user's
+//   Azure Portal authentication instead of to the administrator who made the change.
+//   Step 2 -> 3: SessionId follows elevation into non-interactive activity and
+//   avoids treating every later action by the same user as part of this role event.
+// BIG PICTURE: The pivots show the transition from compromised access to tenant
+// control: role assignment, privileged authentication, then background use.
+// ============================================================================
+
+// Step 1: Find Global Administrator assignments. Record UserId and IPAddress.
+AuditLogs
+| where OperationName == "Add member to role"
+| where tostring(TargetResources) has "Global Administrator"
+| extend UserId=tostring(TargetResources[0].id), IPAddress=tostring(InitiatedBy.user.ipAddress)
+| project TimeGenerated, Identity, UserId, IPAddress, TargetResources
+
+// Step 2: Substitute the target user and source IP. Record SessionId.
+let ElevatedUserId = "<UserId>";
+let SourceIp = "<IPAddress>";
+SigninLogs
+| where UserId == ElevatedUserId and IPAddress == SourceIp
+| where AppDisplayName == "Azure Portal"
+| project TimeGenerated, UserPrincipalName, SessionId, IPAddress
+
+// Step 3: Substitute SessionId. Inspect Evidence.
+let ElevatedSessionId = "<SessionId>";
+AADNonInteractiveUserSignInLogs
+| where SessionId == ElevatedSessionId
+| project TimeGenerated, UserPrincipalName, AppDisplayName, Evidence=AuthenticationDetails
+
+// ============================================================================
+// IDENTITY-05: Service Principal Privilege Escalation
+// TTP-ID: service-principal-privilege-escalation
+// AuditLogs -> AADServicePrincipalSignInLogs -> GraphAPIAuditEvents
+// MITRE ATT&CK: T1098.003 - Account Manipulation: Additional Cloud Roles
+// References:
+//   https://attack.mitre.org/techniques/T1098/003/
+//   https://learn.microsoft.com/entra/architecture/security-operations-applications
+//   https://learn.microsoft.com/entra/identity/enterprise-apps/app-perms-audit-logs
+//
+// KEY TAKEAWAY: Service principals are authorization-bearing identities. A role
+// grant matters because it expands what the application can do without user MFA.
+// PIVOT LOGIC:
+//   Step 1 -> 2: ServicePrincipalId identifies the non-human target of the role
+//   assignment and carries that identity into its app-only sign-in record.
+//   Step 2 -> 3: UniqueTokenIdentifier follows one privileged token into Graph,
+//   proving the role was exercised rather than merely configured.
+// BIG PICTURE: The chain turns an abstract permission change into observed
+// administrative API behavior by the newly elevated application identity.
+// ============================================================================
+
+// Step 1: Find privileged service-principal grants. Record ServicePrincipalId.
+AuditLogs
+| where OperationName == "Add app role assignment to service principal"
+| where tostring(AdditionalDetails) has "RoleManagement.ReadWrite.Directory"
+| extend ServicePrincipalId=tostring(TargetResources[0].id)
+| project TimeGenerated, Identity, ServicePrincipalId, TargetResources
+
+// Step 2: Substitute ServicePrincipalId. Record UniqueTokenIdentifier.
+let ElevatedServicePrincipalId = "<ServicePrincipalId>";
+AADServicePrincipalSignInLogs
+| where ServicePrincipalId == ElevatedServicePrincipalId
+| project TimeGenerated, ServicePrincipalName, UniqueTokenIdentifier, IPAddress
+
+// Step 3: Substitute UniqueTokenIdentifier. Inspect Evidence.
+let PrivilegedTokenId = "<UniqueTokenIdentifier>";
+GraphAPIAuditEvents
+| where UniqueTokenIdentifier == PrivilegedTokenId
+| project TimeGenerated, ApplicationId, RequestMethod, Evidence=RequestUri, ResponseStatusCode
+
+// ============================================================================
+// IDENTITY-06: Conditional Access Policy Abuse
 // TTP-ID: conditional-access-policy-abuse
 // AuditLogs -> CloudAppEvents -> SigninLogs
-// MITRE ATT&CK: T1562 - Impair Defenses (behavioral alignment)
+// MITRE ATT&CK: T1556.009 - Modify Authentication Process: Conditional Access Policies
 // References:
-//   https://attack.mitre.org/techniques/T1562/
+//   https://attack.mitre.org/techniques/T1556/009/
 //   https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-policies
 //   https://learn.microsoft.com/graph/api/resources/signin
 //
@@ -155,8 +358,175 @@ CloudAppEvents
 // Step 3: Substitute ObjectId. Inspect Evidence.
 let PolicyId = "<ObjectId>";
 SigninLogs
-| where tostring(ConditionalAccessPolicies) == PolicyId
+| mv-expand Policy=ConditionalAccessPolicies
+| where tostring(Policy.id) == PolicyId
 | project TimeGenerated, UserPrincipalName, ConditionalAccessStatus, Evidence=AuthenticationDetails
+
+// ============================================================================
+// IDENTITY-07: Directory Reconnaissance
+// TTP-ID: directory-reconnaissance
+// IdentityQueryEvents -> SigninLogs -> GraphAPIAuditEvents
+// MITRE ATT&CK: T1087.004 - Account Discovery: Cloud Account
+// MITRE ATT&CK: T1069.003 - Permission Groups Discovery: Cloud Groups
+// References:
+//   https://attack.mitre.org/techniques/T1087/004/
+//   https://attack.mitre.org/techniques/T1069/003/
+//   https://learn.microsoft.com/defender-xdr/advanced-hunting-identityqueryevents-table
+//
+// KEY TAKEAWAY: Directory reads generally do not appear as directory-change audit
+// events. Identity query and Graph API telemetry show who enumerated privilege paths.
+// PIVOT LOGIC:
+//   Step 1 -> 2: AccountObjectId plus IPAddress attributes the directory query to
+//   the exact cloud sign-in and yields the token used by the same identity.
+//   Step 2 -> 3: UniqueTokenIdentifier carries that authentication into Graph and
+//   reveals which role and membership endpoints were queried.
+// BIG PICTURE: The chain links low-noise discovery across hybrid and cloud identity
+// planes, showing that the actor is mapping power rather than merely listing names.
+// ============================================================================
+
+// Step 1: Find privileged-account enumeration. Record account and IP values.
+IdentityQueryEvents
+| where QueryType == "EnumerateUsers"
+| where Query has "adminCount=1"
+| project Timestamp, AccountUpn, AccountObjectId, IPAddress, Query, QueryTarget
+
+// Step 2: Substitute account and source IP. Record UniqueTokenIdentifier.
+let ReconAccountId = "<AccountObjectId>";
+let SourceIp = "<IPAddress>";
+SigninLogs
+| where UserId == ReconAccountId and IPAddress == SourceIp
+| project TimeGenerated, UserPrincipalName, UniqueTokenIdentifier, AppDisplayName
+
+// Step 3: Substitute UniqueTokenIdentifier. Inspect Evidence.
+let ReconTokenId = "<UniqueTokenIdentifier>";
+GraphAPIAuditEvents
+| where UniqueTokenIdentifier == ReconTokenId
+| project TimeGenerated, ApplicationId, RequestMethod, Evidence=RequestUri, ResponseStatusCode
+
+// ============================================================================
+// IDENTITY-08: Session Persistence / Continuous Access
+// TTP-ID: session-persistence-continuous-access
+// SigninLogs -> CloudAppEvents -> AADNonInteractiveUserSignInLogs
+// MITRE ATT&CK: T1550.001 - Use Alternate Authentication Material: Application Access Token
+// References:
+//   https://attack.mitre.org/techniques/T1550/001/
+//   https://learn.microsoft.com/entra/identity/monitoring-health/concept-noninteractive-sign-ins
+//   https://learn.microsoft.com/defender-xdr/advanced-hunting-cloudappevents-table
+//
+// KEY TAKEAWAY: Continuous access is a timeline condition, not a distinct ATT&CK
+// technique. The same SessionId proves activity continued without another login.
+// PIVOT LOGIC:
+//   Step 1 -> 2: SessionId joins the last interactive authentication to later
+//   activity in another Microsoft 365 service, independent of user or IP reuse.
+//   Step 2 -> 3: Reusing SessionId in non-interactive logs establishes that a
+//   refresh token, rather than a new prompt, sustained the cloud activity.
+// BIG PICTURE: The chain demonstrates why no new sign-in does not mean no attacker
+// and why session revocation matters alongside password reset.
+// ============================================================================
+
+// Step 1: Find the session's last interactive authentication. Record SessionId.
+SigninLogs
+| where ResultType == "0" and IsInteractive
+| where AppDisplayName == "Microsoft 365"
+| project TimeGenerated, UserPrincipalName, SessionId, IPAddress
+
+// Step 2: Substitute SessionId and confirm later cloud activity.
+let PersistentSessionId = "<SessionId>";
+CloudAppEvents
+| extend SessionId=tostring(SessionData.SessionId)
+| where SessionId == PersistentSessionId
+| project Timestamp, AccountId, Application, ActionType, SessionId
+
+// Step 3: Carry the same SessionId into background authentication. Inspect Evidence.
+let PersistentSessionId = "<SessionId>";
+AADNonInteractiveUserSignInLogs
+| where SessionId == PersistentSessionId and not(IsInteractive)
+| project TimeGenerated, UserPrincipalName, IncomingTokenType, Evidence=AuthenticationDetails
+
+// ============================================================================
+// IDENTITY-09: Cross-Tenant / B2B Identity Abuse
+// TTP-ID: cross-tenant-b2b-identity-abuse
+// AuditLogs -> SigninLogs -> CloudAppEvents
+// MITRE ATT&CK: T1078.004 - Valid Accounts: Cloud Accounts
+// MITRE ATT&CK: T1098.003 - Account Manipulation: Additional Cloud Roles
+// References:
+//   https://attack.mitre.org/techniques/T1078/004/
+//   https://attack.mitre.org/techniques/T1098/003/
+//   https://learn.microsoft.com/entra/identity/monitoring-health/concept-sign-in-log-activity-details
+//
+// KEY TAKEAWAY: A guest suffix is not proof of cross-tenant access. HomeTenantId,
+// ResourceTenantId, and CrossTenantAccessType establish the actual trust boundary.
+// PIVOT LOGIC:
+//   Step 1 -> 2: GuestUserId follows the externally owned identity from sensitive
+//   group membership into a sign-in where tenant inequality can be tested directly.
+//   Step 2 -> 3: SessionId ties that cross-tenant authentication to the guest's
+//   subsequent cloud activity without conflating other actions by the same partner.
+// BIG PICTURE: The chain shows durable external authorization, cross-tenant use,
+// and sensitive resource access as one investigation rather than three weak clues.
+// ============================================================================
+
+// Step 1: Find guests added to sensitive groups. Record GuestUserId.
+AuditLogs
+| where OperationName == "Add member to group"
+| where tostring(TargetResources) has_all ("Guest", "Incident Response Administrators")
+| extend GuestUserId=tostring(TargetResources[0].id)
+| project TimeGenerated, Identity, GuestUserId, TargetResources
+
+// Step 2: Substitute GuestUserId. Prove tenant crossing and record SessionId.
+let ExternalGuestUserId = "<GuestUserId>";
+SigninLogs
+| where UserId == ExternalGuestUserId
+| where HomeTenantId != ResourceTenantId and CrossTenantAccessType == "b2bCollaboration"
+| project TimeGenerated, UserPrincipalName, SessionId, HomeTenantId, ResourceTenantId, IPAddress
+
+// Step 3: Substitute SessionId. Inspect Evidence.
+let GuestSessionId = "<SessionId>";
+CloudAppEvents
+| extend SessionId=tostring(SessionData.SessionId)
+| where SessionId == GuestSessionId and IsExternalUser
+| project Timestamp, AccountId, Application, ActionType, Evidence=RawEventData
+
+// ============================================================================
+// IDENTITY-10: Identity to Infrastructure Access
+// TTP-ID: identity-to-infrastructure-access
+// SigninLogs -> AzureActivity -> DeviceProcessEvents
+// MITRE ATT&CK: T1651 - Cloud Administration Command
+// References:
+//   https://attack.mitre.org/techniques/T1651/
+//   https://learn.microsoft.com/azure/virtual-machines/windows/run-command
+//   https://learn.microsoft.com/defender-xdr/advanced-hunting-deviceprocessevents-table
+//
+// KEY TAKEAWAY: Azure Run Command executes through the VM agent; the operator does
+// not need an RDP or SSH session, so control-plane and endpoint evidence must meet.
+// PIVOT LOGIC:
+//   Step 1 -> 2: UserPrincipalName and IPAddress identify the same caller in Azure
+//   Activity and expose which virtual machine received the administration command.
+//   Step 2 -> 3: The ARM resource name is compared with the first DNS label of
+//   DeviceName, while the RunCommandWindows path proves the VM agent launched it.
+// BIG PICTURE: The pivots demonstrate identity-driven code execution from cloud
+// authentication through Azure Resource Manager to a process inside the guest OS.
+// ============================================================================
+
+// Step 1: Find the suspicious Azure management sign-in. Record identity and IP.
+SigninLogs
+| where ResultType == "0" and AppDisplayName == "Azure Portal"
+| project TimeGenerated, UserPrincipalName, IPAddress
+
+// Step 2: Substitute identity and IP. Record ResourceName.
+let AzureCaller = "<UserPrincipalName>";
+let SourceIp = "<IPAddress>";
+AzureActivity
+| where Caller == AzureCaller and CallerIpAddress == SourceIp
+| where OperationNameValue =~ "MICROSOFT.COMPUTE/VIRTUALMACHINES/RUNCOMMAND/ACTION"
+| project TimeGenerated, Caller, ResourceName=Resource, CorrelationId, ResourceId
+
+// Step 3: Substitute ResourceName. Inspect Evidence.
+let TargetResource = "<ResourceName>";
+DeviceProcessEvents
+| extend ResourceName=tostring(split(DeviceName, ".")[0])
+| where ResourceName =~ TargetResource
+| where FolderPath has "RunCommandWindows"
+| project Timestamp, DeviceName, FileName, Evidence=ProcessCommandLine, InitiatingProcessCommandLine
 
 // ============================================================================
 // APPLICATION-01: API Access Abuse
@@ -200,7 +570,171 @@ GraphAPIAuditEvents
 | project TimeGenerated, ApplicationId, RequestMethod, Evidence=RequestUri, ResponseStatusCode
 
 // ============================================================================
-// APPLICATION-02: Cloud Data Collection (Non-Mail)
+// APPLICATION-02: Application Impersonation / On-Behalf-Of Abuse
+// TTP-ID: application-impersonation-obo-abuse
+// SigninLogs -> AADNonInteractiveUserSignInLogs -> GraphAPIAuditEvents
+// MITRE ATT&CK: T1550.001 - Use Alternate Authentication Material: Application Access Token
+// References:
+//   https://attack.mitre.org/techniques/T1550/001/
+//   https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow
+//   https://learn.microsoft.com/entra/identity/monitoring-health/concept-noninteractive-sign-ins
+//
+// KEY TAKEAWAY: On-Behalf-Of is a legitimate token exchange, not inherently an
+// attack. Risk appears when a trusted middle tier uses acquired user context abusively.
+// PIVOT LOGIC:
+//   Step 1 -> 2: SessionId links the user-facing authentication to the confidential
+//   application's background OBO exchange and exposes the downstream token ID.
+//   Step 2 -> 3: UniqueTokenIdentifier proves which Graph action the exchanged
+//   delegated token authorized, separating protocol use from resource impact.
+// BIG PICTURE: The chain distinguishes the human, the app acting for that human,
+// and the downstream API request that inherited the user's permissions.
+// ============================================================================
+
+// Step 1: Find On-Behalf-Of processing. Record SessionId.
+SigninLogs
+| where ResultType == "0"
+| where AuthenticationProcessingDetails has "On-Behalf-Of"
+| project TimeGenerated, UserPrincipalName, AppDisplayName, SessionId, IPAddress
+
+// Step 2: Substitute SessionId. Record UniqueTokenIdentifier.
+let OboSessionId = "<SessionId>";
+AADNonInteractiveUserSignInLogs
+| where SessionId == OboSessionId
+| where AuthenticationProtocol == "oAuth2"
+| project TimeGenerated, UserPrincipalName, AppDisplayName, UniqueTokenIdentifier, IncomingTokenType
+
+// Step 3: Substitute UniqueTokenIdentifier. Inspect Evidence.
+let OboTokenId = "<UniqueTokenIdentifier>";
+GraphAPIAuditEvents
+| where UniqueTokenIdentifier == OboTokenId
+| project TimeGenerated, ApplicationId, AccountObjectId, RequestMethod, Evidence=RequestUri
+
+// ============================================================================
+// APPLICATION-03: Cross-Tenant / B2B Application Impersonation
+// TTP-ID: cross-tenant-b2b-application-impersonation
+// AADServicePrincipalSignInLogs -> GraphAPIAuditEvents -> CloudAppEvents
+// MITRE ATT&CK: T1199 - Trusted Relationship
+// MITRE ATT&CK: T1550.001 - Use Alternate Authentication Material: Application Access Token
+// References:
+//   https://attack.mitre.org/techniques/T1199/
+//   https://attack.mitre.org/techniques/T1550/001/
+//   https://learn.microsoft.com/entra/external-id/cross-tenant-access-overview
+//
+// KEY TAKEAWAY: External application ownership is measurable. Compare the app
+// owner tenant with the resource tenant before accepting partner branding as trust.
+// PIVOT LOGIC:
+//   Step 1 -> 2: UniqueTokenIdentifier carries the foreign-owned service principal
+//   into its exact Graph request while retaining the application ID.
+//   Step 2 -> 3: ApplicationId and ReportId identify the same partner action in
+//   Defender for Cloud Apps and expose the trust metadata attached to it.
+// BIG PICTURE: The pivots show an external app authenticating, calling an internal
+// API, and touching SaaS data through an accepted tenant relationship.
+// ============================================================================
+
+// Step 1: Find foreign-owned service-principal sign-ins. Record token and app IDs.
+AADServicePrincipalSignInLogs
+| where AppOwnerTenantId != AADTenantId
+| project TimeGenerated, AppId, ServicePrincipalName, UniqueTokenIdentifier, IPAddress, AppOwnerTenantId, AADTenantId
+
+// Step 2: Substitute UniqueTokenIdentifier. Record ApplicationId and ReportId.
+let ForeignAppTokenId = "<UniqueTokenIdentifier>";
+GraphAPIAuditEvents
+| where UniqueTokenIdentifier == ForeignAppTokenId
+| project TimeGenerated, ApplicationId, ReportId, IpAddress, RequestUri
+
+// Step 3: Substitute application and report IDs. Inspect Evidence.
+let ForeignApplicationId = "<ApplicationId>";
+let ForeignReportId = "<ReportId>";
+CloudAppEvents
+| where OAuthAppId == ForeignApplicationId and ReportId == ForeignReportId
+| project Timestamp, Application, AccountId, ActionType, ObjectName, Evidence=RawEventData
+
+// ============================================================================
+// APPLICATION-04: Illicit Consent Grants
+// TTP-ID: illicit-consent-grants
+// AuditLogs -> CloudAppEvents -> AADNonInteractiveUserSignInLogs
+// MITRE ATT&CK: T1528 - Steal Application Access Token
+// MITRE ATT&CK: T1550.001 - Use Alternate Authentication Material: Application Access Token
+// References:
+//   https://attack.mitre.org/techniques/T1528/
+//   https://attack.mitre.org/techniques/T1550/001/
+//   https://learn.microsoft.com/entra/identity/enterprise-apps/app-perms-audit-logs
+//
+// KEY TAKEAWAY: This challenge models deceptive user consent, not app-only admin
+// consent. The user authorizes delegated scopes and the app redeems them in background.
+// PIVOT LOGIC:
+//   Step 1 -> 2: AuditCorrelationId connects the directory consent to its enriched
+//   cloud event, where the OAuth app and consent session become visible.
+//   Step 2 -> 3: SessionId follows the user's grant into the first non-interactive
+//   refresh-token redemption, proving the consent became durable access.
+// BIG PICTURE: The chain reconstructs social authorization, application receipt,
+// and token use without confusing it with an administrator's app-role assignment.
+// ============================================================================
+
+// Step 1: Find high-risk principal consent. Record AuditCorrelationId.
+AuditLogs
+| where OperationName == "Consent to application"
+| where tostring(AdditionalDetails) has_all ("Principal", "Mail.Read", "offline_access")
+| project TimeGenerated, Identity, AuditCorrelationId=tostring(CorrelationId), TargetResources
+
+// Step 2: Substitute AuditCorrelationId. Record SessionId.
+let ConsentAuditId = "<AuditCorrelationId>";
+CloudAppEvents
+| where ActionType == "OAuthAppConsentGranted"
+| extend AuditCorrelationId=tostring(RawEventData.AuditCorrelationId), SessionId=tostring(SessionData.SessionId)
+| where AuditCorrelationId == ConsentAuditId
+| project Timestamp, AccountId, OAuthAppId, SessionId, IPAddress
+
+// Step 3: Substitute SessionId. Inspect Evidence.
+let ConsentSessionId = "<SessionId>";
+AADNonInteractiveUserSignInLogs
+| where SessionId == ConsentSessionId and IncomingTokenType == "refreshToken"
+| project TimeGenerated, UserPrincipalName, AppDisplayName, Evidence=AuthenticationDetails
+
+// ============================================================================
+// APPLICATION-05: Cloud Resource Enumeration
+// TTP-ID: cloud-resource-enumeration
+// AzureActivity -> SigninLogs -> AADNonInteractiveUserSignInLogs
+// MITRE ATT&CK: T1580 - Cloud Infrastructure Discovery
+// MITRE ATT&CK: T1059.009 - Command and Scripting Interpreter: Cloud API
+// References:
+//   https://attack.mitre.org/techniques/T1580/
+//   https://attack.mitre.org/techniques/T1059/009/
+//   https://learn.microsoft.com/azure/azure-monitor/reference/tables/azureactivity
+//
+// KEY TAKEAWAY: One resource read is normal; a rapid burst across compute, storage,
+// and network providers reveals intent to map the environment before acting.
+// PIVOT LOGIC:
+//   Step 1 -> 2: Caller and CallerIpAddress attribute the multi-provider discovery
+//   burst to the exact Azure CLI authentication and produce its SessionId.
+//   Step 2 -> 3: SessionId carries that interactive CLI use into background token
+//   activity, proving the enumeration came from a continuing authenticated session.
+// BIG PICTURE: The pivots connect low-noise control-plane reads to the human account
+// and token that performed them, turning harmless-looking GETs into a discovery chain.
+// ============================================================================
+
+// Step 1: Find multi-provider read/list bursts. Record Caller and CallerIpAddress.
+AzureActivity
+| where OperationNameValue contains "/LIST" or OperationNameValue contains "/READ"
+| summarize Operations=make_set(OperationNameValue), Providers=dcount(ResourceProviderValue), FirstSeen=min(TimeGenerated), LastSeen=max(TimeGenerated) by Caller, CallerIpAddress, WindowStart=bin(TimeGenerated, 5m)
+| where array_length(Operations) >= 3 and Providers >= 3 and LastSeen - FirstSeen <= 2m
+
+// Step 2: Substitute caller and source IP. Record SessionId.
+let EnumerationCaller = "<Caller>";
+let EnumerationIp = "<CallerIpAddress>";
+SigninLogs
+| where UserPrincipalName == EnumerationCaller and IPAddress == EnumerationIp
+| where AppDisplayName == "Microsoft Azure CLI"
+| project TimeGenerated, UserPrincipalName, SessionId, IPAddress
+
+// Step 3: Substitute SessionId. Inspect Evidence.
+let EnumerationSessionId = "<SessionId>";
+AADNonInteractiveUserSignInLogs
+| where SessionId == EnumerationSessionId
+| project TimeGenerated, UserPrincipalName, AppDisplayName, IncomingTokenType, Evidence=AuthenticationDetails
+
+// ============================================================================
+// APPLICATION-06: Cloud Data Collection (Non-Mail)
 // TTP-ID: cloud-data-collection-non-mail
 // CloudAppEvents -> GraphAPIAuditEvents -> OfficeActivity
 // MITRE ATT&CK: T1530 - Data from Cloud Storage
@@ -215,8 +749,8 @@ GraphAPIAuditEvents
 // PIVOT LOGIC:
 //   Step 1 -> 2: ObjectId is the stable file/object identifier shared by the cloud
 //   app observation and Graph request; names alone can collide or be changed.
-//   Step 2 -> 3: ReportId carries that object identity into OfficeObjectId, linking
-//   the API request to the workload's authoritative FileDownloaded audit event.
+//   Step 2 -> 3: The object ID extracted from Graph RequestUri matches
+//   OfficeObjectId in the workload's authoritative FileDownloaded audit event.
 // BIG PICTURE: The pivots connect suspicious app-only access, the retrieval channel,
 // and final data movement, distinguishing collection from mere browsing or enumeration.
 // ============================================================================
@@ -226,14 +760,15 @@ CloudAppEvents
 | where ActionType == "FileAccessed" and AccountType == "ServicePrincipal"
 | project Timestamp, ObjectId, OAuthAppId, IPAddress
 
-// Step 2: Substitute ObjectId. Record ReportId.
+// Step 2: Substitute ObjectId. Record ApiObjectId.
 let AccessedObjectId = "<ObjectId>";
 GraphAPIAuditEvents
-| where ReportId == AccessedObjectId
-| project TimeGenerated, ReportId, ApplicationId, RequestMethod, RequestUri
+| extend ApiObjectId=extract(@"/drive/items/([^/]+)/content", 1, RequestUri)
+| where ApiObjectId == AccessedObjectId
+| project TimeGenerated, ApiObjectId, ReportId, ApplicationId, RequestMethod, RequestUri
 
-// Step 3: Substitute ReportId. Inspect Evidence.
-let DownloadReportId = "<ReportId>";
+// Step 3: Substitute ApiObjectId. Inspect Evidence.
+let DownloadObjectId = "<ApiObjectId>";
 OfficeActivity
-| where OfficeObjectId == DownloadReportId and Operation == "FileDownloaded"
+| where OfficeObjectId == DownloadObjectId and Operation == "FileDownloaded"
 | project TimeGenerated, UserId, OfficeObjectId, Evidence=SourceFileName, ClientIP

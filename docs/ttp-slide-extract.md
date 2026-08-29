@@ -2,7 +2,9 @@
 
 Generated from the local source deck by scripts/Convert-TtpDeckToMarkdown.ps1.
 This artifact contains slides 16-39. See docs/ttp-cyber-range.md for the reviewed
-catalog, selected integrations, telemetry paths, flags, and validation workflow.
+catalog, all 19 implemented integrations, authoritative ATT&CK mappings,
+telemetry paths, unique flags, seven-scenario selection, and validation workflow.
+The extract below preserves source wording and is not the normalized answer key.
 <!-- Slide number: 16 -->
 
 # Hunting Cloud-Specific Adversary Tradecraft (TTPs)

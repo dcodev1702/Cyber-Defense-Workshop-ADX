@@ -77,7 +77,7 @@ The screenshot attack vectors are covered and mapped to MITRE ATT&CK, including 
 | ADX backup | Creates secured ADLS Gen2 backup storage, exports schema records, exports table data as Parquet, and restores from the backup manifest | [`adx_db_backupNrestore\Initialize-AdxBackupStorage.ps1`](adx_db_backupNrestore/Initialize-AdxBackupStorage.ps1), [`adx_db_backupNrestore\Backup-AdxDatabase.ps1`](adx_db_backupNrestore/Backup-AdxDatabase.ps1), [`adx_db_backupNrestore\Restore-AdxDatabaseBackup.ps1`](adx_db_backupNrestore/Restore-AdxDatabaseBackup.ps1), [`adx_db_backupNrestore\adx_backup.md`](adx_db_backupNrestore/adx_backup.md) |
 | Schemas | Holds one Microsoft Learn-derived JSON schema file per ADX table | [`schemas\`](schemas/), [`metadata\tables.manifest.json`](metadata/tables.manifest.json), [`tools\Build-SchemasFromMicrosoftLearn.ps1`](tools/Build-SchemasFromMicrosoftLearn.ps1), [`tools\Build-SchemaFromLiveTable.ps1`](tools/Build-SchemaFromLiveTable.ps1) |
 | Tenant sampling | Exports real Log Analytics and Defender XDR advanced hunting rows plus per-column field profiles that ground synthetic generation | [`scripts\Export-TenantTelemetrySamples.ps1`](scripts/Export-TenantTelemetrySamples.ps1), [`scripts\Export-WorkshopTelemetryProfiles.ps1`](scripts/Export-WorkshopTelemetryProfiles.ps1) |
-| Synthetic data | Reproduces the schema-aligned NDJSON telemetry from the committed schemas and field profiles. `data\generated\` is not tracked; run the parallel runner to create it | [`scripts\Invoke-WorkshopParallelGeneration.ps1`](scripts/Invoke-WorkshopParallelGeneration.ps1), [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1), [`metadata\field-profiles\`](metadata/field-profiles/), [`metadata\profile-overrides.json`](metadata/profile-overrides.json), [`data\scenario-summary.json`](data/scenario-summary.json) |
+| Synthetic data | Reproduces the schema-aligned NDJSON telemetry, including all 19 unique-flag TTP chains and the seven-challenge scenario arc, from the committed schemas and field profiles. `data\generated\` is not tracked; run the parallel runner to create it | [`scripts\Invoke-WorkshopParallelGeneration.ps1`](scripts/Invoke-WorkshopParallelGeneration.ps1), [`scripts\New-SyntheticTelemetry.ps1`](scripts/New-SyntheticTelemetry.ps1), [`metadata\ttp-flag-matrix.json`](metadata/ttp-flag-matrix.json), [`metadata\field-profiles\`](metadata/field-profiles/), [`data\scenario-summary.json`](data/scenario-summary.json) |
 | Data quality gates | Scores generated telemetry against the real field profiles, verifies tenant and subscription identifiers, and blocks tenant data from reaching the profiles | [`scripts\Test-SyntheticDataQuality.ps1`](scripts/Test-SyntheticDataQuality.ps1), [`scripts\Test-WorkshopIdentityInvariants.ps1`](scripts/Test-WorkshopIdentityInvariants.ps1), [`scripts\Test-FieldProfileSafety.ps1`](scripts/Test-FieldProfileSafety.ps1) |
 | Tenant data safeguards | Enforces, on every commit and in CI, that raw tenant telemetry is never committed and that tracked field profiles carry no tenant data | [`.githooks\pre-commit`](.githooks/pre-commit), [`scripts\Install-WorkshopGitHooks.ps1`](scripts/Install-WorkshopGitHooks.ps1), [`.github\workflows\telemetry-safety.yml`](.github/workflows/telemetry-safety.yml) |
 | Managed Azure access (secondary) | Documents the full managed Azure ADX build plus SFI-aligned B2B guest provisioning, MFA, access-package lifecycle, participant group access, ADX database viewer permissions, and dashboard sharing | [`docs\managed_azure_adx_setup.md`](docs/managed_azure_adx_setup.md), [`user_creation\README.md`](user_creation/README.md), [`docs\student_access.md`](docs/student_access.md), [`scripts\Grant-StudentAdxAccess.ps1`](scripts/Grant-StudentAdxAccess.ps1) |
@@ -179,7 +179,7 @@ The script defaults to `usag-wiesbaden-cys26.northeurope.kusto.windows.net`, dat
 
 The runner splits the 79 tables across worker processes: about 14 minutes against 46 for the single-threaded generator, with a progress bar and an ETA. Its defaults reproduce the committed dataset exactly, including `DeviceProcessEvents` at 32,000 rows. Eight workers is the measured optimum on an 8-core machine and is the default — more is not better, because every worker repeats the two-minute setup phase and 16 workers finish a full run slower than 8.
 
-`New-SyntheticTelemetry.ps1` still generates everything on its own and is what each worker runs; call it directly to rebuild a single table (`-TableName`) or when debugging generation itself.
+`New-SyntheticTelemetry.ps1` is the worker used by the wrapper. Do not invoke it directly to produce data, including single-table or temporary fixtures. Use `Invoke-WorkshopParallelGeneration.ps1 -TableName <Table>` so the end time and random seed are pinned once and subset output remains deterministic.
 
 The generator writes one NDJSON file per manifest table into `data\generated\`. The importer creates each table from its schema, applies a JSON ingestion mapping, ingests from the read-only `/workshop-data` mount, and reconciles every table's row count against the file on disk.
 
@@ -189,6 +189,7 @@ Verify the result before teaching from it:
 .\scripts\Test-WorkshopPackage.ps1
 .\scripts\Test-SyntheticDataQuality.ps1
 .\scripts\Test-WorkshopIdentityInvariants.ps1
+.\scripts\Test-WorkshopTtpFlags.ps1 -DataDirectory .\data\generated
 ```
 
 `Test-SyntheticDataQuality.ps1` scores each generated table against the real field profile in `metadata\field-profiles\`, reporting columns that are emptier than production, columns populated where production leaves them empty, and values outside the observed vocabulary. Columns the workshop deliberately populates beyond production are declared in `metadata\profile-overrides.json`, which both the generator and the quality gate read.
@@ -288,9 +289,9 @@ See [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md) for the Ser
 
 ## TTP cyber-range challenges
 
-The cloud-adversary section of the source training deck is preserved as a [MarkItDown extract](docs/ttp-slide-extract.md) and reviewed in the [TTP cyber-range catalog](docs/ttp-cyber-range.md). Six challenges span email, identity, and application tradecraft. Each starts with flag-free evidence and requires one or two cross-table pivots before the final telemetry field reveals its themed flag.
+The cloud-adversary section of the source training deck is preserved as a [MarkItDown extract](docs/ttp-slide-extract.md) and researched in the [TTP cyber-range catalog](docs/ttp-cyber-range.md). All 19 challenges span email, identity, and application tradecraft; exactly seven form the canonical scenario. Each starts with flag-free evidence and requires one or two cross-table pivots before a globally unique themed flag appears once in its declared final telemetry field.
 
-Trainees use [the sequential TTP hunt query pack](docs/ttp-hunt-queries.kql). Instructors validate the matrix, unique flag placement, and Kusto join paths with `scripts\Test-WorkshopTtpFlags.ps1`.
+Trainees use [the sequential TTP hunt query pack](docs/ttp-hunt-queries.kql). Instructors use [the answer key](docs/instructor_answer_key.kql) and validate research metadata, seven-scenario membership, unique flag placement, generated data, and all live Kusto join paths with `scripts\Test-WorkshopTtpFlags.ps1`.
 
 ## Live CISA KEV enrichment
 
