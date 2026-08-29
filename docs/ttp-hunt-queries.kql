@@ -6,6 +6,20 @@
 // EMAIL-01: Mailbox Email Forwarding
 // TTP-ID: mailbox-email-forwarding
 // OfficeActivity -> CloudAppEvents -> AADServicePrincipalSignInLogs
+// MITRE ATT&CK: T1114.003 - Email Collection: Email Forwarding Rule
+// References:
+//   https://attack.mitre.org/techniques/T1114/003/
+//   https://learn.microsoft.com/exchange/security-and-compliance/mail-flow-rules/mail-flow-rules
+//
+// KEY TAKEAWAY: A forwarding rule proves that mail flow changed, but it does not
+// identify whether a user or an application performed and sustained the change.
+// PIVOT LOGIC:
+//   Step 1 -> 2: UserId identifies the affected mailbox, while ClientIP preserves
+//   the source context. Together they isolate the matching cloud application event.
+//   Step 2 -> 3: OAuthAppId identifies the non-human application, and IPAddress
+//   confirms the same source when pivoting to its service-principal sign-in.
+// BIG PICTURE: The pivots connect mailbox impact to the responsible application
+// identity, turning a suspicious setting into evidence of app-backed persistence.
 // ============================================================================
 
 // Step 1: Find external mailbox forwarding. Record UserId and ClientIP.
@@ -33,6 +47,22 @@ AADServicePrincipalSignInLogs
 // EMAIL-02: Malicious Inbox Rules
 // TTP-ID: malicious-inbox-rules
 // OfficeActivity -> SigninLogs -> AADNonInteractiveUserSignInLogs
+// MITRE ATT&CK: T1070.008 - Indicator Removal: Clear Mailbox Data
+// MITRE ATT&CK: T1114.003 - Email Collection: Email Forwarding Rule
+// References:
+//   https://attack.mitre.org/techniques/T1070/008/
+//   https://attack.mitre.org/techniques/T1114/003/
+//   https://learn.microsoft.com/powershell/module/exchange/get-inboxrule
+//
+// KEY TAKEAWAY: A rule that moves or deletes security mail shows concealment, but
+// the authentication trail shows who created it and whether access continued.
+// PIVOT LOGIC:
+//   Step 1 -> 2: UserId anchors the affected mailbox and ClientIP anchors the
+//   source. Using both avoids attributing another user's nearby sign-in to the rule.
+//   Step 2 -> 3: CorrelationId is the request-chain identifier. It links the
+//   interactive Exchange sign-in to the exact non-interactive continuation.
+// BIG PICTURE: The pivots connect mailbox manipulation, the initiating session,
+// and automated follow-on access, showing both defense evasion and persistence.
 // ============================================================================
 
 // Step 1: Find rules that suppress security messages. Record UserId and ClientIP.
@@ -59,6 +89,20 @@ AADNonInteractiveUserSignInLogs
 // IDENTITY-01: Token Abuse
 // TTP-ID: token-abuse
 // SigninLogs -> AADNonInteractiveUserSignInLogs
+// MITRE ATT&CK: T1528 - Steal Application Access Token
+// MITRE ATT&CK: T1550.001 - Use Alternate Authentication Material: Application Access Token
+// References:
+//   https://attack.mitre.org/techniques/T1528/
+//   https://attack.mitre.org/techniques/T1550/001/
+//   https://learn.microsoft.com/entra/identity-platform/access-tokens
+//
+// KEY TAKEAWAY: The risky device-code sign-in shows token issuance; SessionId
+// proves that later non-interactive activity belongs to that same authenticated session.
+// PIVOT LOGIC:
+//   Step 1 -> 2: SessionId survives the change from an interactive sign-in to
+//   background token use. It is stronger evidence than matching only user or IP.
+// BIG PICTURE: The pivot demonstrates session continuity without another login or
+// MFA prompt, which is why password changes alone may not terminate token abuse.
 // ============================================================================
 
 // Step 1: Find the risky interactive device-code sign-in. Record SessionId.
@@ -77,6 +121,21 @@ AADNonInteractiveUserSignInLogs
 // IDENTITY-02: Conditional Access Policy Abuse
 // TTP-ID: conditional-access-policy-abuse
 // AuditLogs -> CloudAppEvents -> SigninLogs
+// MITRE ATT&CK: T1562 - Impair Defenses (behavioral alignment)
+// References:
+//   https://attack.mitre.org/techniques/T1562/
+//   https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-policies
+//   https://learn.microsoft.com/graph/api/resources/signin
+//
+// KEY TAKEAWAY: A policy update is a control-plane event; its security impact is
+// established only when a sign-in is evaluated under the altered policy.
+// PIVOT LOGIC:
+//   Step 1 -> 2: CorrelationId ties the Entra audit record to the same policy
+//   operation observed by Defender for Cloud Apps and reveals the policy ObjectId.
+//   Step 2 -> 3: ObjectId identifies the exact Conditional Access policy evaluated
+//   during sign-in, avoiding assumptions based only on timing or policy names.
+// BIG PICTURE: The pivots connect who changed a defensive control, which policy
+// changed, and the successful authentication consequence of that weakened control.
 // ============================================================================
 
 // Step 1: Find the policy update. Record CorrelationId.
@@ -101,6 +160,22 @@ SigninLogs
 // APPLICATION-01: API Access Abuse
 // TTP-ID: api-access-abuse
 // AuditLogs -> AADServicePrincipalSignInLogs -> GraphAPIAuditEvents
+// MITRE ATT&CK: T1059.009 - Command and Scripting Interpreter: Cloud API
+// MITRE ATT&CK: T1550.001 - Use Alternate Authentication Material: Application Access Token
+// References:
+//   https://attack.mitre.org/techniques/T1059/009/
+//   https://attack.mitre.org/techniques/T1550/001/
+//   https://learn.microsoft.com/graph/auth/auth-concepts
+//
+// KEY TAKEAWAY: Consent grants potential access; only the token and API records
+// prove that the service principal exercised those permissions against a resource.
+// PIVOT LOGIC:
+//   Step 1 -> 2: ServicePrincipalId identifies the application identity created or
+//   authorized by consent and separates it from the consenting human identity.
+//   Step 2 -> 3: UniqueTokenIdentifier follows one issued token into the exact Graph
+//   request, preventing unrelated calls by the same application from being conflated.
+// BIG PICTURE: The pivots reconstruct authorization -> app-only authentication ->
+// resource access, showing how broad consent becomes operational API abuse.
 // ============================================================================
 
 // Step 1: Find suspicious application consent. Record ServicePrincipalId.
@@ -126,6 +201,22 @@ GraphAPIAuditEvents
 // APPLICATION-02: Cloud Data Collection (Non-Mail)
 // TTP-ID: cloud-data-collection-non-mail
 // CloudAppEvents -> GraphAPIAuditEvents -> OfficeActivity
+// MITRE ATT&CK: T1530 - Data from Cloud Storage
+// MITRE ATT&CK: T1213.002 - Data from Information Repositories: SharePoint
+// References:
+//   https://attack.mitre.org/techniques/T1530/
+//   https://attack.mitre.org/techniques/T1213/002/
+//   https://learn.microsoft.com/graph/api/driveitem-get-content
+//
+// KEY TAKEAWAY: A cloud-app access alert suggests interest in a file, but Graph
+// and Office audit records are needed to prove API retrieval and completed download.
+// PIVOT LOGIC:
+//   Step 1 -> 2: ObjectId is the stable file/object identifier shared by the cloud
+//   app observation and Graph request; names alone can collide or be changed.
+//   Step 2 -> 3: ReportId carries that object identity into OfficeObjectId, linking
+//   the API request to the workload's authoritative FileDownloaded audit event.
+// BIG PICTURE: The pivots connect suspicious app-only access, the retrieval channel,
+// and final data movement, distinguishing collection from mere browsing or enumeration.
 // ============================================================================
 
 // Step 1: Find application-only file access. Record ObjectId.

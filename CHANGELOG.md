@@ -8,6 +8,7 @@
 - Selected six challenges, two each for email, identity, and application tradecraft. Every challenge begins with flag-free behavioral evidence and requires one or two cross-table pivots before one unique themed `FLAG:{...}` appears in downstream telemetry.
 - Added a machine-readable TTP/table/flag matrix, sequential trainee KQL with no flag literals, deterministic scenario telemetry, and validators for category coverage, schema alignment, pivot depth, unique flag placement, and executable multi-table Kusto results.
 - Added a focused generation harness that reports explicit generator and validator exit codes and counts NDJSON records correctly. The parallel wrapper now accepts comma-separated table filters, and progress rendering supports wider consoles.
+- Expanded every trainee TTP comment block with a key takeaway, the reason each correlation value must feed the next query, the resulting end-to-end attack story, MITRE ATT&CK mappings, and supporting MITRE/Microsoft references. Executable KQL remains unchanged.
 
 ### 2026-08-07 - documented live CISA KEV JSON enrichment
 
