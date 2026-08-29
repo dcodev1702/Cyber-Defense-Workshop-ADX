@@ -167,7 +167,9 @@ services:
       start_period: 10s
 
   cloudflared:
-    image: cloudflare/cloudflared:2026.7.2
+    # Track the current connector release. --no-autoupdate below disables
+    # in-container replacement; updates remain explicit through Compose pull/up.
+    image: cloudflare/cloudflared:latest
     container_name: cyber-conf-wiesbaden-cloudflared
     restart: unless-stopped
     init: true
