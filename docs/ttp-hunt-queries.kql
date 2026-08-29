@@ -1,6 +1,31 @@
-// Cyber Range - 19 TTP Hunt Queries
-// Run one numbered query at a time. Copy the requested value into the next query.
-// No query contains a flag literal; the final projected telemetry field reveals it.
+// ============================================================================
+// CYBER RANGE: 19 PIVOT-DRIVEN TTP HUNTS
+// ============================================================================
+//
+// PURPOSE
+// Practice behavior-first threat hunting with KQL by correlating realistic cloud
+// evidence across Microsoft Entra ID, Exchange Online, Microsoft Graph, Defender
+// XDR, and Azure activity telemetry. Each hunt begins with observable attacker
+// behavior, requires one or two cross-table pivots, and ends at a unique evidence
+// field that confirms the complete investigation path.
+//
+// SCOPE
+// - 19 hunts across three adversary-tradecraft categories:
+//   - Email-Based Adversary Tradecraft: 3 hunts
+//   - Identity-Based Adversary Tradecraft: 10 hunts
+//   - Application-Based Adversary Tradecraft: 6 hunts
+// - 7 hunts form the canonical Midnight Blizzard-inspired scenario.
+// - 12 extension hunts provide independent practice over the same dataset.
+//
+// HOW TO USE THIS PACK
+// Run one numbered hunt at a time. Start with Step 1, investigate the returned
+// evidence, and copy each requested correlation value into the next step's
+// placeholder. Do not skip directly to the final table: the learning objective is
+// to explain how the evidence connects across services. No query contains a flag
+// literal; the final projected Evidence field reveals it only after the pivots.
+//
+// Cyber Range design, category details, ATT&CK mappings, and challenge guidance:
+// https://github.com/dcodev1702/Cyber-Defense-Workshop-ADX/blob/main/docs/ttp-cyber-range.md
 
 // ============================================================================
 // EMAIL-01: Mailbox Email Forwarding
