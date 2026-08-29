@@ -13,6 +13,8 @@
 //
 // KEY TAKEAWAY: A forwarding rule proves that mail flow changed, but it does not
 // identify whether a user or an application performed and sustained the change.
+// In this scenario, Victor Alvarez's mail is forwarded to the external address
+// archive@threat-actor.diaries.cn for persistent collection.
 // PIVOT LOGIC:
 //   Step 1 -> 2: UserId identifies the affected mailbox, while ClientIP preserves
 //   the source context. Together they isolate the matching cloud application event.

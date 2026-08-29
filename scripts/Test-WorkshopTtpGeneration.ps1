@@ -53,9 +53,13 @@ if (-not $resolvedOutput.StartsWith($temporaryRoot, [System.StringComparison]::O
     throw "OutputDirectory must be a cyber-conf-ttp-* directory beneath $temporaryRoot"
 }
 $OutputDirectory = $resolvedOutput
+$summaryPath = "$OutputDirectory-summary.json"
 
 if (Test-Path -LiteralPath $OutputDirectory) {
     Remove-Item -LiteralPath $OutputDirectory -Recurse -Force
+}
+if (Test-Path -LiteralPath $summaryPath) {
+    Remove-Item -LiteralPath $summaryPath -Force
 }
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
 
@@ -65,6 +69,7 @@ foreach ($argument in @(
         '-File', $generatorRunner,
         '-WorkerCount', [string]$WorkerCount,
         '-OutputDirectory', $OutputDirectory,
+        '-SummaryPath', $summaryPath,
         '-TableName', ($tables -join ',')
     )) {
     $arguments.Add($argument)
@@ -107,6 +112,44 @@ foreach ($file in $files) {
     $rowCount = [System.Linq.Enumerable]::Count([System.IO.File]::ReadLines($file.FullName))
     Write-Host "FILE=$($file.Name);ROWS=$rowCount"
 }
+
+$forwardingAddress = 'archive@threat-actor.diaries.cn'
+$retiredForwardingAddress = 'archive@{0}' -f 'proton-mail.example'
+$officeForwardingRows = 0
+$cloudForwardingRows = 0
+foreach ($fileName in @('OfficeActivity.json', 'CloudAppEvents.json')) {
+    $filePath = Join-Path $OutputDirectory $fileName
+    foreach ($line in [System.IO.File]::ReadLines($filePath)) {
+        if ($line.Contains($retiredForwardingAddress, [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw "Retired forwarding address found in $fileName."
+        }
+        if (-not $line.Contains($forwardingAddress, [System.StringComparison]::OrdinalIgnoreCase)) { continue }
+
+        $record = $line | ConvertFrom-Json
+        if ($fileName -eq 'OfficeActivity.json' -and
+            [string]$record.Operation -eq 'Set-Mailbox' -and
+            [string]$record.Parameters -like "*ForwardingSmtpAddress=$forwardingAddress*") {
+            $officeForwardingRows++
+        }
+        elseif ($fileName -eq 'CloudAppEvents.json' -and
+            [string]$record.ActionType -eq 'MailboxForwardingConfigured' -and
+            [string]$record.RawEventData.ForwardingDestination -eq $forwardingAddress) {
+            $cloudForwardingRows++
+        }
+    }
+}
+if ($officeForwardingRows -ne 1 -or $cloudForwardingRows -ne 1) {
+    throw "Expected one forwarding row in each required table; OfficeActivity=$officeForwardingRows CloudAppEvents=$cloudForwardingRows."
+}
+
+$summary = Get-Content -LiteralPath $summaryPath -Raw | ConvertFrom-Json
+$summaryMatches = @($summary.identityAttackVectors | Where-Object {
+        [string]$_.Technique -eq 'T1114.003' -and [string]$_.Command -like "*$forwardingAddress*"
+    })
+if ($summaryMatches.Count -ne 1) {
+    throw "Expected one T1114.003 scenario summary entry for $forwardingAddress; found $($summaryMatches.Count)."
+}
+Write-Host "FORWARDING_ADDRESS_VALIDATION=OfficeActivity:$officeForwardingRows;CloudAppEvents:$cloudForwardingRows;ScenarioSummary:$($summaryMatches.Count)"
 
 & pwsh -NoProfile -File $validator -DataDirectory $OutputDirectory
 $validatorExitCode = $LASTEXITCODE

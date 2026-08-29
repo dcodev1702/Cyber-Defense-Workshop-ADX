@@ -16,7 +16,7 @@
           "slide": 18,
           "name": "Mailbox Email Forwarding",
           "selected": true,
-          "description": "Attackers configure mailbox forwarding to maintain persistent access to communications without continued authentication or malware.",
+          "description": "Attackers configure Victor Alvarez's mailbox to forward communications to archive@threat-actor.diaries.cn, maintaining persistent collection without continued authentication or malware.",
           "finalTable": "AADServicePrincipalSignInLogs",
           "flag": "FLAG:{SilentMailRelay}",
           "flagColumn": "UserAgent",

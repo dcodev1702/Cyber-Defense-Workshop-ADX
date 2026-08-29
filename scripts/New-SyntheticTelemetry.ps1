@@ -8035,6 +8035,7 @@ $cloudCollectionFlag = Get-WorkshopTtpFlag -Id 'cloud-data-collection-non-mail'
 $mailForwardingTime = $StartTime.AddMinutes(17)
 $mailForwardingAppId = New-StableGuid 'ttp-mail-forwarding-app'
 $mailForwardingServicePrincipalId = New-StableGuid 'ttp-mail-forwarding-service-principal'
+$mailForwardingDestination = 'archive@threat-actor.diaries.cn'
 Add-Record -Table 'OfficeActivity' -Time $mailForwardingTime -Values @{
     TenantId = $tenantId
     TimeGenerated = Format-WorkshopTime $mailForwardingTime
@@ -8048,7 +8049,7 @@ Add-Record -Table 'OfficeActivity' -Time $mailForwardingTime -Values @{
     ClientIP = $externalIp
     OfficeObjectId = $victor.Upn
     MailboxOwnerUPN = $victor.Upn
-    Parameters = 'Identity=victor.alvarez;ForwardingSmtpAddress=archive@proton-mail.example;DeliverToMailboxAndForward=True'
+    Parameters = "Identity=victor.alvarez;ForwardingSmtpAddress=$mailForwardingDestination;DeliverToMailboxAndForward=True"
 }
 Add-Record -Table 'CloudAppEvents' -Time $mailForwardingTime.AddSeconds(12) -Values @{
     Timestamp = Format-WorkshopTime $mailForwardingTime.AddSeconds(12)
@@ -8066,7 +8067,7 @@ Add-Record -Table 'CloudAppEvents' -Time $mailForwardingTime.AddSeconds(12) -Val
     ObjectId = $victor.ObjectId
     OAuthAppId = $mailForwardingAppId
     IsAdminOperation = $false
-    RawEventData = @{ Operation = 'Set-Mailbox'; ForwardingDestination = 'archive@proton-mail.example' }
+    RawEventData = @{ Operation = 'Set-Mailbox'; ForwardingDestination = $mailForwardingDestination }
 }
 Add-Record -Table 'AADServicePrincipalSignInLogs' -Time $mailForwardingTime.AddSeconds(25) -Values @{
     TimeGenerated = Format-WorkshopTime $mailForwardingTime.AddSeconds(25)
@@ -9278,6 +9279,7 @@ $summary = [ordered]@{
         [ordered]@{ Title = 'Suspicious OAuth consent grants mailbox and file scopes'; Technique = 'T1528,T1098.003,T1550.001'; Offset = 5; Command = 'CloudAppEvents OAuthAppConsentGranted for USAG Cyber Sync Helper with Mail.Read Files.Read.All offline_access' }
         [ordered]@{ Title = 'Service principal credential added for OAuth persistence'; Technique = 'T1098.001,T1550.001'; Offset = 6; Command = 'AuditLogs Add service principal credentials and AADServicePrincipalSignInLogs client-secret sign-in to Microsoft Graph' }
         [ordered]@{ Title = 'Graph API mailbox, file, and directory collection'; Technique = 'T1087.004,T1114.002,T1530'; Offset = 7; Command = 'GraphAPIAuditEvents and MicrosoftGraphActivityLogs read messages, OneDrive, users, and SharePoint content' }
+        [ordered]@{ Title = 'External mailbox forwarding established for persistent collection'; Technique = 'T1114.003'; Offset = 17; Command = "OfficeActivity and CloudAppEvents forward victor.alvarez mail to $mailForwardingDestination" }
     )
     attackVectors = $attackSteps | Select-Object Title, Technique, Offset, Command
     linuxAttackVectors = @(

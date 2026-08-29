@@ -68,6 +68,12 @@
       "Technique": "T1087.004,T1114.002,T1530",
       "Offset": 7,
       "Command": "GraphAPIAuditEvents and MicrosoftGraphActivityLogs read messages, OneDrive, users, and SharePoint content"
+    },
+    {
+      "Title": "External mailbox forwarding established for persistent collection",
+      "Technique": "T1114.003",
+      "Offset": 17,
+      "Command": "OfficeActivity and CloudAppEvents forward victor.alvarez mail to archive@threat-actor.diaries.cn"
     }
   ],
   "attackVectors": [

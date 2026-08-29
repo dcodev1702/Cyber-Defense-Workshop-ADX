@@ -21,7 +21,7 @@ Email is a high-value target for surveillance and data access. These techniques 
 
 ### Mailbox Email Forwarding (slide 18, selected)
 
-Attackers configure mailbox forwarding to maintain persistent access to communications without continued authentication or malware. Hunt for forwarding-enabled mailboxes, external destinations, and changes without clear user intent.
+Attackers configure Victor Alvarez's mailbox to forward communications to `archive@threat-actor.diaries.cn`, maintaining persistent collection without continued authentication or malware. Hunt for forwarding-enabled mailboxes, external destinations, and changes without clear user intent.
 
 ### Malicious Inbox Rules (slide 19, selected)
 
