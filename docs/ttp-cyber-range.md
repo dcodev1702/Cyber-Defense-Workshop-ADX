@@ -2,7 +2,7 @@
 
 ## Source and conversion
 
-This catalog is derived from slides 16-39 of `Elisha - Threat Hunting Training v3.pptx`. The source presentation is local authoring material under the ignored `TTPs/` directory. Its TTP section was converted to Markdown with MarkItDown 0.1.7, then reviewed and normalized here so the durable repository artifact contains the training content rather than presentation layout noise.
+This catalog is derived from slides 16-39 of `Threat Hunting Training v3.pptx`. The source presentation is local authoring material under the ignored `TTPs/` directory. Its TTP section was converted to Markdown with MarkItDown 0.1.7, then reviewed and normalized here so the durable repository artifact contains the training content rather than presentation layout noise.
 
 The source section groups cloud adversary tradecraft into email, identity, and application categories. All 19 TTPs are implemented as cyber-range challenges with unique flags. Seven form the canonical Midnight Blizzard-inspired scenario arc; the other 12 are independent extension hunts in the same dataset. The implementation contract is [the TTP flag matrix](../metadata/ttp-flag-matrix.json), and the trainee workflow is [the TTP hunt query pack](ttp-hunt-queries.kql).
 

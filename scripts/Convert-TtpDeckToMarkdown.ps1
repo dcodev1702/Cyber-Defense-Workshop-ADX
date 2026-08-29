@@ -13,7 +13,7 @@ artifact. The reviewed cyber-range mapping remains in docs/ttp-cyber-range.md.
 #Requires -Version 7
 [CmdletBinding()]
 param(
-    [string]$InputPath = (Join-Path $PSScriptRoot '..' 'TTPs' 'Elisha - Threat Hunting Training v3.pptx'),
+    [string]$InputPath = (Join-Path $PSScriptRoot '..' 'TTPs' 'Threat Hunting Training v3.pptx'),
     [string]$OutputPath = (Join-Path $PSScriptRoot '..' 'docs' 'ttp-slide-extract.md')
 )
 
