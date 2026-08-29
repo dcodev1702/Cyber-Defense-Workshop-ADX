@@ -116,8 +116,9 @@ cloudflared --version
 > [!IMPORTANT]
 > This terminal must stay open for the whole lab. It is the tunnel. If you close it, every query and dashboard tile stops working until you run the command again.
 
+
 ```powershell
-cloudflared access tcp --hostname adx.tier1-cyberdefense.ai --url 127.0.0.1:8080 --service-token-id d693cceb2da12c0e608489dbb2ceac02.access --service-token-secret 81cd3a66ab62afab8193b39cdf432c8c4db6ae7a08534f0f3e3ddacdca7b8822
+cloudflared access tcp --hostname adx.tier1-cyberdefense.ai --url 127.0.0.1:8080 --service-token-id d693cceb2da12c0e608489dbb2ceac02.access --service-token-secret cfast_9WZeMd7NIy1t9dzuTJB3N0uXKXEDPVlTXNoTU6Zyb15d43df
 ```
 
 ![Step 2: Start the Cloudflare tunnel](../images/student-walk-through/2-CMD-Establish-Cloudflare-Tunnel.jpg)
