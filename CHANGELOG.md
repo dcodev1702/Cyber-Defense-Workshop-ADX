@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### 2026-08-30 - added a protected Jupyter investigation workflow
+
+- Added `images/cyber-defense-workshop-hero-v3.png`, a 1364x720 systems-console header with a technical grid, Windows-local display and monospace typography, cyan-to-green investigation title, workshop status, telemetry metrics, and the existing SOC dashboard as a subdued live backdrop.
+- Added `hunt-notebook/Cyber-Defense-Workshop.ipynb`, a guided Python/KQL lab containing all 19 executable, pivot-driven hunts. It requires a normal Jupyter/IPython kernel but uses a standard-library Kusto REST client instead of an additional Kusto SDK. The Cloudflare proxy runs outside Jupyter through `Start-StudentAdxProxy.ps1`; the notebook contains no credential, tunnel, proxy, or container lifecycle code.
+- Kept every notebook request on `http://127.0.0.1:8080` and added a single `CONTAINER_IS_LOCAL` decision. A status-only `.show cluster` probe sets it to `True` for local Kustainer HTTP 200 and `False` for existing read-only-gateway HTTP 403; both paths require Kusto ping and target-database visibility, while the nonlocal path additionally requires gateway `/healthz`. A disposable full-notebook run executed all 19 raw `%%kql` hunts against the existing local container; every hunt returned exactly one flag-bearing `Evidence` row, and the committed notebook contains no outputs.
+- Removed an accidentally embedded live Cloudflare Service Token ID and secret from the student setup guide and verified zero current tracked-file matches. The guide now uses `Start-StudentAdxProxy.ps1`, which keeps the secret out of command arguments and process listings. The secret remains recoverable from Git history, so it must be rotated again before distributing the notebook or lab files. The automated rotation path was attempted but Cloudflare rejected the locally stored API credential with HTTP 401; no runtime resource or credential changed during that failed attempt.
+
 ### 2026-08-29 - upgraded Kustainer while retaining the database and edge path
 
 - Updated only `cyber-conf-wiesbaden-kusto` from engine `1.0.9697.27504` (`2026.07.20.1506-2629-8bf4dbb-master`, source revision `8bf4dbbbe157c779ecc52548179d557b66902ef8`) to engine `1.0.9735.29185` (`2026.08.27.1605-2634-1322d52-master`, source revision `1322d52007a090d75e4bcf68ed5f2769414ec1d5`). The original image is Microsoft's Linux Kusto emulator at [`mcr.microsoft.com/azuredataexplorer/kustainer-linux:latest`](https://mcr.microsoft.com/en-us/artifact/mar/azuredataexplorer/kustainer-linux/about), using the `latest` tag supported by the [official emulator installation guide](https://learn.microsoft.com/azure/data-explorer/kusto-emulator-install).

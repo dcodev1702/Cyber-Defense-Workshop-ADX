@@ -7,7 +7,7 @@ Use this guide at the workshop to connect your computer to the Cyber Defense lab
 - Use a Windows, MacOS, or GNU/Linux computer with an internet connection.
 - Have access to a personal Microsoft account that you can use to sign in to Azure Data Explorer.
 - Keep the workshop-provided `student-access.env` file and `Start-StudentAdxProxy.ps1` script together in one folder. They are specific to this in-person lab; do not share the credential file.
-- On MacOS and GNU/Linux, `Start-StudentAdxProxy.ps1` needs [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/installing-powershell). You do not need it if you run the `cloudflared` command in step 2 directly, which is the simpler option.
+- On MacOS and GNU/Linux, `Start-StudentAdxProxy.ps1` needs [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/installing-powershell).
 
 ## 🔌 Set up the local connection
 
@@ -110,7 +110,7 @@ cloudflared --version
 ### 2. Start the local Cloudflare proxy
 
 1. In the same terminal, change to the folder containing the workshop-provided files.
-1. Run the command below. It is identical on Windows, MacOS, and GNU/Linux.
+1. Run the command below. It is identical on Windows, MacOS, and GNU/Linux when PowerShell 7 is installed.
 1. Leave this terminal window open. Closing it disconnects the lab database.
 
 > [!IMPORTANT]
@@ -118,8 +118,10 @@ cloudflared --version
 
 
 ```powershell
-cloudflared access tcp --hostname adx.tier1-cyberdefense.ai --url 127.0.0.1:8080 --service-token-id d693cceb2da12c0e608489dbb2ceac02.access --service-token-secret cfast_9WZeMd7NIy1t9dzuTJB3N0uXKXEDPVlTXNoTU6Zyb15d43df
+pwsh -NoProfile -File ./Start-StudentAdxProxy.ps1 -CredentialFile ./student-access.env
 ```
+
+The launcher reads the shared credential file and passes the secret to `cloudflared` through the child process environment. It does not expose the secret in the command line or process list.
 
 ![Step 2: Start the Cloudflare tunnel](../images/student-walk-through/2-CMD-Establish-Cloudflare-Tunnel.jpg)
 

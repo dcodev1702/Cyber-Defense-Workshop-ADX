@@ -287,6 +287,14 @@ Rotate the class credential after the workshop to invalidate the distributed pai
 
 See [infra/cloudflare-adx/README.md](infra/cloudflare-adx/README.md) for the Service Auth setup, DNS routing, secret handling, and connection validation steps.
 
+### Jupyter investigation notebook
+
+Open [hunt-notebook/Cyber-Defense-Workshop.ipynb](hunt-notebook/Cyber-Defense-Workshop.ipynb) in VS Code or JupyterLab for a guided Python/KQL workflow. The notebook does not manage Docker, credentials, Cloudflared, or tunnels. It always uses `http://127.0.0.1:8080` and sets `CONTAINER_IS_LOCAL` from a status-only `.show cluster` probe: HTTP 200 means the Kustainer container is local, while HTTP 403 means the existing endpoint leads through the read-only gateway. It then requires Kusto health and `CyberDefendStudentSnapshot` visibility before running queries, plus gateway health when the container is not local.
+
+The notebook requires a Jupyter/IPython kernel, provides a standard-library Kusto REST client without an additional Kusto SDK, and includes 19 executable, pivot-driven read-only hunts. It contains no credentials and keeps saved outputs empty.
+
+Never paste a live Service Token into a tracked guide or notebook. If either value enters Git history, replacing it with a placeholder is not revocation: rotate the Service Token before distribution and update only the ignored credential file.
+
 ## TTP cyber-range challenges
 
 The cloud-adversary section of the source training deck is preserved as a [MarkItDown extract](docs/ttp-slide-extract.md) and researched in the [TTP cyber-range catalog](docs/ttp-cyber-range.md). All 19 challenges span email, identity, and application tradecraft; exactly seven form the canonical scenario. Each starts with flag-free evidence and requires one or two cross-table pivots before a globally unique themed flag appears once in its declared final telemetry field.
